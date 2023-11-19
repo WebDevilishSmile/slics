@@ -11,7 +11,12 @@ export default function HeaderLinks({ anchorEl, setAnchorEl, open }) {
   };
 
   return (
-    <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+    <Menu
+      disableScrollLock
+      anchorEl={anchorEl}
+      open={open}
+      onClose={handleClose}
+    >
       <MenuItem component={Link} href="/" onClick={handleClose}>
         <ListItemIcon>
           <HomeOutlinedIcon />

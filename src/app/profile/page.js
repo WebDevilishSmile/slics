@@ -28,7 +28,6 @@ export default async function Profile() {
 
   const userName = session?.user.user_metadata.name.split(' ')[0];
 
-  let { data: customers } = await supabase.from('customers').select('*');
   let { data: comments } = await supabase
     .from('comments')
     .select('*')
@@ -66,9 +65,13 @@ export default async function Profile() {
           >
             {com.title}
           </Typography>
-          <IconButton>
-            <EditNoteIcon />
-          </IconButton>
+          <Typography
+            variant="body1"
+            fontWeight="400"
+            sx={{ textTransform: 'uppercase' }}
+          >
+            {com.numSlic}
+          </Typography>
         </Box>
         <Box sx={{ p: '1rem .5rem' }}>
           <Typography>{com.comment}</Typography>

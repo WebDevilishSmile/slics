@@ -18,7 +18,7 @@ export default function Header({ data }) {
   const openUser = Boolean(anchorUser);
 
   const session = data.session;
-  const avatarLetter = session?.user.user_metadata.name.split(' ')[0][0];
+  const user = data.session?.user;
   const userName = session?.user.user_metadata.name.split(' ')[0];
 
   const handleClick = (e) => {
@@ -30,10 +30,14 @@ export default function Header({ data }) {
   };
 
   return (
-    <AppBar sx={{ backgroundColor: theme.palette.primary.main }}>
+    <AppBar sx={{ backgroundColor: theme.palette.primary.dark }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <IconButton onClick={handleUserClick}>
-          <Avatar>{session?.user ? avatarLetter : ''}</Avatar>
+          {session ? (
+            <Avatar src={`${user.user_metadata.picture}`} />
+          ) : (
+            <Avatar />
+          )}
         </IconButton>
         <HeaderUser
           anchorUser={anchorUser}

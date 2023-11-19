@@ -41,7 +41,7 @@ export default function Login() {
         supabaseClient={supabase}
         appearance={{ theme: ThemeSupa }}
         providers={['google', 'apple']}
-        redirectTo={`${location.origin}/auth/callback`}
+        redirectTo={`slics.vercel.app/auth/callback`}
       />
     </Box>
   );

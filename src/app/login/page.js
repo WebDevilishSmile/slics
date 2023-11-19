@@ -25,6 +25,7 @@ export default function Login() {
         backgroundColor: theme.palette.background.light,
       }}
     >
+      {`${location}/api/auth/callback`}
       <Auth
         supabaseClient={supabase}
         appearance={{ theme: ThemeSupa }}

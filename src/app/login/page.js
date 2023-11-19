@@ -29,7 +29,7 @@ export default function Login() {
         supabaseClient={supabase}
         appearance={{ theme: ThemeSupa }}
         providers={['google', 'apple']}
-        redirectTo="https://slics-fgvo74tht-webdevilishsmile.vercel.app/auth/callback"
+        redirectTo="https://slics.vercel.app/auth/callback"
       />
     </Box>
   );

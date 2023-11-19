@@ -11,7 +11,13 @@ const montserrat = Montserrat({
   subsets: ['latin'],
   display: 'swap',
 });
+
+const defaultUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : 'http://localhost:3000';
+
 export const metadata = {
+  metadataBase: new URL(defaultUrl),
   title: 'SLICs',
   description: 'Developed by Tiago Davila',
 };

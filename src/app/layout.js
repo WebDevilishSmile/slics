@@ -20,10 +20,6 @@ export default async function RootLayout(props) {
   const { children } = props;
 
   const supabase = createServerComponentClient({ cookies });
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
   const { data, error } = await supabase.auth.getSession();
 
   return (

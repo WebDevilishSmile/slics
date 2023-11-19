@@ -8,6 +8,7 @@ import Main from './components/Main';
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies });
   const { data, error } = await supabase.auth.getSession();
+
   let { data: customers } = await supabase.from('customers').select('*');
   let { data: centers } = await supabase
     .from('centers')

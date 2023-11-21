@@ -4,8 +4,8 @@ import { Box } from '@mui/material';
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
 import theme from '../utilities/theme';
+import styles from './auth.module.css';
 
 export default function Login() {
   const supabase = createClientComponentClient();
@@ -15,6 +15,7 @@ export default function Login() {
       id="home"
       sx={{
         width: '100vw',
+        height: '85vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -27,9 +28,17 @@ export default function Login() {
     >
       <Auth
         supabaseClient={supabase}
-        appearance={{ theme: ThemeSupa }}
-        providers={['google', 'apple']}
-        redirectTo={`${location}/api/auth/callback`}
+        appearance={{
+          extend: false,
+          className: {
+            container: styles.authContainer,
+            anchor: styles.authAnchor,
+            button: styles.authButton,
+          },
+        }}
+        providers={['google']}
+        redirectTo={`${location.origin}/api/auth/callback`}
+        onlyThirdPartyProviders
       />
     </Box>
   );

@@ -34,7 +34,7 @@ export default function Header({ data }) {
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <IconButton onClick={handleUserClick}>
           {session ? (
-            <Avatar src={`${user.user_metadata.picture}`} />
+            <Avatar src={`${user?.user_metadata.avatar_url}`} />
           ) : (
             <Avatar />
           )}

@@ -9,7 +9,10 @@ export default async function Home() {
   const supabase = createServerComponentClient({ cookies });
   const { data, error } = await supabase.auth.getSession();
 
-  let { data: customers } = await supabase.from('customers').select('*');
+  let { data: customers } = await supabase
+    .from('customers')
+    .select('*')
+    .order('numSlic', { ascending: true });
   let { data: centers } = await supabase
     .from('centers')
     .select('*')

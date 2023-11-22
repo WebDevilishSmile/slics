@@ -65,6 +65,7 @@ export default function Main({ customers, centers, comments, session, user }) {
         <Box
           sx={{
             width: { xs: '100%', sm: '90%', md: '35rem' },
+            minHeight: '34.6rem',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',

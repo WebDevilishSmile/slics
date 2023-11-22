@@ -40,7 +40,9 @@ export default function HowToModal({ handleHowToModalClose }) {
         flexDirection: 'column',
         alignItems: 'center',
         width: '90%',
+        maxWidth: '40rem',
         height: '90%',
+        maxHeight: '45rem',
         p: '1rem 0',
       }}
     >

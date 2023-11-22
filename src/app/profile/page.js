@@ -115,7 +115,7 @@ export default async function Profile() {
       }}
     >
       {session ? (
-        <Paper sx={{ width: '90%', p: '1rem' }}>
+        <Paper sx={{ width: '90%', maxWidth: '40rem', p: '1rem' }}>
           <Typography variant="h5" textAlign="center">
             Profile
           </Typography>

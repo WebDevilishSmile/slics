@@ -10,6 +10,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import HowToModal from './HowToModal';
+import LoginIcon from '@mui/icons-material/Login';
 
 export default function HeaderUser({
   anchorUser,
@@ -90,9 +91,20 @@ export default function HeaderUser({
       {session ? (
         <List>{renderedUserLinks}</List>
       ) : (
-        <MenuItem component={Link} href="/login" onClick={handleUserClose}>
-          Login
-        </MenuItem>
+        <List>
+          <MenuItem component={Link} href='/login' onClick={handleUserClose}>
+            <ListItemIcon>
+              <LoginIcon />
+            </ListItemIcon>
+            Login
+          </MenuItem>
+          <MenuItem component={Link} href='' onClick={handleHowToModalOpen}>
+            <ListItemIcon>
+              <SlideshowIcon />
+            </ListItemIcon>
+            How to Use this Site
+          </MenuItem>
+        </List>
       )}
       <Modal open={howToModal} onClose={handleHowToModalClose}>
         <Box

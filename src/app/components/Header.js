@@ -4,12 +4,20 @@ import { useState } from 'react';
 
 import theme from '../utilities/theme';
 
-import { AppBar, Avatar, IconButton, Toolbar, Typography } from '@mui/material';
+import {
+  AppBar,
+  Avatar,
+  Box,
+  IconButton,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
 import HeaderUser from './HeaderUser';
 import HeaderLinks from './HeaderLinks';
+import HeaderTitle from './HeaderTitle';
 
 export default function Header({ data }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -45,9 +53,7 @@ export default function Header({ data }) {
           openUser={openUser}
           session={session}
         />
-        <Typography sx={{ textTransform: 'uppercase', color: '#f7f7f7' }}>
-          {session ? `Hello ${userName}` : 'Please Login'}
-        </Typography>
+        <HeaderTitle session={session} userName={userName} />
 
         <IconButton
           sx={{ color: theme.palette.primary.light }}

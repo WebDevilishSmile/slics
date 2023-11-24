@@ -8,7 +8,6 @@ import {
   Switch,
   Typography,
 } from '@mui/material';
-import { UPSCenters } from './UPSCenters';
 
 export default function SelectDest({
   slic,
@@ -63,18 +62,18 @@ export default function SelectDest({
       }}
     >
       <Box /* SELECTION */
-        id="selection"
+        id='selection'
         sx={{ width: { xs: '90%', sm: '90%', md: '35rem' }, mt: '1rem' }}
       >
         <FormControl fullWidth>
           <InputLabel>SLIC</InputLabel>
-          <Select label="SLIC" value={slic} onChange={handleSlicSelect}>
+          <Select label='SLIC' value={slic} onChange={handleSlicSelect}>
             {checked ? upsCenterMenuItems : locationMenuItems}
           </Select>
         </FormControl>
       </Box>
       <Box /* SWITCH CUSTOMERS UPSCENTERS */>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction='row' spacing={1} alignItems='center'>
           <Typography onClick={handleCustomerCheck} sx={{ cursor: 'pointer' }}>
             Customers
           </Typography>

@@ -5,6 +5,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { Analytics } from '@vercel/analytics/react';
 
 const montserrat = Montserrat({
   weight: ['300', '400', '500', '600', '700', '800', '900'],
@@ -29,12 +30,13 @@ export default async function RootLayout(props) {
   const { data, error } = await supabase.auth.getSession();
 
   return (
-    <html lang="en">
+    <html lang='en'>
       <body className={montserrat.className}>
         <ThemeRegistry options={{ key: 'mui' }}>
           <Header data={data} />
           {children}
           <Footer />
+          <Analytics />
         </ThemeRegistry>
       </body>
     </html>

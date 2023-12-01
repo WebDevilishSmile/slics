@@ -11,6 +11,7 @@ import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import HowToModal from './HowToModal';
 import LoginIcon from '@mui/icons-material/Login';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 export default function HeaderUser({
   anchorUser,
@@ -58,6 +59,12 @@ export default function HeaderUser({
       link: '',
       onClick: handleHowToModalOpen,
       icon: <SlideshowIcon />,
+    },
+    {
+      title: 'UPS Google Docs',
+      link: 'https://docs.google.com/spreadsheets/u/0/d/1PZHLmYXGzWqZjeIWZnrlubUBzC4aoqfbEy0X_mQH0v4/htmlview',
+      onClick: handleUserClose,
+      icon: <DescriptionIcon />,
     },
     {
       title: 'Sign Out',

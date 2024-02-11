@@ -10,7 +10,7 @@ export default function Weather({ upsCenter, slic, checked }) {
   const [weatherDest, setWeatherDest] = useState(null);
 
   useEffect(() => {
-    fetch(`http://api.weatherapi.com/v1/current.json?key=5c48e43dda8c425faa113600241102&q=Tatamy&aqi=no
+    fetch(`https://api.weatherapi.com/v1/current.json?key=5c48e43dda8c425faa113600241102&q=Tatamy&aqi=no
     `)
       .then((res) => {
         return res.json();
@@ -23,7 +23,7 @@ export default function Weather({ upsCenter, slic, checked }) {
 
   useEffect(() => {
     if (slic && checked)
-      fetch(`http://api.weatherapi.com/v1/current.json?key=5c48e43dda8c425faa113600241102&q=${upsCenter.zip}&aqi=no
+      fetch(`https://api.weatherapi.com/v1/current.json?key=5c48e43dda8c425faa113600241102&q=${upsCenter.zip}&aqi=no
     `)
         .then((res) => {
           return res.json();

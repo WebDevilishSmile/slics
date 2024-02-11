@@ -16,7 +16,6 @@ export default function Weather({ upsCenter, slic, checked }) {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
         setWeatherOrigin(data);
       });
   }, []);
@@ -29,7 +28,6 @@ export default function Weather({ upsCenter, slic, checked }) {
           return res.json();
         })
         .then((data) => {
-          console.log(data);
           setWeatherDest(data);
         });
   }, [upsCenter, slic, checked]);

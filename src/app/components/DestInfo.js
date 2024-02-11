@@ -136,19 +136,21 @@ export default function DestInfo({
             <Typography
               variant='body1'
               fontWeight='700'
-              sx={{ textTransform: 'uppercase' }}
+              sx={{ textTransform: 'uppercase', fontSize: '.8rem' }}
             >
               {com.title}
             </Typography>
-            <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton
+                size='small'
                 onClick={() => upVote()}
                 disabled={upDisabled.includes(index)}
               >
                 <ArrowCircleUpIcon />
               </IconButton>
-              {com.votes}
+              <Typography sx={{ fontSize: '.8rem' }}>{com.votes}</Typography>
               <IconButton
+                size='small'
                 onClick={() => downVote()}
                 disabled={downDisabled.includes(index)}
               >
@@ -157,7 +159,7 @@ export default function DestInfo({
             </Box>
           </Box>
           <Box sx={{ p: '1rem' }}>
-            <Typography>{com.comment}</Typography>
+            <Typography sx={{ fontSize: '.8rem' }}>{com.comment}</Typography>
           </Box>
           {userId === com.user_id && (
             <Box>
@@ -192,7 +194,7 @@ export default function DestInfo({
     <Paper /* INFORMATION ABOUT CUSTOMER */
       sx={{
         width: { xxs: '90%', xs: '90%', sm: '90%', md: '90%' },
-        backgroundColor: theme.palette.background.medium,
+        background: `linear-gradient(to top left, ${theme.palette.background.medium}, ${theme.palette.secondary.main}  )`,
         mt: '2rem',
         p: '1rem',
       }}
@@ -244,12 +246,16 @@ export default function DestInfo({
             {session ? (
               customerComments
             ) : (
-              <Typography>Please Login to see comments</Typography>
+              <Typography textAlign='center'>
+                Please Login to see comments
+              </Typography>
             )}
           </Box>
         </Box>
+      ) : user ? (
+        <Typography textAlign='center'>Choose Slic to see comments</Typography>
       ) : (
-        'Please choose SLIC from list above'
+        <Typography>Log in to see comments</Typography>
       )}
     </Paper>
   );

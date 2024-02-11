@@ -20,61 +20,58 @@ export default function Blog() {
   const renderedPosts = blogPosts.map(function (item) {
     return (
       <Card
-        key={item.name}
+        key={item.title}
         sx={{ maxWidth: '95%', minWidth: '12rem', p: '.5rem', mb: '2rem' }}
       >
-        <CardActionArea>
-          <CardMedia component='img' image={item.img} />
-          <CardContent
+        <CardMedia component='img' image={item.img} />
+        <CardContent
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Typography
+            variant='h6'
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
+              mt: '.5rem',
+              fontWeight: '700',
+              textTransform: 'uppercase',
+              textAlign: 'center',
             }}
           >
-            <Typography
-              variant='h6'
-              sx={{
-                mt: '.5rem',
-                fontWeight: '700',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-              }}
-            >
-              {item.title}
-            </Typography>
-            <Typography
-              sx={{
-                mt: '1rem',
-                fontSize: '.85rem',
-              }}
-            >
-              {item.content.split(' ').slice(0, 32).join(' ') + '...'}
-            </Typography>
-            <Button
-              variant='outlined'
-              size='small'
-              sx={{ fontSize: '.75rem', mt: '1.25rem' }}
-            >
-              See more
-            </Button>
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                fontSize: '.75rem',
-                mt: '2rem',
-              }}
-            >
-              <Typography sx={{ fontSize: '.75rem' }}>{item.date}</Typography>
-              <Typography sx={{ fontSize: '.75rem' }}>
-                - {item.author}
-              </Typography>
-            </Box>
-          </CardContent>
-        </CardActionArea>
+            {item.title}
+          </Typography>
+          <Typography
+            sx={{
+              mt: '1rem',
+              fontSize: '.85rem',
+            }}
+          >
+            {item.content.split(' ').slice(0, 32).join(' ') + '...'}
+          </Typography>
+          <Button
+            variant='outlined'
+            size='small'
+            sx={{ fontSize: '.75rem', mt: '1.25rem' }}
+          >
+            See more
+          </Button>
+
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '.75rem',
+              mt: '2rem',
+            }}
+          >
+            <Typography sx={{ fontSize: '.75rem' }}>{item.date}</Typography>
+            <Typography sx={{ fontSize: '.75rem' }}>- {item.author}</Typography>
+          </Box>
+        </CardContent>
       </Card>
     );
   });

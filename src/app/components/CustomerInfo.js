@@ -10,7 +10,7 @@ export default function CustomerInfo({ customer, slic }) {
     <Paper /* CUSTOMER INFORMATION */
       sx={{
         minWidth: { xxs: '90%', xs: '90%', sm: '90%', md: '90%' },
-        backgroundColor: theme.palette.background.medium,
+        background: `linear-gradient(to top left, ${theme.palette.background.medium}, ${theme.palette.secondary.main}  )`,
         mt: '3rem',
         p: '1rem',
       }}

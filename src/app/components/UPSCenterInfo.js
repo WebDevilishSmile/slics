@@ -21,7 +21,7 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
       <Paper /* UPS CENTER INFORMATION */
         sx={{
           width: { xxs: '90%', xs: '90%', sm: '90%', md: '90%' },
-          backgroundColor: theme.palette.background.medium,
+          background: `linear-gradient(to top left, ${theme.palette.background.medium}, ${theme.palette.secondary.main}  )`,
           mt: '3rem',
           p: '1rem',
         }}
@@ -84,13 +84,15 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
             <Box sx={{ display: 'flex', mt: '.5rem' }}></Box>
           </Box>
         ) : (
-          'Please choose SLIC from list above'
+          <Typography sx={{ textAlign: 'center' }}>
+            Please choose SLIC from list above
+          </Typography>
         )}
       </Paper>
       <Paper /* UPS CENTER INFORMATION */
         sx={{
           width: { xxs: '90%', xs: '90%', sm: '90%', md: '90%' },
-          backgroundColor: theme.palette.background.medium,
+          background: `linear-gradient(to top left, ${theme.palette.background.medium}, ${theme.palette.secondary.main}  )`,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',

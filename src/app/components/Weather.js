@@ -49,19 +49,29 @@ export default function Weather({ upsCenter, slic, checked }) {
         <Box
           sx={{
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Typography>
-            Tatamy {Math.round(weatherOrigin.current.temp_f)} &deg;
-          </Typography>
-          <Image
-            src={`https:${weatherOrigin.current.condition?.icon}`}
-            width={48}
-            height={48}
-            alt='Weather Icon'
-          />
+          <Typography sx={{ fontWeight: '600' }}>BETPA Weather</Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography>
+              Tatamy {Math.round(weatherOrigin.current.temp_f)} &deg;
+            </Typography>
+            <Image
+              src={`https:${weatherOrigin.current.condition?.icon}`}
+              width={48}
+              height={48}
+              alt='Weather Icon'
+            />
+          </Box>
         </Box>
       )}
 
@@ -69,19 +79,31 @@ export default function Weather({ upsCenter, slic, checked }) {
         <Box
           sx={{
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Typography>
-            {upsCenter.city} {Math.round(weatherDest.current.temp_f)} &deg;
+          <Typography sx={{ fontWeight: '600' }}>
+            Destination Weather
           </Typography>
-          <Image
-            src={`https:${weatherDest.current.condition?.icon}`}
-            width={48}
-            height={48}
-            alt='Weather Icon'
-          />
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography>
+              {upsCenter.city} {Math.round(weatherDest.current.temp_f)} &deg;
+            </Typography>
+            <Image
+              src={`https:${weatherDest.current.condition?.icon}`}
+              width={48}
+              height={48}
+              alt='Weather Icon'
+            />
+          </Box>
         </Box>
       )}
     </Paper>

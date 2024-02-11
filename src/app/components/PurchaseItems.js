@@ -35,4 +35,10 @@ export const purchaseItems = [
     price: '$25.99',
     link: 'https://www.etsy.com/listing/982212837/custom-ups-hats-caps-flex-fit-210-flat?gpla=1&gao=1&&utm_source=google&utm_medium=cpc&utm_campaign=shopping_us_-accessories&utm_custom1=_k_CjwKCAiAxreqBhAxEiwAfGfndJWbMqRi57vCpIibuPmug9_CTh_l2pKGS5au7K65Hks9HNHKXVNLJxoCwW4QAvD_BwE_k_&utm_content=go_12665398257_121762925993_511610210343_pla-294930372950_c__982212837_12768591&utm_custom2=12665398257&gad_source=1&gclid=CjwKCAiAxreqBhAxEiwAfGfndJWbMqRi57vCpIibuPmug9_CTh_l2pKGS5au7K65Hks9HNHKXVNLJxoCwW4QAvD_BwE',
   },
+  {
+    name: `Day-Cab Hammock`,
+    img: '/purchases/day_cab_hammock.jpg',
+    price: '$59.95',
+    link: 'https://daycablounger.com/shop/ols/products/day-cab-lounger',
+  },
 ];

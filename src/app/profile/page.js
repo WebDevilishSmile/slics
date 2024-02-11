@@ -59,22 +59,22 @@ export default async function Profile() {
         >
           <Avatar src={`${user.user_metadata.picture}`} />
           <Typography
-            variant="body1"
-            fontWeight="700"
-            sx={{ textTransform: 'uppercase' }}
+            variant='body1'
+            fontWeight='700'
+            sx={{ textTransform: 'uppercase', fontSize: '.9rem' }}
           >
             {com.title}
           </Typography>
           <Typography
-            variant="body1"
-            fontWeight="400"
-            sx={{ textTransform: 'uppercase' }}
+            variant='body1'
+            fontWeight='400'
+            sx={{ textTransform: 'uppercase', fontSize: '.9rem' }}
           >
             {com.numSlic}
           </Typography>
         </Box>
         <Box sx={{ p: '1rem .5rem' }}>
-          <Typography>{com.comment}</Typography>
+          <Typography sx={{ fontSize: '.9rem' }}>{com.comment}</Typography>
           <Box
             sx={{
               display: 'flex',
@@ -83,12 +83,12 @@ export default async function Profile() {
               mt: '1rem',
             }}
           >
-            <Typography>{com.created_at}</Typography>
-            <Box>
+            <Typography sx={{ fontSize: '.9rem' }}>{com.created_at}</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton>
                 <ArrowCircleUpIcon />
               </IconButton>
-              {com.votes}
+              <Typography sx={{ fontSize: '.9rem' }}>{com.votes}</Typography>
               <IconButton>
                 <ArrowCircleDownIcon />
               </IconButton>
@@ -101,7 +101,7 @@ export default async function Profile() {
 
   return (
     <Box /* HOME PAGE CONTAINER */
-      id="home"
+      id='home'
       sx={{
         width: '100vw',
         minHeight: '100rem',
@@ -116,7 +116,7 @@ export default async function Profile() {
     >
       {session ? (
         <Paper sx={{ width: '90%', maxWidth: '40rem', p: '1rem' }}>
-          <Typography variant="h5" textAlign="center">
+          <Typography variant='h5' textAlign='center'>
             Profile
           </Typography>
 

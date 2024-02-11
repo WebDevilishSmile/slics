@@ -1,11 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 
 import {
   Box,
   Card,
-  CardActionArea,
   CardContent,
   CardMedia,
   Typography,
@@ -16,64 +16,21 @@ import theme from '../utilities/theme';
 
 import { blogPosts } from './blogPosts';
 
-export default function Blog() {
-  const renderedPosts = blogPosts.map(function (item) {
-    return (
-      <Card
-        key={item.title}
-        sx={{ maxWidth: '95%', minWidth: '12rem', p: '.5rem', mb: '2rem' }}
-      >
-        <CardMedia component='img' image={item.img} />
-        <CardContent
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Typography
-            variant='h6'
-            sx={{
-              mt: '.5rem',
-              fontWeight: '700',
-              textTransform: 'uppercase',
-              textAlign: 'center',
-            }}
-          >
-            {item.title}
-          </Typography>
-          <Typography
-            sx={{
-              mt: '1rem',
-              fontSize: '.85rem',
-            }}
-          >
-            {item.content.split(' ').slice(0, 32).join(' ') + '...'}
-          </Typography>
-          <Button
-            variant='outlined'
-            size='small'
-            sx={{ fontSize: '.75rem', mt: '1.25rem' }}
-          >
-            See more
-          </Button>
+import BlogArticle from './BlogArticle';
 
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '.75rem',
-              mt: '2rem',
-            }}
-          >
-            <Typography sx={{ fontSize: '.75rem' }}>{item.date}</Typography>
-            <Typography sx={{ fontSize: '.75rem' }}>- {item.author}</Typography>
-          </Box>
-        </CardContent>
-      </Card>
-    );
+export default function Blog() {
+  const [openArticle, setOpenArticle] = useState(false);
+
+  function handleOpenArticle(id) {
+    setOpenArticle(true);
+  }
+
+  function handleCloseArticle() {
+    setOpenArticle(false);
+  }
+
+  const renderedPosts = blogPosts.map(function (blog) {
+    return <BlogArticle blog={blog} key={blog.id} />;
   });
 
   return (

@@ -44,7 +44,6 @@ export default function Weather({ upsCenter, slic, checked }) {
         alignItems: 'center',
       }}
     >
-      <Typography variant='h6'>Weather</Typography>
       {weatherOrigin && (
         <Box
           sx={{
@@ -63,7 +62,7 @@ export default function Weather({ upsCenter, slic, checked }) {
             }}
           >
             <Typography>
-              Tatamy {Math.round(weatherOrigin.current.temp_f)} &deg;
+              Tatamy, PA {Math.round(weatherOrigin.current.temp_f)} &deg;
             </Typography>
             <Image
               src={`https:${weatherOrigin.current.condition?.icon}`}
@@ -95,7 +94,8 @@ export default function Weather({ upsCenter, slic, checked }) {
             }}
           >
             <Typography>
-              {upsCenter.city} {Math.round(weatherDest.current.temp_f)} &deg;
+              {upsCenter.city}, {upsCenter.state}{' '}
+              {Math.round(weatherDest.current.temp_f)} &deg;
             </Typography>
             <Image
               src={`https:${weatherDest.current.condition?.icon}`}

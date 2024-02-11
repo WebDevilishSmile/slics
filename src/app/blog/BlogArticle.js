@@ -140,6 +140,18 @@ export default function BlogArticle({ children, blog }) {
                     style={{ width: '90%', height: 'auto' }}
                   />
                 ) : null}
+                {p.type === 'pdf' ? (
+                  <Button
+                    color='secondary'
+                    variant='contained'
+                    href={p.data}
+                    rel='noreffer'
+                    target='_blank'
+                    sx={{ fontWeight: '400', mt: '1rem' }}
+                  >
+                    {p.title}
+                  </Button>
+                ) : null}
               </Box>
             );
           })}

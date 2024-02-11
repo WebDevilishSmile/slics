@@ -32,10 +32,13 @@ export const blogPosts = [
       },
       {
         type: 'p',
-        data: `I never went to trucking school like a lot of other drivers. I am mostly self-taught. I used to feel like if I ask a mechanic something he will laugh at me for not knowing. And to be honest, I've asked some DUMB questions. Regardless of how insanely naive I must have sounded, I only have to ask that stupid question once. What I do now is I preface the question with, "Don't laugh at me if I sound like a dumbass, but... what does the red hose do?". Don't be afraid to ask a dumb question, it could end up saving your life or at the very least it will teach you something. Be curious.`,
+        data: `I never went to trucking school like a lot of other drivers. I am mostly self-taught. I used to feel like if I ask a mechanic something he will laugh at me for not knowing. And to be honest, I've asked some DUMB questions. Regardless of how insanely naive I must have sounded, I only have to ask that stupid question once. What I do now is I preface the question with, "Don't laugh at me if I sound like a dumb-ass, but... what does the red hose do?". Don't be afraid to ask a dumb question, it could end up saving your life or at the very least it will teach you something. Be curious.`,
       },
-
-      ,
+      {
+        type: 'pdf',
+        data: '/blogs/pre_trip_list.pdf',
+        title: 'Pre-Trip Checklist',
+      },
     ],
     author: 'Tiago Davila',
   },

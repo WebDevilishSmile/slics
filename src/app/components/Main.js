@@ -9,6 +9,7 @@ import SelectDest from './SelectDest';
 import UPSCenterInfo from './UPSCenterInfo';
 import CustomerInfo from './CustomerInfo';
 import DestInfo from './DestInfo';
+import Weather from './Weather';
 
 export default function Main({ customers, centers, comments, session, user }) {
   const [slic, setSlic] = useState('');
@@ -48,6 +49,7 @@ export default function Main({ customers, centers, comments, session, user }) {
         flexDirection: 'column',
         alignItems: 'center',
         width: '100%',
+        minHeight: '100vh',
       }}
     >
       <Heading />
@@ -60,17 +62,27 @@ export default function Main({ customers, centers, comments, session, user }) {
         customers={customers}
         centers={centers}
       />
+
       {checked ? (
         <Box
           sx={{
             width: { xs: '100%', sm: '90%', md: '35rem' },
-            minHeight: '34.6rem',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
           }}
         >
           <UPSCenterInfo upsCenter={upsCenter} slic={slic} />
+
+          <DestInfo
+            slic={slic}
+            customer={upsCenter}
+            customers={centers}
+            comments={comments}
+            session={session}
+            user={user}
+            checked={checked}
+          />
         </Box>
       ) : (
         <Box
@@ -90,9 +102,12 @@ export default function Main({ customers, centers, comments, session, user }) {
             comments={comments}
             session={session}
             user={user}
+            checked={checked}
           />
         </Box>
       )}
+      {/* WEATHER */}
+      <Weather upsCenter={upsCenter} slic={slic} checked={checked} />
     </Box>
   );
 }

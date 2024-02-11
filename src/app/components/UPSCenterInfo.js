@@ -29,7 +29,7 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
         {slic ? (
           <Box>
             <Typography /* SLIC NUMBER */
-              variant="h6"
+              variant='h6'
               sx={{ width: '100%', textAlign: 'center' }}
             >
               SLIC{' '}
@@ -44,7 +44,7 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
               </span>{' '}
             </Typography>
             <Typography /* SLIC NAME */
-              variant="h6"
+              variant='h6'
               sx={{ width: '100%', textAlign: 'center', mt: '.5rem' }}
             >
               {upsCenter.alphaSlic}
@@ -52,8 +52,8 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
 
             <Box sx={{ display: 'flex', mt: '1rem' }}>
               <Button /* LINK TO MAP */
-                color="secondary"
-                variant="contained"
+                color='secondary'
+                variant='contained'
                 sx={{ width: '100%', gap: '1.5rem', fontWeight: '400' }}
                 href={`https://www.google.com/maps/search/?api=1&query=${upsCenter.street}%2C%20${upsCenter.city}%2C%20${upsCenter.state}`}
               >
@@ -70,8 +70,8 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
             </Box>
             <Box sx={{ display: 'flex', mt: '1rem' }}>
               <Button /* LINK TO PHONE NUMBER */
-                color="secondary"
-                variant="contained"
+                color='secondary'
+                variant='contained'
                 sx={{ width: '100%', gap: '1.5rem', fontWeight: '400' }}
                 href={`tel:${upsCenter.phone}`}
               >
@@ -100,11 +100,11 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
       >
         {slic ? (
           <Button
-            color="secondary"
+            color='secondary'
             variant={upsCenter.directions === '' ? 'disabled' : 'contained'}
             href={`/centerDirections/${dirPdf}.pdf`}
-            rel="noreffer"
-            target="_blank"
+            rel='noreffer'
+            target='_blank'
             sx={{ fontWeight: '400' }}
           >
             {upsCenter.directions === ''
@@ -112,7 +112,7 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
               : `${upsCenter.alphaSlic}  pdf`}
           </Button>
         ) : (
-          <Typography textAlign="center">
+          <Typography textAlign='center'>
             Click on the address to take you to Google maps and click on phone
             number to dial feeder office.
           </Typography>

@@ -25,7 +25,14 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import EditCommentModal from './EditCommentModal';
 
-export default function DestInfo({ customer, slic, comments, session, user }) {
+export default function DestInfo({
+  customer,
+  slic,
+  comments,
+  session,
+  user,
+  checked,
+}) {
   const [openAddComm, setOpenAddComm] = useState(false);
   const [editComm, setEditComm] = useState(false);
   const [title, setTitle] = useState('');
@@ -127,8 +134,8 @@ export default function DestInfo({ customer, slic, comments, session, user }) {
           >
             <Avatar src={com.user_avatar} />
             <Typography
-              variant="body1"
-              fontWeight="700"
+              variant='body1'
+              fontWeight='700'
               sx={{ textTransform: 'uppercase' }}
             >
               {com.title}
@@ -194,7 +201,7 @@ export default function DestInfo({ customer, slic, comments, session, user }) {
         <Box sx={{ width: '100%' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography /* CUSTOMER NAME */
-              variant="h6"
+              variant='h6'
               sx={{
                 width: '100%',
                 textAlign: 'center',
@@ -202,13 +209,13 @@ export default function DestInfo({ customer, slic, comments, session, user }) {
                 mb: '1rem',
               }}
             >
-              {customer.name}
+              {!checked ? customer.name : customer.alphaSlic}
             </Typography>
             {session && (
               <Button /* ADD COMMENT BUTTON */
-                variant="contained"
-                color="secondary"
-                size="small"
+                variant='contained'
+                color='secondary'
+                size='small'
                 sx={{ p: '.25rem .5rem', m: '0', minWidth: '0' }}
                 onClick={handleAddComm}
               >

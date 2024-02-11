@@ -17,8 +17,8 @@ export default function CustomerInfo({ customer, slic }) {
     >
       {slic ? (
         <Box>
-          <Typography /* SLIC NUMBER */
-            variant="h6"
+          <Typography /* NUMBER SLIC NUMBER */
+            variant='h6'
             sx={{ width: '100%', textAlign: 'center' }}
           >
             SLIC{' '}
@@ -29,11 +29,12 @@ export default function CustomerInfo({ customer, slic }) {
                 borderRadius: '.5rem',
               }}
             >
-              {customer.numSlic}
+              {customer.numSlic} / {customer.alphaSlic}
             </span>
           </Typography>
+
           <Typography /* SLIC NAME */
-            variant="h6"
+            variant='h6'
             sx={{
               width: '100%',
               textAlign: 'center',
@@ -45,8 +46,8 @@ export default function CustomerInfo({ customer, slic }) {
           </Typography>
           <Box sx={{ display: 'flex', mt: '1rem' }}>
             <Button /* LINK TO MAP */
-              variant="contained"
-              color="secondary"
+              variant='contained'
+              color='secondary'
               sx={{ width: '100%', gap: '1.5rem', fontWeight: '400' }}
               href={`https://www.google.com/maps/search/?api=1&query=${customer.street}%2C%20${customer.city}%2C%20${customer.state}`}
             >
@@ -59,7 +60,7 @@ export default function CustomerInfo({ customer, slic }) {
           </Box>
         </Box>
       ) : (
-        <Typography textAlign="center">
+        <Typography textAlign='center'>
           Pressing on address opens Google Maps
         </Typography>
       )}

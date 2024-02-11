@@ -8,6 +8,10 @@ export const blogPosts = [
         type: 'p',
         data: `If you ventured this far into this web app, you must be desperate for content. What, tik tok, facebook, and instagram are down?? Well, you're in luck driver, because I'm about to spew a bunch of nonsense to keep you entertained. `,
       },
+      {
+        type: 'img',
+        data: '/blogs/welcome.jpg',
+      },
     ],
     author: 'Tiago Davila',
     image: '/blogs/welcome.jpg',

@@ -106,8 +106,17 @@ export default function Main({ customers, centers, comments, session, user }) {
           />
         </Box>
       )}
-      {/* WEATHER */}
-      <Weather upsCenter={upsCenter} slic={slic} checked={checked} />
+      <Box
+        sx={{
+          width: { xs: '100%', sm: '90%', md: '35rem' },
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        {/* WEATHER */}
+        <Weather upsCenter={upsCenter} slic={slic} checked={checked} />
+      </Box>
     </Box>
   );
 }

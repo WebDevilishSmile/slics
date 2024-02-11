@@ -17,6 +17,7 @@ import theme from '../utilities/theme';
 import { blogPosts } from './blogPosts';
 
 import BlogArticle from './BlogArticle';
+import Image from 'next/image';
 
 export default function Blog() {
   const [openArticle, setOpenArticle] = useState(false);
@@ -58,14 +59,20 @@ export default function Blog() {
         >
           My Two Cents
         </Typography>
-        <Typography
-          textAlign='center'
-          variant='body1'
-          fontWeight='600'
-          sx={{ m: '1rem 2rem 3rem 2rem', textTransform: 'uppercase' }}
-        >
-          Work in Progress
-        </Typography>
+
+        <Image
+          src='/blogs/construction.jpg'
+          width={400}
+          height={400}
+          alt='under construction image'
+          style={{
+            width: '90%',
+            height: 'auto',
+            borderRadius: '6px',
+            boxShadow: '0px 1px 6px rgba(0, 0, 0, .3)',
+            marginBottom: '2rem',
+          }}
+        />
         {renderedPosts}
       </Box>
     </ThemeProvider>

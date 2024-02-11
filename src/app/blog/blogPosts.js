@@ -25,11 +25,12 @@ export const blogPosts = [
         type: 'p',
         data: `Pre-trips are important. I know we hear it all the time from management but I have to put in my two cents because well, its my site and I'll do whatever I want. And you're the one still reading my thoughts so... here goes.`,
       },
-      { type: 'img', data: '/blogs/mechanic.png' },
+      { type: 'img', data: '/blogs/checklist.png' },
       {
         type: 'p',
         data: `Maybe your values are different than mine but I'm sure there are more important things in your life than the packages in the back of the trailer you're pulling. That's why I don't pull trailers that I deem hazardous and I don't use tractors that have major issues. It's easy to get caught in the go-go-go mentally and overlook important details. If something looks or feels off, then I ask a mechanic. Those guys are cool and its their job. I have never gone to the mechanic and been told they couldn't help me. I went there once and thought something was wrong with a tractor and I was wrong. The mechanic and I had a laugh about it and off I went.`,
       },
+      { type: 'img', data: '/blogs/mechanic.png' },
       {
         type: 'p',
         data: `I never went to trucking school like a lot of other drivers. I am mostly self-taught. I used to feel like if I ask a mechanic something he will laugh at me for not knowing. And to be honest, I've asked some DUMB questions. Regardless of how insanely naive I must have sounded, I only have to ask that stupid question once. What I do now is I preface the question with, "Don't laugh at me if I sound like a dumb-ass, but... what does the red hose do?". Don't be afraid to ask a dumb question, it could end up saving your life or at the very least it will teach you something. Be curious.`,

@@ -120,24 +120,33 @@ export default function BlogArticle({ children, blog }) {
                   alignItems: ' center',
                 }}
               >
-                <Typography
-                  sx={{
-                    mt: '1rem',
-                    fontSize: '.9rem',
-                    lineHeight: '1.75',
-                    p: '0 1rem',
-                    textIndent: '2rem',
-                  }}
-                >
-                  {p.type === 'p' ? p.data : null}
-                </Typography>
+                {p.type === 'p' ? (
+                  <Typography
+                    sx={{
+                      mt: '1rem',
+                      fontSize: '.9rem',
+                      lineHeight: '1.75',
+                      p: '0 1rem',
+                      textIndent: '2rem',
+                    }}
+                  >
+                    {p.data}
+                  </Typography>
+                ) : null}
+
                 {p.type === 'img' ? (
                   <Image
                     src={p.data}
                     width={400}
                     height={400}
                     alt='article image'
-                    style={{ width: '90%', height: 'auto' }}
+                    style={{
+                      width: '90%',
+                      height: 'auto',
+                      boxShadow: '0px 1px 12px rgba(0, 0, 0, .30)',
+                      borderRadius: '6px',
+                      marginTop: '1.25rem',
+                    }}
                   />
                 ) : null}
                 {p.type === 'pdf' ? (
@@ -147,7 +156,7 @@ export default function BlogArticle({ children, blog }) {
                     href={p.data}
                     rel='noreffer'
                     target='_blank'
-                    sx={{ fontWeight: '400', mt: '1rem' }}
+                    sx={{ fontWeight: '400', mt: '1.5rem' }}
                   >
                     {p.title}
                   </Button>

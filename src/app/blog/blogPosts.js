@@ -19,7 +19,7 @@ export const blogPosts = [
     content: [
       {
         type: 'p',
-        data: `Pre-trips are important. I know we hear it all the time from management but I have to put in my two cents because well, its my site and I'll do whatever I want. And you're the one still reading my thoughts... so here goes.`,
+        data: `Pre-trips are important. I know we hear it all the time from management but I have to put in my two cents because well, its my site and I'll do whatever I want. And you're the one still reading my thoughts so... here goes.`,
       },
       { type: 'img', data: '/blogs/mechanic.png' },
       {

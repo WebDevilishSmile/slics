@@ -24,10 +24,10 @@ export const purchaseItems = [
     link: 'https://www.amazon.com/Skechers-USA-Mens-3-0-Ezra-Leather/dp/B08QZTMYM2/ref=sr_1_5?crid=2RBEDWDPFS9TX&keywords=skechers%2Bmen%2Bbrown&qid=1697944400&sprefix=skechers%2Bmen%2Bbrown%2Caps%2C92&sr=8-5&th=1&psc=1',
   },
   {
-    name: `APPS2CAR Phone Holder`,
-    img: '/purchases/phone_holder.jpg',
-    price: '$14.99',
-    link: 'https://www.amazon.com/APPS2Car-Windshield-Anti-Shake-Stabilizer-Smartphone/dp/B088BRCTXQ/ref=sr_1_4_pp?crid=3ARGDI5D9B9Q6&keywords=phone+holder+car&qid=1697944988&sprefix=phone+holder+car%2Caps%2C109&sr=8-4',
+    name: `Qifutan Phone Holder`,
+    img: '/purchases/phone_holder2.jpg',
+    price: '$19.99',
+    link: 'https://www.amazon.com/gp/product/B097D7XKKZ/ref=ppx_yo_dt_b_asin_image_o09_s00?ie=UTF8&th=1',
   },
   {
     name: `UPS Fitted Hat`,

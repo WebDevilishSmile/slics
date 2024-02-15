@@ -18,7 +18,7 @@ export default function Weather({ upsCenter, slic, checked }) {
       .then((data) => {
         setWeatherOrigin(data);
       });
-  }, []);
+  }, [slic]);
 
   useEffect(() => {
     if (slic && checked)

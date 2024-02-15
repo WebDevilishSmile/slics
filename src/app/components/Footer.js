@@ -21,14 +21,11 @@ export default function Footer() {
         transition: 'all .5s ease',
       }}
     >
-      <Typography variant="h3" color={theme.palette.primary.light}>
-        BY TEE
-      </Typography>
       <Image
-        src="/logo_3.png"
-        height={120}
-        width={120}
-        alt="Tiago Davila Logo"
+        src='/logo_3.png'
+        height={180}
+        width={180}
+        alt='Tiago Davila Logo'
         style={{ filter: 'invert(1)' }}
       />
     </Box>

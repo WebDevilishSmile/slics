@@ -27,7 +27,7 @@ export default async function Home() {
 
   return (
     <Box /* HOME PAGE CONTAINER */
-      id="home"
+      id='home'
       sx={{
         width: '100vw',
         display: 'flex',
@@ -35,7 +35,7 @@ export default async function Home() {
         alignItems: 'center',
         justifyContent: 'flex-start',
         overflow: 'hidden',
-        p: '6rem 0',
+        p: '6rem 0 0 0',
         bgcolor: '#ebe8e8',
       }}
     >

@@ -72,7 +72,7 @@ export default function SelectDest({
           </Select>
         </FormControl>
       </Box>
-      <Box /* SWITCH CUSTOMERS UPSCENTERS */>
+      <Box /* SWITCH CUSTOMERS UPS CENTERS */>
         <Stack direction='row' spacing={1} alignItems='center'>
           <Typography onClick={handleCustomerCheck} sx={{ cursor: 'pointer' }}>
             Customers

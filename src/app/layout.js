@@ -35,7 +35,6 @@ export default async function RootLayout(props) {
         <ThemeRegistry options={{ key: 'mui' }}>
           <Header data={data} />
           {children}
-          <Footer />
           <Analytics />
         </ThemeRegistry>
       </body>

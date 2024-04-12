@@ -66,7 +66,12 @@ export default function Blog() {
           height={400}
           alt='under construction image'
           style={{
-            width: '90%',
+            width: {
+              xxs: '90%',
+              xs: '90%',
+              sm: '60%',
+              md: '40%',
+            },
             height: 'auto',
             borderRadius: '6px',
             boxShadow: '0px 1px 6px rgba(0, 0, 0, .3)',

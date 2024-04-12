@@ -10,6 +10,7 @@ import UPSCenterInfo from './UPSCenterInfo';
 import CustomerInfo from './CustomerInfo';
 import DestInfo from './DestInfo';
 import Weather from './Weather';
+import Footer from './Footer';
 
 export default function Main({ customers, centers, comments, session, user }) {
   const [slic, setSlic] = useState('');
@@ -117,6 +118,7 @@ export default function Main({ customers, centers, comments, session, user }) {
         {/* WEATHER */}
         <Weather upsCenter={upsCenter} slic={slic} checked={checked} />
       </Box>
+      <Footer />
     </Box>
   );
 }

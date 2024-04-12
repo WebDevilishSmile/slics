@@ -38,6 +38,7 @@ export default function Weather({ upsCenter, slic, checked }) {
         minWidth: { xxs: '90%', xs: '90%', sm: '90%', md: '90%' },
         backgroundColor: theme.palette.primary.light,
         mt: '3rem',
+        mb: '3rem',
         p: '1rem',
         display: 'flex',
         flexDirection: 'column',

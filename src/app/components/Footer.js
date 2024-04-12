@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import Image from 'next/image';
 import theme from '../utilities/theme';
 
@@ -8,9 +8,9 @@ export default function Footer() {
   return (
     <Box /* FOOTER CONTAINER */
       sx={{
+        width: '100%',
         height: '10rem',
-        top: 'auto',
-        bottom: 0,
+        mt: 'auto',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',

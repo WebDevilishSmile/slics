@@ -1,3 +1,7 @@
+import { useState } from 'react';
+
+import Image from 'next/image';
+
 import {
   Box,
   Button,
@@ -5,13 +9,12 @@ import {
   CardContent,
   IconButton,
   Modal,
-  Paper,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+
+import { Close } from '@mui/icons-material';
+
 import theme from '../utilities/theme';
-import { combineChunks } from '@supabase/ssr';
-import Image from 'next/image';
 
 export default function BlogArticle({ children, blog }) {
   const [open, setOpen] = useState(false);
@@ -91,17 +94,25 @@ export default function BlogArticle({ children, blog }) {
             width: '100%',
             maxWidth: '40rem',
             minHeight: '100%',
-            p: '4.8rem .25rem',
+            p: '.5rem .25rem 15rem .25rem',
             background: theme.palette.background.light,
             margin: 'auto',
           }}
         >
-          <IconButton
-            onClick={handleClose}
-            sx={{ position: 'absolute', top: '1rem', right: '2rem' }}
+          <Box
+            sx={{
+              top: 0,
+              right: 0,
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              mb: '.5rem',
+            }}
           >
-            X
-          </IconButton>
+            <IconButton onClick={handleClose} size='medium' sx={{}}>
+              <Close />
+            </IconButton>
+          </Box>
 
           <Typography
             variant='h6'

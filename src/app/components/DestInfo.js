@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 import theme from '../utilities/theme';
 
@@ -21,8 +23,6 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 
 import AddCommentModal from './AddCommentModal';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter } from 'next/navigation';
 import EditCommentModal from './EditCommentModal';
 
 export default function DestInfo({

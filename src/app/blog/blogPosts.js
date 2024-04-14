@@ -3,6 +3,7 @@ export const blogPosts = [
     id: 1,
     title: 'Welcome to this site',
     date: 'February 11, 2024',
+    author: 'Tiago Davila',
     content: [
       {
         type: 'p',
@@ -13,13 +14,12 @@ export const blogPosts = [
         data: '/blogs/welcome.jpg',
       },
     ],
-    author: 'Tiago Davila',
-    image: '/blogs/welcome.jpg',
   },
   {
     id: 2,
     title: 'Pre-trip',
     date: 'February 11, 2024',
+    author: 'Tiago Davila',
     content: [
       {
         type: 'p',
@@ -41,6 +41,33 @@ export const blogPosts = [
         title: 'Pre-Trip Checklist',
       },
     ],
+  },
+  {
+    id: 3,
+    title: 'Cleanliness',
+    date: 'April 14, 2024',
     author: 'Tiago Davila',
+    content: [
+      {
+        type: 'p',
+        data: `I'm not the cleanest driver here, but I try to be considerate of the fact that another person will be using the same equipment that I do. I keep Clorox wipes with me and use them to clean the steering wheel of just about every tractor I get into. You can get these just about anywhere, I get them from Sam's Club.`,
+      },
+      {
+        type: 'img',
+        data: '/blogs/clorox.png',
+      },
+      {
+        type: 'p',
+        data: `I also keep a bottle of glass cleaner that I also get from Sam's. This is one of the best glass cleaners I ever used. Seeing out of the mirrors and windows is safety concern and should be part of your pre-trip. Take the time to make sure you can see well.`,
+      },
+      {
+        type: 'img',
+        data: '/blogs/glassCleaner.png',
+      },
+      {
+        type: 'p',
+        data: `Be considerate to your co-workers and don't leave a mess for the next guy. Also, if you are feeling generous, wipe down the dash and clean the windows. Consider it your good deed for the day.`,
+      },
+    ],
   },
 ];

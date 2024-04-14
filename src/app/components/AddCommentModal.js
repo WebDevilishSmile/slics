@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+
 import {
   Button,
   FormControl,
@@ -8,9 +12,6 @@ import {
   TextareaAutosize,
   Typography,
 } from '@mui/material';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 export default function AddCommentModal({
   user,
@@ -69,27 +70,27 @@ export default function AddCommentModal({
         bgcolor: '#fff8e6',
       }}
     >
-      <Typography variant="h6" sx={{ mb: '1rem' }}>
+      <Typography variant='h6' sx={{ mb: '1rem' }}>
         ADD COMMENT
       </Typography>
       <FormControl fullWidth>
-        <InputLabel id="comment-title-label">Title</InputLabel>
+        <InputLabel id='comment-title-label'>Title</InputLabel>
         <Select
-          labelId="comment-title-label"
+          labelId='comment-title-label'
           fullWidth
-          label="Title"
+          label='Title'
           value={title}
           onChange={handleTitleChange}
           sx={{ color: '#333' }}
         >
-          <MenuItem value="Directions">Directions</MenuItem>
-          <MenuItem value="Instructions">Instructions</MenuItem>
-          <MenuItem value="Correction">Correction</MenuItem>
+          <MenuItem value='Directions'>Directions</MenuItem>
+          <MenuItem value='Instructions'>Instructions</MenuItem>
+          <MenuItem value='Correction'>Correction</MenuItem>
         </Select>
       </FormControl>
       <TextareaAutosize
-        aria-label="Comment"
-        placeholder="Comment"
+        aria-label='Comment'
+        placeholder='Comment'
         minRows={2}
         maxRows={4}
         value={comment}
@@ -106,7 +107,7 @@ export default function AddCommentModal({
         }}
       />
 
-      <Button variant="contained" onClick={insertComment}>
+      <Button variant='contained' onClick={insertComment}>
         Save Comment
       </Button>
     </Paper>

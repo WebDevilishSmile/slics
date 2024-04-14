@@ -1,23 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
+
 import { ThemeProvider } from '@mui/material/styles';
-
-import {
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  Button,
-} from '@mui/material';
-
-import theme from '../utilities/theme';
+import { Box, Typography } from '@mui/material';
 
 import { blogPosts } from './blogPosts';
-
 import BlogArticle from './BlogArticle';
-import Image from 'next/image';
+
+import theme from '../utilities/theme';
 
 export default function Blog() {
   const [openArticle, setOpenArticle] = useState(false);

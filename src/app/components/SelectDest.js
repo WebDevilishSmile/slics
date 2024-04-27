@@ -47,7 +47,7 @@ export default function SelectDest({
   const upsCenterMenuItems = centers.map(function (center, index) {
     return (
       <MenuItem key={index} value={center.numSlic}>
-        {center.numSlic}
+        {center.numSlic} -- ({center.alphaSlic})
       </MenuItem>
     );
   });

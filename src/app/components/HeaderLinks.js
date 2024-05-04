@@ -4,7 +4,11 @@ import Image from 'next/image';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import Link from 'next/link';
-import { RssFeed } from '@mui/icons-material';
+import {
+  BusinessCenterSharp,
+  BusinessSharp,
+  RssFeed,
+} from '@mui/icons-material';
 
 export default function HeaderLinks({ anchorEl, setAnchorEl, open }) {
   const handleClose = () => {
@@ -55,6 +59,12 @@ export default function HeaderLinks({ anchorEl, setAnchorEl, open }) {
           <RssFeed />
         </ListItemIcon>
         Blog
+      </MenuItem>
+      <MenuItem component={Link} href='/jobs' onClick={handleClose}>
+        <ListItemIcon>
+          <BusinessCenterSharp />
+        </ListItemIcon>
+        Jobs
       </MenuItem>
     </Menu>
   );

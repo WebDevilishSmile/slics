@@ -52,12 +52,10 @@ export default function Blog() {
           My Two Cents
         </Typography>
 
-        <Image
-          src='/blogs/construction.jpg'
-          width={400}
-          height={400}
-          alt='under construction image'
-          style={{
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
             width: {
               xxs: '90%',
               xs: '90%',
@@ -65,11 +63,23 @@ export default function Blog() {
               md: '40%',
             },
             height: 'auto',
-            borderRadius: '6px',
-            boxShadow: '0px 1px 6px rgba(0, 0, 0, .3)',
-            marginBottom: '2rem',
           }}
-        />
+        >
+          <Image
+            src='/blogs/construction.jpg'
+            width={400}
+            height={400}
+            alt='under construction image'
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: '6px',
+              boxShadow: '0px 1px 6px rgba(0, 0, 0, .3)',
+              marginBottom: '2rem',
+            }}
+          />
+        </Box>
+
         {renderedPosts}
       </Box>
     </ThemeProvider>

@@ -40,7 +40,7 @@ export default function HeaderLinks({ anchorEl, setAnchorEl, open }) {
       </MenuItem>
       <MenuItem
         component={Link}
-        href='https://www.aramark-uniform.com/ups/'
+        href='https://www.vestisuniforms.com/ups/'
         onClick={handleClose}
       >
         <ListItemIcon>
@@ -48,12 +48,12 @@ export default function HeaderLinks({ anchorEl, setAnchorEl, open }) {
         </ListItemIcon>
         UPS Socks
       </MenuItem>
-      <MenuItem component={Link} href='/recommended' onClick={handleClose}>
+      {/* <MenuItem component={Link} href='/recommended' onClick={handleClose}>
         <ListItemIcon>
           <ShoppingCartOutlinedIcon />
         </ListItemIcon>
         Purchases
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem component={Link} href='/blog' onClick={handleClose}>
         <ListItemIcon>
           <RssFeed />

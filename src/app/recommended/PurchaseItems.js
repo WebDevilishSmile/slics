@@ -2,13 +2,13 @@ export const purchaseItems = [
   {
     name: 'Blue Parrott B450',
     img: '/purchases/blue_parrot.jpg',
-    price: '$169.99',
+    price: '$139.99',
     link: 'https://www.amazon.com/BlueParrott-B450-XT-Cancelling-Bluetooth-Headset/dp/B087R97MM2/ref=sr_1_3?crid=MM0J3GBB1AJH&keywords=blue%2Bparrot&qid=1697943620&sprefix=blue%2Bparrot%2Caps%2C87&sr=8-3&th=1',
   },
   {
     name: 'Westinghouse Heated Blanket',
     img: '/purchases/heated_blanket.jpg',
-    price: '$39.99',
+    price: '$29.99',
     link: 'https://www.amazon.com/Westinghouse-Electric-Car-Blanket-Gbplaid/dp/B09T96NNYN/ref=sr_1_6?crid=15AT4IDNYV8EB&keywords=heated%2Bblanket%2Bfor%2Bcar&qid=1697944003&sprefix=heated%2Bblanket%2B%2Caps%2C104&sr=8-6&th=1',
   },
   {
@@ -33,7 +33,7 @@ export const purchaseItems = [
     name: `UPS Fitted Hat`,
     img: '/purchases/upsHat.avif',
     price: '$25.99',
-    link: 'https://www.etsy.com/listing/982212837/custom-ups-hats-caps-flex-fit-210-flat?gpla=1&gao=1&&utm_source=google&utm_medium=cpc&utm_campaign=shopping_us_-accessories&utm_custom1=_k_CjwKCAiAxreqBhAxEiwAfGfndJWbMqRi57vCpIibuPmug9_CTh_l2pKGS5au7K65Hks9HNHKXVNLJxoCwW4QAvD_BwE_k_&utm_content=go_12665398257_121762925993_511610210343_pla-294930372950_c__982212837_12768591&utm_custom2=12665398257&gad_source=1&gclid=CjwKCAiAxreqBhAxEiwAfGfndJWbMqRi57vCpIibuPmug9_CTh_l2pKGS5au7K65Hks9HNHKXVNLJxoCwW4QAvD_BwE',
+    link: 'https://www.etsy.com/listing/982212837/custom-ups-hats-caps-flex-fit-210-flat?gpla=1&gao=1&&utm_source=google&utm_medium=cpc&utm_campaign=shopping_us_-accessories&utm_custom1=_k_CjwKCAjw3NyxBhBmEiwAyofDYTZISbXmBXwQNIQwvZIfQCpiiNJkhSwCnkvwF1HWKmPswzET7GHZlBoCY7UQAvD_BwE_k_&utm_content=go_12665398257_121762925993_511610210343_aud-2079782229334:pla-294930372950_c__982212837_12768591&utm_custom2=12665398257&gad_source=1&gclid=CjwKCAjw3NyxBhBmEiwAyofDYTZISbXmBXwQNIQwvZIfQCpiiNJkhSwCnkvwF1HWKmPswzET7GHZlBoCY7UQAvD_BwE',
   },
   {
     name: `Day-Cab Hammock`,

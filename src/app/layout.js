@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const montserrat = Montserrat({
   weight: ['300', '400', '500', '600', '700', '800', '900'],
@@ -36,6 +37,7 @@ export default async function RootLayout(props) {
           <Header data={data} />
           {children}
           <Analytics />
+          <SpeedInsights />
         </ThemeRegistry>
       </body>
     </html>

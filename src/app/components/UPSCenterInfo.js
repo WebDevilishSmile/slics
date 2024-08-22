@@ -43,6 +43,7 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
                 {upsCenter.numSlic}
               </span>{' '}
             </Typography>
+
             <Typography /* SLIC NAME */
               variant='h6'
               sx={{ width: '100%', textAlign: 'center', mt: '.5rem' }}
@@ -62,6 +63,7 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
                     color: theme.palette.primary.dark,
                   }}
                 />
+
                 <Box /* ADDRESS */>
                   {upsCenter.street} <br />
                   {upsCenter.city} {upsCenter.state} {upsCenter.zip}
@@ -79,6 +81,7 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
                 <PhoneInTalkOutlinedIcon
                   sx={{ color: theme.palette.primary.dark }}
                 />
+
                 <Box /* PHONE NUMBER */>{upsCenter.phone}</Box>
               </Button>
             </Box>
@@ -90,6 +93,7 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
           </Typography>
         )}
       </Paper>
+
       <Paper /* UPS CENTER INFORMATION */
         sx={{
           width: { xxs: '90%', xs: '90%', sm: '90%', md: '90%' },
@@ -104,7 +108,9 @@ export default function UPSCenterInfo({ upsCenter, slic }) {
         {slic ? (
           <Button
             color='secondary'
-            variant={upsCenter.directions === '' ? 'disabled' : 'contained'}
+            variant={
+              upsCenter.directions === '' || null ? 'disabled' : 'contained'
+            }
             href={`/centerDirections/${dirPdf}.pdf`}
             rel='noreffer'
             target='_blank'

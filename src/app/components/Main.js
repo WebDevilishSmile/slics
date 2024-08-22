@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { Box } from '@mui/material';
+import { Box, Button, Modal, Paper } from '@mui/material';
 
 import Heading from './Heading';
 import SelectDest from './SelectDest';
@@ -11,6 +11,7 @@ import CustomerInfo from './CustomerInfo';
 import DestInfo from './DestInfo';
 import Weather from './Weather';
 import Footer from './Footer';
+import AddSlic from './AddSlic';
 
 export default function Main({ customers, centers, comments, session, user }) {
   const [slic, setSlic] = useState('');
@@ -54,6 +55,7 @@ export default function Main({ customers, centers, comments, session, user }) {
       }}
     >
       <Heading />
+
       <SelectDest
         slic={slic}
         setSlic={setSlic}
@@ -65,6 +67,8 @@ export default function Main({ customers, centers, comments, session, user }) {
       />
 
       {checked ? (
+        // UPS CENTERS DISPLAY
+
         <Box
           sx={{
             width: { xs: '100%', sm: '90%', md: '35rem' },
@@ -86,6 +90,8 @@ export default function Main({ customers, centers, comments, session, user }) {
           />
         </Box>
       ) : (
+        // CUSTOMERS DISPLAY
+
         <Box
           sx={{
             width: { xs: '100%', sm: '90%', md: '35rem' },
@@ -107,6 +113,8 @@ export default function Main({ customers, centers, comments, session, user }) {
           />
         </Box>
       )}
+
+      {/* WEATHER */}
       <Box
         sx={{
           width: { xs: '100%', sm: '90%', md: '35rem' },
@@ -115,9 +123,11 @@ export default function Main({ customers, centers, comments, session, user }) {
           alignItems: 'center',
         }}
       >
-        {/* WEATHER */}
         <Weather upsCenter={upsCenter} slic={slic} checked={checked} />
       </Box>
+
+      <AddSlic />
+
       <Footer />
     </Box>
   );

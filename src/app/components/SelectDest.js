@@ -38,7 +38,7 @@ export default function SelectDest({
 
   const locationMenuItems = customers.map(function (cus, index) {
     return (
-      <MenuItem key={cus.id} value={cus.numSlic}>
+      <MenuItem key={index} value={cus.numSlic}>
         {cus.numSlic}
       </MenuItem>
     );
@@ -67,11 +67,13 @@ export default function SelectDest({
       >
         <FormControl fullWidth>
           <InputLabel>SLIC</InputLabel>
+
           <Select label='SLIC' value={slic} onChange={handleSlicSelect}>
             {checked ? upsCenterMenuItems : locationMenuItems}
           </Select>
         </FormControl>
       </Box>
+
       <Box /* SWITCH CUSTOMERS UPS CENTERS */>
         <Stack direction='row' spacing={1} alignItems='center'>
           <Typography onClick={handleCustomerCheck} sx={{ cursor: 'pointer' }}>

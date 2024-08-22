@@ -126,7 +126,7 @@ export default function Main({ customers, centers, comments, session, user }) {
         <Weather upsCenter={upsCenter} slic={slic} checked={checked} />
       </Box>
 
-      <AddSlic />
+      {/* <AddSlic /> */}
 
       <Footer />
     </Box>

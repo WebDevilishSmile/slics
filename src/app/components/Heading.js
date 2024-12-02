@@ -1,10 +1,16 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
+import Link from 'next/link';
 
 export default function Heading() {
   return (
     <Box /* HEADING */
       id='selection'
-      sx={{ width: { xs: '90%', sm: '90%', md: '35rem' } }}
+      sx={{
+        width: { xs: '90%', sm: '90%', md: '35rem' },
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
     >
       <Typography
         textAlign='center'
@@ -20,6 +26,18 @@ export default function Heading() {
       <Typography textAlign='center' variant='h6' sx={{ fontSize: '1rem' }}>
         BETPA 1809
       </Typography>
+
+      <Typography textAlign='center' sx={{ mt: '1rem' }}>
+        A new version of SLICs is out. Click below to go to the new site. Make
+        sure to save the new address or bookmark the site.
+      </Typography>
+      <Button
+        LinkComponent={Link}
+        href='https://slics-beta.vercel.app/1809'
+        variant='outlined'
+      >
+        SLICs 4.0
+      </Button>
     </Box>
   );
 }

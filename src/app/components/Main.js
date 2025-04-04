@@ -56,7 +56,7 @@ export default function Main({ customers, centers, comments, session, user }) {
     >
       <Heading />
 
-      <SelectDest
+      {/* <SelectDest
         slic={slic}
         setSlic={setSlic}
         checked={checked}
@@ -64,58 +64,60 @@ export default function Main({ customers, centers, comments, session, user }) {
         init={init}
         customers={customers}
         centers={centers}
-      />
+      /> */}
 
       {checked ? (
         // UPS CENTERS DISPLAY
+        <>
+          {/* <Box
+            sx={{
+              width: { xs: '100%', sm: '90%', md: '35rem' },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <UPSCenterInfo upsCenter={upsCenter} slic={slic} />
 
-        <Box
-          sx={{
-            width: { xs: '100%', sm: '90%', md: '35rem' },
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <UPSCenterInfo upsCenter={upsCenter} slic={slic} />
-
-          <DestInfo
-            slic={slic}
-            customer={upsCenter}
-            customers={centers}
-            comments={comments}
-            session={session}
-            user={user}
-            checked={checked}
-          />
-        </Box>
+            <DestInfo
+              slic={slic}
+              customer={upsCenter}
+              customers={centers}
+              comments={comments}
+              session={session}
+              user={user}
+              checked={checked}
+            />
+          </Box> */}
+        </>
       ) : (
         // CUSTOMERS DISPLAY
+        <>
+          {/* <Box
+            sx={{
+              width: { xs: '100%', sm: '90%', md: '35rem' },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <CustomerInfo customer={customer} slic={slic} />
 
-        <Box
-          sx={{
-            width: { xs: '100%', sm: '90%', md: '35rem' },
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <CustomerInfo customer={customer} slic={slic} />
-
-          <DestInfo
-            slic={slic}
-            customer={customer}
-            customers={customers}
-            comments={comments}
-            session={session}
-            user={user}
-            checked={checked}
-          />
-        </Box>
+            <DestInfo
+              slic={slic}
+              customer={customer}
+              customers={customers}
+              comments={comments}
+              session={session}
+              user={user}
+              checked={checked}
+            />
+          </Box> */}
+        </>
       )}
 
       {/* WEATHER */}
-      <Box
+      {/* <Box
         sx={{
           width: { xs: '100%', sm: '90%', md: '35rem' },
           display: 'flex',
@@ -124,7 +126,7 @@ export default function Main({ customers, centers, comments, session, user }) {
         }}
       >
         <Weather upsCenter={upsCenter} slic={slic} checked={checked} />
-      </Box>
+      </Box> */}
 
       {/* <AddSlic /> */}
 

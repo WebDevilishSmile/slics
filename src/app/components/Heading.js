@@ -35,6 +35,7 @@ export default function Heading() {
         LinkComponent={Link}
         href='https://slics-beta.vercel.app/1809'
         variant='outlined'
+        sx={{ mt: '1rem' }}
       >
         SLICs 4.0
       </Button>

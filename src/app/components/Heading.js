@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from '@mui/material';
 import Link from 'next/link';
+import Maintenance from './Maintenance';
 
 export default function Heading() {
   return (
@@ -12,6 +13,8 @@ export default function Heading() {
         alignItems: 'center',
       }}
     >
+      <Maintenance />
+
       <Typography
         textAlign='center'
         variant='h5'

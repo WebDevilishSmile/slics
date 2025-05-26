@@ -1,4 +1,5 @@
 import client from '@/lib/db';
+import { ObjectId } from 'mongodb';
 
 export async function createSlic(slicData) {
   try {
@@ -61,6 +62,53 @@ export async function createSlic(slicData) {
   }
 }
 
+export async function deleteSlic(slicId) {
+  try {
+    // Validate required parameter
+    if (!slicId) {
+      throw new Error('Slic ID is required');
+    }
+
+    // Validate ObjectId format
+    if (!ObjectId.isValid(slicId)) {
+      throw new Error('Invalid slic ID format');
+    }
+
+    const db = client.db();
+    const slicsCollection = db.collection('slics');
+
+    // Check if slic exists before deleting
+    const existingSlic = await slicsCollection.findOne({
+      _id: new ObjectId(slicId),
+    });
+
+    if (!existingSlic) {
+      throw new Error(`Slic with ID "${slicId}" not found`);
+    }
+
+    // Delete the document
+    const result = await slicsCollection.deleteOne({
+      _id: new ObjectId(slicId),
+    });
+
+    if (result.deletedCount === 0) {
+      throw new Error('Failed to delete slic');
+    }
+
+    return {
+      success: true,
+      deletedId: slicId,
+      deletedSlic: existingSlic,
+      message: `Slic "${
+        existingSlic.alphaSlic || existingSlic.numSlic
+      }" deleted successfully`,
+    };
+  } catch (error) {
+    console.error('Error deleting slic:', error);
+    throw error;
+  }
+}
+
 export async function getAllSlics() {
   try {
     const db = client.db('test');
@@ -70,6 +118,27 @@ export async function getAllSlics() {
     return slics;
   } catch (error) {
     console.error('Error fetching slics:', error);
+    throw error;
+  }
+}
+
+export async function getSlicByNumSlic(numSlic) {
+  try {
+    if (!numSlic) {
+      throw new Error('numSlic is required');
+    }
+
+    const db = client.db();
+    const slicsCollection = db.collection('slics');
+    const slic = await slicsCollection.findOne({ numSlic });
+
+    if (!slic) {
+      throw new Error(`Slic with numSlic "${numSlic}" not found`);
+    }
+
+    return slic;
+  } catch (error) {
+    console.error('Error fetching slic by numSlic:', error);
     throw error;
   }
 }

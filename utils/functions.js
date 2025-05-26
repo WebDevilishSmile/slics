@@ -9,3 +9,10 @@ export function formatPhoneNumber(value) {
   if (len < 7) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
 }
+
+export function serializeSlic(slicData) {
+  return {
+    ...slicData,
+    _id: slicData._id.toString(),
+  };
+}

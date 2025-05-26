@@ -16,6 +16,7 @@ import { SortOutlined } from '@mui/icons-material';
 import { getAllSlics } from '@/utils/slicsApi';
 import TableHeader from '../components/admin/TableHeader';
 import dayjs from 'dayjs';
+import SlicRow from '../components/newSlic/SlicRow';
 
 async function AdminPage() {
   const slics = await getAllSlics();
@@ -46,17 +47,7 @@ async function AdminPage() {
 
             <TableBody>
               {slics.map((slic) => (
-                <TableRow key={slic._id}>
-                  <TableCell>
-                    {dayjs(slic.created_at).format('MM/DD/YY')}
-                  </TableCell>
-                  <TableCell>{slic.numSlic}</TableCell>
-                  <TableCell>{slic.alphaSlic}</TableCell>
-                  <TableCell>{slic.name}</TableCell>
-                  <TableCell>
-                    <Checkbox />
-                  </TableCell>
-                </TableRow>
+                <SlicRow key={slic._id} slic={slic} />
               ))}
             </TableBody>
           </Table>

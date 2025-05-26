@@ -35,7 +35,7 @@ export default async function Header() {
           )}
           {session?.user?.role === 'admin' && (
             <ListItem>
-              <Button>Admin</Button>
+              <Button href='/admin'>Admin</Button>
             </ListItem>
           )}
         </UserMenu>

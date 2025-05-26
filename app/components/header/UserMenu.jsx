@@ -1,8 +1,7 @@
 'use client';
 
-import { CloseOutlined } from '@mui/icons-material';
+import { CloseOutlined, MenuOutlined } from '@mui/icons-material';
 import {
-  Avatar,
   Box,
   Button,
   Dialog,
@@ -30,11 +29,10 @@ function UserMenu({ children, user }) {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          p: '0.25rem',
         }}
         onClick={handleOpen}
       >
-        <Avatar src={user ? user.image : null} />
+        <MenuOutlined />
       </IconButton>
 
       <Dialog open={open} onClose={handleClose} fullScreen>
@@ -54,11 +52,11 @@ function UserMenu({ children, user }) {
             justifyContent: 'center',
           }}
         >
-          <Typography variant='h2'>User Menu</Typography>
+          <Typography variant='h2'>Menu</Typography>
 
           <List>
             <ListItem>
-              <Button>Home</Button>
+              <Button href='/'>Home</Button>
             </ListItem>
             {children}
           </List>

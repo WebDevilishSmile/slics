@@ -14,7 +14,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         .collection('users')
         .updateOne(
           { _id: new ObjectId(message.user.id) },
-          { $set: { role: 'user' } }
+          { $set: { role: 'user' }, $set: { comments: [] } }
         );
     },
   },
@@ -23,6 +23,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Add the role to the session object
       if (session.user) {
         session.user.role = user.role || 'user';
+        session.user.comments = user.comments || [];
       }
       return session;
     },

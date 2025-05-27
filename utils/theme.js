@@ -21,11 +21,7 @@ let theme = createTheme({
   colorSchemes: {
     dark: {
       palette: {
-        primary: {
-          light: blue[700],
-          main: blue[300],
-          dark: blue[100],
-        },
+        primary: lightBlue,
         secondary: green,
         background: {
           default: '#050505',

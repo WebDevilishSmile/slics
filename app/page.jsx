@@ -4,6 +4,7 @@ import { Typography } from '@mui/material';
 import { redirect } from 'next/navigation';
 
 import PageContainer from './components/layout/PageContainer';
+import DataManipulation from './components/home/DataManipulation';
 
 export default async function Home() {
   const session = await auth();

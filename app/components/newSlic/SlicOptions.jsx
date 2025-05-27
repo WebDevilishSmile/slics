@@ -82,7 +82,7 @@ function SlicOptions({ slic, onSlicDeleted }) {
 
       // Route to admin after a brief delay to show the snackbar
       setTimeout(() => {
-        router.push('/admin');
+        router.push('/admin/slics');
       }, 1500); // 1.5 second delay
 
       return result;

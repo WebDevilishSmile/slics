@@ -10,7 +10,7 @@ export default function PageContainer({ children }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        my: '8rem',
+        my: '10rem',
         mx: { xs: '0%', md: '10%', lg: '5%', xl: '15%' },
         px: { xs: '1rem', md: '2rem', lg: '3rem' },
       }}

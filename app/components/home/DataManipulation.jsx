@@ -1,5 +1,6 @@
 'use client';
 
+import { BetpaCenters } from '@/utils/centers';
 import { betpaCustomers } from '@/utils/customers';
 
 function DataManipulation() {
@@ -12,6 +13,7 @@ function DataManipulation() {
       address: {
         street: customer.street || '',
         city: customer.city || '',
+        state: customer.state || '',
         zip: customer.zip || '',
       },
       phone: customer.phone || '',

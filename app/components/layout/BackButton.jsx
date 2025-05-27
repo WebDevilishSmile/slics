@@ -13,7 +13,7 @@ function BackButton() {
 
   return (
     <Button
-      sx={{ position: 'absolute', top: '8rem', right: '2rem' }}
+      sx={{ position: 'absolute', top: '6rem', right: '2rem' }}
       onClick={handleBack}
     >
       <ChevronLeftOutlined /> Back

@@ -2,8 +2,11 @@
 import {
   blue,
   brown,
+  cyan,
+  deepOrange,
   green,
   grey,
+  lightBlue,
   lime,
   orange,
   purple,
@@ -41,7 +44,7 @@ let theme = createTheme({
     },
   },
   palette: {
-    primary: green,
+    primary: lightBlue,
     secondary: green,
     containedButton: {
       main: blue[300],
@@ -114,6 +117,16 @@ let theme = createTheme({
           fontSize: '1.4rem',
           borderRadius: '1.5rem',
           textTransform: 'none',
+        },
+      },
+    },
+
+    MuiButtonGroup: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'var(--font-font)',
+          fontSize: '1.4rem',
+          borderRadius: '1.5rem',
         },
       },
     },

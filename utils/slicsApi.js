@@ -122,7 +122,8 @@ export async function getAllSlics() {
   }
 }
 
-export async function getSlicByNumSlic(numSlic) {
+export async function getSlicByNumSlic(slic) {
+  const numSlic = slic;
   try {
     if (!numSlic) {
       throw new Error('numSlic is required');

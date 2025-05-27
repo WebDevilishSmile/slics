@@ -10,7 +10,9 @@ async function EditPage({ params }) {
   return (
     <PageContainer>
       <BackButton />
-      <Typography variant='h2'>Edit Slic</Typography>
+      <Typography variant='h2' sx={{ maxWidth: '40rem', textAlign: 'center' }}>
+        Edit {slicData.name || slicData.alphaSlic}
+      </Typography>
     </PageContainer>
   );
 }

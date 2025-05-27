@@ -16,3 +16,7 @@ export function serializeSlic(slicData) {
     _id: slicData._id.toString(),
   };
 }
+
+export function serializeSlics(slics) {
+  return slics.map(serializeSlic);
+}

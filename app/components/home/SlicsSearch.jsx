@@ -52,7 +52,7 @@ function SlicsSearch({ slics }) {
       fullWidth
       options={slicLabels}
       renderInput={(params) => <TextField {...params} label='Search Slics' />}
-      sx={{ maxWidth: '40rem', mt: '2rem' }}
+      sx={{ maxWidth: '30rem', mt: '2rem' }}
       onChange={handleSlicChange}
       value={selectedSlic}
     />

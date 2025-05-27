@@ -12,6 +12,11 @@ export default async function Header() {
     <AppBar>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <UserMenu user={session?.user}>
+          {session?.user?.role === 'admin' && (
+            <ListItem>
+              <Button href='/admin'>Admin</Button>
+            </ListItem>
+          )}
           {session?.user ? (
             <ListItem
               component='form'
@@ -31,11 +36,6 @@ export default async function Header() {
               }}
             >
               <Button type='submit'>Sign In</Button>
-            </ListItem>
-          )}
-          {session?.user?.role === 'admin' && (
-            <ListItem>
-              <Button href='/admin'>Admin</Button>
             </ListItem>
           )}
         </UserMenu>

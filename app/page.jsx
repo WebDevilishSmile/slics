@@ -1,7 +1,9 @@
-import { Typography } from '@mui/material';
-import PageContainer from './components/layout/PageContainer';
 import { auth } from '@/auth';
+import { getAllSlics } from '@/utils/slicsApi';
+import { Typography } from '@mui/material';
 import { redirect } from 'next/navigation';
+
+import PageContainer from './components/layout/PageContainer';
 
 export default async function Home() {
   const session = await auth();
@@ -9,6 +11,8 @@ export default async function Home() {
   if (!session) {
     redirect('/signin');
   }
+
+  const slics = await getAllSlics();
 
   return (
     <PageContainer>

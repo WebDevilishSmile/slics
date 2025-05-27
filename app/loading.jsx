@@ -5,7 +5,7 @@ function loading() {
   return (
     <PageContainer>
       <Typography variant='h2'>Loading...</Typography>
-      <CircularProgress size='large' />
+      <CircularProgress size='7rem' />
     </PageContainer>
   );
 }

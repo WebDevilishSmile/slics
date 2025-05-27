@@ -3,8 +3,10 @@ import { getAllSlics } from '@/utils/slicsApi';
 import { Typography } from '@mui/material';
 import { redirect } from 'next/navigation';
 
+import { serializeSlics } from '@/utils/functions';
+import SlicsSearch from './components/home/SlicsSearch';
 import PageContainer from './components/layout/PageContainer';
-import DataManipulation from './components/home/DataManipulation';
+import BackButton from './components/layout/BackButton';
 
 export default async function Home() {
   const session = await auth();
@@ -14,10 +16,12 @@ export default async function Home() {
   }
 
   const slics = await getAllSlics();
-
   return (
     <PageContainer>
+      <BackButton />
       <Typography variant='h1'>SLICs</Typography>
+
+      <SlicsSearch slics={serializeSlics(slics)} />
     </PageContainer>
   );
 }

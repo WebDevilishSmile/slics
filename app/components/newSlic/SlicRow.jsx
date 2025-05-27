@@ -1,8 +1,7 @@
-import { MoreVertOutlined } from '@mui/icons-material';
-import { IconButton, TableCell, TableRow } from '@mui/material';
+import { serializeSlic } from '@/utils/functions';
+import { TableCell, TableRow } from '@mui/material';
 import dayjs from 'dayjs';
 import SlicOptions from './SlicOptions';
-import { serializeSlic } from '@/utils/functions';
 
 function SlicRow({ slic }) {
   return (

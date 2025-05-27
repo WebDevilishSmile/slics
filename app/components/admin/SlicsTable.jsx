@@ -1,6 +1,7 @@
 'use client';
 
-import { SortByAlphaOutlined, SortOutlined } from '@mui/icons-material';
+import { SLICS_PER_PAGE } from '@/utils/variables';
+import { SortOutlined } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -10,13 +11,11 @@ import {
   TableFooter,
   TablePagination,
   TableRow,
-  TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import SlicsBody from './SlicsBody';
-import TableHeader from './TableHeader';
-import { SLICS_PER_PAGE } from '@/utils/variables';
 import SlicsFilter from './SlicsFilter';
+import TableHeader from './TableHeader';
 
 function SlicsTable({ slics }) {
   const [page, setPage] = useState(0);
@@ -75,7 +74,7 @@ function SlicsTable({ slics }) {
         }}
       >
         <Button onClick={handleSort}>
-          Date{' '}
+          Date
           <SortOutlined
             sx={{
               transform: sort === 'ascending' ? 'rotateX(180deg)' : 'none',

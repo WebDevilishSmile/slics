@@ -124,7 +124,12 @@ function SlicOptions({ slic, onSlicDeleted }) {
         <MoreVertOutlined />
       </IconButton>
 
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+      <Menu
+        disableScrollLock
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
         <MenuItem onClick={handleWarningOpen}>Delete</MenuItem>
       </Menu>

@@ -1,3 +1,5 @@
+export const SLICS_PER_PAGE = 7;
+
 export const SLIC_CENTER_EXAMPLE = {
   id: 'SLIC_ID',
   created_at: '05/26/2025',

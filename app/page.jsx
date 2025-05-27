@@ -7,6 +7,7 @@ import { serializeSlics } from '@/utils/functions';
 import SlicsSearch from './components/home/SlicsSearch';
 import PageContainer from './components/layout/PageContainer';
 import SlicDisplay from './components/home/SlicDisplay';
+import Comments from './components/comments/Comments';
 
 export default async function Home() {
   const session = await auth();
@@ -23,6 +24,8 @@ export default async function Home() {
       <SlicsSearch slics={serializeSlics(slics)} />
 
       <SlicDisplay slics={serializeSlics(slics)} />
+
+      <Comments />
     </PageContainer>
   );
 }

@@ -28,7 +28,7 @@ function EmptySlic() {
       </Typography>
       <Button
         variant='contained'
-        href=''
+        href='https://buymeacoffee.com/tiagodavila'
         sx={{ display: 'flex', gap: '1rem', mt: '1.6rem' }}
       >
         <CoffeeOutlined /> Buy me a coffee

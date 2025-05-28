@@ -51,8 +51,26 @@ function SlicsSearch({ slics }) {
     <Autocomplete
       fullWidth
       options={slicLabels}
-      renderInput={(params) => <TextField {...params} label='Search Slics' />}
-      sx={{ maxWidth: '30rem', mt: '2rem' }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label='Search Slics'
+          InputProps={{
+            ...params.InputProps,
+            style: { fontSize: '1.6rem' }, // Ensures input is at least 16px
+          }}
+          InputLabelProps={{
+            style: { fontSize: '1.6rem' }, // Ensures label doesn't trigger zoom
+          }}
+        />
+      )}
+      sx={{
+        maxWidth: '30rem',
+        mt: '2rem',
+        '& .MuiInputBase-input': {
+          fontSize: '1.6rem',
+        },
+      }}
       onChange={handleSlicChange}
       value={selectedSlic}
     />

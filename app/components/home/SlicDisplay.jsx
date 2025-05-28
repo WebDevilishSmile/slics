@@ -1,8 +1,7 @@
 'use client';
 
 import { useAppleDevice } from '@/utils/clientFunctions';
-import { Apple, Google, PhoneOutlined } from '@mui/icons-material';
-import { Box, Button, Paper, Typography } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import EmptySlic from './EmptySlic';
@@ -12,6 +11,7 @@ import MapPhoneLinks from './MapPhoneLinks';
 
 function SlicDisplay({ slics }) {
   const [slic, setSlic] = useState(null);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   const searchParams = useSearchParams();
   const isAppleDevice = useAppleDevice();
@@ -23,14 +23,26 @@ function SlicDisplay({ slics }) {
       const foundSlic = slics.find(
         (s) => s.numSlic.toString() === numSlic.toString()
       );
-      setSlic(foundSlic);
+      setSlic(foundSlic || null);
     } else {
       setSlic(null);
-      return;
     }
+
+    setLoading(false); // End loading once processing is done
   }, [searchParams, slics]);
 
-  // const centers =
+  if (loading) {
+    return (
+      <Box
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        height='100%'
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (!slic) {
     return <EmptySlic />;

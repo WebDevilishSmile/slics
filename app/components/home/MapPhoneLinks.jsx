@@ -11,8 +11,8 @@ function MapPhoneLinks({ slic }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        mt: '1.6rem',
-        gap: '1.6rem',
+        mt: '1rem',
+        gap: '1rem',
       }}
     >
       <Button
@@ -34,7 +34,7 @@ function MapPhoneLinks({ slic }) {
           Apple Maps
         </Button>
       )}
-      {slic.type === 'center' && (
+      {slic.type === 'center' && slic.phone && (
         <Button
           variant='contained'
           href={`tel:${slic.phone}`}

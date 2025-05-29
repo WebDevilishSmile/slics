@@ -21,6 +21,7 @@
     "@tiptap/react": "^2.12.0",
     "@tiptap/starter-kit": "^2.12.0",
     "dayjs": "^1.11.13",
+    "html-react-parser": "^5.2.5",
     "mongodb": "^6.16.0",
     "next": "^15.3.2",
     "next-auth": "^5.0.0-beta.28",

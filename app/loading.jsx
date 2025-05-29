@@ -5,7 +5,7 @@ function loading() {
   return (
     <PageContainer>
       <Typography variant='h2'>Loading...</Typography>
-      <CircularProgress size='7rem' sx={{ mt: '2.5rem' }} />
+      <CircularProgress size='5rem' sx={{ mt: '2rem' }} />
     </PageContainer>
   );
 }

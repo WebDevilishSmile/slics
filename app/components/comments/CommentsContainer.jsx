@@ -4,8 +4,9 @@ import { Button, Collapse, IconButton, Paper, Typography } from '@mui/material';
 import CommentEditor from './CommentEditor';
 import { AddComment, HideSource } from '@mui/icons-material';
 import { useState } from 'react';
+import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
 
-function CommentsContainer({ children }) {
+function CommentsContainer({ children, user, numSlic, refetchComments }) {
   const [showEditor, setShowEditor] = useState(false);
 
   const toggleEditor = () => {
@@ -14,11 +15,12 @@ function CommentsContainer({ children }) {
 
   return (
     <Paper
+      elevation={ELEVATION}
       sx={{
         position: 'relative',
         width: '100%',
-        maxWidth: '40rem',
-        minHeight: '36rem',
+        maxWidth: MAX_WIDTH,
+        minHeight: MIN_HEIGHT,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -39,7 +41,12 @@ function CommentsContainer({ children }) {
       </IconButton>
 
       <Collapse in={showEditor} sx={{ width: '100%' }}>
-        <CommentEditor />
+        <CommentEditor
+          user={user}
+          numSlic={numSlic}
+          refetchComments={refetchComments}
+          setShowEditor={setShowEditor}
+        />
       </Collapse>
       {children}
     </Paper>

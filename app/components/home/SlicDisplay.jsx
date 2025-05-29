@@ -1,20 +1,20 @@
 'use client';
 
-import { useAppleDevice } from '@/utils/clientFunctions';
-import { Box, CircularProgress } from '@mui/material';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
+import { CircularProgress } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
+
 import EmptySlic from './EmptySlic';
+import MapPhoneLinks from './MapPhoneLinks';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
-import MapPhoneLinks from './MapPhoneLinks';
 
 function SlicDisplay({ slics }) {
   const [slic, setSlic] = useState(null);
   const [loading, setLoading] = useState(true); // Added loading state
 
   const searchParams = useSearchParams();
-  const isAppleDevice = useAppleDevice();
 
   useEffect(() => {
     const numSlic = searchParams.get('slic');
@@ -33,14 +33,9 @@ function SlicDisplay({ slics }) {
 
   if (loading) {
     return (
-      <Box
-        display='flex'
-        justifyContent='center'
-        alignItems='center'
-        height='100%'
-      >
-        <CircularProgress />
-      </Box>
+      <SlicDetailsContainer title='Loading...'>
+        <CircularProgress sx={{ mt: '1rem' }} />
+      </SlicDetailsContainer>
     );
   }
 

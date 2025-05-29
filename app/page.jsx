@@ -15,7 +15,7 @@ export default async function Home() {
   if (!session) {
     redirect('/signin');
   }
-
+  const user = session.user;
   const slics = await getAllSlics();
   return (
     <PageContainer>
@@ -25,7 +25,7 @@ export default async function Home() {
 
       <SlicDisplay slics={serializeSlics(slics)} />
 
-      <Comments />
+      <Comments user={user} />
     </PageContainer>
   );
 }

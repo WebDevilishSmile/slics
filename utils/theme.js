@@ -1,6 +1,7 @@
 'use client';
 import {
   blue,
+  blueGrey,
   brown,
   cyan,
   deepOrange,
@@ -29,6 +30,7 @@ let theme = createTheme({
           paper: '#050505',
           solid: '#edf3fc',
           grey: grey[800],
+          comment: '#050505',
         },
         text: {
           dark: '#222222',
@@ -49,9 +51,10 @@ let theme = createTheme({
     background: {
       default: '#edf3fc',
       opposite: '#050505',
-      paper: blue[50],
+      paper: blueGrey[50],
       solid: '#edf3fc',
       grey: grey[300],
+      comment: grey[50],
     },
     text: {
       dark: '#222222',
@@ -63,36 +66,29 @@ let theme = createTheme({
 
   typography: {
     fontFamily: 'var(--font-font)',
-    htmlFontSize: 10,
     h1: {
-      fontSize: '7.2rem',
+      fontSize: '5rem',
       fontWeight: 700,
     },
     h2: {
-      fontSize: '6.2rem',
+      fontSize: '4.2rem',
       fontWeight: 700,
     },
     h3: {
-      fontSize: '5.2rem',
-      fontWeight: 500,
-    },
-    h4: {
-      fontSize: '4rem',
-      fontWeight: 500,
-    },
-    h5: {
       fontSize: '3.2rem',
       fontWeight: 500,
     },
-    h6: {
+    h4: {
       fontSize: '2.8rem',
       fontWeight: 500,
     },
-    body1: {
-      fontSize: '1.6rem',
+    h5: {
+      fontSize: '2.2rem',
+      fontWeight: 500,
     },
-    body2: {
-      fontSize: '1.4rem',
+    h6: {
+      fontSize: '1.8rem',
+      fontWeight: 500,
     },
   },
   breakpoints: {
@@ -110,7 +106,6 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           fontFamily: 'var(--font-font)',
-          fontSize: '1.4rem',
           borderRadius: '1.5rem',
           textTransform: 'none',
         },
@@ -121,7 +116,6 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           fontFamily: 'var(--font-font)',
-          fontSize: '1.4rem',
           borderRadius: '1.5rem',
         },
       },

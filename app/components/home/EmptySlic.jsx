@@ -1,23 +1,25 @@
+import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
 import { CoffeeOutlined } from '@mui/icons-material';
 import { Button, Paper, Typography } from '@mui/material';
 
 function EmptySlic() {
   return (
     <Paper
+      elevation={ELEVATION}
       sx={{
         width: '100%',
-        maxWidth: '40rem',
-        minHeight: '36rem',
+        maxWidth: MAX_WIDTH,
+        minHeight: MIN_HEIGHT,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         mt: '2rem',
         py: '2rem',
-        px: '1rem',
+        px: '2rem',
       }}
     >
-      <Typography variant='h4' sx={{ textAlign: 'center', mb: '1rem' }}>
+      <Typography variant='h4' sx={{ textAlign: 'center', mb: '1.5rem' }}>
         Please choose a SLIC to view details
       </Typography>
 
@@ -29,7 +31,7 @@ function EmptySlic() {
       <Button
         variant='contained'
         href='https://buymeacoffee.com/tiagodavila'
-        sx={{ display: 'flex', gap: '1rem', mt: '1.6rem' }}
+        sx={{ display: 'flex', gap: '1rem', mt: '2rem' }}
       >
         <CoffeeOutlined /> Buy me a coffee
       </Button>

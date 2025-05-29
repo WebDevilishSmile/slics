@@ -7,7 +7,7 @@ function TitleAddress({ slic }) {
         {slic?.numSlic} - {slic.type === 'center' ? slic.alphaSlic : slic.name}
       </Typography>
 
-      <Box sx={{ textAlign: 'center', mt: '1.6rem' }}>
+      <Box sx={{ textAlign: 'center', mt: '1rem' }}>
         <Typography>{slic.address.street}</Typography>
         <Typography>
           {slic.address.city}, {slic.address.state} {slic.address.zip}

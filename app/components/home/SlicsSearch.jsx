@@ -1,5 +1,6 @@
 'use client';
 
+import { MAX_WIDTH } from '@/utils/variables';
 import { Autocomplete, TextField } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -51,25 +52,11 @@ function SlicsSearch({ slics }) {
     <Autocomplete
       fullWidth
       options={slicLabels}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label='Search Slics'
-          InputProps={{
-            ...params.InputProps,
-            style: { fontSize: '1.6rem' }, // Ensures input is at least 16px
-          }}
-          InputLabelProps={{
-            style: { fontSize: '1.6rem' }, // Ensures label doesn't trigger zoom
-          }}
-        />
-      )}
+      renderInput={(params) => <TextField {...params} label='Search Slics' />}
       sx={{
-        maxWidth: '30rem',
-        mt: '2rem',
-        '& .MuiInputBase-input': {
-          fontSize: '1.6rem',
-        },
+        width: '90%',
+        maxWidth: `calc(${MAX_WIDTH} - 15%)`,
+        mt: '1.5rem',
       }}
       onChange={handleSlicChange}
       value={selectedSlic}

@@ -1,5 +1,10 @@
 export const SLICS_PER_PAGE = 7;
 
+export const ELEVATION = 6;
+export const MAX_WIDTH = '32rem';
+export const MIN_HEIGHT = '24rem';
+export const BORDER_RADIUS = '6px';
+
 export const SLIC_CENTER_EXAMPLE = {
   id: 'SLIC_ID',
   created_at: '05/26/2025',

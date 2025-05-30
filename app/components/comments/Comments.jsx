@@ -27,7 +27,7 @@ function Comments({ user }) {
 
   useEffect(() => {
     fetchComments();
-  }, [fetchComments]);
+  }, [fetchComments, searchParams]);
 
   return (
     <CommentsContainer

@@ -36,6 +36,7 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
       <IconButton
         sx={{ position: 'absolute', top: '2rem', right: '2rem' }}
         onClick={toggleEditor}
+        disabled={!numSlic}
       >
         {showEditor ? <HideSource /> : <AddComment />}
       </IconButton>

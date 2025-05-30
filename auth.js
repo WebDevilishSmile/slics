@@ -14,17 +14,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         .collection('users')
         .updateOne(
           { _id: new ObjectId(message.user.id) },
-          { $set: { role: 'user' }, $set: { comments: [] } }
+          { $set: { role: 'user', comments: [] } },
+          { upsert: true }
         );
     },
   },
   callbacks: {
     async session({ session, user }) {
-      // Add the role to the session object
+      const db = client.db();
+
+      // Add missing fields to session
       if (session.user) {
         session.user.role = user.role || 'user';
         session.user.comments = user.comments || [];
       }
+
+      // Persist default role if not already set
+      if (!user.role) {
+        await db
+          .collection('users')
+          .updateOne(
+            { _id: new ObjectId(user.id) },
+            { $set: { role: 'user' } }
+          );
+      }
+
       return session;
     },
   },

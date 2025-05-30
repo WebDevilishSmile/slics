@@ -1,8 +1,17 @@
-import { Avatar, Box, Divider, Paper, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Divider,
+  IconButton,
+  Paper,
+  Typography,
+} from '@mui/material';
 import parse, { domToReact } from 'html-react-parser';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import CommentFooter from './CommentFooter';
+import { ThumbDown, ThumbUp } from '@mui/icons-material';
+import CommentHeader from './CommentHeader';
 
 function Comment({ comment, refetchComments }) {
   const [author, setAuthor] = useState({});
@@ -44,8 +53,6 @@ function Comment({ comment, refetchComments }) {
     );
   }
 
-  console.log(author.image);
-
   return (
     <Paper
       sx={{
@@ -56,22 +63,11 @@ function Comment({ comment, refetchComments }) {
         bgcolor: 'background.comment',
       }}
     >
-      <Box
-        sx={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          py: '.25rem',
-          px: '.5rem',
-        }}
-      >
-        {/* COMMENT HEADER */}
-        <Avatar src={author.image} sx={{ width: '2rem', height: '2rem' }} />
-        <Typography>
-          {author?.name?.split(' ').at(0)} - {author?.email}
-        </Typography>
-      </Box>
+      <CommentHeader
+        author={author}
+        comment={comment}
+        refetchComments={refetchComments}
+      />
 
       <Divider />
 

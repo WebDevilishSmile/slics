@@ -46,7 +46,7 @@ export default function SlicForm({
   };
 
   const slicData = {
-    created_at: initialData?.created_at || dayjs().format('MM/DD/YY'),
+    created_at: initialData?.created_at || new Date().toISOString(),
     type,
     numSlic,
     alphaSlic,

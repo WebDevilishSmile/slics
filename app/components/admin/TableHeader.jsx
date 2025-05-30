@@ -1,99 +1,60 @@
-import { ArrowDownward } from '@mui/icons-material';
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 import { TableCell, TableHead, TableRow } from '@mui/material';
 
 function TableHeader({ sortCategory, setSortCategory, sort, setSort }) {
   // This component renders the table header with sortable columns
   // It receives the current sort category and a function to set the sort category
   // Clicking on a header cell will change the sort category
-  const toggleSortOrder = () => {
-    // Toggles the sort order between ascending and descending
-    setSort((prevSort) =>
-      prevSort === 'ascending' ? 'descending' : 'ascending'
-    );
-  };
+
   const handleSortClick = (category) => {
-    setSortCategory(category);
-    // If the clicked category is already the current sort category, toggle the sort order
     if (sortCategory === category) {
-      toggleSortOrder();
+      // If the clicked category is already the current sort category, toggle the sort order
+      setSort((prevSort) =>
+        prevSort === 'ascending' ? 'descending' : 'ascending'
+      );
     } else {
       // If a different category is clicked, set the sort to ascending
+      setSortCategory(category);
       setSort('ascending');
     }
   };
+
   // The style of the header cell changes based on the current sort category
+  const categories = [
+    { id: 'created_at', label: 'Date' },
+    { id: 'numSlic', label: 'Slic' },
+    { id: 'alphaSlic', label: 'Alpha' },
+    { id: 'name', label: 'Name' },
+  ];
 
   return (
     <TableHead>
       <TableRow>
-        <TableCell
-          onClick={() => handleSortClick('created_at')}
-          style={{
-            cursor: 'pointer',
-            fontWeight: sortCategory === 'created_at' ? 'bold' : 'normal',
-          }}
-        >
-          Date{' '}
-          {sortCategory === 'created_at' &&
-            (sort === 'descending' ? (
-              <ArrowDownward sx={{ fontSize: '1rem' }} />
-            ) : (
-              <ArrowDownward
-                sx={{ fontSize: '1rem', transform: 'rotate(180deg)' }}
-              />
-            ))}
-        </TableCell>
-        <TableCell
-          onClick={() => handleSortClick('numSlic')}
-          style={{
-            cursor: 'pointer',
-            fontWeight: sortCategory === 'numSlic' ? 'bold' : 'normal',
-          }}
-        >
-          Slic{' '}
-          {sortCategory === 'numSlic' &&
-            (sort === 'descending' ? (
-              <ArrowDownward sx={{ fontSize: '1rem' }} />
-            ) : (
-              <ArrowDownward
-                sx={{ fontSize: '1rem', transform: 'rotate(180deg)' }}
-              />
-            ))}
-        </TableCell>
-        <TableCell
-          onClick={() => handleSortClick('alphaSlic')}
-          style={{
-            cursor: 'pointer',
-            fontWeight: sortCategory === 'alphaSlic' ? 'bold' : 'normal',
-          }}
-        >
-          Alpha
-          {sortCategory === 'alphaSlic' &&
-            (sort === 'descending' ? (
-              <ArrowDownward sx={{ fontSize: '1rem' }} />
-            ) : (
-              <ArrowDownward
-                sx={{ fontSize: '1rem', transform: 'rotate(180deg)' }}
-              />
-            ))}
-        </TableCell>
-        <TableCell
-          onClick={() => handleSortClick('name')}
-          style={{
-            cursor: 'pointer',
-            fontWeight: sortCategory === 'name' ? 'bold' : 'normal',
-          }}
-        >
-          Name{' '}
-          {sortCategory === 'name' &&
-            (sort === 'descending' ? (
-              <ArrowDownward sx={{ fontSize: '1rem' }} />
-            ) : (
-              <ArrowDownward
-                sx={{ fontSize: '1rem', transform: 'rotate(180deg)' }}
-              />
-            ))}
-        </TableCell>
+        {categories.map((category) => (
+          <TableCell
+            key={category.id}
+            onClick={() => handleSortClick(category.id)}
+            sx={{
+              cursor: 'pointer',
+              fontWeight: sortCategory === category.id ? 'bold' : 'normal',
+              userSelect: 'none', // Prevents text selection on click
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              },
+            }}
+          >
+            {category.label}
+            {sortCategory === category.id && (
+              <>
+                {sort === 'ascending' ? (
+                  <ArrowUpward sx={{ fontSize: '1rem', ml: 0.5 }} />
+                ) : (
+                  <ArrowDownward sx={{ fontSize: '1rem', ml: 0.5 }} />
+                )}
+              </>
+            )}
+          </TableCell>
+        ))}
         <TableCell>Select</TableCell>
       </TableRow>
     </TableHead>

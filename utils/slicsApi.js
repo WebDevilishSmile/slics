@@ -37,7 +37,7 @@ export async function createSlic(slicData) {
 
     // Create the document
     const slicDocument = {
-      created_at: slicData.created_at || new Date().toISOString(),
+      created_at: new Date().toISOString(),
       type: slicData.type,
       numSlic: slicData.numSlic,
       alphaSlic: slicData.alphaSlic,

@@ -1,7 +1,6 @@
 'use client';
 
 import { SLICS_PER_PAGE } from '@/utils/variables';
-import { SortOutlined } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -28,10 +27,12 @@ function SlicsTable({ slics }) {
     setPage(newPage);
   };
 
+  // Combined effect for filtering and sorting
   useEffect(() => {
     const query = search.toLowerCase();
 
-    const result = slics.filter((slic) => {
+    // Filter first
+    const filtered = slics.filter((slic) => {
       const numSlicMatch = slic.numSlic?.toString().includes(query);
       const alphaSlicMatch = slic.alphaSlic
         ?.toString()
@@ -42,12 +43,8 @@ function SlicsTable({ slics }) {
       return numSlicMatch || alphaSlicMatch || nameMatch;
     });
 
-    setFilteredSlics(result);
-    setPage(0); // Reset to first page on search
-  }, [search, slics]);
-
-  useEffect(() => {
-    const sortedSlics = [...filteredSlics].sort((a, b) => {
+    // Then sort
+    const sortedSlics = [...filtered].sort((a, b) => {
       const aValue = a[sortCategory];
       const bValue = b[sortCategory];
 
@@ -57,7 +54,8 @@ function SlicsTable({ slics }) {
     });
 
     setFilteredSlics(sortedSlics);
-  }, [sort, sortCategory]);
+    setPage(0); // Reset to first page on search or sort change
+  }, [search, slics, sort, sortCategory]);
 
   return (
     <Paper sx={{ width: '100%', maxWidth: '50rem', mt: '2rem' }}>

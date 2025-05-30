@@ -120,7 +120,7 @@ function SlicOptions({ slic, onSlicDeleted }) {
 
   return (
     <>
-      <IconButton onClick={handleClick}>
+      <IconButton onClick={handleClick} size='small'>
         <MoreVertOutlined />
       </IconButton>
 

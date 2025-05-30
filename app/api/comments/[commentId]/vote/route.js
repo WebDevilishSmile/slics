@@ -11,7 +11,7 @@ export async function POST(request, { params }) {
 
   const { voteType } = await request.json(); // "up" or "down"
   const userId = session.user.id;
-  const { commentId } = params;
+  const { commentId } = await params;
 
   if (!['up', 'down'].includes(voteType)) {
     return NextResponse.json({ message: 'Invalid vote type' }, { status: 400 });

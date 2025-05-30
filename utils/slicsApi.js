@@ -15,6 +15,7 @@ export async function createSlic(slicData) {
     if (
       !slicData.address.street ||
       !slicData.address.city ||
+      !slicData.address.state ||
       !slicData.address.zip
     ) {
       throw new Error('Address must include street, city, and zip');
@@ -45,6 +46,7 @@ export async function createSlic(slicData) {
       address: {
         street: slicData.address.street,
         city: slicData.address.city,
+        state: slicData.address.state,
         zip: slicData.address.zip,
       },
       directions: slicData.directions || null,
@@ -64,32 +66,25 @@ export async function createSlic(slicData) {
 
 export async function deleteSlic(slicId) {
   try {
-    // Validate required parameter
     if (!slicId) {
       throw new Error('Slic ID is required');
     }
 
-    // Validate ObjectId format
     if (!ObjectId.isValid(slicId)) {
       throw new Error('Invalid slic ID format');
     }
 
+    const objectId = new ObjectId(slicId);
     const db = client.db();
     const slicsCollection = db.collection('slics');
 
-    // Check if slic exists before deleting
-    const existingSlic = await slicsCollection.findOne({
-      _id: new ObjectId(slicId),
-    });
+    const existingSlic = await slicsCollection.findOne({ _id: objectId });
 
     if (!existingSlic) {
       throw new Error(`Slic with ID "${slicId}" not found`);
     }
 
-    // Delete the document
-    const result = await slicsCollection.deleteOne({
-      _id: new ObjectId(slicId),
-    });
+    const result = await slicsCollection.deleteOne({ _id: objectId });
 
     if (result.deletedCount === 0) {
       throw new Error('Failed to delete slic');

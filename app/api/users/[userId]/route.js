@@ -2,7 +2,7 @@ import { getUserById } from '@/utils/usersApi';
 import { NextResponse } from 'next/server';
 
 export async function GET(_request, { params }) {
-  const userId = params?.userId;
+  const { userId } = await params;
 
   if (!userId) {
     return NextResponse.json(

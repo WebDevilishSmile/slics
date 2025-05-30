@@ -3,6 +3,7 @@ import { Typography } from '@mui/material';
 import BackButton from '@/app/components/layout/BackButton';
 import PageContainer from '@/app/components/layout/PageContainer';
 import NewSlicForm from '@/app/components/newSlic/NewSlicForm';
+import SlicForm from '@/app/components/createEditSlic/SlicForm';
 
 async function NewSlicPage() {
   return (
@@ -10,7 +11,8 @@ async function NewSlicPage() {
       <BackButton />
       <Typography variant='h2'>New Slic</Typography>
 
-      <NewSlicForm />
+      <SlicForm />
+      {/* <NewSlicForm /> */}
     </PageContainer>
   );
 }

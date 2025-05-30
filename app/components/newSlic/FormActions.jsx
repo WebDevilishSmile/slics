@@ -2,11 +2,11 @@ import { Alert, Box, Button, Snackbar } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-function FormActions({ handleClear, slicData }) {
+function FormActions({ handleClear, slicData, mode = 'create', onSubmit }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
-  const [snackSeverity, setSnackSeverity] = useState('error'); // Add severity state
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [snackSeverity, setSnackSeverity] = useState('error');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const showSnackbar = (message, severity = 'error') => {
@@ -16,7 +16,6 @@ function FormActions({ handleClear, slicData }) {
   };
 
   const handleSave = async () => {
-    // Validate data before sending
     if (!slicData || Object.keys(slicData).length === 0) {
       showSnackbar('No data to save', 'warning');
       return;
@@ -25,49 +24,51 @@ function FormActions({ handleClear, slicData }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/newSlic', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      let endpoint = '/api/newSlic';
+      let method = 'POST';
+
+      if (mode === 'edit') {
+        if (!slicData.numSlic) {
+          throw new Error('Missing numSlic for edit');
+        }
+
+        endpoint = `/api/slic/${slicData.numSlic}`;
+        method = 'PATCH'; // or 'PUT' depending on your route
+      }
+
+      const response = await fetch(endpoint, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(slicData),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to create slic');
+        throw new Error(result.error || `Failed to ${mode} slic`);
       }
 
-      // Clear form first
-      handleClear();
+      if (mode === 'create') {
+        handleClear();
+      }
 
-      // Show success message
-      showSnackbar('Slic created successfully!', 'success');
+      showSnackbar(
+        mode === 'edit'
+          ? 'Slic updated successfully!'
+          : 'Slic created successfully!',
+        'success'
+      );
 
-      // Route to admin after a brief delay to show the snackbar
-      setTimeout(() => {
-        router.push('/admin');
-      }, 1500); // 1.5 second delay
-
-      return result;
+      setTimeout(() => router.push('/admin/slics'), 1500);
     } catch (error) {
-      console.error('Error creating slic:', error);
+      console.error('Error:', error);
 
-      // More specific error messages
-      let errorMessage = 'An error occurred while creating the slic';
-
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        errorMessage =
-          'Network error. Please check your connection and try again.';
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
+      const errorMessage =
+        error.name === 'TypeError' && error.message.includes('fetch')
+          ? 'Network error. Please check your connection.'
+          : error.message || 'An unexpected error occurred.';
 
       showSnackbar(errorMessage, 'error');
-
-      // Don't re-throw the error unless parent component needs to handle it
-      // throw error;
     } finally {
       setIsLoading(false);
     }
@@ -90,15 +91,27 @@ function FormActions({ handleClear, slicData }) {
       }}
     >
       <Button variant='contained' onClick={handleSave} disabled={isLoading}>
-        {isLoading ? 'Saving...' : 'Save'}
+        {isLoading
+          ? mode === 'edit'
+            ? 'Updating...'
+            : 'Saving...'
+          : mode === 'edit'
+          ? 'Update'
+          : 'Save'}
       </Button>
       <Button
         variant='contained'
         color='error'
-        onClick={handleClear}
+        onClick={() => {
+          if (mode === 'edit') {
+            router.back(); // or `router.back()` if you want to go to the previous page
+          } else {
+            handleClear();
+          }
+        }}
         disabled={isLoading}
       >
-        Clear
+        {mode === 'edit' ? 'Back' : 'Clear'}
       </Button>
 
       <Snackbar

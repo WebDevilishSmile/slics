@@ -20,26 +20,9 @@ import TableHeader from './TableHeader';
 function SlicsTable({ slics }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
+  const [sortCategory, setSortCategory] = useState('created_at');
   const [sort, setSort] = useState('ascending');
   const [filteredSlics, setFilteredSlics] = useState(slics);
-
-  const handleSort = () => {
-    if (sort === 'ascending') {
-      setFilteredSlics(
-        [...filteredSlics].sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        )
-      );
-      setSort('descending');
-    } else {
-      setFilteredSlics(
-        [...filteredSlics].sort(
-          (a, b) => new Date(a.created_at) - new Date(b.created_at)
-        )
-      );
-      setSort('ascending');
-    }
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -62,6 +45,20 @@ function SlicsTable({ slics }) {
     setFilteredSlics(result);
     setPage(0); // Reset to first page on search
   }, [search, slics]);
+
+  useEffect(() => {
+    const sortedSlics = [...filteredSlics].sort((a, b) => {
+      const aValue = a[sortCategory];
+      const bValue = b[sortCategory];
+
+      if (aValue < bValue) return sort === 'ascending' ? -1 : 1;
+      if (aValue > bValue) return sort === 'ascending' ? 1 : -1;
+      return 0;
+    });
+
+    setFilteredSlics(sortedSlics);
+  }, [sort, sortCategory]);
+
   return (
     <Paper sx={{ width: '100%', maxWidth: '50rem', mt: '2rem' }}>
       <Box
@@ -73,22 +70,18 @@ function SlicsTable({ slics }) {
           pt: '1rem',
         }}
       >
-        <Button onClick={handleSort}>
-          Date
-          <SortOutlined
-            sx={{
-              transform: sort === 'ascending' ? 'rotateX(180deg)' : 'none',
-            }}
-          />
-        </Button>
-
         <SlicsFilter search={search} setSearch={setSearch} />
 
         <Button href='/admin/new'>New SLIC</Button>
       </Box>
       <TableContainer>
         <Table>
-          <TableHeader />
+          <TableHeader
+            sort={sort}
+            setSort={setSort}
+            sortCategory={sortCategory}
+            setSortCategory={setSortCategory}
+          />
 
           <SlicsBody slics={filteredSlics} page={page} />
 

@@ -15,6 +15,8 @@ export async function createComment(commentData) {
       numSlic: commentData.numSlic,
       userId: commentData.userId,
       content: commentData.content,
+      upVotes: [],
+      downVotes: [],
     };
 
     const result = await commentsCollection.insertOne(commentDocument);
@@ -34,14 +36,23 @@ export async function getCommentsBySlic(numSlic) {
     if (!numSlic) {
       throw new Error('Slic ID is required');
     }
+
     const db = client.db();
     const commentsCollection = db.collection('comments');
 
     const comments = await commentsCollection
-      .find({
-        numSlic: numSlic,
-      })
+      .find({ numSlic }) // match the slic
       .toArray();
+
+    // Sort: by upVotes length descending, then by createdAt descending
+    comments.sort((a, b) => {
+      const aVotes = a.upVotes?.length || 0;
+      const bVotes = b.upVotes?.length || 0;
+
+      if (bVotes !== aVotes) return bVotes - aVotes;
+
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
 
     return comments;
   } catch (error) {

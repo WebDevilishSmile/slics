@@ -40,7 +40,7 @@ export default async function Header() {
           )}
         </UserMenu>
 
-        <Box sx={{ position: 'relative', height: '5rem', width: '5rem' }}>
+        <Box sx={{ position: 'relative', height: '2.4rem', width: '2.4rem' }}>
           <Image
             src='/slics_logo_only.png'
             fill

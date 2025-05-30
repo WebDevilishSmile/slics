@@ -1,15 +1,7 @@
-import { Delete, Edit } from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  Collapse,
-  Dialog,
-  IconButton,
-  Typography,
-} from '@mui/material';
-import dayjs from 'dayjs';
 import { useState } from 'react';
-import CommentEditor from './CommentEditor';
+import { Box, Button, Dialog, IconButton, Typography } from '@mui/material';
+import { Delete } from '@mui/icons-material';
+import dayjs from 'dayjs';
 
 function CommentFooter({ comment, author, user, refetchComments }) {
   const [loading, setLoading] = useState(false);
@@ -63,7 +55,11 @@ function CommentFooter({ comment, author, user, refetchComments }) {
           )}
         </Box>
 
-        <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>
+        <Dialog
+          open={openConfirm}
+          onClose={() => setOpenConfirm(false)}
+          disableScrollLock
+        >
           <Box
             sx={{
               width: '100%',

@@ -2,7 +2,7 @@ import client from '@/lib/db';
 import { ObjectId } from 'mongodb';
 
 export async function DELETE(request, { params }) {
-  const commentId = params?.commentId;
+  const { commentId } = await params;
 
   if (!commentId) {
     return Response.json(

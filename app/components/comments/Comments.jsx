@@ -1,11 +1,10 @@
 'use client';
 
-import { Box, Typography } from '@mui/material';
-import CommentsContainer from './CommentsContainer';
-import { useEffect, useState, useCallback } from 'react';
+import { Typography } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
-import parse, { domToReact } from 'html-react-parser';
+import { useCallback, useEffect, useState } from 'react';
 import Comment from './Comment';
+import CommentsContainer from './CommentsContainer';
 
 function Comments({ user }) {
   const [comments, setComments] = useState([]);

@@ -1,16 +1,9 @@
-import {
-  Avatar,
-  Box,
-  Divider,
-  IconButton,
-  Paper,
-  Typography,
-} from '@mui/material';
-import parse, { domToReact } from 'html-react-parser';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import parse, { domToReact } from 'html-react-parser';
+import { Box, Divider, Paper, Typography } from '@mui/material';
+
 import CommentFooter from './CommentFooter';
-import { ThumbDown, ThumbUp } from '@mui/icons-material';
 import CommentHeader from './CommentHeader';
 
 function Comment({ comment, refetchComments }) {

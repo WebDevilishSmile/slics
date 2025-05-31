@@ -1,9 +1,17 @@
+import { auth, signIn } from '@/auth';
+import { Google } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import PageContainer from '../components/layout/PageContainer';
-import { Google } from '@mui/icons-material';
-import { signIn } from '@/auth';
+import RedirectMessage from './RedirectMessage';
 
-function SigninPage() {
+async function SigninPage() {
+  const session = await auth();
+
+  if (session) {
+    // If the user is already signed in, redirect them to the home page
+    return <RedirectMessage />;
+  }
+
   return (
     <PageContainer>
       <Typography variant='h2'>Sign In</Typography>
@@ -26,9 +34,9 @@ function SigninPage() {
           oogle Sign in
         </Button>
 
-        <Button href='https://buy.stripe.com/28EbJ12lb2ri8PMg6BabK01'>
+        {/* <Button href='https://buy.stripe.com/28EbJ12lb2ri8PMg6BabK01'>
           Subscribe
-        </Button>
+        </Button> */}
       </Box>
     </PageContainer>
   );

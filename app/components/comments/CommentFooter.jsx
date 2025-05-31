@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Box, Button, Dialog, IconButton, Typography } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
 
 function CommentFooter({ comment, author, user, refetchComments }) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -19,7 +21,7 @@ function CommentFooter({ comment, author, user, refetchComments }) {
       }
       // Optionally, you can trigger a refetch of comments here
       refetchComments();
-      console.log('Comment deleted successfully');
+      router.refresh();
     } catch (error) {
       console.error('Error deleting comment:', error);
     } finally {

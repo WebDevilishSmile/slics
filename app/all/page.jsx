@@ -8,15 +8,25 @@ import Comments from '../components/comments/Comments';
 import SlicDisplay from '../components/home/SlicDisplay';
 import SlicsSearch from '../components/home/SlicsSearch';
 import PageContainer from '../components/layout/PageContainer';
+import { getCommentsBySlic } from '@/utils/commentsApi';
 
-async function AllHubs() {
+async function AllHubs({ searchParams }) {
   const session = await auth();
-
+  const searchParameters = await searchParams;
+  const slic = searchParameters.slic ? searchParameters.slic : null;
   if (!session) {
     redirect('/signin');
   }
   const user = session.user;
   const allHubs = await getAllHubs();
+
+  let comments = [];
+  let commentsCount = 0; // Default to 0 if no slic is selected
+
+  if (slic) {
+    comments = await getCommentsBySlic(slic);
+    commentsCount = comments.length;
+  }
 
   return (
     <PageContainer>
@@ -29,7 +39,10 @@ async function AllHubs() {
 
       <SlicsSearch slics={serializeSlics(allHubs)} />
 
-      <SlicDisplay slics={serializeSlics(allHubs)} />
+      <SlicDisplay
+        slics={serializeSlics(allHubs)}
+        commentsCount={commentsCount}
+      />
       <Comments user={user} />
     </PageContainer>
   );

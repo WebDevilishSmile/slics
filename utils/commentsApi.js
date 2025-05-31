@@ -31,6 +31,30 @@ export async function createComment(commentData) {
   }
 }
 
+export async function getAllComments() {
+  try {
+    const db = client.db();
+    const commentsCollection = db.collection('comments');
+
+    const comments = await commentsCollection.find({}).toArray();
+
+    // Sort: by upVotes length descending, then by createdAt descending
+    comments.sort((a, b) => {
+      const aVotes = a.upVotes?.length || 0;
+      const bVotes = b.upVotes?.length || 0;
+
+      if (bVotes !== aVotes) return bVotes - aVotes;
+
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    return comments;
+  } catch (error) {
+    console.error('Error fetching all comments:', error);
+    throw error;
+  }
+}
+
 export async function getCommentsBySlic(numSlic) {
   try {
     if (!numSlic) {

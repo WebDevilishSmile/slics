@@ -10,6 +10,7 @@ import StarterKit from '@tiptap/starter-kit';
 
 function CommentEditor({ user, refetchComments, setShowEditor }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const numSlic = searchParams.get('slic');
 
   const [comment, setComment] = useState({
@@ -50,6 +51,7 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
 
       refetchComments();
       setShowEditor(false);
+      router.refresh();
     } catch (error) {
       console.error('Error submitting comment:', error);
     }

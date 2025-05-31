@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import Comment from './Comment';
 import CommentsContainer from './CommentsContainer';
+import NoSlicComments from './NoSlicComments';
 
 function Comments({ user }) {
   const [comments, setComments] = useState([]);
@@ -27,6 +28,10 @@ function Comments({ user }) {
   useEffect(() => {
     fetchComments();
   }, [fetchComments, searchParams]);
+
+  if (!numSlic) {
+    return <NoSlicComments />;
+  }
 
   return (
     <CommentsContainer

@@ -46,7 +46,8 @@ function TitleAddress({ slic }) {
   return (
     <>
       <Typography variant='h6' sx={{ textAlign: 'center' }}>
-        {slic?.numSlic} - {slic.type === 'center' ? slic.alphaSlic : slic.name}
+        {slic?.numSlic} -{' '}
+        {slic.type === 'center' || !slic.type ? slic.alphaSlic : slic.name}
       </Typography>
 
       <Box

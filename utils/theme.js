@@ -42,7 +42,7 @@ let theme = createTheme({
     },
   },
   palette: {
-    primary: lightBlue,
+    primary: orange,
     secondary: green,
     containedButton: {
       main: blue[300],

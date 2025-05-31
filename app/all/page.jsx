@@ -2,6 +2,8 @@ import { auth } from '@/auth';
 import { serializeSlics } from '@/utils/functions';
 import { getAllHubs } from '@/utils/slicsApi';
 import { Button, Typography } from '@mui/material';
+import { redirect } from 'next/navigation';
+
 import Comments from '../components/comments/Comments';
 import SlicDisplay from '../components/home/SlicDisplay';
 import SlicsSearch from '../components/home/SlicsSearch';

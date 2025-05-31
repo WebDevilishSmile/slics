@@ -2,16 +2,17 @@
 
 import { MAX_WIDTH } from '@/utils/variables';
 import { Autocomplete, TextField } from '@mui/material';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 function SlicsSearch({ slics }) {
   const [selectedSlic, setSelectedSlic] = useState('');
+  const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const slicLabels = slics.map((slic) => {
-    if (slic.type === 'center') {
+    if (slic.type === 'center' || !slic.type) {
       return `${slic.numSlic} - ${slic.alphaSlic}`;
     } else if (slic.type === 'customer') {
       return `${slic.numSlic} - ${slic.name}`;
@@ -19,14 +20,26 @@ function SlicsSearch({ slics }) {
   });
 
   const handleSlicChange = (event, value) => {
-    if (!value) {
-      setSelectedSlic('');
-      router.push(`/`);
+    if (pathname === '/') {
+      if (!value) {
+        setSelectedSlic('');
+        router.push(`/`);
 
-      return;
-    } else {
-      setSelectedSlic(value);
-      router.push(`/?slic=${value.split(' ').at(0)}`);
+        return;
+      } else {
+        setSelectedSlic(value);
+        router.push(`/?slic=${value.split(' ').at(0)}`);
+      }
+    } else if (pathname.startsWith('/all')) {
+      if (!value) {
+        setSelectedSlic('');
+        router.push(`/all`);
+
+        return;
+      } else {
+        setSelectedSlic(value);
+        router.push(`/all?slic=${value.split(' ').at(0)}`);
+      }
     }
   };
 
@@ -37,7 +50,7 @@ function SlicsSearch({ slics }) {
         (s) => s.numSlic === initialSlic || s.alphaSlic === initialSlic
       );
       if (slic) {
-        if (slic.type === 'center') {
+        if (slic.type === 'center' || !slic.type) {
           setSelectedSlic(`${slic.numSlic} - ${slic.alphaSlic}`);
         } else if (slic.type === 'customer') {
           setSelectedSlic(`${slic.numSlic} - ${slic.name}`);

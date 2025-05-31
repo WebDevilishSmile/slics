@@ -1,9 +1,10 @@
-import BackButton from '@/app/components/layout/BackButton';
 import { serializeSlics } from '@/utils/functions';
 import { getAllSlics } from '@/utils/slicsApi';
 import { Typography } from '@mui/material';
+
 import SlicsTable from '../../components/admin/SlicsTable';
 import PageContainer from '../../components/layout/PageContainer';
+import BackButton from '@/app/components/layout/BackButton';
 
 async function SlicsTablePage() {
   const slics = await getAllSlics();

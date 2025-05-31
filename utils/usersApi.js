@@ -30,3 +30,20 @@ export async function getUserById(userId) {
     throw error;
   }
 }
+
+export async function getUserByEmail(email) {
+  try {
+    if (!email) {
+      throw new Error('Email is required');
+    }
+    const db = client.db('test');
+    const usersCollection = db.collection('users');
+
+    const user = await usersCollection.findOne({ email });
+
+    return user;
+  } catch (error) {
+    console.error('Error fetching user by email:', error);
+    throw error;
+  }
+}

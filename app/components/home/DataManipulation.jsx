@@ -1,29 +1,28 @@
 'use client';
 
+import { allHubs } from '@/utils/allHubs';
 import { BetpaCenters } from '@/utils/centers';
+import { comments } from '@/utils/comments';
 import { betpaCustomers } from '@/utils/customers';
 
 function DataManipulation() {
-  const newBetpaCustomers = betpaCustomers.map((customer) => {
+  const newAllHubs = allHubs.map((hub) => {
     return {
-      created_at: customer.created_at,
-      numSlic: customer.numSlic,
-      alphaSlic: customer.alphaSlic,
-      name: customer.name || '',
+      created_at: hub.created_at,
+      numSlic: hub.numSlic,
+      alphaSlic: hub.alphaSlic,
+      name: hub.name,
+      phone: hub.phone,
       address: {
-        street: customer.street || '',
-        city: customer.city || '',
-        state: customer.state || '',
-        zip: customer.zip || '',
+        street: hub.street,
+        city: hub.city,
+        state: hub.state,
+        zip: hub.zip,
       },
-      phone: customer.phone || '',
-      directions: '',
-      type: 'customer',
-      comments: [],
     };
   });
 
-  const json = JSON.stringify(newBetpaCustomers, null, 2);
+  const json = JSON.stringify(newAllHubs, null, 2);
   navigator.clipboard
     .writeText(json)
     .then(() => alert('Copied'))

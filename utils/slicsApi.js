@@ -117,6 +117,18 @@ export async function getAllSlics() {
   }
 }
 
+export async function getAllHubs() {
+  try {
+    const db = client.db('test');
+    const allHubsCollection = db.collection('allHubs');
+    const allHubs = await allHubsCollection.find({}).toArray();
+    return allHubs;
+  } catch (error) {
+    console.error('Error fetching all hubs:', error);
+    throw error;
+  }
+}
+
 export async function getSlicByNumSlic(slic) {
   const numSlic = slic;
   try {

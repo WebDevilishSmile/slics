@@ -22,7 +22,7 @@ let theme = createTheme({
   colorSchemes: {
     dark: {
       palette: {
-        primary: lightBlue,
+        primary: green,
         secondary: green,
         background: {
           default: '#050505',
@@ -42,8 +42,8 @@ let theme = createTheme({
     },
   },
   palette: {
-    primary: orange,
-    secondary: green,
+    primary: green,
+    secondary: orange,
     containedButton: {
       main: blue[300],
       contrastText: '#222222',

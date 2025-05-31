@@ -2,6 +2,7 @@ import { ContentCopy } from '@mui/icons-material';
 import {
   Alert,
   Box,
+  Chip,
   IconButton,
   Snackbar,
   Tooltip,
@@ -9,7 +10,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-function TitleAddress({ slic }) {
+function TitleAddress({ slic, commentsCount }) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackMessage, setSnackMessage] = useState(
     'Address copied to clipboard'
@@ -49,6 +50,14 @@ function TitleAddress({ slic }) {
         {slic?.numSlic} -{' '}
         {slic.type === 'center' || !slic.type ? slic.alphaSlic : slic.name}
       </Typography>
+
+      <Chip
+        label={
+          commentsCount < 1
+            ? 'No comments yet'
+            : `${commentsCount} comment${commentsCount > 1 ? 's' : ''}`
+        }
+      />
 
       <Box
         sx={{

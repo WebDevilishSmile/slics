@@ -10,7 +10,7 @@ import MapPhoneLinks from './MapPhoneLinks';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
 
-function SlicDisplay({ slics }) {
+function SlicDisplay({ slics, commentsCount }) {
   const [slic, setSlic] = useState(null);
   const [loading, setLoading] = useState(true); // Added loading state
 
@@ -45,7 +45,7 @@ function SlicDisplay({ slics }) {
 
   return (
     <SlicDetailsContainer>
-      <TitleAddress slic={slic} />
+      <TitleAddress slic={slic} commentsCount={commentsCount} />
       <MapPhoneLinks slic={slic} />
     </SlicDetailsContainer>
   );

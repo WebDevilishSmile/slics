@@ -25,6 +25,10 @@ function SigninPage() {
           &nbsp; <Google />
           oogle Sign in
         </Button>
+
+        <Button href='https://buy.stripe.com/28EbJ12lb2ri8PMg6BabK01'>
+          Subscribe
+        </Button>
       </Box>
     </PageContainer>
   );

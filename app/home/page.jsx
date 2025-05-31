@@ -1,16 +1,16 @@
 import { auth } from '@/auth';
-import { getCommentsBySlic } from '@/utils/commentsApi';
-import { serializeSlics } from '@/utils/functions';
-import { getAllHubs } from '@/utils/slicsApi';
+import { getAllSlics } from '@/utils/slicsApi';
 import { Button, Typography } from '@mui/material';
 import { redirect } from 'next/navigation';
 
+import { serializeSlics } from '@/utils/functions';
 import Comments from '../components/comments/Comments';
 import SlicDisplay from '../components/home/SlicDisplay';
 import SlicsSearch from '../components/home/SlicsSearch';
 import PageContainer from '../components/layout/PageContainer';
+import { getCommentsBySlic } from '@/utils/commentsApi';
 
-async function AllHubs({ searchParams }) {
+export default async function Home({ searchParams }) {
   const session = await auth();
   const searchParameters = await searchParams;
   const slic = searchParameters.slic ? searchParameters.slic : null;
@@ -18,34 +18,32 @@ async function AllHubs({ searchParams }) {
     redirect('/signin');
   }
   const user = session.user;
-  const allHubs = await getAllHubs();
-
+  const slics = await getAllSlics();
+  // const comments = await getAllComments();
   let comments = [];
-  let commentsCount = 0; // Default to 0 if no slic is selected
+  let commentsCount = 0;
 
   if (slic) {
+    // If a specific SLIC is requested, fetch comments for that SLIC
     comments = await getCommentsBySlic(slic);
     commentsCount = comments.length;
   }
 
   return (
     <PageContainer>
-      <Typography variant='h2' sx={{ textAlign: 'center', maxWidth: '40rem' }}>
+      <Typography variant='h1'>SLICs</Typography>
+      <Button variant='contained' href='/all'>
         All Hubs
-      </Typography>
-      <Button variant='contained' href='/home'>
-        Home
       </Button>
 
-      <SlicsSearch slics={serializeSlics(allHubs)} />
+      <SlicsSearch slics={serializeSlics(slics)} />
 
       <SlicDisplay
-        slics={serializeSlics(allHubs)}
+        slics={serializeSlics(slics)}
         commentsCount={commentsCount}
       />
+
       <Comments user={user} />
     </PageContainer>
   );
 }
-
-export default AllHubs;

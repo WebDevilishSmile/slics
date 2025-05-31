@@ -25,7 +25,7 @@ async function SigninPage() {
         action={async () => {
           'use server';
           await signIn('google', {
-            redirectTo: '/',
+            redirectTo: '/home',
           });
         }}
       >

@@ -20,14 +20,14 @@
     "@tiptap/pm": "^2.12.0",
     "@tiptap/react": "^2.12.0",
     "@tiptap/starter-kit": "^2.12.0",
+    "crypto": "^1.0.1",
     "dayjs": "^1.11.13",
     "html-react-parser": "^5.2.5",
     "mongodb": "^6.16.0",
     "next": "^15.3.2",
     "next-auth": "^5.0.0-beta.28",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "stripe": "^18.2.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

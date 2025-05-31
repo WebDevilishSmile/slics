@@ -10,7 +10,7 @@ function RedirectMessage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/');
+      router.push('/home');
     }, 3000); // Redirect after 3 seconds
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
   }, [router]);

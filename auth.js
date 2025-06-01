@@ -47,6 +47,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.role = user.role || 'user';
         token.comments = user.comments || [];
         token.bmcMember = user.bmcMember || false;
+        token.created_at = user.created_at || new Date();
       } else if (token.id) {
         // For subsequent requests, when 'user' is not available,
         // fetch the latest data from the database using the ID from the token.

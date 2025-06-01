@@ -7,13 +7,13 @@ import SlicForm from '@/app/components/createEditSlic/SlicForm';
 
 async function NewSlicPage() {
   return (
-    <PageContainer>
+    <>
       <BackButton />
       <Typography variant='h2'>New Slic</Typography>
 
       <SlicForm />
       {/* <NewSlicForm /> */}
-    </PageContainer>
+    </>
   );
 }
 

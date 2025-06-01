@@ -64,7 +64,7 @@ export async function POST(req) {
       event.event_name === 'membership_started' ||
       event.event_name === 'monthly_support_started'
     ) {
-      const email = event.payer_email; // Assuming BMC provides the payer's email
+      const email = event.supporter_email; // Assuming BMC provides the payer's email
       if (email) {
         await usersCollection.updateOne(
           { email: email },
@@ -74,14 +74,14 @@ export async function POST(req) {
         console.log(`User ${email} marked as BMC member.`);
       } else {
         console.warn(
-          'BMC webhook received without payer_email for membership_started event.'
+          'BMC webhook received without supporter_email for membership_started event.'
         );
       }
     } else if (
       event.event_name === 'membership_cancelled' ||
       event.event_name === 'monthly_support_cancelled'
     ) {
-      const email = event.payer_email;
+      const email = event.supporter_email;
       if (email) {
         await usersCollection.updateOne(
           { email: email },
@@ -91,7 +91,7 @@ export async function POST(req) {
         console.log(`User ${email} marked as NOT a BMC member.`);
       } else {
         console.warn(
-          'BMC webhook received without payer_email for membership_cancelled event.'
+          'BMC webhook received without supporter_email for membership_cancelled event.'
         );
       }
     }
@@ -99,6 +99,7 @@ export async function POST(req) {
 
     return NextResponse.json(
       { message: 'Webhook received and processed' },
+
       { status: 200 }
     );
   } catch (error) {

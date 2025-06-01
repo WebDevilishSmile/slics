@@ -34,6 +34,7 @@ export const authConfig = {
         token.role = user.role || 'user';
         token.comments = user.comments || [];
         token.bmcMember = user.bmcMember || false;
+        token.created_at = user.created_at || new Date();
       }
       return token;
     },
@@ -43,6 +44,7 @@ export const authConfig = {
         session.user.role = token.role || 'user';
         session.user.comments = token.comments || [];
         session.user.bmcMember = token.bmcMember || false;
+        session.user.created_at = token.created_at || new Date();
       }
       return session;
     },

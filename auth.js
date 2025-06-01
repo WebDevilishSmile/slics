@@ -14,13 +14,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // console.log('Event: createUser', message.user);
       const db = client.db();
       const userId = new ObjectId(message.user.id);
-      await db
-        .collection('users')
-        .updateOne(
-          { _id: userId },
-          { $set: { role: 'user', comments: [], bmcMember: false } },
-          { upsert: true }
-        );
+      await db.collection('users').updateOne(
+        { _id: userId },
+        {
+          $set: {
+            role: 'user',
+            comments: [],
+            bmcMember: false,
+            created_at: new Date(),
+          },
+        },
+        { upsert: true }
+      );
     },
   },
   callbacks: {
@@ -55,6 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.role = dbUser.role || 'user';
             token.comments = dbUser.comments || [];
             token.bmcMember = dbUser.bmcMember || false;
+            token.created_at = dbUser.created_at || new Date();
           } else {
             console.warn(
               `User with ID ${token.id} not found in DB during Main Auth.js JWT callback.`
@@ -83,6 +89,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.role = token.role || 'user';
         session.user.comments = token.comments || [];
         session.user.bmcMember = token.bmcMember || false;
+        session.user.created_at = token.created_at || new Date();
       }
       // console.log('Main Auth.js Session Callback - Final Session:', session);
       return session;

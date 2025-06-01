@@ -61,8 +61,8 @@ export async function POST(req) {
   try {
     // Determine the type of event and update user status
     if (
-      event.event_name === 'membership_started' ||
-      event.event_name === 'monthly_support_started'
+      event.type === 'membership_started' ||
+      event.type === 'monthly_support_started'
     ) {
       const email = event.supporter_email; // Assuming BMC provides the payer's email
       if (email) {
@@ -78,8 +78,8 @@ export async function POST(req) {
         );
       }
     } else if (
-      event.event_name === 'membership_cancelled' ||
-      event.event_name === 'monthly_support_cancelled'
+      event.type === 'membership_cancelled' ||
+      event.type === 'monthly_support_cancelled'
     ) {
       const email = event.supporter_email;
       if (email) {

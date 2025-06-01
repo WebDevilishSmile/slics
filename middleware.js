@@ -17,7 +17,7 @@ export async function middleware(req) {
   const user = await db.collection('users').findOne({ email: token.email });
 
   // User exists but doesn't have an active subscription or BMC membership → redirect
-  if (!user || (user.subscriptionStatus !== 'active' && !user.bmcMember)) {
+  if (!user || !user.bmcMember) {
     url.pathname = '/';
     return NextResponse.redirect(url);
   }

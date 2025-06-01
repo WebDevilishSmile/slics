@@ -1,5 +1,3 @@
-import { auth } from '@/auth';
-import { getAllSlics } from '@/utils/slicsApi';
 import {
   Box,
   Button,
@@ -8,20 +6,18 @@ import {
   CardContent,
   Typography,
 } from '@mui/material';
-import { redirect } from 'next/navigation';
 
-import { getCommentsBySlic } from '@/utils/commentsApi';
 import { MAX_WIDTH } from '@/utils/variables';
 import Image from 'next/image';
 import PageContainer from './components/layout/PageContainer';
 
-export default async function Main({ searchParams }) {
+export default async function Main() {
   return (
     <PageContainer>
       <Typography variant='h1'>SLICs</Typography>
 
       <Typography>
-        To use SLICs you must be a member of Buy Me a Coffee
+        To use SLICs you must be a member on Buy Me a Coffee
       </Typography>
 
       <Card sx={{ maxWidth: MAX_WIDTH, mt: '2rem' }}>
@@ -54,16 +50,43 @@ export default async function Main({ searchParams }) {
         <CardActions
           sx={{
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
+            justifyContent: 'center',
+            gap: '2rem',
             px: '2rem',
             pb: '2rem',
           }}
         >
-          <Button variant='contained'>Sign Up</Button>
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '30rem',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '.25rem',
+            }}
+          >
+            <Button
+              variant='contained'
+              href='https://www.buymeacoffee.com/tiagodavila/membership'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Become a Member
+            </Button>
+            <Typography sx={{ mt: 2 }}>
+              After subscribing on Buy Me a Coffee, come back here and{' '}
+              <strong>sign in</strong> to access your dashboard.
+            </Typography>
+          </Box>
 
           <Box
             sx={{
+              width: '100%',
+              maxWidth: '30rem',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',

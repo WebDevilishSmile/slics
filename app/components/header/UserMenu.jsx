@@ -56,7 +56,7 @@ function UserMenu({ children, user }) {
 
           <List>
             <ListItem>
-              <Button href='/'>Home</Button>
+              <Button href='/home'>Home</Button>
             </ListItem>
             {children}
           </List>

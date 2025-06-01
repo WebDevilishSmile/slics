@@ -1,22 +1,13 @@
-// src/app/page.jsx (This stays a Server Component)
-
+import { auth } from '@/auth';
+import { getUserByEmail } from '@/utils/usersApi';
+import { MAX_WIDTH } from '@/utils/variables';
 import { Box, Card, CardContent, Typography } from '@mui/material'; // No Button, CardActions here
 import Image from 'next/image';
 import PageContainer from './components/layout/PageContainer'; // Assuming this is a client component
-
-import { MAX_WIDTH } from '@/utils/variables';
 import MembershipActionButtons from './home/MembershipActionButtons';
-import { auth } from '@/auth';
-import { getUserByEmail } from '@/utils/usersApi';
-import { redirect } from 'next/navigation';
 import RedirectMember from './home/RedirectMember';
 
 export default async function Main() {
-  // No 'use client' needed here
-
-  // You can fetch data here if needed for server-side rendering
-  // const session = await getServerSession(authOptions); // Example if you need session data on server
-  // const user = session?.user;
   const session = await auth();
 
   let isLoggedIn = false;

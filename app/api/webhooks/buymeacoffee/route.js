@@ -59,51 +59,56 @@ export async function POST(req) {
   console.log('Received BMC Webhook Event:', event);
 
   try {
-    // Determine the type of event and update user status
-    if (
-      event.type === 'membership_started' ||
-      event.type === 'monthly_support_started'
-    ) {
-      const email = event.supporter_email; // Assuming BMC provides the payer's email
-      if (email) {
-        await usersCollection.updateOne(
-          { email: email },
-          { $set: { bmcMember: true } },
-          { upsert: false } // Do not create a new user if not found
-        );
-        console.log(`User ${email} marked as BMC member.`);
-      } else {
-        console.warn(
-          'BMC webhook received without supporter_email for membership_started event.'
-        );
-      }
-    } else if (
-      event.type === 'membership_cancelled' ||
-      event.type === 'monthly_support_cancelled'
-    ) {
-      const email = event.supporter_email;
-      if (email) {
-        await usersCollection.updateOne(
-          { email: email },
-          { $set: { bmcMember: false } },
-          { upsert: false }
-        );
-        console.log(`User ${email} marked as NOT a BMC member.`);
-      } else {
-        console.warn(
-          'BMC webhook received without supporter_email for membership_cancelled event.'
-        );
-      }
+    // --- FIX START ---
+    // The actual event type is in the top-level 'type' field.
+    const eventType = event.type;
+    // The supporter's email is nested inside the 'data' object.
+    const supporterEmail = event.data?.supporter_email; // Use optional chaining for safety
+
+    if (!supporterEmail) {
+      console.warn(
+        `BMC Webhook: Event type "${eventType}" received without supporter_email in data.`
+      );
+      return NextResponse.json(
+        { message: 'Missing supporter_email in webhook data' },
+        { status: 400 }
+      );
     }
-    // Add more conditions for other event types if needed (e.g., 'monthly_support_updated')
+    // --- FIX END ---
+
+    // Determine the type of event and update user status
+    if (eventType === 'membership.started') {
+      await usersCollection.updateOne(
+        { email: supporterEmail }, // Use the correctly extracted supporterEmail
+        { $set: { bmcMember: true } },
+        { upsert: false } // Do not create a new user if not found
+      );
+      console.log(`BMC Webhook: User ${supporterEmail} marked as BMC member.`);
+    } else if (
+      eventType === 'membership.cancelled' ||
+      eventType === 'membership.canceled'
+    ) {
+      // Check for common cancellation event names
+      await usersCollection.updateOne(
+        { email: supporterEmail }, // Use the correctly extracted supporterEmail
+        { $set: { bmcMember: false } },
+        { upsert: false }
+      );
+      console.log(
+        `BMC Webhook: User ${supporterEmail} marked as NOT a BMC member.`
+      );
+    } else {
+      console.log(
+        `BMC Webhook: Unhandled event type: ${eventType}. No action taken.`
+      );
+    }
 
     return NextResponse.json(
       { message: 'Webhook received and processed' },
-
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error processing BMC webhook:', error);
+    console.error('BMC Webhook: Error processing webhook event:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },
       { status: 500 }

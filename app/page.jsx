@@ -1,17 +1,37 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Typography,
-} from '@mui/material';
+// src/app/page.jsx (This stays a Server Component)
+
+import { Box, Card, CardContent, Typography } from '@mui/material'; // No Button, CardActions here
+import Image from 'next/image';
+import PageContainer from './components/layout/PageContainer'; // Assuming this is a client component
 
 import { MAX_WIDTH } from '@/utils/variables';
-import Image from 'next/image';
-import PageContainer from './components/layout/PageContainer';
+import MembershipActionButtons from './home/MembershipActionButtons';
+import { auth } from '@/auth';
+import { getUserByEmail } from '@/utils/usersApi';
+import { redirect } from 'next/navigation';
+import RedirectMember from './home/RedirectMember';
 
 export default async function Main() {
+  // No 'use client' needed here
+
+  // You can fetch data here if needed for server-side rendering
+  // const session = await getServerSession(authOptions); // Example if you need session data on server
+  // const user = session?.user;
+  const session = await auth();
+
+  let isLoggedIn = false;
+  let isMember = false;
+
+  if (session) {
+    const user = await getUserByEmail(session?.user?.email);
+    isLoggedIn = !!user; // Check if user is logged in
+    isMember = user?.bmcMember;
+    console.log(isMember);
+    if (isLoggedIn && isMember) {
+      return <RedirectMember userName={user.name.split(' ')[0]} />;
+    }
+  }
+
   return (
     <PageContainer>
       <Typography variant='h1'>SLICs</Typography>
@@ -47,59 +67,8 @@ export default async function Main() {
           </Typography>
         </CardContent>
 
-        <CardActions
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-            gap: '2rem',
-            px: '2rem',
-            pb: '2rem',
-          }}
-        >
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: '30rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '.25rem',
-            }}
-          >
-            <Button
-              variant='contained'
-              href='https://www.buymeacoffee.com/tiagodavila/membership'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              Become a Member
-            </Button>
-            <Typography sx={{ mt: 2 }}>
-              After subscribing on Buy Me a Coffee, come back here and{' '}
-              <strong>sign in</strong> to access your dashboard.
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: '30rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '.25rem',
-            }}
-          >
-            <Button href='/signin' variant='contained'>
-              Sign In
-            </Button>
-
-            <Typography variant='body2'>Already a member?</Typography>
-          </Box>
-        </CardActions>
+        {/* Render the Client Component here */}
+        <MembershipActionButtons isMember={isMember} isLoggedIn={isLoggedIn} />
       </Card>
     </PageContainer>
   );

@@ -10,14 +10,14 @@ async function EditPage({ params }) {
   const slicData = await getSlicByNumSlic(slic);
 
   return (
-    <PageContainer>
+    <>
       <BackButton />
       <Typography variant='h2' sx={{ maxWidth: '40rem', textAlign: 'center' }}>
         Edit {slicData.name || slicData.alphaSlic}
       </Typography>
 
       <SlicForm initialData={serializeSlic(slicData)} mode='edit' />
-    </PageContainer>
+    </>
   );
 }
 

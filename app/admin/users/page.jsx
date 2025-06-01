@@ -1,24 +1,25 @@
+import UserCard from '@/app/components/admin/UserCard';
 import BackButton from '@/app/components/layout/BackButton';
-import PageContainer from '@/app/components/layout/PageContainer';
 import { getUsers } from '@/utils/usersApi';
-import { List, ListItem, Typography } from '@mui/material';
+import { ELEVATION, MAX_WIDTH } from '@/utils/variables';
+import { Box, Card, CardContent, List, Paper, Typography } from '@mui/material';
+import dayjs from 'dayjs';
+import Image from 'next/image';
 
 async function UsersPage() {
   const users = await getUsers();
 
   return (
-    <PageContainer>
+    <>
       <BackButton />
       <Typography variant='h2'>Users Page</Typography>
 
-      <List sx={{ fontSize: '1.4rem' }}>
+      <List sx={{ maxWidth: MAX_WIDTH, width: '100%', mt: '2rem' }}>
         {users.map((user) => (
-          <ListItem key={user._id}>
-            {user.name} - {user.role}
-          </ListItem>
+          <UserCard key={user._id} user={user} />
         ))}
       </List>
-    </PageContainer>
+    </>
   );
 }
 

@@ -20,3 +20,10 @@ export function serializeSlic(slicData) {
 export function serializeSlics(slics) {
   return slics.map(serializeSlic);
 }
+
+export function serializeUser(userData) {
+  return {
+    ...userData,
+    _id: userData._id.toString(),
+  };
+}

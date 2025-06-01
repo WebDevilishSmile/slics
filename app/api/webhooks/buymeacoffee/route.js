@@ -20,7 +20,7 @@ export async function POST(req) {
     );
   }
 
-  const signature = req.headers.get('x-bmc-signature'); // Check BMC documentation for exact header name
+  const signature = req.headers.get('x-signature-sha256'); // Check BMC documentation for exact header name
 
   // Read the raw body as text for HMAC verification
   const rawBody = await req.text();

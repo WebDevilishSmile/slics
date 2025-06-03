@@ -2,6 +2,7 @@
 
 import { MoreVert } from '@mui/icons-material';
 import { Button, IconButton, Menu, MenuItem } from '@mui/material';
+import Link from 'next/link';
 import { useState } from 'react';
 
 function UserCardActions({ user }) {
@@ -29,8 +30,10 @@ function UserCardActions({ user }) {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem>Admin</MenuItem>
-        <MenuItem>User</MenuItem>
+        <MenuItem>Toggle Membership</MenuItem>
+        <MenuItem component={Button} href={`/admin/users/${user._id}`}>
+          More...
+        </MenuItem>
       </Menu>
     </>
   );

@@ -27,3 +27,10 @@ export function serializeUser(userData) {
     _id: userData._id.toString(),
   };
 }
+
+export function serializeComment(commentData) {
+  return {
+    ...commentData,
+    _id: commentData._id.toString(),
+  };
+}

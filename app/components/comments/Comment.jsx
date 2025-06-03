@@ -1,7 +1,9 @@
+'use client';
+
+import { Box, Divider, Paper, Typography } from '@mui/material';
+import parse, { domToReact } from 'html-react-parser';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import parse, { domToReact } from 'html-react-parser';
-import { Box, Divider, Paper, Typography } from '@mui/material';
 
 import CommentFooter from './CommentFooter';
 import CommentHeader from './CommentHeader';

@@ -106,3 +106,31 @@ export async function deleteComment(commentId) {
     throw error;
   }
 }
+
+export async function getCommentsByUserId(userId) {
+  try {
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+
+    const db = client.db();
+    const commentsCollection = db.collection('comments');
+
+    const comments = await commentsCollection.find({ userId }).toArray();
+
+    // Sort: by upVotes length descending, then by createdAt descending
+    comments.sort((a, b) => {
+      const aVotes = a.upVotes?.length || 0;
+      const bVotes = b.upVotes?.length || 0;
+
+      if (bVotes !== aVotes) return bVotes - aVotes;
+
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    return comments;
+  } catch (error) {
+    console.error('Error fetching comments by user ID:', error);
+    throw error;
+  }
+}

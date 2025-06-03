@@ -1,9 +1,13 @@
+'use client';
+
 import { ThumbDown, ThumbUp } from '@mui/icons-material';
 import { Avatar, Box, IconButton, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 
 function CommentHeader({ author, comment, refetchComments }) {
   const user = useSession().data?.user;
+  const pathname = usePathname();
 
   const handleVote = async (commentId, type) => {
     const res = await fetch(`/api/comments/${commentId}/vote`, {
@@ -41,7 +45,10 @@ function CommentHeader({ author, comment, refetchComments }) {
         >
           <IconButton
             onClick={() => handleVote(comment._id, 'up')}
-            disabled={comment.upVotes.includes(user?.id)}
+            disabled={
+              comment.upVotes.includes(user?.id) ||
+              pathname.startsWith('/admin/users')
+            }
           >
             <ThumbUp sx={{ fontSize: '1rem' }} />{' '}
           </IconButton>
@@ -52,7 +59,10 @@ function CommentHeader({ author, comment, refetchComments }) {
         >
           <IconButton
             onClick={() => handleVote(comment._id, 'down')}
-            disabled={comment.downVotes.includes(user?.id)}
+            disabled={
+              comment.downVotes.includes(user?.id) ||
+              pathname.startsWith('/admin/users')
+            }
           >
             <ThumbDown sx={{ fontSize: '1rem' }} />{' '}
           </IconButton>

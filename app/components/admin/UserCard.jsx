@@ -1,17 +1,9 @@
+import { serializeUser } from '@/utils/functions';
 import { ELEVATION, MAX_WIDTH } from '@/utils/variables';
-import { MoreVert } from '@mui/icons-material';
-import {
-  Box,
-  Card,
-  CardContent,
-  IconButton,
-  Paper,
-  Typography,
-} from '@mui/material';
+import { Box, Card, CardContent, Paper, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import UserCardActions from './UserCardActions';
-import { serializeUser } from '@/utils/functions';
 
 function UserCard({ user }) {
   return (

@@ -20,15 +20,15 @@ function SlicsSearch({ slics }) {
   });
 
   const handleSlicChange = (event, value) => {
-    if (pathname === '/') {
+    if (pathname === '/home') {
       if (!value) {
         setSelectedSlic('');
-        router.push(`/`);
+        router.push(`/home`);
 
         return;
       } else {
         setSelectedSlic(value);
-        router.push(`/?slic=${value.split(' ').at(0)}`);
+        router.push(`/home?slic=${value.split(' ').at(0)}`);
       }
     } else if (pathname.startsWith('/all')) {
       if (!value) {

@@ -32,7 +32,7 @@ export default async function Header() {
               component='form'
               action={async () => {
                 'use server';
-                await signIn('google', { redirectTo: '/' });
+                await signIn('google', { redirectTo: '/home' });
               }}
             >
               <Button type='submit'>Sign In</Button>

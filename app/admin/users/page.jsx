@@ -1,10 +1,10 @@
 import UserCard from '@/app/components/admin/UserCard';
 import BackButton from '@/app/components/layout/BackButton';
+import StyledHeading from '@/app/components/layout/StyledHeading';
+import { serializeUser } from '@/utils/functions';
 import { getUsers } from '@/utils/usersApi';
-import { ELEVATION, MAX_WIDTH } from '@/utils/variables';
-import { Box, Card, CardContent, List, Paper, Typography } from '@mui/material';
-import dayjs from 'dayjs';
-import Image from 'next/image';
+import { MAX_WIDTH } from '@/utils/variables';
+import { List } from '@mui/material';
 
 async function UsersPage() {
   const users = await getUsers();
@@ -12,11 +12,11 @@ async function UsersPage() {
   return (
     <>
       <BackButton />
-      <Typography variant='h2'>Users Page</Typography>
+      <StyledHeading>Users Page</StyledHeading>
 
       <List sx={{ maxWidth: MAX_WIDTH, width: '100%', mt: '2rem' }}>
         {users.map((user) => (
-          <UserCard key={user._id} user={user} />
+          <UserCard key={user._id} user={serializeUser(user)} />
         ))}
       </List>
     </>

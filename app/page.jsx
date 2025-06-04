@@ -6,6 +6,7 @@ import Image from 'next/image';
 import PageContainer from './components/layout/PageContainer'; // Assuming this is a client component
 import MembershipActionButtons from './home/MembershipActionButtons';
 import RedirectMember from './home/RedirectMember';
+import StyledHeading from './components/layout/StyledHeading';
 
 export default async function Main() {
   const session = await auth();
@@ -25,9 +26,11 @@ export default async function Main() {
 
   return (
     <PageContainer>
-      <Typography variant='h1'>SLICs</Typography>
+      <StyledHeading>SLICs</StyledHeading>
 
-      <Typography>
+      <Typography
+        sx={{ maxWidth: '55rem', textAlign: 'center', my: '2rem', px: '1rem' }}
+      >
         To use SLICs you must be a member on Buy Me a Coffee
       </Typography>
 

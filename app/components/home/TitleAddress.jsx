@@ -46,9 +46,13 @@ function TitleAddress({ slic, commentsCount }) {
 
   return (
     <>
+      {slic?.type === 'customer' && (
+        <Typography variant='h6' sx={{ textAlign: 'center' }}>
+          {slic.name}
+        </Typography>
+      )}
       <Typography variant='h6' sx={{ textAlign: 'center' }}>
-        {slic?.numSlic} -{' '}
-        {slic.type === 'center' || !slic.type ? slic.alphaSlic : slic.name}
+        {slic?.numSlic} - {slic?.alphaSlic}
       </Typography>
 
       <Chip

@@ -32,11 +32,15 @@ export default async function Home({ searchParams }) {
   return (
     <PageContainer>
       <Typography variant='h1'>SLICs</Typography>
+
+      <SlicsSearch slics={serializeSlics(slics)} />
+
+      <Typography sx={{ mt: '1rem' }} variant='caption'>
+        Click All Hubs to view a list of all UPS hubs.
+      </Typography>
       <Button variant='contained' href='/all'>
         All Hubs
       </Button>
-
-      <SlicsSearch slics={serializeSlics(slics)} />
 
       <SlicDisplay
         slics={serializeSlics(slics)}

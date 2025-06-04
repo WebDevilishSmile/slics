@@ -14,7 +14,7 @@ function SlicDetailsContainer({ children, title = 'Slic Details' }) {
         alignItems: 'center',
         justifyContent: 'center',
         mt: '2rem',
-        py: '1rem',
+        py: '2rem',
         px: '2rem',
       }}
     >

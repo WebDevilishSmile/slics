@@ -1,8 +1,8 @@
 // src/app/(admin)/layout.jsx
 import { auth } from '@/auth'; // Import your auth helper
 import { getUserByEmail } from '@/utils/usersApi'; // Import your user utility
-import RedirectMessage from './RedirectMessage'; // Adjust path if needed
 import PageContainer from '../components/layout/PageContainer'; // Adjust path if needed
+import RedirectMessage from '../components/layout/RedirectMessage';
 
 // This layout will apply to all pages within the (admin) route group.
 // It will be a Server Component by default, which is perfect for Auth.js 'auth' helper.
@@ -14,7 +14,8 @@ export default async function AdminLayout({ children }) {
     console.log('AdminLayout: User not logged in, redirecting to sign-in.');
     return (
       <RedirectMessage
-        message='You must be logged in to access admin pages.'
+        heading='You must be logged in to access admin pages.'
+        subheading='Please sign in to continue.'
         redirect='/signin' // Redirect to your sign-in page
       />
     );
@@ -29,7 +30,8 @@ export default async function AdminLayout({ children }) {
     // Handle error, e.g., redirect to an error page or sign-in
     return (
       <RedirectMessage
-        message='An error occurred while verifying your account. Please try again.'
+        heading='An error occurred while verifying your account. Please try again.'
+        subheading='If the problem persists, contact support.'
         redirect='/signin'
       />
     );
@@ -44,7 +46,8 @@ export default async function AdminLayout({ children }) {
     );
     return (
       <RedirectMessage
-        message='You must be an administrator to access this content.'
+        heading='You must be an administrator to access this content.'
+        subheading='Redirecting you to the home page...'
         redirect='/home' // Redirect non-admins to /home
       />
     );

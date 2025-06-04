@@ -1,6 +1,6 @@
 'use client';
 
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import PageContainer from '../components/layout/PageContainer';
@@ -17,10 +17,19 @@ function RedirectMessage() {
 
   return (
     <PageContainer>
-      <Typography variant='h2'>Already Signed In</Typography>
+      <Typography variant='h2' sx={{ maxWidth: '55rem', textAlign: 'center' }}>
+        Already Signed In
+      </Typography>
       <Typography sx={{ my: '2rem' }}>
         You are already signed in. Redirecting you to the home page...
       </Typography>
+
+      <Typography variant='body1'>
+        If you are not redirected automatically, click
+      </Typography>
+      <Button variant='outlined' href={redirect} sx={{ ml: '.5rem' }}>
+        here
+      </Button>
     </PageContainer>
   );
 }

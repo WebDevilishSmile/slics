@@ -1,11 +1,11 @@
 import { Typography } from '@mui/material';
 
-function StyledHeading({ children, heading = 'h1' }) {
+function StyledHeading({ children, heading = 'h2' }) {
   return (
     <Typography
       variant={heading}
       sx={{
-        maxWidth: '80rem',
+        maxWidth: '55rem',
         textAlign: 'center',
         textTransform: 'uppercase',
         fontWeight: '700',

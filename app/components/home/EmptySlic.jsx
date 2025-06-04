@@ -25,15 +25,16 @@ function EmptySlic() {
 
       <Typography>
         I put a lot of work into making this app. Countless hours went into the
-        design, development, and testing. If you can, please consider supporting
-        the project by donating at the link below. Your support helps.
+        design, development, and testing. Thank you for your support! If you
+        have any feedback or suggestions, please reach out!
       </Typography>
+
       <Button
         variant='contained'
-        href='https://buymeacoffee.com/tiagodavila'
-        sx={{ display: 'flex', gap: '1rem', mt: '2rem' }}
+        href='mailto:webdevilishsmile@gmail.com'
+        sx={{ mt: '1rem' }}
       >
-        <CoffeeOutlined /> Buy me a coffee
+        Email me
       </Button>
     </Paper>
   );

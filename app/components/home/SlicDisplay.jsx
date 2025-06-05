@@ -10,13 +10,13 @@ import MapPhoneLinks from './MapPhoneLinks';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
 
-function SlicDisplay({ slics, commentsCount }) {
+function SlicDisplay({ slics, commentsCount, loading, setLoading }) {
   const [slic, setSlic] = useState(null);
-  const [loading, setLoading] = useState(true); // Added loading state
 
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    setLoading(true); // Start loading when the component mounts or searchParams change
     const numSlic = searchParams.get('slic');
 
     if (numSlic) {

@@ -1,14 +1,15 @@
 import { auth } from '@/auth';
+import { getCommentsBySlic } from '@/utils/commentsApi';
+import { serializeSlics } from '@/utils/functions';
 import { getAllSlics } from '@/utils/slicsApi';
 import { Button, Typography } from '@mui/material';
 import { redirect } from 'next/navigation';
 
-import { serializeSlics } from '@/utils/functions';
 import Comments from '../components/comments/Comments';
 import SlicDisplay from '../components/home/SlicDisplay';
 import SlicsSearch from '../components/home/SlicsSearch';
 import PageContainer from '../components/layout/PageContainer';
-import { getCommentsBySlic } from '@/utils/commentsApi';
+import Main from '../components/home/Main';
 
 export default async function Home({ searchParams }) {
   const session = await auth();
@@ -33,19 +34,7 @@ export default async function Home({ searchParams }) {
     <PageContainer>
       <Typography variant='h1'>SLICs</Typography>
 
-      <SlicsSearch slics={serializeSlics(slics)} />
-
-      <Typography sx={{ mt: '1rem' }} variant='caption'>
-        Click All Hubs to view a list of all UPS hubs.
-      </Typography>
-      <Button variant='contained' href='/all'>
-        All Hubs
-      </Button>
-
-      <SlicDisplay
-        slics={serializeSlics(slics)}
-        commentsCount={commentsCount}
-      />
+      <Main slics={serializeSlics(slics)} commentsCount={commentsCount} />
 
       <Comments user={user} />
     </PageContainer>

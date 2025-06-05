@@ -89,7 +89,7 @@ function UserCard({ user: initialUser }) {
         <Typography variant='subtitle1'>Role: {user.role}</Typography>
         <Typography>Email: {user.email}</Typography>
         <Typography>
-          Joined: {dayjs(user.createdAt).format('MMMM D, YYYY')}
+          Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
         </Typography>
         <Typography>
           BuyMeACoffee:{' '}

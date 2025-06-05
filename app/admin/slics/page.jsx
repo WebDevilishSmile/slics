@@ -6,7 +6,7 @@ import SlicsTable from '../../components/admin/SlicsTable';
 import PageContainer from '../../components/layout/PageContainer';
 import BackButton from '@/app/components/layout/BackButton';
 import { auth } from '@/auth';
-import RedirectMessage from '../RedirectMessage';
+import RedirectMessage from '@/app/components/layout/RedirectMessage';
 
 async function SlicsTablePage() {
   const session = await auth();
@@ -15,7 +15,8 @@ async function SlicsTablePage() {
     // If the user is not authenticated, redirect them to the sign-in page
     return (
       <RedirectMessage
-        message='You must be logged in to access this page.'
+        heading='You must be logged in to access this page.'
+        subheading='Please sign in to continue.'
         redirect='/signin'
       />
     );

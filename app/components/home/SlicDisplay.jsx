@@ -16,7 +16,6 @@ function SlicDisplay({ slics, commentsCount, loading, setLoading }) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    setLoading(true); // Start loading when the component mounts or searchParams change
     const numSlic = searchParams.get('slic');
 
     if (numSlic) {

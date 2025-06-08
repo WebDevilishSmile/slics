@@ -2,14 +2,12 @@ import { auth } from '@/auth';
 import { getCommentsBySlic } from '@/utils/commentsApi';
 import { serializeSlics } from '@/utils/functions';
 import { getAllSlics } from '@/utils/slicsApi';
-import { Button, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { redirect } from 'next/navigation';
 
 import Comments from '../components/comments/Comments';
-import SlicDisplay from '../components/home/SlicDisplay';
-import SlicsSearch from '../components/home/SlicsSearch';
-import PageContainer from '../components/layout/PageContainer';
 import Main from '../components/home/Main';
+import PageContainer from '../components/layout/PageContainer';
 
 export default async function Home({ searchParams }) {
   const session = await auth();

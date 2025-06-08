@@ -108,7 +108,7 @@ export async function getAllSlics() {
   try {
     const db = client.db('test');
     const slicsCollection = db.collection('slics');
-    const slics = await slicsCollection.find({}).toArray();
+    const slics = await slicsCollection.find({}).sort({ numSlic: 1 }).toArray();
 
     return slics;
   } catch (error) {
@@ -147,6 +147,29 @@ export async function getSlicByNumSlic(slic) {
     return slic;
   } catch (error) {
     console.error('Error fetching slic by numSlic:', error);
+    throw error;
+  }
+}
+
+export async function setNumSlicsToString() {
+  try {
+    const db = client.db();
+    const slicsCollection = db.collection('slics');
+
+    const slics = await slicsCollection.find({}).toArray();
+
+    for (const slic of slics) {
+      if (typeof slic.numSlic === 'number') {
+        await slicsCollection.updateOne(
+          { _id: slic._id },
+          { $set: { numSlic: String(slic.numSlic) } }
+        );
+      }
+    }
+
+    return { success: true, message: 'All numSlic values updated to strings' };
+  } catch (error) {
+    console.error('Error updating numSlic values:', error);
     throw error;
   }
 }

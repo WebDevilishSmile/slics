@@ -59,7 +59,8 @@ function FormActions({ handleClear, slicData, mode = 'create', onSubmit }) {
         'success'
       );
 
-      setTimeout(() => router.push('/admin/slics'), 1500);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      router.push('/admin/slics');
     } catch (error) {
       console.error('Error:', error);
 

@@ -36,7 +36,7 @@ export default function MembershipActionButtons({ isMember, isLoggedIn }) {
         pb: '2rem',
       }}
     >
-      {!isMember && (
+      {!isMember && isLoggedIn && (
         <Box
           sx={{
             width: '100%',
@@ -69,10 +69,12 @@ export default function MembershipActionButtons({ isMember, isLoggedIn }) {
       >
         {!isLoggedIn && (
           <>
+            <Typography variant='body2'>
+              Sign in or create an account.
+            </Typography>
             <Button href='/signin' variant='contained'>
               Sign In
             </Button>
-            <Typography variant='body2'>Already a member?</Typography>
           </>
         )}
       </Box>

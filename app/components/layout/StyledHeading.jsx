@@ -10,6 +10,7 @@ function StyledHeading({ children, heading = 'h2' }) {
         textTransform: 'uppercase',
         fontWeight: '700',
         py: '1rem',
+        px: '1rem',
       }}
     >
       {children}

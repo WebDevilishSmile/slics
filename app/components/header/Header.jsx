@@ -22,7 +22,7 @@ export default async function Header() {
               component='form'
               action={async () => {
                 'use server';
-                await signOut({ redirectTo: '/signin' });
+                await signOut({ redirectTo: '/' });
               }}
             >
               <Button type='submit'>Sign Out</Button>

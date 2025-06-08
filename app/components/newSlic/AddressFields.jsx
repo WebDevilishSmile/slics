@@ -1,17 +1,29 @@
-import { FormControl, FormLabel, TextField } from '@mui/material';
+import { capitalizeWords } from '@/utils/functions';
+import { FormControl, TextField } from '@mui/material';
 
 function AddressFields({ address, setAddress }) {
   const handleStreetChange = (event) => {
-    setAddress((prev) => ({ ...prev, street: event.target.value }));
+    const inputValue = event.target.value;
+    // Ensure the street is capitalized
+    const capitalizedValue = capitalizeWords(inputValue);
+    setAddress((prev) => ({ ...prev, street: capitalizedValue }));
   };
   const handleCityChange = (event) => {
-    setAddress((prev) => ({ ...prev, city: event.target.value }));
+    const inputValue = event.target.value;
+    const capitalizedValue = capitalizeWords(inputValue);
+    setAddress((prev) => ({ ...prev, city: capitalizedValue }));
   };
   const handleStateChange = (event) => {
-    setAddress((prev) => ({ ...prev, state: event.target.value }));
+    setAddress((prev) => ({
+      ...prev,
+      state: event.target.value.toUpperCase(),
+    }));
   };
   const handleZipChange = (event) => {
-    setAddress((prev) => ({ ...prev, zip: event.target.value }));
+    setAddress((prev) => ({
+      ...prev,
+      zip: event.target.value.toUpperCase(),
+    }));
   };
   return (
     <FormControl

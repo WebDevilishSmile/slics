@@ -12,12 +12,12 @@ function RedirectMessage({
 }) {
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     router.push(redirect);
-  //   }, 3000); // Redirect after 3 seconds
-  //   return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  // }, [router, redirect]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push(redirect);
+    }, 3000); // Redirect after 3 seconds
+    return () => clearTimeout(timer); // Cleanup the timer on component unmount
+  }, [router, redirect]);
 
   return (
     <PageContainer>

@@ -1,8 +1,11 @@
+import { capitalizeWords } from '@/utils/functions';
 import { FormControl, FormLabel, TextField } from '@mui/material';
 
 function NameField({ name, setName }) {
   const handleChange = (event) => {
-    setName(event.target.value);
+    const inputValue = event.target.value;
+    const capitalizedValue = capitalizeWords(inputValue);
+    setName(capitalizedValue);
   };
 
   return (

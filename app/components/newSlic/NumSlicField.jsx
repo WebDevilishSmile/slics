@@ -2,7 +2,7 @@ import { FormControl, FormLabel, TextField } from '@mui/material';
 
 function NumSlicField({ numSlic, setNumSlic }) {
   const handleChange = (event) => {
-    setNumSlic(event.target.value);
+    setNumSlic(event.target.value.toUpperCase());
   };
 
   return (

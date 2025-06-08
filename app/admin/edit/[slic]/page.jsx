@@ -1,9 +1,8 @@
-import { getSlicByNumSlic } from '@/utils/slicsApi';
-import { serializeSlic } from '@/utils/functions';
-import { Typography } from '@mui/material';
 import SlicForm from '@/app/components/createEditSlic/SlicForm';
 import BackButton from '@/app/components/layout/BackButton';
-import PageContainer from '@/app/components/layout/PageContainer';
+import { serializeSlic } from '@/utils/functions';
+import { getSlicByNumSlic } from '@/utils/slicsApi';
+import { Typography } from '@mui/material';
 
 async function EditPage({ params }) {
   const { slic } = await params;

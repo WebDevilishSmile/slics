@@ -2,7 +2,7 @@ import { FormControl, TextField } from '@mui/material';
 
 function AlphaSlicField({ alphaSlic, setAlphaSlic }) {
   const handleChange = (event) => {
-    setAlphaSlic(event.target.value);
+    setAlphaSlic(event.target.value.toUpperCase());
   };
 
   return (

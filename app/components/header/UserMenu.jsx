@@ -56,8 +56,13 @@ function UserMenu({ children, user }) {
 
           <List>
             <ListItem>
-              <Button href='/home'>Home</Button>
+              <Button href={user ? '/home' : '/'}>Home</Button>
             </ListItem>
+            {user && (
+              <ListItem>
+                <Button href={`/profile/${user.id}`}>Profile</Button>
+              </ListItem>
+            )}
             {children}
           </List>
         </Box>

@@ -8,6 +8,8 @@ import { redirect } from 'next/navigation';
 import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';
 import PageContainer from '../components/layout/PageContainer';
+import SupportBanner from '../components/layout/SupportBanner';
+import BackButton from '../components/layout/BackButton';
 
 export default async function Home({ searchParams }) {
   const session = await auth();
@@ -18,18 +20,19 @@ export default async function Home({ searchParams }) {
   }
   const user = session.user;
   const slics = await getAllSlics();
-  // const comments = await getAllComments();
+
   let comments = [];
   let commentsCount = 0;
 
   if (slic) {
-    // If a specific SLIC is requested, fetch comments for that SLIC
     comments = await getCommentsBySlic(slic);
     commentsCount = comments.length;
   }
 
   return (
     <PageContainer>
+      {/* <SupportBanner /> */}
+      <BackButton />
       <Typography variant='h1'>SLICs</Typography>
 
       <Main slics={serializeSlics(slics)} commentsCount={commentsCount} />

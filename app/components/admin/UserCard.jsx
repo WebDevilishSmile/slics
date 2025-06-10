@@ -7,17 +7,19 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  Button,
+  Divider,
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import Image from 'next/image';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import UserEmail from './UserEmail';
+import UserPhone from './UserPhone';
+import UserRole from './UserRole';
 
 function UserCard({ user: initialUser }) {
   const [user, setUser] = useState(initialUser);
-  const router = useRouter();
 
   if (!user) {
     return (
@@ -27,45 +29,41 @@ function UserCard({ user: initialUser }) {
     );
   }
 
-  const toggleMembership = async () => {
-    try {
-      const response = await fetch(`/api/users/${user._id}/toggle-membership`, {
-        method: 'PATCH', // Use PATCH method as defined in your API route
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // No body needed for this specific API as userId is in the URL
-      });
-
-      if (!response.ok) {
-        // Handle API errors (e.g., 401, 403, 404, 500)
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to toggle membership');
-      }
-
-      const updatedUser = await response.json(); // Parse the updated user data
-
-      if (updatedUser) {
-        console.log('Membership status updated:', updatedUser);
-        setUser(updatedUser); // Update local state
-        router.refresh(); // Revalidate data for the current route
-      } else {
-        console.error(
-          'Failed to update membership status: No user data returned from API.'
-        );
-      }
-    } catch (error) {
-      console.error('Error toggling membership:', error);
-      alert(`Error: ${error.message}`); // Simple alert for user feedback
-    }
-  };
-
   return (
-    <Accordion key={user._id.toString()}>
+    <Accordion key={user._id.toString()} sx={{ width: '100%', mb: '.25rem' }}>
       <AccordionSummary expandIcon={<ExpandMore />}>
-        <Typography>
-          {user.name} - {user.email}
-        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+            minWidth: 0, // Crucial for allowing the flex item to shrink below its content size
+          }}
+        >
+          <Typography
+            sx={{
+              whiteSpace: 'nowrap',
+              flexShrink: 0, // Prevents name from shrinking, ensuring full content width
+            }}
+          >
+            {user.name}
+          </Typography>
+
+          <Divider orientation='vertical' sx={{ height: '2rem', mx: 1 }} />
+
+          <Typography
+            variant='caption'
+            sx={{
+              flexGrow: 1, // Allows it to take all available remaining space
+              whiteSpace: 'nowrap', // Essential: keeps text on single line
+              overflow: 'hidden', // Essential: hides text that goes beyond the container
+              textOverflow: 'ellipsis', // Essential: shows ellipses for overflow
+              minWidth: 0, // CRUCIAL: Allows flex item to shrink below its content size
+            }}
+          >
+            {user.email}
+          </Typography>
+        </Box>
       </AccordionSummary>
       <AccordionDetails>
         <Box
@@ -86,23 +84,18 @@ function UserCard({ user: initialUser }) {
             height={100}
           />
         </Box>
-        <Typography variant='subtitle1'>Role: {user.role}</Typography>
-        <Typography>Email: {user.email}</Typography>
+        <Typography>
+          Membership: <strong>{user.bmcMember ? 'Active' : 'Inactive'}</strong>
+        </Typography>
         <Typography>
           Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
         </Typography>
-        <Typography>
-          BuyMeACoffee:{' '}
-          <strong>{user.bmcMember ? 'Member' : 'Not a member'}</strong>
-        </Typography>
-        {user.role === 'user' && ( // Only show button for regular users
-          <Button
-            variant='contained'
-            sx={{ mt: '1rem' }}
-            onClick={toggleMembership}
-          >
-            Toggle Membership
-          </Button>
+        <UserRole role={user.role} />
+        <UserEmail email={user.email} />
+        {user.phone ? (
+          <UserPhone phone={user.phone} />
+        ) : (
+          <Typography>Phone: Not provided</Typography>
         )}
       </AccordionDetails>
     </Accordion>

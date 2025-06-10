@@ -14,7 +14,9 @@ async function UsersPage() {
       <BackButton />
       <StyledHeading>Users Page</StyledHeading>
 
-      <List sx={{ maxWidth: MAX_WIDTH, width: '100%', mt: '2rem' }}>
+      <List
+        sx={{ maxWidth: MAX_WIDTH, width: '100%', minWidth: 0, mt: '2rem' }}
+      >
         {users.map((user) => (
           <UserCard key={user._id} user={serializeUser(user)} />
         ))}

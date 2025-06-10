@@ -20,7 +20,7 @@ function SlicsTable({ slics }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortCategory, setSortCategory] = useState('created_at');
-  const [sort, setSort] = useState('ascending');
+  const [sort, setSort] = useState('descending');
   const [filteredSlics, setFilteredSlics] = useState(slics);
 
   const handleChangePage = (event, newPage) => {

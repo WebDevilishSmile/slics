@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import { CircularProgress } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
@@ -10,26 +10,14 @@ import MapPhoneLinks from './MapPhoneLinks';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
 
-function SlicDisplay({ slics, commentsCount, loading, setLoading }) {
-  const [slic, setSlic] = useState(null);
-
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const numSlic = searchParams.get('slic');
-
-    if (numSlic) {
-      const foundSlic = slics.find(
-        (s) => s.numSlic.toString() === numSlic.toString()
-      );
-      setSlic(foundSlic || null);
-    } else {
-      setSlic(null);
-    }
-
-    setLoading(false); // End loading once processing is done
-  }, [searchParams, slics]);
-
+function SlicDisplay({
+  slics,
+  commentsCount,
+  loading,
+  setLoading,
+  slic,
+  setSlic,
+}) {
   if (loading) {
     return (
       <SlicDetailsContainer title='Loading...'>
@@ -44,8 +32,10 @@ function SlicDisplay({ slics, commentsCount, loading, setLoading }) {
 
   return (
     <SlicDetailsContainer>
-      <TitleAddress slic={slic} commentsCount={commentsCount} />
-      <MapPhoneLinks slic={slic} />
+      <Suspense fallback={<CircularProgress sx={{ mt: '1rem' }} />}>
+        <TitleAddress slic={slic} commentsCount={commentsCount} />
+        <MapPhoneLinks slic={slic} />
+      </Suspense>
     </SlicDetailsContainer>
   );
 }

@@ -3,16 +3,39 @@
 import { serializeSlics } from '@/utils/functions';
 import { Button, Typography } from '@mui/material';
 
+import { useEffect, useState } from 'react';
 import SlicDisplay from './SlicDisplay';
 import SlicsSearch from './SlicsSearch';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 function Main({ slics, commentsCount }) {
   const [loading, setLoading] = useState(true);
+  const [slic, setSlic] = useState(null);
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const numSlic = searchParams.get('slic');
+
+    if (numSlic) {
+      const foundSlic = slics.find(
+        (s) => s.numSlic.toString() === numSlic.toString()
+      );
+      setSlic(foundSlic || null);
+    } else {
+      setSlic(null);
+    }
+
+    setLoading(false); // End loading once processing is done
+  }, [searchParams, slics]);
 
   return (
     <>
-      <SlicsSearch slics={serializeSlics(slics)} setLoading={setLoading} />
+      <SlicsSearch
+        slics={serializeSlics(slics)}
+        setLoading={setLoading}
+        loading={loading}
+      />
 
       <Typography sx={{ mt: '1rem' }} variant='caption'>
         Click All Hubs to view a list of all UPS hubs.
@@ -26,6 +49,8 @@ function Main({ slics, commentsCount }) {
         commentsCount={commentsCount}
         loading={loading}
         setLoading={setLoading}
+        slic={slic}
+        setSlic={setSlic}
       />
     </>
   );

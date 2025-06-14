@@ -1,15 +1,16 @@
 'use client';
 
-import { MAX_WIDTH } from '@/utils/variables';
 import { Autocomplete, TextField } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
+import { MAX_WIDTH } from '@/utils/variables';
 
-function SlicsSearch({ slics, setLoading }) {
+function SlicsSearch({ slics, setLoading, loading }) {
   const [selectedSlic, setSelectedSlic] = useState('');
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
   const slicLabels = slics.map((slic) => {
     if (slic.type === 'center' || !slic.type) {
@@ -20,21 +21,21 @@ function SlicsSearch({ slics, setLoading }) {
     return '';
   });
 
-  const handleSlicChange = async (event, value) => {
-    setLoading(true); // Always set loading to true when navigation starts
-    let newPath = '';
-    let slicNum = value ? value.split(' ').at(0) : '';
+  const handleSlicChange = (event, value) => {
+    setLoading(true);
+    startTransition(() => {
+      setSelectedSlic(value || '');
 
-    if (pathname === '/home') {
-      newPath = `/home${slicNum ? `?slic=${slicNum}` : ''}`;
-    } else if (pathname.startsWith('/all')) {
-      newPath = `/all${slicNum ? `?slic=${slicNum}` : ''}`;
-    }
+      const slicNum = value ? value.split(' ')[0] : '';
+      const newPath = slicNum ? `${pathname}?slic=${slicNum}` : pathname;
 
-    setSelectedSlic(value || ''); // Update local state for Autocomplete
-
-    router.push(newPath);
+      router.push(newPath);
+    });
   };
+
+  useEffect(() => {
+    setLoading(isPending);
+  }, [searchParams, setLoading]);
 
   useEffect(() => {
     const initialSlic = searchParams.get('slic');
@@ -43,11 +44,11 @@ function SlicsSearch({ slics, setLoading }) {
         (s) => s.numSlic === initialSlic || s.alphaSlic === initialSlic
       );
       if (slic) {
-        if (slic.type === 'center' || !slic.type) {
-          setSelectedSlic(`${slic.numSlic} - ${slic.alphaSlic}`);
-        } else if (slic.type === 'customer') {
-          setSelectedSlic(`${slic.numSlic} - ${slic.name}`);
-        }
+        const label =
+          slic.type === 'customer'
+            ? `${slic.numSlic} - ${slic.name}`
+            : `${slic.numSlic} - ${slic.alphaSlic}`;
+        setSelectedSlic(label);
       }
     } else {
       setSelectedSlic('');
@@ -67,6 +68,7 @@ function SlicsSearch({ slics, setLoading }) {
       onChange={handleSlicChange}
       value={selectedSlic}
       isOptionEqualToValue={(option, value) => option === value || value === ''}
+      loading={loading}
     />
   );
 }

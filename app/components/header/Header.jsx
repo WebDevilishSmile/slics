@@ -42,7 +42,7 @@ export default async function Header() {
 
         <Box sx={{ position: 'relative', height: '2.4rem', width: '2.4rem' }}>
           <Image
-            src='/slics_logo_only.png'
+            src='/slics_logo_dark.png'
             fill
             style={{ objectFit: 'contain' }}
             alt='SLICs Logo'

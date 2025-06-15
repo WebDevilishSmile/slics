@@ -1,5 +1,8 @@
 import { auth } from '@/auth';
 import { Box, Button, Typography } from '@mui/material';
+import Link from 'next/link';
+import RequestAccess from './RequestAccess';
+import { serializeUser } from '@/utils/functions';
 
 async function Membership() {
   const session = await auth();
@@ -48,6 +51,8 @@ async function Membership() {
       >
         Buy Me a Coffee
       </Button>
+
+      <RequestAccess user={user} />
     </Box>
   );
 }

@@ -29,7 +29,7 @@ export default async function Main() {
 
   return (
     <PageContainer>
-      <StyledHeading>SLICs</StyledHeading>
+      <StyledHeading heading='h1'>SLICs</StyledHeading>
       {!isLoggedIn && !isMember && <SignIn />}
       {isLoggedIn && !isMember && <Membership />}
 

@@ -49,7 +49,7 @@ function SignIn() {
           <Microsoft /> Microsoft
         </Button>
         <Typography variant='caption'>
-          Microsoft sign-in is currently disabled.
+          Microsoft sign-in is in development.
         </Typography>
       </Box>
     </Box>

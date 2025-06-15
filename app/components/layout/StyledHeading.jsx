@@ -9,7 +9,7 @@ function StyledHeading({ children, heading = 'h2' }) {
         maxWidth: MAX_WIDTH,
         textAlign: 'center',
         textTransform: 'uppercase',
-        fontWeight: '700',
+        fontWeight: '800',
       }}
     >
       {children}

@@ -40,6 +40,12 @@ export function serializeUser(userData) {
     _id: userData._id.toString(),
   };
 }
+export function serializeUsers(usersData) {
+  return usersData.map((user) => ({
+    ...user,
+    _id: user._id.toString(),
+  }));
+}
 
 export function serializeComment(commentData) {
   return {

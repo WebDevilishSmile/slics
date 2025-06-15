@@ -1,12 +1,12 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { serializeSlics } from '@/utils/functions';
 import { Button, Typography } from '@mui/material';
 
-import { useEffect, useState } from 'react';
 import SlicDisplay from './SlicDisplay';
 import SlicsSearch from './SlicsSearch';
-import { useSearchParams } from 'next/navigation';
 
 function Main({ slics, commentsCount }) {
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,8 @@
 // src/components/UserCard.jsx
 'use client';
 
+import Image from 'next/image';
+import { useState } from 'react';
 import { ExpandMore } from '@mui/icons-material';
 import {
   Accordion,
@@ -11,12 +13,11 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+
 import UserEmail from './UserEmail';
 import UserPhone from './UserPhone';
 import UserRole from './UserRole';
+import UserMembership from './UserMembership';
 
 function UserCard({ user: initialUser }) {
   const [user, setUser] = useState(initialUser);
@@ -85,12 +86,10 @@ function UserCard({ user: initialUser }) {
           />
         </Box>
         <Typography>
-          Membership: <strong>{user.bmcMember ? 'Active' : 'Inactive'}</strong>
-        </Typography>
-        <Typography>
           Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
         </Typography>
-        <UserRole role={user.role} />
+        <UserMembership user={user} />
+        <UserRole role={user.role} user={user} />
         <UserEmail email={user.email} />
         {user.phone ? (
           <UserPhone phone={user.phone} />

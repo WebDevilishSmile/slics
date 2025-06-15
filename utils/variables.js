@@ -1,4 +1,4 @@
-export const SLICS_PER_PAGE = 7;
+export const SLICS_PER_PAGE = 5;
 
 export const ELEVATION = 6;
 export const MAX_WIDTH = '32rem';

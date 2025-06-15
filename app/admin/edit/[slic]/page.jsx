@@ -1,8 +1,9 @@
-import SlicForm from '@/app/components/createEditSlic/SlicForm';
-import BackButton from '@/app/components/layout/BackButton';
 import { serializeSlic } from '@/utils/functions';
 import { getSlicByNumSlic } from '@/utils/slicsApi';
-import { Typography } from '@mui/material';
+
+import SlicForm from '@/app/components/createEditSlic/SlicForm';
+import BackButton from '@/app/components/layout/BackButton';
+import StyledHeading from '@/app/components/layout/StyledHeading';
 
 async function EditPage({ params }) {
   const { slic } = await params;
@@ -11,9 +12,9 @@ async function EditPage({ params }) {
   return (
     <>
       <BackButton />
-      <Typography variant='h2' sx={{ maxWidth: '40rem', textAlign: 'center' }}>
+      <StyledHeading heading='h3'>
         Edit {slicData.name || slicData.alphaSlic}
-      </Typography>
+      </StyledHeading>
 
       <SlicForm initialData={serializeSlic(slicData)} mode='edit' />
     </>

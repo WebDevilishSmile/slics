@@ -45,12 +45,20 @@ function SlicsTable({ slics }) {
 
     // Then sort
     const sortedSlics = [...filtered].sort((a, b) => {
-      const aValue = a[sortCategory];
-      const bValue = b[sortCategory];
+      if (sortCategory === 'name') {
+        const aName = a.name?.toLowerCase() || '';
+        const bName = b.name?.toLowerCase() || '';
+        if (aName < bName) return sort === 'ascending' ? -1 : 1;
+        if (aName > bName) return sort === 'ascending' ? 1 : -1;
+        return 0;
+      } else {
+        const aValue = a[sortCategory];
+        const bValue = b[sortCategory];
 
-      if (aValue < bValue) return sort === 'ascending' ? -1 : 1;
-      if (aValue > bValue) return sort === 'ascending' ? 1 : -1;
-      return 0;
+        if (aValue < bValue) return sort === 'ascending' ? -1 : 1;
+        if (aValue > bValue) return sort === 'ascending' ? 1 : -1;
+        return 0;
+      }
     });
 
     setFilteredSlics(sortedSlics);
@@ -66,6 +74,7 @@ function SlicsTable({ slics }) {
           justifyContent: 'space-between',
           px: '1rem',
           pt: '1rem',
+          pb: '1rem',
         }}
       >
         <SlicsFilter search={search} setSearch={setSearch} />

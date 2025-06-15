@@ -46,6 +46,7 @@ export default async function Header() {
             fill
             style={{ objectFit: 'contain' }}
             alt='SLICs Logo'
+            sizes='(max-width: 600px) 2.4rem, 2.4rem'
           />
         </Box>
       </Toolbar>

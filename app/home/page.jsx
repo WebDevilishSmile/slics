@@ -9,6 +9,7 @@ import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';
 import BackButton from '../components/layout/BackButton';
 import PageContainer from '../components/layout/PageContainer';
+import Footer from '../components/footer/Footer';
 
 export default async function Home({ searchParams }) {
   const session = await auth();

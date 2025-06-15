@@ -1,4 +1,5 @@
 import { Box } from '@mui/material';
+import Footer from '../footer/Footer';
 
 export default function PageContainer({ children }) {
   return (

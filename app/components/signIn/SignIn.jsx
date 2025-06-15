@@ -38,10 +38,19 @@ function SignIn() {
             redirectTo: '/',
           });
         }}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          mt: '1rem',
+        }}
       >
-        <Button type='submit' variant='contained'>
+        <Button type='submit' variant='contained' disabled>
           <Microsoft /> Microsoft
         </Button>
+        <Typography variant='caption'>
+          Microsoft sign-in is currently disabled.
+        </Typography>
       </Box>
     </Box>
   );

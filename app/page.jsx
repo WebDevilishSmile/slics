@@ -1,22 +1,21 @@
-import { auth, signIn } from '@/auth';
+import { auth } from '@/auth';
 import { getUserByEmail } from '@/utils/usersApi';
-import { MAX_WIDTH } from '@/utils/variables';
-import { Box, Button, Card, CardContent, Typography } from '@mui/material'; // No Button, CardActions here
-import Image from 'next/image';
-import PageContainer from './components/layout/PageContainer'; // Assuming this is a client component
-import MembershipActionButtons from './home/MembershipActionButtons';
-import RedirectMember from './home/RedirectMember';
+
+import PageContainer from './components/layout/PageContainer';
 import StyledHeading from './components/layout/StyledHeading';
-import { Google } from '@mui/icons-material';
-import SignIn from './components/signIn/SignIn';
 import Membership from './components/signIn/Membership';
+import SignIn from './components/signIn/SignIn';
+import RedirectMember from './home/RedirectMember';
 
 export default async function Main() {
+  // Check if the user is logged in
   const session = await auth();
 
   let isLoggedIn = false;
   let isMember = false;
 
+  // If the session exists, we check if the user is a member
+  // and redirect them if they are already a member
   if (session) {
     const user = await getUserByEmail(session?.user?.email);
     isLoggedIn = !!user; // Check if user is logged in
@@ -27,13 +26,13 @@ export default async function Main() {
     }
   }
 
+  // If the user is not logged in, we display the SignIn component
+  // If the user is logged in but not a member, we display the Membership component
   return (
     <PageContainer>
       <StyledHeading heading='h1'>SLICs</StyledHeading>
       {!isLoggedIn && !isMember && <SignIn />}
       {isLoggedIn && !isMember && <Membership />}
-
-      {/* <MembershipActionButtons isMember={isMember} isLoggedIn={isLoggedIn} /> */}
     </PageContainer>
   );
 }

@@ -1,3 +1,4 @@
+// Function to format phone numbers
 export function formatPhoneNumber(value) {
   // Remove all non-digit characters
   const digits = value.replace(/\D/g, '');
@@ -10,6 +11,7 @@ export function formatPhoneNumber(value) {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
 }
 
+// Function to capitalize the first letter of each word in a string
 export function capitalizeWords(str) {
   if (!str) return '';
   return str
@@ -18,11 +20,13 @@ export function capitalizeWords(str) {
     .join(' ');
 }
 
+// Function to capitalize the first letter of a string
 export function capitalizeFirstLetter(str) {
   if (!str) return '';
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+// FunctionS to serialize data
 export function serializeSlic(slicData) {
   return {
     ...slicData,
@@ -52,4 +56,14 @@ export function serializeComment(commentData) {
     ...commentData,
     _id: commentData._id.toString(),
   };
+}
+
+// Helper function to detect mobile based on User-Agent
+export function isMobileDevice(userAgent) {
+  if (!userAgent) return false;
+  const mobileRegex =
+    /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|rim)|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i;
+  const tabletRegex = /android|ipad|playbook|silk/i; // Catch tablets too
+
+  return mobileRegex.test(userAgent) || tabletRegex.test(userAgent);
 }

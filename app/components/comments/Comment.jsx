@@ -1,18 +1,21 @@
 'use client';
 
-import { Box, Divider, Paper, Typography } from '@mui/material';
+import { Box, Divider, Paper, Typography, useColorScheme } from '@mui/material';
 import parse, { domToReact } from 'html-react-parser';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import theme from '@/utils/theme';
 
 import CommentFooter from './CommentFooter';
 import CommentHeader from './CommentHeader';
+import { ELEVATION } from '@/utils/variables';
 
 function Comment({ comment, refetchComments }) {
   const [author, setAuthor] = useState({});
   const { userId } = comment;
   const session = useSession();
   const user = session.data?.user;
+  const { mode } = useColorScheme();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -50,6 +53,10 @@ function Comment({ comment, refetchComments }) {
 
   return (
     <Paper
+      className={`${
+        mode === 'light' ? 'border-[#eaf8fe]' : 'border-[#050505]'
+      }`}
+      elevation={0}
       sx={{
         width: '100%',
         minHeight: '7rem',

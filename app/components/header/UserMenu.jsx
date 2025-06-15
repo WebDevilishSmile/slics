@@ -29,6 +29,7 @@ function UserMenu({ children, user }) {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          color: 'text.light',
         }}
         onClick={handleOpen}
       >

@@ -22,7 +22,11 @@ let theme = createTheme({
   colorSchemes: {
     dark: {
       palette: {
-        primary: green,
+        primary: {
+          light: lightBlue[300],
+          main: lightBlue[600],
+          dark: lightBlue[800],
+        },
         secondary: green,
         background: {
           default: '#050505',
@@ -42,7 +46,11 @@ let theme = createTheme({
     },
   },
   palette: {
-    primary: green,
+    primary: {
+      light: lightBlue[300],
+      main: lightBlue[600],
+      dark: lightBlue[800],
+    },
     secondary: orange,
     containedButton: {
       main: blue[300],
@@ -51,10 +59,10 @@ let theme = createTheme({
     background: {
       default: '#edf3fc',
       opposite: '#050505',
-      paper: blueGrey[50],
+      paper: lightBlue[50],
       solid: '#edf3fc',
       grey: grey[300],
-      comment: grey[50],
+      comment: '#eaf8fe',
     },
     text: {
       dark: '#222222',
@@ -110,6 +118,46 @@ let theme = createTheme({
           textTransform: 'none',
         },
       },
+    },
+    MuiButton: {
+      variants: [
+        {
+          props: { variant: 'contained' },
+          style: {
+            fontFamily: 'var(--font-font)',
+            borderRadius: '1.5rem',
+            textTransform: 'none',
+            color: 'text.light',
+            '&:hover': {
+              backgroundColor: 'primary.dark',
+            },
+          },
+        },
+        {
+          props: { variant: 'text' },
+          style: {
+            fontFamily: 'var(--font-font)',
+            borderRadius: '1.5rem',
+            textTransform: 'none',
+            color: 'text.light',
+            '&:hover': {
+              backgroundColor: 'primary.dark',
+            },
+          },
+        },
+        {
+          props: { variant: 'outlined' },
+          style: {
+            fontFamily: 'var(--font-font)',
+            borderRadius: '1.5rem',
+            textTransform: 'none',
+            color: 'text.light',
+            '&:hover': {
+              backgroundColor: 'primary.dark',
+            },
+          },
+        },
+      ],
     },
 
     MuiButtonGroup: {

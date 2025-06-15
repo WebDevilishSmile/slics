@@ -2,12 +2,23 @@ import { auth } from '@/auth';
 import { Box, Button, Typography } from '@mui/material';
 import Link from 'next/link';
 import RequestAccess from './RequestAccess';
-import { serializeUser } from '@/utils/functions';
+import { isMobileDevice, serializeUser } from '@/utils/functions';
+import { headers } from 'next/headers';
 
 async function Membership() {
+  // Ensure the auth function is called to get the session
+  // This is necessary to check if the user is logged in
   const session = await auth();
   const user = session?.user;
 
+  // Check if the user is using a mobile device
+  // This is done by checking the User-Agent header
+  // We use the headers function from Next.js to get the request headers
+  const headersList = await headers();
+  const userAgent = headersList.get('user-agent');
+  const isMobile = isMobileDevice(userAgent);
+
+  // If the user is not logged in, we return a message prompting them to sign in
   if (!user) {
     return (
       <Box sx={{ textAlign: 'center', my: '2rem' }}>
@@ -26,6 +37,7 @@ async function Membership() {
     );
   }
 
+  // If the user is logged in, but not a member, we display the membership prompt
   return (
     <Box sx={{ textAlign: 'center', my: '2rem' }}>
       <Typography
@@ -52,7 +64,8 @@ async function Membership() {
         Buy Me a Coffee
       </Button>
 
-      <RequestAccess user={user} />
+      {/* Request Access Component */}
+      <RequestAccess user={user} isMobile={isMobile} />
     </Box>
   );
 }

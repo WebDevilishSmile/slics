@@ -9,6 +9,7 @@ import Comments from '../components/comments/Comments';
 import SlicDisplay from '../components/home/SlicDisplay';
 import SlicsSearch from '../components/home/SlicsSearch';
 import PageContainer from '../components/layout/PageContainer';
+import Main from '../components/home/Main';
 
 async function AllHubs({ searchParams }) {
   const session = await auth();
@@ -37,12 +38,8 @@ async function AllHubs({ searchParams }) {
         Home
       </Button>
 
-      <SlicsSearch slics={serializeSlics(allHubs)} />
+      <Main slics={serializeSlics(allHubs)} commentsCount={commentsCount} />
 
-      <SlicDisplay
-        slics={serializeSlics(allHubs)}
-        commentsCount={commentsCount}
-      />
       <Comments user={user} />
     </PageContainer>
   );

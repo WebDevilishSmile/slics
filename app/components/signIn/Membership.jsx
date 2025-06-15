@@ -35,7 +35,7 @@ async function Membership() {
         }}
       >
         Welcome {user.name.split(' ')[0]}! Now that you have an account, you can
-        become a member of Buy Me a Coffee to access your dashboard and other
+        become a member on Buy Me a Coffee to access your dashboard and other
         member-only features.
       </Typography>
 
@@ -46,7 +46,7 @@ async function Membership() {
         target='_blank'
         rel='noopener noreferrer'
       >
-        Buy Me a Coffee Membership
+        Buy Me a Coffee
       </Button>
     </Box>
   );

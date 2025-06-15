@@ -1,3 +1,4 @@
+import { MAX_WIDTH } from '@/utils/variables';
 import { Typography } from '@mui/material';
 
 function StyledHeading({ children, heading = 'h2' }) {
@@ -5,12 +6,10 @@ function StyledHeading({ children, heading = 'h2' }) {
     <Typography
       variant={heading}
       sx={{
-        maxWidth: '55rem',
+        maxWidth: MAX_WIDTH,
         textAlign: 'center',
         textTransform: 'uppercase',
         fontWeight: '700',
-        py: '1rem',
-        px: '1rem',
       }}
     >
       {children}

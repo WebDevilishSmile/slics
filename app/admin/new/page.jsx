@@ -1,15 +1,12 @@
-import { Typography } from '@mui/material';
-
-import BackButton from '@/app/components/layout/BackButton';
-import PageContainer from '@/app/components/layout/PageContainer';
-import NewSlicForm from '@/app/components/newSlic/NewSlicForm';
 import SlicForm from '@/app/components/createEditSlic/SlicForm';
+import BackButton from '@/app/components/layout/BackButton';
+import StyledHeading from '@/app/components/layout/StyledHeading';
 
 async function NewSlicPage() {
   return (
     <>
       <BackButton />
-      <Typography variant='h2'>New Slic</Typography>
+      <StyledHeading heading='h3'>New Slic</StyledHeading>
 
       <SlicForm />
       {/* <NewSlicForm /> */}

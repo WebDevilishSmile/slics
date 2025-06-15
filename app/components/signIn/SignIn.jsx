@@ -1,5 +1,5 @@
 import { signIn } from '@/auth';
-import { Google } from '@mui/icons-material';
+import { Google, Microsoft } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 
 function SignIn() {
@@ -28,6 +28,19 @@ function SignIn() {
         <Button type='submit' variant='contained'>
           &nbsp; <Google />
           oogle
+        </Button>
+      </Box>
+      <Box
+        component='form'
+        action={async () => {
+          'use server';
+          await signIn('azure-ad', {
+            redirectTo: '/',
+          });
+        }}
+      >
+        <Button type='submit' variant='contained'>
+          <Microsoft /> Microsoft
         </Button>
       </Box>
     </Box>

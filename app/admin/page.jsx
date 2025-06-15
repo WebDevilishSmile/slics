@@ -1,9 +1,10 @@
 import { Button, ButtonGroup, Typography } from '@mui/material';
+import StyledHeading from '../components/layout/StyledHeading';
 
 async function AdminPage() {
   return (
     <>
-      <Typography variant='h2'>Admin Page</Typography>
+      <StyledHeading>Admin Page</StyledHeading>
 
       <ButtonGroup variant='contained' sx={{ mt: '2rem' }}>
         <Button href='/admin/slics'>Slics</Button>

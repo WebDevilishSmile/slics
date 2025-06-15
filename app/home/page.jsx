@@ -9,7 +9,6 @@ import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';
 import BackButton from '../components/layout/BackButton';
 import PageContainer from '../components/layout/PageContainer';
-import { Suspense } from 'react';
 
 export default async function Home({ searchParams }) {
   const session = await auth();
@@ -31,7 +30,6 @@ export default async function Home({ searchParams }) {
 
   return (
     <PageContainer>
-      {/* <SupportBanner /> */}
       <BackButton />
       <Typography variant='h1'>SLICs</Typography>
 

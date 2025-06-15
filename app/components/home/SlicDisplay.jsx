@@ -10,14 +10,7 @@ import MapPhoneLinks from './MapPhoneLinks';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
 
-function SlicDisplay({
-  slics,
-  commentsCount,
-  loading,
-  setLoading,
-  slic,
-  setSlic,
-}) {
+function SlicDisplay({ commentsCount, loading, slic }) {
   if (loading) {
     return (
       <SlicDetailsContainer title='Loading...'>

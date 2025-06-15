@@ -7,6 +7,7 @@ import PageContainer from '../../components/layout/PageContainer';
 import BackButton from '@/app/components/layout/BackButton';
 import { auth } from '@/auth';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
+import StyledHeading from '@/app/components/layout/StyledHeading';
 
 async function SlicsTablePage() {
   const session = await auth();
@@ -37,7 +38,7 @@ async function SlicsTablePage() {
   return (
     <>
       <BackButton />
-      <Typography variant='h2'>Slics</Typography>
+      <StyledHeading>Slics</StyledHeading>
 
       <SlicsTable slics={serializeSlics(slics)} />
     </>

@@ -1,20 +1,15 @@
-import { AccountCircle, VerifiedUser } from '@mui/icons-material';
+import { Person, PersonOff } from '@mui/icons-material';
 import { Box, IconButton, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-function UserRole({ role, user: initialUser }) {
+function UserMembership({ user: initialUser }) {
   const [user, setUser] = useState(initialUser);
   const router = useRouter();
 
-  // If user is not provided, render nothing or an error message
-  if (!user || !user._id) {
-    return null; // Or return <Typography color="error">User data missing</Typography>;
-  }
-
-  async function handleRoleChange() {
+  async function handleMemberChange() {
     try {
-      const response = await fetch(`/api/users/${user._id}/toggle-role`, {
+      const response = await fetch(`/api/users/${user._id}/toggle-member`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -30,28 +25,27 @@ function UserRole({ role, user: initialUser }) {
         );
       }
 
-      // If response.ok is true, check if an actual role change occurred or just an info message
-      if (responseData.role) {
-        setUser(responseData); // Update local state with the new role
+      // If response.ok is true, check if an actual membership change occurred or just an info message
+      if (responseData.bmcMember !== undefined) {
+        setUser(responseData); // Update local state with the new membership status
         router.refresh(); // Revalidate data for the current route
       } else if (responseData.message) {
-        // This case is for when the role was already the target role, and API returned a message
+        // This case is for when the membership was already the target status, and API returned a message
         console.log('API Info:', responseData.message);
         alert(`Info: ${responseData.message}`); // Inform the user
       } else {
-        // Fallback for unexpected successful response without role or message
+        // Fallback for unexpected successful response without membership status or message
         console.warn(
           'API returned success but no user object or message:',
           responseData
         );
-        alert('Role operation completed, but response was unexpected.');
+        alert('Membership operation completed, but response was unexpected.');
       }
     } catch (error) {
-      console.error('Error toggling role:', error);
+      console.error('Error toggling membership:', error);
       alert(`Error: ${error.message}`);
     }
   }
-
   return (
     <Box
       sx={{
@@ -60,12 +54,14 @@ function UserRole({ role, user: initialUser }) {
         justifyContent: 'space-between',
       }}
     >
-      <Typography variant='subtitle1'>Role: {user.role}</Typography>
-      <IconButton onClick={handleRoleChange}>
-        {user.role === 'admin' ? <VerifiedUser /> : <AccountCircle />}
+      <Typography variant='subtitle1'>
+        Membership: {user.bmcMember ? 'Active' : 'Inactive'}
+      </Typography>
+      <IconButton onClick={handleMemberChange}>
+        {user.bmcMember ? <Person /> : <PersonOff />}
       </IconButton>
     </Box>
   );
 }
 
-export default UserRole;
+export default UserMembership;

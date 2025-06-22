@@ -108,24 +108,32 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
           onChange={handleImageChange}
         />
 
-        <Button
-          variant='contained'
-          color='primary'
-          sx={{ my: '1rem', mr: '0.5rem' }}
-          onClick={handleLibraryClick}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
-          Select from Library
-        </Button>
-        {isMobile && (
           <Button
             variant='contained'
             color='primary'
-            sx={{ my: '1rem' }}
-            onClick={handleCameraClick}
+            sx={{ my: '1rem', mr: '0.5rem' }}
+            onClick={handleLibraryClick}
           >
-            Take Photo
+            Select from Library
           </Button>
-        )}
+          {isMobile && (
+            <Button
+              variant='contained'
+              color='primary'
+              sx={{ my: '1rem' }}
+              onClick={handleCameraClick}
+            >
+              Take Photo
+            </Button>
+          )}
+        </Box>
 
         {selectedImage && (
           <Box

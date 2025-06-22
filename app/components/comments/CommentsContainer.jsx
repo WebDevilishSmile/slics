@@ -14,19 +14,29 @@ import {
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import CommentEditor from './CommentEditor';
+import { useIsMobile } from '@/utils/clientFunctions';
 
 function CommentsContainer({ children, user, numSlic, refetchComments }) {
   const [showEditor, setShowEditor] = useState(false);
   const [showImage, setShowImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const fileInputRef = useRef(null);
+  const libraryInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+
+  const isMobile = useIsMobile();
 
   const toggleEditor = () => {
     setShowEditor((prev) => !prev);
   };
-
   const toggleImage = () => {
     setShowImage((prev) => !prev);
+  };
+
+  const handleLibraryClick = () => {
+    libraryInputRef.current.click();
+  };
+  const handleCameraClick = () => {
+    cameraInputRef.current.click();
   };
 
   const handleImageChange = (event) => {
@@ -83,11 +93,39 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
 
       <Collapse in={showImage} sx={{ width: '100%' }}>
         <TextField
-          sx={{ my: '1rem' }}
+          inputRef={cameraInputRef}
+          sx={{ display: 'none' }}
+          type='file'
+          accept='image/*'
+          onChange={handleImageChange}
+          capture='environment'
+        />
+        <TextField
+          inputRef={libraryInputRef}
+          sx={{ display: 'none' }}
           type='file'
           accept='image/*'
           onChange={handleImageChange}
         />
+
+        <Button
+          variant='contained'
+          color='primary'
+          sx={{ my: '1rem', mr: '0.5rem' }}
+          onClick={handleLibraryClick}
+        >
+          Select from Library
+        </Button>
+        {isMobile && (
+          <Button
+            variant='contained'
+            color='primary'
+            sx={{ my: '1rem' }}
+            onClick={handleCameraClick}
+          >
+            Take Photo
+          </Button>
+        )}
 
         {selectedImage && (
           <Box
@@ -107,9 +145,19 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
               />
             </Box>
 
-            <Button variant='contained' color='primary' sx={{ mt: '1rem' }}>
-              Upload
-            </Button>
+            <Box sx={{ display: 'flex', gap: '1rem' }}>
+              <Button
+                variant='contained'
+                color='error'
+                sx={{ mt: '1rem' }}
+                onClick={() => setSelectedImage(null)}
+              >
+                Cancel
+              </Button>
+              <Button variant='contained' color='primary' sx={{ mt: '1rem' }}>
+                Upload
+              </Button>
+            </Box>
           </Box>
         )}
       </Collapse>

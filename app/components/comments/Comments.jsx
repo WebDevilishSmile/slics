@@ -1,8 +1,8 @@
 'use client';
 
-import { CircularProgress, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Comment from './Comment';
 import CommentsContainer from './CommentsContainer';
 import NoSlicComments from './NoSlicComments';

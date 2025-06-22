@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import FormContainer from '../newSlic/FormContainer';
-import TypeRadio from '../newSlic/TypeRadio';
-import NumSlicField from '../newSlic/NumSlicField';
-import AlphaSlicField from '../newSlic/AlphaSlicField';
-import NameField from '../newSlic/NameField';
-import PhoneField from '../newSlic/PhoneField';
 import AddressFields from '../newSlic/AddressFields';
+import AlphaSlicField from '../newSlic/AlphaSlicField';
 import FormActions from '../newSlic/FormActions';
+import FormContainer from '../newSlic/FormContainer';
+import NameField from '../newSlic/NameField';
+import NumSlicField from '../newSlic/NumSlicField';
+import PhoneField from '../newSlic/PhoneField';
+import TypeRadio from '../newSlic/TypeRadio';
 import Warning from '../newSlic/Warning';
-import dayjs from 'dayjs';
+import { Box, Checkbox, InputLabel, Typography } from '@mui/material';
+import PdfCheckbox from '../newSlic/PdfCheckbox';
 
 export default function SlicForm({
   initialData = null,
@@ -25,6 +26,7 @@ export default function SlicForm({
   const [address, setAddress] = useState(
     initialData?.address || { street: '', city: '', state: '', zip: '' }
   );
+  const [pdf, setPdf] = useState(initialData?.pdf || false);
 
   const [openWarning, setOpenWarning] = useState(false);
   const [warningMessage, setWarningMessage] = useState('');
@@ -38,6 +40,7 @@ export default function SlicForm({
     setAddress({ street: '', city: '', state: '', zip: '' });
     setOpenWarning(false);
     setWarningMessage('');
+    setPdf(false);
   };
 
   const handleWarningClose = () => {
@@ -54,6 +57,7 @@ export default function SlicForm({
     phone,
     address,
     directions: initialData?.directions || null,
+    pdf,
   };
 
   useEffect(() => {
@@ -82,6 +86,7 @@ export default function SlicForm({
       <NameField name={name} setName={setName} />
       <PhoneField phone={phone} setPhone={setPhone} />
       <AddressFields address={address} setAddress={setAddress} />
+      <PdfCheckbox pdf={pdf} setPdf={setPdf} />
 
       <FormActions
         handleClear={handleClear}

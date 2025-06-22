@@ -9,6 +9,7 @@ function FormContainer({ children }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
         p: '2rem',
         mt: '2rem',
       }}

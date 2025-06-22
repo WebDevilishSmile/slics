@@ -9,6 +9,7 @@ import EmptySlic from './EmptySlic';
 import MapPhoneLinks from './MapPhoneLinks';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
+import PdfLink from './PdfLink';
 
 function SlicDisplay({ commentsCount, loading, slic }) {
   if (loading) {
@@ -28,6 +29,7 @@ function SlicDisplay({ commentsCount, loading, slic }) {
       <Suspense fallback={<CircularProgress sx={{ mt: '1rem' }} />}>
         <TitleAddress slic={slic} commentsCount={commentsCount} />
         <MapPhoneLinks slic={slic} />
+        <PdfLink slic={slic} />
       </Suspense>
     </SlicDetailsContainer>
   );

@@ -1,13 +1,12 @@
 import { InitColorSchemeScript } from '@mui/material';
 import { Montserrat } from 'next/font/google';
+import './globals.css';
 
+import Footer from './components/footer/Footer';
+import Header from './components/header/Header';
 import Container from './components/layout/Container';
 import ModeSwitch from './components/layout/ModeSwitch';
 import Providers from './components/layout/Providers';
-
-import './globals.css';
-import Header from './components/header/Header';
-import Footer from './components/footer/Footer';
 
 const font = Montserrat({
   variable: '--font-font',

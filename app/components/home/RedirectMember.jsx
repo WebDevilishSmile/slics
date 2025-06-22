@@ -1,9 +1,9 @@
 'use client';
 
 import { CircularProgress, Typography } from '@mui/material';
-import PageContainer from '../components/layout/PageContainer';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import PageContainer from '../layout/PageContainer';
 
 function RedirectMember({ userName }) {
   const router = useRouter();

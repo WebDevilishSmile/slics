@@ -8,7 +8,7 @@ import PageContainer from './PageContainer';
 function RedirectMessage({
   heading = 'You are already signed in.',
   subheading = 'Redirecting you to the home page...',
-  redirect = '/home',
+  redirect = '/',
 }) {
   const router = useRouter();
 

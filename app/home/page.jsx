@@ -3,21 +3,27 @@ import { getCommentsBySlic } from '@/utils/commentsApi';
 import { serializeSlics } from '@/utils/functions';
 import { getAllSlics } from '@/utils/slicsApi';
 import { Typography } from '@mui/material';
-import { redirect } from 'next/navigation';
 
 import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';
 import BackButton from '../components/layout/BackButton';
 import PageContainer from '../components/layout/PageContainer';
-import Footer from '../components/footer/Footer';
+import RedirectMessage from '../components/layout/RedirectMessage';
 
 export default async function Home({ searchParams }) {
   const session = await auth();
+
+  if (!session) {
+    return (
+      <RedirectMessage
+        heading='You must be logged in to view SLICs.'
+        redirect='/'
+      />
+    );
+  }
   const searchParameters = await searchParams;
   const slic = searchParameters.slic ? searchParameters.slic : null;
-  if (!session) {
-    redirect('/signin');
-  }
+
   const user = session.user;
   const slics = await getAllSlics();
 

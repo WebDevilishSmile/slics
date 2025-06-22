@@ -15,8 +15,9 @@ async function AllHubs({ searchParams }) {
   const session = await auth();
   const searchParameters = await searchParams;
   const slic = searchParameters.slic ? searchParameters.slic : null;
+
   if (!session) {
-    redirect('/signin');
+    redirect('/');
   }
   const user = session.user;
   const allHubs = await getAllHubs();

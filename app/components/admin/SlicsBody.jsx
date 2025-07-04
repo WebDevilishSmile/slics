@@ -2,7 +2,7 @@
 
 import { SLICS_PER_PAGE } from '@/utils/variables';
 import { TableBody, TableCell, TableRow } from '@mui/material';
-import SlicRow from '../newSlic/SlicRow';
+import SlicRow from './SlicRow';
 
 function SlicsBody({ slics, page }) {
   // Avoid a layout jump when reaching the last page with empty rows.

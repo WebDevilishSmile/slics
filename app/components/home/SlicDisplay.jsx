@@ -1,15 +1,14 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense } from 'react';
 
 import { CircularProgress } from '@mui/material';
-import { useSearchParams } from 'next/navigation';
 
 import EmptySlic from './EmptySlic';
 import MapPhoneLinks from './MapPhoneLinks';
+import PdfLink from './PdfLink';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
-import PdfLink from './PdfLink';
 
 function SlicDisplay({ commentsCount, loading, slic }) {
   if (loading) {

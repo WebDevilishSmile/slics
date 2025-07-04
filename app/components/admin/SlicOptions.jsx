@@ -130,6 +130,9 @@ function SlicOptions({ slic, onSlicDeleted }) {
         open={open}
         onClose={handleClose}
       >
+        <MenuItem onClick={() => router.push(`/home?slic=${slic.numSlic}`)}>
+          See SLIC
+        </MenuItem>
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
         <MenuItem onClick={handleWarningOpen}>Delete</MenuItem>
       </Menu>

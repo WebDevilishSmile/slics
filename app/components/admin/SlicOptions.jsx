@@ -1,6 +1,12 @@
 'use client';
 
-import { MoreVertOutlined } from '@mui/icons-material';
+import {
+  Delete,
+  Details,
+  Edit,
+  InfoRounded,
+  MoreVertOutlined,
+} from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -131,10 +137,14 @@ function SlicOptions({ slic, onSlicDeleted }) {
         onClose={handleClose}
       >
         <MenuItem onClick={() => router.push(`/home?slic=${slic.numSlic}`)}>
-          See SLIC
+          <InfoRounded /> &nbsp; See SLIC
         </MenuItem>
-        <MenuItem onClick={handleEdit}>Edit</MenuItem>
-        <MenuItem onClick={handleWarningOpen}>Delete</MenuItem>
+        <MenuItem onClick={handleEdit}>
+          <Edit /> &nbsp; Edit
+        </MenuItem>
+        <MenuItem onClick={handleWarningOpen}>
+          <Delete /> &nbsp; Delete
+        </MenuItem>
       </Menu>
 
       <Dialog fullScreen open={openWarning} onClose={handleWarningClose}>

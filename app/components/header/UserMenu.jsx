@@ -10,7 +10,7 @@ import {
   ListItem,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function UserMenu({ children, user }) {
   const [open, setOpen] = useState(false);
@@ -21,6 +21,13 @@ function UserMenu({ children, user }) {
   function handleClose() {
     setOpen(false);
   }
+
+  // If user signs out, we want to close the menu
+  useEffect(() => {
+    if (!user) {
+      setOpen(false);
+    }
+  }, [user]);
 
   return (
     <>

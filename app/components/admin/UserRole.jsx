@@ -61,7 +61,10 @@ function UserRole({ role, user: initialUser }) {
       }}
     >
       <Typography variant='subtitle1'>Role: {user.role}</Typography>
-      <IconButton onClick={handleRoleChange}>
+      <IconButton
+        onClick={handleRoleChange}
+        disabled={user.email === 'webdevilishsmile@gmail.com'}
+      >
         {user.role === 'admin' ? <VerifiedUser /> : <AccountCircle />}
       </IconButton>
     </Box>

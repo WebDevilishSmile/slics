@@ -57,7 +57,10 @@ function UserMembership({ user: initialUser }) {
       <Typography variant='subtitle1'>
         Membership: {user.bmcMember ? 'Active' : 'Inactive'}
       </Typography>
-      <IconButton onClick={handleMemberChange}>
+      <IconButton
+        onClick={handleMemberChange}
+        disabled={user.email === 'webdevilishsmile@gmail.com'}
+      >
         {user.bmcMember ? <Person /> : <PersonOff />}
       </IconButton>
     </Box>

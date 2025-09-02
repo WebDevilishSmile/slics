@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { serializeSlics } from '@/utils/functions';
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import SlicDisplay from './SlicDisplay';
 import SlicsSearch from './SlicsSearch';
+import AllHubsButton from './AllHubsButton';
 
 function Main({ slics, commentsCount }) {
   const [loading, setLoading] = useState(true);
@@ -37,12 +38,7 @@ function Main({ slics, commentsCount }) {
         loading={loading}
       />
 
-      <Typography sx={{ mt: '1rem' }} variant='caption'>
-        Click All Hubs to view a list of all UPS hubs.
-      </Typography>
-      <Button variant='contained' href='/all'>
-        All Hubs
-      </Button>
+      <AllHubsButton />
 
       <SlicDisplay
         slics={serializeSlics(slics)}

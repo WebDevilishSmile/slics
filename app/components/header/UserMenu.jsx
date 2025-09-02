@@ -67,9 +67,29 @@ function UserMenu({ children, user }) {
               <Button href={user ? '/home' : '/'}>Home</Button>
             </ListItem>
             {user && (
-              <ListItem>
-                <Button href={`/profile/${user.id}`}>Profile</Button>
-              </ListItem>
+              <>
+                <ListItem>
+                  <Button href={`/profile/${user.id}`}>Profile</Button>
+                </ListItem>
+                <ListItem>
+                  <Button
+                    href={`https://www.upsers.com`}
+                    rel='noopener noreferrer'
+                    target='_blank'
+                  >
+                    UPSers
+                  </Button>
+                </ListItem>
+                <ListItem>
+                  <Button
+                    href={`https://vestisuniforms.com/ups/`}
+                    rel='noopener noreferrer'
+                    target='_blank'
+                  >
+                    Socks
+                  </Button>
+                </ListItem>
+              </>
             )}
             {children}
           </List>

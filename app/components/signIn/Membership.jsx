@@ -50,8 +50,10 @@ async function Membership() {
         }}
       >
         Welcome {user.name.split(' ')[0]}! Now that you have an account, you can
-        become a member on Buy Me a Coffee to access your dashboard and other
-        member-only features.
+        access all the SLIC locations. I strive to maintain a database of
+        reliable resources. I have put many hours of work into creating this
+        site and maintaining the databases. Please consider donating or becoming
+        a member on Buy Me a Coffee.
       </Typography>
 
       <Button

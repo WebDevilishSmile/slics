@@ -1,6 +1,6 @@
 'use client';
 
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, Box, TextField, Typography } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 import { MAX_WIDTH } from '@/utils/variables';

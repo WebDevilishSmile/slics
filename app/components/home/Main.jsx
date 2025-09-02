@@ -38,7 +38,7 @@ function Main({ slics, commentsCount }) {
         loading={loading}
       />
 
-      <AllHubsButton />
+      {/* <AllHubsButton /> */}
 
       <SlicDisplay
         slics={serializeSlics(slics)}

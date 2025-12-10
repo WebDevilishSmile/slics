@@ -3,7 +3,7 @@ import { Button, Paper, Typography } from '@mui/material';
 import EmblaCarousel from './EmblaCarousel';
 
 function EmptySlic() {
-  const OPTIONS = { dragFree: true, loop: true };
+  const OPTIONS = { loop: true, align: 'center' };
   const SLIDE_COUNT = 5;
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
 

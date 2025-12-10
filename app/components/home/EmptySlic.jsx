@@ -37,7 +37,7 @@ function EmptySlic() {
       <EmblaCarousel slides={SLIDES} options={OPTIONS} />
 
       <Typography variant='body2' sx={{ mt: '1rem', textAlign: 'center' }}>
-        On Friday November 21st, 2025, our beloved BETPA feeder Dan Sakasitz
+        On Friday November 21st, 2025, our fellow BETPA feeder Dan Sakasitz
         suffered a devastating house fire that destroyed his home and all his
         belongings. Dan, his wife, and their three wonderful children have lost
         everything except the clothes on their backs. Dan has been a dedicated

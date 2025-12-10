@@ -1,18 +1,5 @@
 'use client';
-import {
-  blue,
-  blueGrey,
-  brown,
-  cyan,
-  deepOrange,
-  green,
-  grey,
-  lightBlue,
-  lime,
-  orange,
-  purple,
-  red,
-} from '@mui/material/colors';
+import { blue, green, grey, lightBlue, orange } from '@mui/material/colors';
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
 let theme = createTheme({

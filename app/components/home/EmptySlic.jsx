@@ -1,7 +1,5 @@
 import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
-import { CoffeeOutlined } from '@mui/icons-material';
-import { Box, Button, Paper, Typography } from '@mui/material';
-import Image from 'next/image';
+import { Button, Paper, Typography } from '@mui/material';
 import EmblaCarousel from './EmblaCarousel';
 
 function EmptySlic() {

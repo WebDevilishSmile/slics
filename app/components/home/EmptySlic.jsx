@@ -1,6 +1,7 @@
 import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
 import { CoffeeOutlined } from '@mui/icons-material';
-import { Button, Paper, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
+import Image from 'next/image';
 
 function EmptySlic() {
   return (
@@ -20,21 +21,24 @@ function EmptySlic() {
       }}
     >
       <Typography variant='h4' sx={{ textAlign: 'center', mb: '1.5rem' }}>
-        Please choose a SLIC to view details
+        Help Support a Fellow Feeder in Need
       </Typography>
 
-      <Typography>
-        I put a lot of work into making this app. Countless hours went into the
-        design, development, and testing. Thank you for your support! If you
-        have any feedback or suggestions, please reach out!
-      </Typography>
+      <Box sx={{ borderRadius: '1rem', overflow: 'hidden' }}>
+        <Image
+          src='/sakasitzFire.webp'
+          alt='Description'
+          width={500}
+          height={300}
+        />
+      </Box>
 
       <Button
         variant='contained'
-        href='mailto:webdevilishsmile@gmail.com'
+        href='https://gofund.me/52ffdb875'
         sx={{ mt: '1rem' }}
       >
-        Email me
+        Donate
       </Button>
     </Paper>
   );

@@ -1,4 +1,5 @@
 import { InitColorSchemeScript } from '@mui/material';
+import { Analytics } from '@vercel/analytics/next';
 import { Montserrat } from 'next/font/google';
 import './globals.css';
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
           </Container>
           <ModeSwitch />
         </body>
+        <Analytics />
       </Providers>
     </html>
   );

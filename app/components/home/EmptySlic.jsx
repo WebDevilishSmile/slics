@@ -36,7 +36,7 @@ function EmptySlic() {
       </Button>
       <EmblaCarousel slides={SLIDES} options={OPTIONS} />
 
-      <Typography variant='caption' sx={{ mt: '1rem', textAlign: 'center' }}>
+      <Typography variant='body2' sx={{ mt: '1rem', textAlign: 'center' }}>
         On Friday November 21st, 2025, our beloved BETPA feeder Dan Sakasitz
         suffered a devastating house fire that destroyed his home and all his
         belongings. Dan, his wife, and their three wonderful children have lost

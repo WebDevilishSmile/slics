@@ -1,7 +1,7 @@
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback, useEffect, useRef } from 'react';
 
-const TWEEN_FACTOR_BASE = 0.2;
+const TWEEN_FACTOR_BASE = 1;
 
 const EmblaCarousel = (props) => {
   const { slides, options } = props;
@@ -16,7 +16,7 @@ const EmblaCarousel = (props) => {
   }, []);
 
   const setTweenFactor = useCallback((emblaApi) => {
-    tweenFactor.current = TWEEN_FACTOR_BASE * emblaApi.scrollSnapList().length;
+    tweenFactor.current = TWEEN_FACTOR_BASE;
   }, []);
 
   const tweenParallax = useCallback((emblaApi, eventName) => {

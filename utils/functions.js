@@ -72,6 +72,17 @@ export function serializeComments(commentsData) {
   return commentsData.map(serializeComment);
 }
 
+export function serializeCover(coverData) {
+  return {
+    ...coverData,
+    _id: coverData._id.toString(),
+  };
+}
+
+export function serializeCovers(coversData) {
+  return coversData.map(serializeCover);
+}
+
 // Helper function to detect mobile based on User-Agent
 export function isMobileDevice(userAgent) {
   if (!userAgent) return false;

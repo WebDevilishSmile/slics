@@ -1,8 +1,8 @@
 // src/app/(admin)/layout.jsx
-import { auth } from '@/auth'; // Import your auth helper
 import { getUserByEmail } from '@/utils/usersApi'; // Import your user utility
 import PageContainer from '../components/layout/PageContainer'; // Adjust path if needed
 import RedirectMessage from '../components/layout/RedirectMessage';
+import { auth } from '@/auth';
 
 // This layout will apply to all pages within the (admin) route group.
 // It will be a Server Component by default, which is perfect for Auth.js 'auth' helper.

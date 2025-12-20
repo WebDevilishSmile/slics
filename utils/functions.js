@@ -51,11 +51,25 @@ export function serializeUsers(usersData) {
   }));
 }
 
+// Updated Serialization for Comments
 export function serializeComment(commentData) {
   return {
     ...commentData,
     _id: commentData._id.toString(),
+    // Convert Dates to ISO strings explicitly to prevent hydration drift
+    created_at:
+      commentData.created_at instanceof Date
+        ? commentData.created_at.toISOString()
+        : commentData.created_at,
+    updated_at:
+      commentData.updated_at instanceof Date
+        ? commentData.updated_at.toISOString()
+        : commentData.updated_at,
   };
+}
+
+export function serializeComments(commentsData) {
+  return commentsData.map(serializeComment);
 }
 
 // Helper function to detect mobile based on User-Agent

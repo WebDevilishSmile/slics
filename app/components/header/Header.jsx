@@ -13,9 +13,14 @@ export default async function Header() {
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <UserMenu user={session?.user}>
           {session?.user?.role === 'admin' && (
-            <ListItem>
-              <Button href='/admin'>Admin</Button>
-            </ListItem>
+            <>
+              <ListItem>
+                <Button href='/admin'>Admin</Button>
+              </ListItem>
+              <ListItem>
+                <Button href='/covers'>Covers</Button>
+              </ListItem>
+            </>
           )}
           {session?.user ? (
             <ListItem

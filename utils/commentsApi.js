@@ -1,3 +1,5 @@
+'use server';
+
 import client from '@/lib/db';
 
 export async function createComment(commentData) {

@@ -1,13 +1,11 @@
+import { auth } from '@/auth';
 import { serializeSlics } from '@/utils/functions';
 import { getAllSlics } from '@/utils/slicsApi';
-import { Typography } from '@mui/material';
 
-import SlicsTable from '../../components/admin/SlicsTable';
-import PageContainer from '../../components/layout/PageContainer';
 import BackButton from '@/app/components/layout/BackButton';
-import { auth } from '@/auth';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import StyledHeading from '@/app/components/layout/StyledHeading';
+import SlicsTable from '../../components/admin/slics/SlicsTable';
 
 async function SlicsTablePage() {
   const session = await auth();

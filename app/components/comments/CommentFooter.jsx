@@ -48,8 +48,8 @@ function CommentFooter({ comment, author, user, refetchComments }) {
         </Typography>
 
         <Box>
-          {author._id.toString() === user.id && (
-            // Only show edit and delete buttons if the comment belongs to the user
+          {(author._id.toString() === user.id || user.role === 'admin') && (
+            // Only show edit and delete buttons if the comment belongs to the user or user is admin
 
             <IconButton onClick={() => setOpenConfirm(true)} disabled={loading}>
               <Delete color='error' />

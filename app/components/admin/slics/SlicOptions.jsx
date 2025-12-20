@@ -2,7 +2,6 @@
 
 import {
   Delete,
-  Details,
   Edit,
   InfoRounded,
   MoreVertOutlined,

@@ -1,7 +1,7 @@
 import { serializeUsers } from '@/utils/functions';
 import { getUsers } from '@/utils/usersApi';
 
-import UserList from '@/app/components/admin/UserList';
+import UserList from '@/app/components/admin/users/UserList';
 import BackButton from '@/app/components/layout/BackButton';
 import StyledHeading from '@/app/components/layout/StyledHeading';
 

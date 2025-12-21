@@ -15,6 +15,9 @@ async function AdminPage() {
         <Button href='/admin/cover/drivers'>Cover Drivers</Button>
         <Button href='/admin/cover/jobs'>Cover Jobs</Button>
       </ButtonGroup>
+      <ButtonGroup variant='contained' sx={{ mt: '2rem' }}>
+        <Button href='/admin/drivers'>Drivers</Button>
+      </ButtonGroup>
     </>
   );
 }

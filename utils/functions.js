@@ -83,6 +83,13 @@ export function serializeCovers(coversData) {
   return coversData.map(serializeCover);
 }
 
+export function serializeDrivers(driversData) {
+  return driversData.map((driver) => ({
+    ...driver,
+    _id: driver._id.toString(),
+  }));
+}
+
 // Helper function to detect mobile based on User-Agent
 export function isMobileDevice(userAgent) {
   if (!userAgent) return false;

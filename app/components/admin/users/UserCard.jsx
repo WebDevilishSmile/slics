@@ -10,6 +10,7 @@ import {
   AccordionSummary,
   Box,
   Divider,
+  Table,
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
@@ -33,7 +34,7 @@ function UserCard({ user: initialUser }) {
   return (
     <Accordion key={user._id.toString()} sx={{ width: '100%' }}>
       <AccordionSummary expandIcon={<ExpandMore />}>
-        <Box
+        <Table
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -50,21 +51,21 @@ function UserCard({ user: initialUser }) {
             {user.name}
           </Typography>
 
-          <Divider orientation='vertical' sx={{ height: '2rem', mx: 1 }} />
+          <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
 
-          <Typography
-            variant='caption'
-            sx={{
-              flexGrow: 1, // Allows it to take all available remaining space
-              whiteSpace: 'nowrap', // Essential: keeps text on single line
-              overflow: 'hidden', // Essential: hides text that goes beyond the container
-              textOverflow: 'ellipsis', // Essential: shows ellipses for overflow
-              minWidth: 0, // CRUCIAL: Allows flex item to shrink below its content size
-            }}
-          >
-            {user.email}
-          </Typography>
-        </Box>
+          {user.cover && (
+            <Typography
+              sx={{
+                color: 'text.secondary',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Cover {user.cover}
+            </Typography>
+          )}
+        </Table>
       </AccordionSummary>
       <AccordionDetails>
         <Box

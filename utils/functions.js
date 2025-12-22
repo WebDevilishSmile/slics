@@ -83,6 +83,13 @@ export function serializeCovers(coversData) {
   return coversData.map(serializeCover);
 }
 
+export function serializeDriver(driverData) {
+  return {
+    ...driverData,
+    _id: driverData._id.toString(),
+  };
+}
+
 export function serializeDrivers(driversData) {
   return driversData.map((driver) => ({
     ...driver,

@@ -1,13 +1,14 @@
 'use client';
 
-import * as React from 'react';
-import dayjs from 'dayjs';
-import isBetweenPlugin from 'dayjs/plugin/isBetween';
+import { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay } from '@mui/x-date-pickers/PickersDay';
+
+import dayjs from 'dayjs';
+import isBetweenPlugin from 'dayjs/plugin/isBetween';
 
 dayjs.extend(isBetweenPlugin);
 
@@ -68,9 +69,8 @@ function Day(props) {
   );
 }
 
-export default function WeekPicker() {
-  const [hoveredDay, setHoveredDay] = React.useState(null);
-  const [value, setValue] = React.useState(dayjs());
+export default function WeekPicker({ value, setValue }) {
+  const [hoveredDay, setHoveredDay] = useState(null);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

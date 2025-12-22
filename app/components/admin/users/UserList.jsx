@@ -59,13 +59,11 @@ function UserList({ users }) {
         />
       </Box>
 
-      <List
-        sx={{ maxWidth: MAX_WIDTH, width: '100%', minWidth: 0, mt: '2rem' }}
-      >
+      <Box sx={{ maxWidth: MAX_WIDTH, width: '100%', minWidth: 0, mt: '2rem' }}>
         {filteredUsers.map((user) => (
           <UserCard key={user._id} user={serializeUser(user)} />
         ))}
-      </List>
+      </Box>
     </Box>
   );
 }

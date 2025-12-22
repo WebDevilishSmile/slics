@@ -17,9 +17,9 @@ export default async function Header() {
               <ListItem>
                 <Button href='/admin'>Admin</Button>
               </ListItem>
-              <ListItem>
+              {/* <ListItem>
                 <Button href='/covers'>Covers</Button>
-              </ListItem>
+              </ListItem> */}
             </>
           )}
           {session?.user ? (

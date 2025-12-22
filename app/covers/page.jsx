@@ -6,6 +6,12 @@ import StyledHeading from '../components/layout/StyledHeading';
 import HydrationGuard from '../components/utility/HydrationGuard';
 import { auth } from '@/auth';
 import { getUserById } from '@/utils/usersApi';
+import {
+  serializeDriver,
+  serializeDrivers,
+  serializeUser,
+} from '@/utils/functions';
+import { getAllDrivers, getDriverById } from '@/utils/driversApi';
 
 async function CoversPage() {
   const session = await auth();
@@ -30,6 +36,17 @@ async function CoversPage() {
       />
     );
   }
+  const driverData = await getDriverById(userData.driverId);
+
+  if (userData.driverId !== driverData._id.toString()) {
+    return (
+      <RedirectMessage
+        heading='You do not have permission to view this profile.'
+        subheading='Please check the user ID and try again.'
+        redirect='/'
+      />
+    );
+  }
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -38,7 +55,10 @@ async function CoversPage() {
         <StyledHeading>Covers</StyledHeading>
 
         <HydrationGuard>
-          <CoversDate user={userData} />
+          <CoversDate
+            user={serializeUser(userData)}
+            driver={serializeDriver(driverData)}
+          />
         </HydrationGuard>
       </PageContainer>
     </Suspense>

@@ -7,14 +7,13 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
-  TablePagination,
   TableRow,
 } from '@mui/material';
-import dayjs from 'dayjs';
 import { useState } from 'react';
+
+import DriversTableFooter from './DriversTableFooter';
 import DriversTableHead from './DriversTableHead';
-import TablePaginationActions from './TablePaginationActions';
+import DriversTableOptions from './DriversTableOptions';
 
 function DriversTable({ allDrivers }) {
   const [page, setPage] = useState(0);
@@ -36,7 +35,6 @@ function DriversTable({ allDrivers }) {
     <TableContainer component={Paper}>
       <Table size='small'>
         <DriversTableHead />
-
         <TableBody>
           {allDrivers
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -52,60 +50,17 @@ function DriversTable({ allDrivers }) {
                     ? driver.seniorityDate.replace('-A', '')
                     : driver.seniorityDate}
                 </TableCell>
-                <TableCell sx={{ width: '2rem' }}>
-                  <MoreHoriz />
-                </TableCell>
+                <DriversTableOptions driver={driver} />
               </TableRow>
             ))}
         </TableBody>
-
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[]}
-              count={allDrivers.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-              labelRowsPerPage=''
-              labelDisplayedRows={() => ''}
-              sx={{
-                '.MuiToolbar-root': {
-                  justifyContent: 'center',
-                  padding: 0, // Optional: removes extra side padding
-                },
-                '.MuiTablePagination-spacer': {
-                  display: 'none', // Required: removes the "pusher" element that forces content to the right
-                },
-              }}
-            />
-          </TableRow>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[10, 25, 50]}
-              count={allDrivers.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              labelRowsPerPage='Rows per page:'
-              sx={{
-                '.MuiToolbar-root': {
-                  justifyContent: 'center',
-                  padding: 0, // Optional: removes extra side padding
-                },
-                '.MuiTablePagination-spacer': {
-                  display: 'none', // Required: removes the "pusher" element that forces content to the right
-                },
-                '& .MuiTablePagination-actions': {
-                  display: 'none',
-                },
-              }}
-            />
-          </TableRow>
-        </TableFooter>
+        <DriversTableFooter
+          allDrivers={allDrivers}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          handleChangePage={handleChangePage}
+          handleChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </Table>
     </TableContainer>
   );

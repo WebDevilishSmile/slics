@@ -34,7 +34,7 @@ function UserCard({ user: initialUser }) {
   return (
     <Accordion key={user._id.toString()} sx={{ width: '100%' }}>
       <AccordionSummary expandIcon={<ExpandMore />}>
-        <Table
+        <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -65,7 +65,7 @@ function UserCard({ user: initialUser }) {
               Cover {user.cover}
             </Typography>
           )}
-        </Table>
+        </Box>
       </AccordionSummary>
       <AccordionDetails>
         <Box

@@ -1,16 +1,29 @@
-import { Typography } from '@mui/material';
+'use client';
+
+import { useState } from 'react';
 import dayjs from 'dayjs';
+
+import { Typography } from '@mui/material';
 import Calendar from './Calendar';
 
-function CoversDate({ user }) {
-  console.log(user);
+function CoversDate({ user, driver }) {
+  const [selectedWeek, setSelectedWeek] = useState(null);
+  const [value, setValue] = useState(dayjs());
+
   return (
     <>
       <Typography>{user.name}</Typography>
-      <Typography>Current cover</Typography>
-      <Typography>{dayjs().format('dddd, MMMM D')}</Typography>
+      <Typography>Current cover {driver.jobs}</Typography>
+      <Typography>
+        Week ending {value.endOf('week').format('MM/DD/YYYY')}
+      </Typography>
 
-      <Calendar />
+      <Calendar
+        selectedWeek={selectedWeek}
+        setSelectedWeek={setSelectedWeek}
+        value={value}
+        setValue={setValue}
+      />
     </>
   );
 }

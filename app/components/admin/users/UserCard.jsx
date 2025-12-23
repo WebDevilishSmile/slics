@@ -1,7 +1,6 @@
 // src/components/UserCard.jsx
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
 import { ExpandMore } from '@mui/icons-material';
 import {
@@ -10,15 +9,15 @@ import {
   AccordionSummary,
   Box,
   Divider,
-  Table,
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
+import Image from 'next/image';
 
 import UserEmail from './UserEmail';
+import UserMembership from './UserMembership';
 import UserPhone from './UserPhone';
 import UserRole from './UserRole';
-import UserMembership from './UserMembership';
 
 function UserCard({ user: initialUser }) {
   const [user, setUser] = useState(initialUser);

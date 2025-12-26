@@ -3,11 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { serializeSlics } from '@/utils/functions';
-import { Box, Button, Typography } from '@mui/material';
 
 import SlicDisplay from './SlicDisplay';
 import SlicsSearch from './SlicsSearch';
-import AllHubsButton from './AllHubsButton';
 
 function Main({ slics, commentsCount }) {
   const [loading, setLoading] = useState(true);
@@ -37,8 +35,6 @@ function Main({ slics, commentsCount }) {
         setLoading={setLoading}
         loading={loading}
       />
-
-      {/* <AllHubsButton /> */}
 
       <SlicDisplay
         slics={serializeSlics(slics)}

@@ -1,8 +1,9 @@
 'use client';
 
-import { Box, Button, Typography } from '@mui/material';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { Box, Button, Typography } from '@mui/material';
 import PageContainer from './PageContainer';
 
 function RedirectMessage({
@@ -15,7 +16,7 @@ function RedirectMessage({
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push(redirect);
-    }, 3000); // Redirect after 3 seconds
+    }, 2500); // Redirect after 2.5 seconds
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
   }, [router, redirect]);
 

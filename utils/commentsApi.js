@@ -122,11 +122,6 @@ export async function getCommentsByUserId(userId) {
 
     // Sort: by upVotes length descending, then by createdAt descending
     comments.sort((a, b) => {
-      const aVotes = a.upVotes?.length || 0;
-      const bVotes = b.upVotes?.length || 0;
-
-      if (bVotes !== aVotes) return bVotes - aVotes;
-
       return new Date(b.created_at) - new Date(a.created_at);
     });
 

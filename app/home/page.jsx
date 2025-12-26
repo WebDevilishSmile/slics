@@ -6,7 +6,6 @@ import { Typography } from '@mui/material';
 
 import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';
-import BackButton from '../components/layout/BackButton';
 import PageContainer from '../components/layout/PageContainer';
 import RedirectMessage from '../components/layout/RedirectMessage';
 import HydrationGuard from '../components/utility/HydrationGuard';
@@ -38,7 +37,6 @@ export default async function Home({ searchParams }) {
 
   return (
     <PageContainer>
-      <BackButton />
       <Typography variant='h1'>SLICs</Typography>
 
       <HydrationGuard>

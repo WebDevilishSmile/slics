@@ -1,7 +1,8 @@
+import client from '@/lib/db';
+
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { deleteSlic } from '@/utils/slicsApi';
-import client from '@/lib/db';
 
 // GET a single slic
 export async function GET(request, { params }) {

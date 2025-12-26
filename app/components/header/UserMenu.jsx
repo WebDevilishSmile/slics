@@ -72,6 +72,9 @@ function UserMenu({ children, user }) {
                   <Button href={`/profile/${user.id}`}>Profile</Button>
                 </ListItem>
                 <ListItem>
+                  <Button href={`/all`}>All Hubs</Button>
+                </ListItem>
+                <ListItem>
                   <Button
                     href={`https://www.upsers.com`}
                     rel='noopener noreferrer'

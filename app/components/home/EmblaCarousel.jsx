@@ -1,5 +1,6 @@
-import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback, useEffect, useRef } from 'react';
+
+import useEmblaCarousel from 'embla-carousel-react';
 
 const TWEEN_FACTOR_BASE = 1;
 

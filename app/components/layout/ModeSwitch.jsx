@@ -35,7 +35,7 @@ function ModeSwitch() {
         justifySelf: 'flex-end',
         color: 'text.opposite',
         bgcolor: 'background.opposite',
-        opacity: '60%',
+        opacity: '40%',
         '&:hover': { bgcolor: 'background.opposite', opacity: '50%' },
       }}
     >

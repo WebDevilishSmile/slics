@@ -1,8 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import { ChevronLeftOutlined } from '@mui/icons-material';
 import { Button } from '@mui/material';
-import { useRouter } from 'next/navigation';
 
 function BackButton() {
   const router = useRouter();
@@ -15,6 +16,8 @@ function BackButton() {
     <Button
       sx={{ position: 'absolute', top: '4.8rem', right: '1rem' }}
       onClick={handleBack}
+      size='small'
+      variant='outlined'
     >
       <ChevronLeftOutlined /> Back
     </Button>

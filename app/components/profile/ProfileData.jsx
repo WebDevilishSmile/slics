@@ -1,11 +1,14 @@
 'use client';
 
-import { capitalizeFirstLetter } from '@/utils/functions';
-import { MAX_WIDTH } from '@/utils/variables';
-import { Edit } from '@mui/icons-material';
-import { Alert, Box, IconButton, Snackbar, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+
+import { capitalizeFirstLetter } from '@/utils/functions';
+import { MAX_WIDTH } from '@/utils/variables';
+
+import { Edit } from '@mui/icons-material';
+import { Alert, Box, IconButton, Snackbar, Typography } from '@mui/material';
+
 import AddEditPhone from './AddEditPhone';
 
 function ProfileData({ userData }) {
@@ -55,10 +58,10 @@ function ProfileData({ userData }) {
       <Typography>
         <strong>Role:</strong> {capitalizeFirstLetter(userData.role)}
       </Typography>
-      <Typography>
+      {/* <Typography>
         <strong>Membership:</strong>{' '}
         {userData.bmcMember ? 'Active' : 'Inactive'}
-      </Typography>
+      </Typography> */}
 
       {!editPhone ? (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

@@ -4,7 +4,7 @@ import EmblaCarousel from './EmblaCarousel';
 
 function EmptySlic() {
   const OPTIONS = { loop: true, align: 'center' };
-  const SLIDE_COUNT = 5;
+  const SLIDE_COUNT = 4;
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
 
   return (
@@ -24,27 +24,23 @@ function EmptySlic() {
       }}
     >
       <Typography variant='h5' sx={{ textAlign: 'center', mb: '1rem' }}>
-        BETPA Feeder in need
+        Welcome to SLICs 5.0
       </Typography>
 
+      <Typography variant='caption'>Coming soon</Typography>
       <Button
+        disabled
         variant='contained'
-        href='https://gofund.me/52ffdb875'
+        // href='https://gofund.me/52ffdb875'
         sx={{ mb: '1rem' }}
       >
-        Help Dan
+        Watch Tutorial
       </Button>
       <EmblaCarousel slides={SLIDES} options={OPTIONS} />
 
       <Typography variant='body2' sx={{ mt: '1rem', textAlign: 'center' }}>
-        On Friday November 21st, 2025, our fellow BETPA feeder Dan Sakasitz
-        suffered a devastating house fire that destroyed his home and all his
-        belongings. Dan, his wife, and their three wonderful children have lost
-        everything except the clothes on their backs. Dan has been a dedicated
-        feeder since 2021. Now, he needs our help more than ever. Please
-        consider donating to help Dan rebuild his life and continue his vital
-        work with BETPA. Click on the link above to go the the GoFundMe page.
-        Every little bit helps. Thank you for your generosity and support.
+        Use the search bar above to find SLICs by numerical SLIC, alphabetical
+        SLIC, or customer name. Interact with comments shared by users like you!
       </Typography>
     </Paper>
   );

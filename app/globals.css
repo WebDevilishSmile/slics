@@ -86,9 +86,9 @@ a {
 .embla {
   max-width: 48rem;
   margin: auto;
-  --slide-height: 19rem;
+  --slide-height: 20rem;
   --slide-spacing: 1rem;
-  --slide-size: 80%;
+  --slide-size: 75%;
 }
 .embla__viewport {
   overflow: hidden;
@@ -209,12 +209,12 @@ a {
 .embla__parallax__img {
   /* BASE STYLES */
   max-width: none;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   height: var(--slide-height); /* Retain height from your base styles */
 
   /* PARALLAX SPECIFIC STYLES */
   width: 150%; /* Make the image 150% wider than the layer for movement */
   flex: 0 0 auto; /* Stop using flex for width */
-  margin-left: -25%; /* Center the image in its 150% space (150% - 100%) / 2 = 25% */
+  margin-left: 0; /* Center the image in its 150% space (150% - 100%) / 2 = 25% */
 }

@@ -82,7 +82,7 @@ const EmblaCarousel = (props) => {
                 <div className='embla__parallax__layer'>
                   <img
                     className='embla__slide__img embla__parallax__img'
-                    src={`/carousel_${index + 1}.jpeg`}
+                    src={`/carousel_${index + 1}.png`}
                     alt='Your alt text'
                   />
                 </div>

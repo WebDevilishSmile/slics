@@ -1,4 +1,5 @@
 import { CircularProgress, Typography } from '@mui/material';
+
 import PageContainer from './PageContainer';
 
 function LoadingFallback() {

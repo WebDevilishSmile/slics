@@ -1,9 +1,10 @@
 'use client';
 
+import theme from '@/utils/theme';
+
 import { SessionProvider } from 'next-auth/react';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import theme from '@/utils/theme';
 
 function Providers({ children }) {
   return (

@@ -1,18 +1,18 @@
 import { auth } from '@/auth';
 import { getCommentsByUserId } from '@/utils/commentsApi';
 import { getUserById } from '@/utils/usersApi';
-import { ELEVATION, MAX_WIDTH } from '@/utils/variables';
-import { Paper, Typography } from '@mui/material';
+import { serializeUser } from '@/utils/functions';
 
+import HomeButton from '@/app/components/layout/HomeButton';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
-import CommentBody from '@/app/components/profile/CommentBody';
-import CommentFoot from '@/app/components/profile/CommentFoot';
-import CommentHeader from '@/app/components/profile/CommentHeader';
+import ProfileComments from '@/app/components/profile/ProfileComments';
+import ProfileData from '@/app/components/profile/ProfileData';
 import ProfileImage from '@/app/components/profile/ProfileImage';
+import HydrationGuard from '@/app/components/utility/HydrationGuard';
 import PageContainer from '../../components/layout/PageContainer';
 import StyledHeading from '../../components/layout/StyledHeading';
-import ProfileData from '@/app/components/profile/ProfileData';
-import { serializeUser } from '@/utils/functions';
+import { Suspense } from 'react';
+import LoadingFallback from '@/app/components/layout/LoadingFallback';
 
 async function ProfilePage({ params }) {
   const { id } = await params;
@@ -53,31 +53,18 @@ async function ProfilePage({ params }) {
   const comments = await getCommentsByUserId(id);
 
   return (
-    <PageContainer>
-      <StyledHeading>Profile</StyledHeading>
+    <Suspense fallback={<LoadingFallback />}>
+      <PageContainer>
+        <StyledHeading>Profile</StyledHeading>
+        <HomeButton />
 
-      <ProfileImage userData={userData} />
-      <ProfileData userData={serializeUser(userData)} />
-
-      {comments.map((comment) => (
-        <Paper
-          key={comment._id}
-          elevation={ELEVATION}
-          sx={{
-            maxWidth: MAX_WIDTH,
-            width: '100%',
-            mt: 2,
-            p: 2,
-            borderRadius: '8px',
-            boxShadow: 1,
-          }}
-        >
-          <CommentHeader comment={comment} />
-          <CommentBody comment={comment} />
-          <CommentFoot comment={comment} />
-        </Paper>
-      ))}
-    </PageContainer>
+        <HydrationGuard>
+          <ProfileImage userData={userData} />
+          <ProfileData userData={serializeUser(userData)} />
+          <ProfileComments comments={comments} />
+        </HydrationGuard>
+      </PageContainer>
+    </Suspense>
   );
 }
 

@@ -1,6 +1,6 @@
-import { ELEVATION } from '@/utils/variables';
-import { Paper } from '@mui/material';
 import Image from 'next/image';
+import { Paper } from '@mui/material';
+import { ELEVATION } from '@/utils/variables';
 
 function ProfileImage({ userData }) {
   return (

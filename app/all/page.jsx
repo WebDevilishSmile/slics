@@ -10,6 +10,7 @@ import SlicDisplay from '../components/home/SlicDisplay';
 import SlicsSearch from '../components/home/SlicsSearch';
 import PageContainer from '../components/layout/PageContainer';
 import Main from '../components/home/Main';
+import HomeButton from '../components/layout/HomeButton';
 
 async function AllHubs({ searchParams }) {
   const session = await auth();
@@ -32,12 +33,11 @@ async function AllHubs({ searchParams }) {
 
   return (
     <PageContainer>
+      <HomeButton />
+
       <Typography variant='h2' sx={{ textAlign: 'center', maxWidth: '40rem' }}>
         All Hubs
       </Typography>
-      <Button variant='contained' href='/home'>
-        Home
-      </Button>
 
       <Main slics={serializeSlics(allHubs)} commentsCount={commentsCount} />
 

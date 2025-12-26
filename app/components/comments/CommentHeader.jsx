@@ -22,6 +22,8 @@ function CommentHeader({ author, comment, refetchComments }) {
     }
   };
 
+  console.log(author);
+
   return (
     <Box
       sx={{

@@ -15,8 +15,8 @@ function getDonationMessage(count) {
   return `${count} lookups! SLICs runs on community support — thank you for being here.`;
 }
 
-function SlicsSearch({ slics, setLoading, loading, viewCount }) {
-  const donationMessage = getDonationMessage(viewCount);
+function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
+  const donationMessage = isMember ? null : getDonationMessage(viewCount);
   const [selectedSlic, setSelectedSlic] = useState('');
   const pathname = usePathname();
   const router = useRouter();

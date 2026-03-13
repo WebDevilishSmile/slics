@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { serializeSlics } from '@/utils/functions';
 
@@ -10,8 +10,20 @@ import SlicsSearch from './SlicsSearch';
 function Main({ slics, commentsCount }) {
   const [loading, setLoading] = useState(true);
   const [slic, setSlic] = useState(null);
+  const [viewCount, setViewCount] = useState(0);
+  const prevSlicRef = useRef(null);
 
   const searchParams = useSearchParams();
+
+  // Fetch lifetime view count on mount
+  useEffect(() => {
+    fetch('/api/user/views')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.slicViews !== undefined) setViewCount(data.slicViews);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const numSlic = searchParams.get('slic');
@@ -28,12 +40,32 @@ function Main({ slics, commentsCount }) {
     setLoading(false); // End loading once processing is done
   }, [searchParams, slics]);
 
+  // Track each unique slic view
+  useEffect(() => {
+    if (slic && slic !== prevSlicRef.current) {
+      prevSlicRef.current = slic;
+      fetch('/api/user/track-view', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numSlic: slic.numSlic }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.slicViews !== undefined) setViewCount(data.slicViews);
+        })
+        .catch(() => {});
+    } else if (!slic) {
+      prevSlicRef.current = null;
+    }
+  }, [slic]);
+
   return (
     <>
       <SlicsSearch
         slics={serializeSlics(slics)}
         setLoading={setLoading}
         loading={loading}
+        viewCount={viewCount}
       />
 
       <SlicDisplay

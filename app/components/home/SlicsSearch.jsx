@@ -1,11 +1,22 @@
 'use client';
 
-import { Autocomplete, Box, TextField, Typography } from '@mui/material';
+import { Alert, Autocomplete, Box, Link, TextField } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 import { MAX_WIDTH } from '@/utils/variables';
 
-function SlicsSearch({ slics, setLoading, loading }) {
+function getDonationMessage(count) {
+  if (count <= 0) return null;
+  if (count <= 5) return `Enjoying SLICs? Help keep it free!`;
+  if (count <= 20)
+    return `You've looked up ${count} slics — consider supporting us!`;
+  if (count <= 50)
+    return `You're a power user! ${count} lookups and counting — your support matters.`;
+  return `${count} lookups! SLICs runs on community support — thank you for being here.`;
+}
+
+function SlicsSearch({ slics, setLoading, loading, viewCount }) {
+  const donationMessage = getDonationMessage(viewCount);
   const [selectedSlic, setSelectedSlic] = useState('');
   const pathname = usePathname();
   const router = useRouter();
@@ -41,7 +52,7 @@ function SlicsSearch({ slics, setLoading, loading }) {
     const initialSlic = searchParams.get('slic');
     if (initialSlic) {
       const slic = slics.find(
-        (s) => s.numSlic === initialSlic || s.alphaSlic === initialSlic
+        (s) => s.numSlic === initialSlic || s.alphaSlic === initialSlic,
       );
       if (slic) {
         const label =
@@ -56,20 +67,50 @@ function SlicsSearch({ slics, setLoading, loading }) {
   }, [searchParams, slics]);
 
   return (
-    <Autocomplete
-      fullWidth
-      options={slicLabels}
-      renderInput={(params) => <TextField {...params} label='Search Slics' />}
+    <Box
       sx={{
-        width: '90%',
-        maxWidth: `calc(${MAX_WIDTH} - 15%)`,
-        mt: '1.5rem',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
       }}
-      onChange={handleSlicChange}
-      value={selectedSlic}
-      isOptionEqualToValue={(option, value) => option === value || value === ''}
-      loading={loading}
-    />
+    >
+      {donationMessage && (
+        <Alert
+          severity='info'
+          sx={{
+            width: '90%',
+            maxWidth: `calc(${MAX_WIDTH} - 15%)`,
+            mt: '1.5rem',
+          }}
+        >
+          {donationMessage}{' '}
+          <Link
+            href='https://buymeacoffee.com/tiagodavila'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            Support us on Buy Me a Coffee
+          </Link>
+        </Alert>
+      )}
+      <Autocomplete
+        fullWidth
+        options={slicLabels}
+        renderInput={(params) => <TextField {...params} label='Search Slics' />}
+        sx={{
+          width: '90%',
+          maxWidth: `calc(${MAX_WIDTH} - 15%)`,
+          mt: '1.5rem',
+        }}
+        onChange={handleSlicChange}
+        value={selectedSlic}
+        isOptionEqualToValue={(option, value) =>
+          option === value || value === ''
+        }
+        loading={loading}
+      />
+    </Box>
   );
 }
 

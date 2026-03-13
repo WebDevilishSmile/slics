@@ -1,6 +1,6 @@
 import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
-import { Button, Paper, Typography } from '@mui/material';
-import EmblaCarousel from './EmblaCarousel';
+import { Box, Paper, Typography } from '@mui/material';
+import Image from 'next/image';
 
 function EmptySlic() {
   const OPTIONS = { loop: true, align: 'center' };
@@ -27,21 +27,16 @@ function EmptySlic() {
         Welcome to SLICs 5.0
       </Typography>
 
-      <Typography variant='caption'>Coming soon</Typography>
-      <Button
-        disabled
-        variant='contained'
-        // href='https://gofund.me/52ffdb875'
-        sx={{ mb: '1rem' }}
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
       >
-        Watch Tutorial
-      </Button>
-      <EmblaCarousel slides={SLIDES} options={OPTIONS} />
-
-      <Typography variant='body2' sx={{ mt: '1rem', textAlign: 'center' }}>
-        Use the search bar above to find SLICs by numerical SLIC, alphabetical
-        SLIC, or customer name. Interact with comments shared by users like you!
-      </Typography>
+        <Image
+          src='/slics-logo.png'
+          alt='SLICs Logo'
+          width={200}
+          height={200}
+        />
+      </Box>
     </Paper>
   );
 }

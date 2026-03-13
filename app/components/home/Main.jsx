@@ -2,16 +2,18 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { serializeSlics } from '@/utils/functions';
 
 import SlicDisplay from './SlicDisplay';
 import SlicsSearch from './SlicsSearch';
 
 function Main({ slics, commentsCount }) {
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [slic, setSlic] = useState(null);
   const [viewCount, setViewCount] = useState(0);
-  const prevSlicRef = useRef(null);
+  const prevSlicNumRef = useRef(null);
 
   const searchParams = useSearchParams();
 
@@ -42,8 +44,8 @@ function Main({ slics, commentsCount }) {
 
   // Track each unique slic view
   useEffect(() => {
-    if (slic && slic !== prevSlicRef.current) {
-      prevSlicRef.current = slic;
+    if (slic && slic.numSlic !== prevSlicNumRef.current) {
+      prevSlicNumRef.current = slic.numSlic;
       fetch('/api/user/track-view', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -55,7 +57,7 @@ function Main({ slics, commentsCount }) {
         })
         .catch(() => {});
     } else if (!slic) {
-      prevSlicRef.current = null;
+      prevSlicNumRef.current = null;
     }
   }, [slic]);
 
@@ -66,6 +68,7 @@ function Main({ slics, commentsCount }) {
         setLoading={setLoading}
         loading={loading}
         viewCount={viewCount}
+        isMember={!!session?.user?.bmcMember}
       />
 
       <SlicDisplay

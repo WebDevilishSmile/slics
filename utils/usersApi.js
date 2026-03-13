@@ -48,6 +48,24 @@ export async function getUserByEmail(email) {
   }
 }
 
+export async function getSlicViewCounts() {
+  try {
+    const db = client.db();
+    const counts = await db
+      .collection('slicViews')
+      .aggregate([{ $group: { _id: '$userId', count: { $sum: 1 } } }])
+      .toArray();
+
+    return counts.reduce((map, entry) => {
+      map[entry._id.toString()] = entry.count;
+      return map;
+    }, {});
+  } catch (error) {
+    console.error('Error fetching slic view counts:', error);
+    return {};
+  }
+}
+
 export async function toggleMembershipApi(userId) {
   try {
     if (!userId) {

@@ -72,7 +72,7 @@ async function Membership() {
         href='https://buymeacoffee.com/tiagodavila'
         target='_blank'
         rel='noopener noreferrer'
-        sx={{ backgroundColor: 'transparent', color: 'black' }}
+        sx={{ backgroundColor: '#f7f7f7', color: 'black' }}
       >
         <Image
           src='/bmc-brand-logo.svg'

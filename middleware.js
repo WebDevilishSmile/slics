@@ -21,11 +21,7 @@ export default auth((req) => {
   // );
 
   // Define paths that require BMC membership
-  const requiresBMCMembership =
-    url.pathname.startsWith('/dashboard') ||
-    url.pathname.startsWith('/protected') ||
-    url.pathname.startsWith('/home') ||
-    url.pathname.startsWith('/all');
+  const requiresBMCMembership = url.pathname.startsWith('/history');
 
   // --- MODIFICATION STARTS HERE ---
 

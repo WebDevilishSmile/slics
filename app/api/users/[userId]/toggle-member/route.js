@@ -22,16 +22,16 @@ export async function PATCH(req, { params }) {
     if (!loggedInUser || loggedInUser.role !== 'admin') {
       return NextResponse.json(
         { message: 'Forbidden: Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
-    const { userId } = params;
+    const { userId } = await params;
 
     if (!userId) {
       return NextResponse.json(
         { message: 'User ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,11 +41,11 @@ export async function PATCH(req, { params }) {
     } catch (objIdError) {
       console.error(
         'API Error: Invalid User ID format for ObjectId:',
-        objIdError
+        objIdError,
       );
       return NextResponse.json(
         { message: 'Invalid User ID format' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -63,7 +63,7 @@ export async function PATCH(req, { params }) {
           ...userToUpdate,
           message: `User membership is already '${newMembership}'. No change made.`,
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -71,21 +71,21 @@ export async function PATCH(req, { params }) {
       // Renamed variable for clarity
       { _id: objectIdUserId },
       { $set: { bmcMember: newMembership } },
-      { returnDocument: 'after' }
+      { returnDocument: 'after' },
     );
 
     // Fix: Directly check if updatedUserDocument is null/undefined
     // If it's null, it means no document was found matching the filter during the update
     if (!updatedUserDocument) {
       console.error(
-        'API Error: findOneAndUpdate unexpectedly returned null, indicating no document matched filter during update.'
+        'API Error: findOneAndUpdate unexpectedly returned null, indicating no document matched filter during update.',
       );
       return NextResponse.json(
         {
           message:
             'Failed to update user role. Document not found during update or disappeared.',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -98,7 +98,7 @@ export async function PATCH(req, { params }) {
         message: 'Internal server error',
         error: error.message || 'An unknown error occurred on the server.',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,9 +1,10 @@
 import { auth } from '@/auth';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, SvgIcon, Typography } from '@mui/material';
 import Link from 'next/link';
 import RequestAccess from './RequestAccess';
 import { isMobileDevice, serializeUser } from '@/utils/functions';
 import { headers } from 'next/headers';
+import Image from 'next/image';
 
 async function Membership() {
   // Ensure the auth function is called to get the session
@@ -39,7 +40,16 @@ async function Membership() {
 
   // If the user is logged in, but not a member, we display the membership prompt
   return (
-    <Box sx={{ textAlign: 'center', my: '2rem' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+        my: '2rem',
+        gap: '1rem',
+      }}
+    >
       <Typography
         variant='body2'
         sx={{
@@ -59,15 +69,37 @@ async function Membership() {
       <Button
         type='submit'
         variant='contained'
-        href='https://buymeacoffee.com/tiagodavila/membership'
+        href='https://buymeacoffee.com/tiagodavila'
         target='_blank'
         rel='noopener noreferrer'
+        sx={{ backgroundColor: 'transparent', color: 'black' }}
       >
-        Buy Me a Coffee
+        <Image
+          src='/bmc-brand-logo.svg'
+          width={148}
+          height={24}
+          alt='Buy Me a Coffee'
+        />
       </Button>
 
-      {/* Request Access Component */}
-      <RequestAccess user={user} isMobile={isMobile} />
+      <Typography
+        variant='body2'
+        sx={{
+          maxWidth: '55rem',
+          textAlign: 'center',
+          my: '1rem',
+          px: '1rem',
+        }}
+      >
+        If you would like immediate access, click the link below but don&apos;t
+        forget to support us in the future!
+      </Typography>
+      <Button variant='contained' href='/home'>
+        Use SLICs now
+      </Button>
+
+      {/* Request Access Component
+      <RequestAccess user={user} isMobile={isMobile} /> */}
     </Box>
   );
 }

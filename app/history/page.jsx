@@ -7,9 +7,9 @@ import HomeButton from '@/app/components/layout/HomeButton';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import PageContainer from '@/app/components/layout/PageContainer';
 import StyledHeading from '@/app/components/layout/StyledHeading';
+import LocalDate from '@/app/components/layout/LocalDate';
 import { Box, Divider, Paper, Typography } from '@mui/material';
 import { ELEVATION, MAX_WIDTH } from '@/utils/variables';
-import dayjs from 'dayjs';
 
 async function getViewHistory(userId) {
   const sixMonthsAgo = new Date();
@@ -32,9 +32,10 @@ async function getViewHistory(userId) {
 function groupByMonth(views) {
   const groups = {};
   for (const view of views) {
-    const key = dayjs(view.viewedAt).format('MMMM YYYY');
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(view);
+    const d = new Date(view.viewedAt);
+    const label = d.toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    if (!groups[label]) groups[label] = [];
+    groups[label].push(view);
   }
   return groups;
 }
@@ -124,7 +125,7 @@ export default async function HistoryPage() {
                     {getSlicLabel(view.numSlic, slics)}
                   </Typography>
                   <Typography variant='body2' sx={{ color: 'text.secondary' }}>
-                    {dayjs(view.viewedAt).format('MMM D, h:mm A')}
+                    <LocalDate date={view.viewedAt} />
                   </Typography>
                 </Box>
               ))}

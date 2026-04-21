@@ -27,7 +27,7 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
     if (slic.type === 'center' || !slic.type) {
       return `${slic.numSlic} - ${slic.alphaSlic}`;
     } else if (slic.type === 'customer') {
-      return `${slic.numSlic} - ${slic.name}`;
+      return `${slic.numSlic} - ${slic.name} - ${slic.alphaSlic}`;
     }
     return '';
   });

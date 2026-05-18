@@ -19,9 +19,6 @@ const font = Montserrat({
 export const metadata = {
   title: 'SLICs',
   description: 'Created By Tiago Davila',
-  icons: {
-    apple: '/apple-touch-icon.png',
-  },
 };
 
 export default function RootLayout({ children }) {

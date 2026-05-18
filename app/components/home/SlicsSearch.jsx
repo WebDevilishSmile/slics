@@ -57,7 +57,7 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
       if (slic) {
         const label =
           slic.type === 'customer'
-            ? `${slic.numSlic} - ${slic.name}`
+            ? `${slic.numSlic} - ${slic.name} - ${slic.alphaSlic}`
             : `${slic.numSlic} - ${slic.alphaSlic}`;
         setSelectedSlic(label);
       }

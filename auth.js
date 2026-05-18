@@ -1,13 +1,47 @@
 // auth.js (This is your main Auth.js entry point, usually at src/app/api/auth/[...nextauth]/route.js or directly at auth.js in root)
 import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import client from './lib/db'; // Your MongoDB connection client
 import { ObjectId } from 'mongodb'; // Assuming you use ObjectId
 import { authConfig } from './auth.config'; // Import the base config for providers/callbacks
+import bcrypt from 'bcryptjs';
 
 // Extend the authConfig with the adapter and any server-only logic
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig, // Inherit providers, session strategy, pages, secret, etc.
+  providers: [
+    ...authConfig.providers,
+    Credentials({
+      credentials: {
+        email: {},
+        password: {},
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+        const db = client.db();
+        const user = await db
+          .collection('users')
+          .findOne({ email: credentials.email.toString().toLowerCase() });
+        if (!user || !user.password) return null;
+        const isValid = await bcrypt.compare(
+          credentials.password.toString(),
+          user.password
+        );
+        if (!isValid) return null;
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name,
+          image: user.image || null,
+          role: user.role,
+          bmcMember: user.bmcMember,
+          comments: user.comments,
+          created_at: user.created_at,
+        };
+      },
+    }),
+  ],
   adapter: MongoDBAdapter(client), // Add the database adapter here
   events: {
     async createUser(message) {

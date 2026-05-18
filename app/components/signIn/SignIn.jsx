@@ -1,6 +1,7 @@
 import { signIn } from '@/auth';
 import { Google, Microsoft } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
+import EmailAuth from './EmailAuth';
 
 function SignIn() {
   return (
@@ -14,7 +15,7 @@ function SignIn() {
           px: '1rem',
         }}
       >
-        To sign in or create an account you must use a Google account.
+        Sign in or create an account using Google or email and password.
       </Typography>
       <Box
         component='form'
@@ -52,6 +53,7 @@ function SignIn() {
           Microsoft sign-in is in development.
         </Typography>
       </Box>
+      <EmailAuth />
     </Box>
   );
 }

@@ -187,7 +187,7 @@ An image upload button is rendered but hardcoded `disabled={true}` with no toolt
 
 ---
 
-### [ ] 18. Fix carousel placeholder alt text
+### [x] 18. Fix carousel placeholder alt text
 **File:** `app/components/home/EmblaCarousel.jsx` (line ~86)
 
 `alt='Your alt text'` — a forgotten placeholder.

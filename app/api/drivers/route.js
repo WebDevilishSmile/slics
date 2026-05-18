@@ -1,7 +1,14 @@
 import client from '@/lib/db';
+import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 
 export async function POST(request) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (session.user.role !== 'admin')
+    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+
   try {
     const { name, employeeId, seniorityDate, phone } = await request.json();
 

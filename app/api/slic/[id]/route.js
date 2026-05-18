@@ -1,5 +1,5 @@
 import client from '@/lib/db';
-
+import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { deleteSlic } from '@/utils/slicsApi';
@@ -34,8 +34,13 @@ export async function GET(request, { params }) {
 
 // PATCH (update) a slic
 export async function PATCH(request, { params }) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (session.user.role !== 'admin')
+    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+
   const { id } = params;
-  console.log(id);
 
   if (!id) {
     return NextResponse.json({ error: 'Invalid slic ID' }, { status: 400 });
@@ -65,6 +70,12 @@ export async function PATCH(request, { params }) {
 
 // DELETE a slic
 export async function DELETE(request, { params }) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (session.user.role !== 'admin')
+    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+
   const { id } = params;
 
   if (!id || !ObjectId.isValid(id)) {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { ExpandMore, Person, PersonOff } from '@mui/icons-material';
 import {
   Accordion,
@@ -25,7 +26,8 @@ import UserRole from './UserRole';
 function UserCard({ user: initialUser, viewCount = 0 }) {
   const [user, setUser] = useState(initialUser);
   const router = useRouter();
-  const isProtected = user?.email === 'webdevilishsmile@gmail.com';
+  const { data: session } = useSession();
+  const isProtected = user?._id?.toString() === session?.user?.id?.toString();
 
   if (!user) {
     return (

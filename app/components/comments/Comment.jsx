@@ -3,38 +3,18 @@
 import { Box, Divider, Paper, Typography, useColorScheme } from '@mui/material';
 import parse, { domToReact } from 'html-react-parser';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 import theme from '@/utils/theme';
 
 import CommentFooter from './CommentFooter';
 import CommentHeader from './CommentHeader';
 import { ELEVATION } from '@/utils/variables';
 
-function Comment({ comment, refetchComments }) {
-  const [author, setAuthor] = useState({});
-  const { userId } = comment;
+function Comment({ comment, author, refetchComments }) {
   const session = useSession();
   const user = session.data?.user;
   const { mode } = useColorScheme();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`/api/users/${userId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user');
-        }
-        const data = await response.json();
-        setAuthor(data);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    };
-
-    fetchUser();
-  }, [userId]);
-
-  if (!author || Object.keys(author).length === 0) {
+  if (!author) {
     return (
       <Paper
         sx={{

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd /c dir *)",
+      "Bash(cmd /c dir /s /b *)",
+      "Bash(npx tsc --noEmit)"
+    ]
+  }
+}

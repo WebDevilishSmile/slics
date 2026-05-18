@@ -9,17 +9,30 @@ import NoSlicComments from './NoSlicComments';
 
 function Comments({ user }) {
   const [comments, setComments] = useState([]);
+  const [authorsMap, setAuthorsMap] = useState({});
   const searchParams = useSearchParams();
   const numSlic = searchParams.get('slic');
 
   const fetchComments = useCallback(async () => {
     try {
       const response = await fetch(`/api/comments?slic=${numSlic}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch comments');
-      }
+      if (!response.ok) throw new Error('Failed to fetch comments');
       const data = await response.json();
       setComments(data);
+
+      const uniqueUserIds = [...new Set(data.map((c) => c.userId).filter(Boolean))];
+      const results = await Promise.all(
+        uniqueUserIds.map((id) =>
+          fetch(`/api/users/${id}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null)
+        )
+      );
+      const map = {};
+      results.forEach((author) => {
+        if (author?._id) map[author._id.toString()] = author;
+      });
+      setAuthorsMap(map);
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
@@ -44,6 +57,7 @@ function Comments({ user }) {
           <Comment
             key={index}
             comment={comment}
+            author={authorsMap[comment.userId?.toString()]}
             refetchComments={fetchComments}
           />
         ))

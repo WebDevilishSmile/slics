@@ -2,7 +2,7 @@ import client from '@/lib/db';
 import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { deleteSlic } from '@/utils/slicsApi';
+import { deleteSlic, updateSlic } from '@/utils/slicsApi';
 
 // GET a single slic
 export async function GET(request, { params }) {
@@ -48,19 +48,17 @@ export async function PATCH(request, { params }) {
 
   try {
     const updates = await request.json();
-    const db = client.db();
 
-    const result = await db
-      .collection('slics')
-      .updateOne({ numSlic: id }, { $set: updates });
-
-    if (result.matchedCount === 0) {
-      return NextResponse.json({ error: 'Slic not found' }, { status: 404 });
-    }
+    await updateSlic(id, updates, session.user);
 
     return NextResponse.json({ message: 'Slic updated successfully' });
   } catch (error) {
     console.error('Error updating slic:', error);
+
+    if (error.message?.includes('not found')) {
+      return NextResponse.json({ error: error.message }, { status: 404 });
+    }
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

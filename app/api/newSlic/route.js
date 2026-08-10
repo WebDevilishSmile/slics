@@ -19,7 +19,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const newSlic = await createSlic(body);
+    const newSlic = await createSlic(body, session.user);
 
     return NextResponse.json(
       {

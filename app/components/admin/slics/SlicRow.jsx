@@ -1,9 +1,17 @@
 import { serializeSlic } from '@/utils/functions';
-import { TableCell, TableRow } from '@mui/material';
+import { TableCell, TableRow, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import SlicOptions from './SlicOptions';
 
+function editorLabel(userStamp) {
+  if (!userStamp) return null;
+  return userStamp.name || userStamp.email || 'Unknown';
+}
+
 function SlicRow({ slic }) {
+  const lastEditor = editorLabel(slic.updatedBy) || editorLabel(slic.createdBy);
+  const lastEditDate = slic.updatedBy ? slic.updated_at : slic.created_at;
+
   return (
     <TableRow key={slic._id}>
       <TableCell
@@ -39,6 +47,27 @@ function SlicRow({ slic }) {
         }}
       >
         {slic.name}
+      </TableCell>
+      <TableCell
+        sx={{
+          whiteSpace: 'nowrap',
+          maxWidth: '6rem',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {lastEditor ? (
+          <>
+            <Typography variant='body2' noWrap>
+              {lastEditor}
+            </Typography>
+            <Typography variant='caption' color='text.secondary'>
+              {lastEditDate ? dayjs(lastEditDate).format('MM/DD/YY') : ''}
+            </Typography>
+          </>
+        ) : (
+          '—'
+        )}
       </TableCell>
       <TableCell>
         <SlicOptions slic={serializeSlic(slic)} />

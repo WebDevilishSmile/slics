@@ -18,7 +18,7 @@ function SlicsBody({ slics, page }) {
         ))}
       {emptyRows > 0 && (
         <TableRow sx={{ height: 73 * emptyRows }}>
-          <TableCell colSpan={5} />
+          <TableCell colSpan={6} />
         </TableRow>
       )}
     </TableBody>

@@ -77,6 +77,9 @@ function UserMenu({ children, user }) {
                   </ListItem>
                 )}
                 <ListItem>
+                  <Button href={`/cover-bid-jobs`}>Cover Bids</Button>
+                </ListItem>
+                <ListItem>
                   <Button href={`/all`}>All Hubs</Button>
                 </ListItem>
                 <ListItem>

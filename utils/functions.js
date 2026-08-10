@@ -38,6 +38,22 @@ export function serializeSlics(slics) {
   return slics.map(serializeSlic);
 }
 
+export function serializeSlicHistoryEntry(entry) {
+  return {
+    ...entry,
+    _id: entry._id.toString(),
+    slicId: entry.slicId ? entry.slicId.toString() : null,
+    timestamp:
+      entry.timestamp instanceof Date
+        ? entry.timestamp.toISOString()
+        : entry.timestamp,
+  };
+}
+
+export function serializeSlicHistory(history) {
+  return history.map(serializeSlicHistoryEntry);
+}
+
 export function serializeUser(userData) {
   return {
     ...userData,
@@ -95,6 +111,13 @@ export function serializeDrivers(driversData) {
     ...driver,
     _id: driver._id.toString(),
   }));
+}
+
+// dayjs .day(n) sets the weekday within the current Sun-Sat week (0=Sun..6=Sat),
+// so .day(6) always lands on that week's Saturday — same day if already Saturday,
+// otherwise the upcoming one.
+export function getUpcomingSaturday(date) {
+  return date.day(6);
 }
 
 // Helper function to detect mobile based on User-Agent

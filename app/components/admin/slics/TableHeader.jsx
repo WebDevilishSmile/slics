@@ -55,6 +55,7 @@ function TableHeader({ sortCategory, setSortCategory, sort, setSort }) {
             )}
           </TableCell>
         ))}
+        <TableCell>Last Edited</TableCell>
         <TableCell>Select</TableCell>
       </TableRow>
     </TableHead>

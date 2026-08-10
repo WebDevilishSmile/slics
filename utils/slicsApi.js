@@ -1,7 +1,17 @@
 import client from '@/lib/db';
 import { ObjectId } from 'mongodb';
+import { addSlicHistoryEntry, diffSlicFields } from '@/utils/slicHistoryApi';
 
-export async function createSlic(slicData) {
+function toUserStamp(user) {
+  if (!user) return null;
+  return {
+    id: user.id || null,
+    name: user.name || null,
+    email: user.email || null,
+  };
+}
+
+export async function createSlic(slicData, user) {
   try {
     // Validate required fields
     const requiredFields = ['type', 'numSlic', 'alphaSlic', 'address'];
@@ -38,6 +48,9 @@ export async function createSlic(slicData) {
     // Create the document
     const slicDocument = {
       created_at: new Date().toISOString(),
+      createdBy: toUserStamp(user),
+      updated_at: null,
+      updatedBy: null,
       type: slicData.type,
       numSlic: slicData.numSlic,
       alphaSlic: slicData.alphaSlic,
@@ -54,12 +67,65 @@ export async function createSlic(slicData) {
 
     const result = await slicsCollection.insertOne(slicDocument);
 
+    await addSlicHistoryEntry({
+      slicId: result.insertedId,
+      numSlic: slicDocument.numSlic,
+      action: 'created',
+      changes: null,
+      user,
+    });
+
     return {
       _id: result.insertedId,
       ...slicDocument,
     };
   } catch (error) {
     console.error('Error creating slic:', error);
+    throw error;
+  }
+}
+
+export async function updateSlic(numSlic, updates, user) {
+  try {
+    if (!numSlic) {
+      throw new Error('numSlic is required');
+    }
+
+    const db = client.db();
+    const slicsCollection = db.collection('slics');
+
+    const existingSlic = await slicsCollection.findOne({ numSlic });
+
+    if (!existingSlic) {
+      throw new Error(`Slic with numSlic "${numSlic}" not found`);
+    }
+
+    const changes = diffSlicFields(existingSlic, updates);
+
+    const updatedFields = {
+      ...updates,
+      updated_at: new Date().toISOString(),
+      updatedBy: toUserStamp(user),
+    };
+
+    const result = await slicsCollection.updateOne(
+      { numSlic },
+      { $set: updatedFields }
+    );
+
+    if (changes.length > 0) {
+      await addSlicHistoryEntry({
+        slicId: existingSlic._id,
+        numSlic,
+        action: 'updated',
+        changes,
+        user,
+      });
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error updating slic:', error);
     throw error;
   }
 }

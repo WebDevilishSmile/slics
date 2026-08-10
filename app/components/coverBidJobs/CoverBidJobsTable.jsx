@@ -17,7 +17,12 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import CoverBidJobCard from './CoverBidJobCard';
 import CoverBidJobDetailDialog from './CoverBidJobDetailDialog';
-import { DAY_FIELDS, DAY_LABELS, DAY_COLORS, formatDayValue } from './dayFormat';
+import {
+  DAY_FIELDS,
+  DAY_LABELS,
+  DAY_COLORS,
+  formatDayValue,
+} from './dayFormat';
 
 const DAY_COLUMNS = DAY_FIELDS.map((day) => ({
   field: day,
@@ -63,7 +68,7 @@ const DESKTOP_COLUMNS = [
   },
 ];
 
-const CARDS_PER_PAGE = 20;
+const CARDS_PER_PAGE = 50;
 
 function CoverBidJobsTable({ jobs }) {
   const theme = useTheme();
@@ -71,7 +76,7 @@ function CoverBidJobsTable({ jobs }) {
 
   const weeks = useMemo(
     () => [...new Set(jobs.map((job) => job.weekEnding))],
-    [jobs]
+    [jobs],
   );
 
   const [selectedWeek, setSelectedWeek] = useState(weeks[0] ?? null);
@@ -93,7 +98,7 @@ function CoverBidJobsTable({ jobs }) {
 
   const paginatedJobs = filteredJobs.slice(
     page * CARDS_PER_PAGE,
-    page * CARDS_PER_PAGE + CARDS_PER_PAGE
+    page * CARDS_PER_PAGE + CARDS_PER_PAGE,
   );
 
   if (jobs.length === 0) {
@@ -164,9 +169,9 @@ function CoverBidJobsTable({ jobs }) {
             rows={filteredJobs}
             columns={DESKTOP_COLUMNS}
             getRowId={(row) => row._id}
-            pageSizeOptions={[25, 50, 100]}
+            pageSizeOptions={[10, 25, 50, 100]}
             initialState={{
-              pagination: { paginationModel: { pageSize: 25 } },
+              pagination: { paginationModel: { pageSize: 50 } },
             }}
             autoHeight
             getRowHeight={() => 'auto'}
@@ -182,7 +187,11 @@ function CoverBidJobsTable({ jobs }) {
         <Box sx={{ px: 1.5, pb: 2 }}>
           <Stack spacing={1.5}>
             {paginatedJobs.map((job) => (
-              <CoverBidJobCard key={job._id} job={job} onSelect={setSelectedJob} />
+              <CoverBidJobCard
+                key={job._id}
+                job={job}
+                onSelect={setSelectedJob}
+              />
             ))}
           </Stack>
 

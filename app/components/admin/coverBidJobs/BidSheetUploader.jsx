@@ -28,6 +28,7 @@ import CoverBidJobEditCard from './CoverBidJobEditCard';
 
 const MAX_DIMENSION = 3200;
 const JPEG_QUALITY = 0.92;
+const MAX_PDF_SIZE_BYTES = 15 * 1024 * 1024;
 
 function resizeImageToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -55,6 +56,22 @@ function resizeImageToBase64(file) {
     };
     reader.readAsDataURL(file);
   });
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.readAsDataURL(file);
+  });
+}
+
+function isPdfFile(file) {
+  return (
+    file.type === 'application/pdf' ||
+    file.name?.toLowerCase().endsWith('.pdf')
+  );
 }
 
 function emptyRow() {
@@ -97,11 +114,21 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
     setSuccessMessage(null);
 
     try {
+      const oversizedPdf = files.find(
+        (file) => isPdfFile(file) && file.size > MAX_PDF_SIZE_BYTES
+      );
+      if (oversizedPdf) {
+        throw new Error(
+          `${oversizedPdf.name} is too large (max ${MAX_PDF_SIZE_BYTES / (1024 * 1024)}MB). Try a smaller or lower-resolution scan.`
+        );
+      }
+
       const images = await Promise.all(
-        files.map(async (file) => ({
-          data: await resizeImageToBase64(file),
-          mediaType: 'image/jpeg',
-        }))
+        files.map(async (file) =>
+          isPdfFile(file)
+            ? { data: await fileToBase64(file), mediaType: 'application/pdf' }
+            : { data: await resizeImageToBase64(file), mediaType: 'image/jpeg' }
+        )
       );
 
       const res = await fetch('/api/coverBidJobs/extract', {
@@ -112,7 +139,7 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to extract rows from photo');
+        throw new Error(data.error || 'Failed to extract rows from upload');
       }
 
       const newRows = data.rows.map((row) => ({ id: crypto.randomUUID(), ...row }));
@@ -175,7 +202,7 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
       <input
         ref={fileInputRef}
         type='file'
-        accept='image/*'
+        accept='image/*,application/pdf,.pdf'
         multiple
         hidden
         onChange={handleFileChange}
@@ -187,7 +214,7 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
         onClick={handlePickFile}
         disabled={uploading}
       >
-        {uploading ? 'Reading photos...' : 'Upload Bid Sheet Photo(s)'}
+        {uploading ? 'Reading files...' : 'Upload Bid Sheet Photo(s) or PDF(s)'}
       </Button>
 
       {error && (
@@ -287,8 +314,8 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
       {rows.length === 0 && (
         <Typography variant='body2' sx={{ marginTop: 1, color: 'text.secondary' }}>
           Upload one photo per page of the weekly bid sheet (select multiple
-          files at once) to extract job rows. Shoot each page flat and
-          straight-on for the most accurate results.
+          files at once), or upload a scanned PDF, to extract job rows. Shoot
+          each page flat and straight-on for the most accurate results.
         </Typography>
       )}
     </Box>

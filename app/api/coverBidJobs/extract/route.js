@@ -4,6 +4,8 @@ import { NextResponse } from 'next/server';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+const ALLOWED_MEDIA_TYPES = new Set(['image/jpeg', 'application/pdf']);
+
 const ROW_PROPERTIES = {
   jobNumber: { type: Type.STRING },
   name: { type: Type.STRING },
@@ -34,7 +36,7 @@ const ROWS_SCHEMA = {
   required: ['rows'],
 };
 
-const EXTRACTION_PROMPT = `You will be shown one or more photos of a printed weekly "AVAILABLE FOR W/E [date]" cover-jobs bid sheet used by a trucking dispatch office. Extract every job row from all photos into structured data.
+const EXTRACTION_PROMPT = `You will be shown one or more photos and/or PDF documents of a printed weekly "AVAILABLE FOR W/E [date]" cover-jobs bid sheet used by a trucking dispatch office. A PDF may contain multiple pages; treat each page inside it the same way you would treat a separate photo. Extract every job row from all provided pages into structured data.
 
 Table layout — the columns are ALWAYS in this fixed order, left to right: Job #, Name, Assigned Driver, Cover Reason, Sun, Mon, Tue, Wed, Thu, Fri, Sat, Description. This column order holds even on a photo that does not show a header row at all — only the first page of a multi-page sheet displays the day-of-week header labels, so a continuation-page photo must still be read using this same fixed layout.
 - The leftmost column is the Job # (e.g. "LV56", "BP02", "BCP1", "AIL1", "BUB4"). Job # codes are short: a few letters followed by one or two digits. Read digits and letters carefully — a trailing character that could be read as either a digit or a similar-looking letter (e.g. "4" vs "A", "0" vs "O") should be read as a digit if the rest of the code matches this letters-then-digits pattern.
@@ -83,15 +85,23 @@ export async function POST(request) {
       );
     }
 
-    if (images.some((img) => !img?.data || !img?.mediaType)) {
+    if (
+      images.some(
+        (img) =>
+          !img?.data || !img?.mediaType || !ALLOWED_MEDIA_TYPES.has(img.mediaType)
+      )
+    ) {
       return NextResponse.json(
-        { error: 'each image must have data and mediaType' },
+        {
+          error:
+            'each file must have data and a supported mediaType (image/jpeg or application/pdf)',
+        },
         { status: 400 }
       );
     }
 
     const imageParts = images.flatMap((img, index) => [
-      { text: `Photo ${index + 1} of ${images.length}, in upload order:` },
+      { text: `File ${index + 1} of ${images.length}, in upload order:` },
       { inlineData: { mimeType: img.mediaType, data: img.data } },
     ]);
 

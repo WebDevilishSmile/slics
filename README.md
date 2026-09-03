@@ -32,8 +32,6 @@ _(Numbers pulled from Vercel Analytics + app database — update periodically ra
 
 ## Tech Stack
 
-_(Adjust below if this doesn't match your actual setup)_
-
 - **Framework:** Next.js / React / TypeScript
 - **Database:** MongoDB
 - **Auth:** Google sign-in / Email/password
@@ -48,7 +46,7 @@ _(Adjust below if this doesn't match your actual setup)_
 
 ## Screenshots
 
-[ADD: 2–4 screenshots — search bar + result card, the Maps/call links, and the admin panel]
+[Coming soon — screenshots of the search bar, a destination page, and the admin panel.]
 
 ## Why I Built This
 

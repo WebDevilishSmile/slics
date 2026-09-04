@@ -1,0 +1,72 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this app is
+
+SLICs replaces a paper binder that UPS Feeder drivers used to look up destination addresses/phone numbers. A driver enters a SLIC code and gets the address, a tap-to-open Google Maps link, a tap-to-call phone number, and driver-submitted comments about that location. It's a live production app used daily (not a demo), so changes to auth, data integrity, and the admin CRUD flows have real user impact — see `README.md` for the full product context.
+
+## Commands
+
+- `npm run dev` — start dev server (Next.js with Turbopack)
+- `npm run build` — production build
+- `npm run start` — run the production build
+- `npm run lint` — ESLint (`next/core-web-vitals` config)
+
+There is no test suite configured in this repo.
+
+## Architecture
+
+**Stack:** Next.js 15 (App Router) + React 19, MongoDB (native driver, no ODM), NextAuth v5 (beta) for auth, MUI v7 for components, Tailwind for utility classes alongside MUI's `sx` prop, Emotion as the styling engine under MUI.
+
+**Path alias:** `@/*` maps to the repo root (e.g. `@/lib/db`, `@/utils/slicsApi`, `@/auth`).
+
+### Data layer
+
+- `lib/db.ts` exports a single shared `MongoClient` instance (cached on `global` in dev to survive HMR). Every data-access module imports this client directly — there is no repository abstraction beyond the `utils/*Api.js` files.
+- Domain data access lives in `utils/*Api.js` (`slicsApi.js`, `usersApi.js`, `commentsApi.js`, `driversApi.js`, `coverBidJobsApi.js`, `slicHistoryApi.js`). API routes call these instead of touching collections directly, though some inline routes (e.g. `comment` DELETE) still query `client.db()` directly for simple lookups.
+- **Known inconsistency:** most modules call `client.db()` (uses the default DB from `MONGODB_URI`), but several older ones — `usersApi.js`, `getAllSlics()`/`getAllHubs()` in `slicsApi.js` — explicitly call `client.db('test')`. These need to be unified (tracked in `SUGGESTIONS.md` #10); don't assume both point at the same data without checking.
+- Mutations to `slics` go through `createSlic`/`updateSlic` in `utils/slicsApi.js`, which also write an audit trail via `utils/slicHistoryApi.js` (`addSlicHistoryEntry`, `diffSlicFields`). Don't bypass these with raw `updateOne` calls for anything a user should see in history.
+- Timestamps are `new Date().toISOString()` on write in most newer code (`created_at`, `updated_at`); some older code stored `MM/DD/YY` strings instead, so don't assume the field is always a parseable ISO string without checking the source.
+
+### Auth
+
+NextAuth v5 is split across two files because of Edge runtime constraints:
+- `auth.config.js` — Edge-safe config only (OAuth providers, JWT/session callbacks that don't touch the DB). Used by `middleware.js`.
+- `auth.js` — full config: adds the Credentials provider (bcrypt password check), `MongoDBAdapter`, and JWT/session callbacks that hit the database for fresh `role`/`bmcMember`/`comments`. Used everywhere else (API routes, server components) via `import { auth } from '@/auth'`.
+
+Route protection happens at two levels:
+- `middleware.js` — redirects unauthenticated users to `/signin` for non-public paths, and separately gate-keeps `bmcMember`-only routes (e.g. `/history`).
+- Inside API routes — every mutating handler must independently check `const session = await auth()` and `session.user.role === 'admin'` where required. Middleware does not protect `/api/*`; each route does its own check (see `app/api/slic/[id]/route.js` for the standard pattern). Never trust a client-supplied `userId`/`role` in a request body — always derive identity from `session.user`.
+
+Roles: `user` and `admin` on `session.user.role`. Membership tier is `session.user.bmcMember` (Buy Me a Coffee supporter — unlocks `/history`, set via `app/api/webhooks/buymeacoffee`).
+
+### API routes
+
+Standard shape for `app/api/**/route.js` (see `app/api/slic/[id]/route.js`, `app/api/comment/route.js`):
+1. `await auth()` and check session/role first for anything mutating.
+2. Validate route params / body, returning `NextResponse.json({ error }, { status })` on failure (400/401/403/404).
+3. Delegate to a `utils/*Api.js` function inside a `try/catch`; log with `console.error` and return 500 on unexpected failure.
+
+Error response bodies are inconsistent across routes — some use `{ error }`, others `{ message }` (tracked in `SUGGESTIONS.md` #14). Check the specific route's existing shape before adding a caller.
+
+Rate limiting (`utils/rateLimit.js`) is a MongoDB-backed fixed-window limiter, deliberately **fail-open** (allows the request through if Mongo is unreachable — a limiter outage must not take down sign-up/commenting). Key it by user id where an authenticated action should be per-driver-not-per-network (drivers share building wifi), by IP for pre-auth endpoints like registration.
+
+### Frontend structure
+
+- `app/<route>/page.jsx` are route entry points; `app/components/<feature>/` holds the components for that feature area, mirroring route names (`admin/`, `bids/`, `comments/`, `covers/`, `drivers/`, `slicPage/`, etc.).
+- `app/components/layout/Providers.jsx` is the client-side provider tree: `SessionProvider` → MUI `AppRouterCacheProvider` → `ThemeProvider` (+ `CssBaseline`).
+- Theme is `utils/theme.js` (MUI `createTheme` with `colorSchemes.dark`, `cssVariables: { colorSchemeSelector: 'class' }`, `responsiveFontSizes`). Custom palette keys beyond MUI defaults are used throughout (`background.opposite`, `background.solid`, `background.comment`, `text.dark`, `text.light`, `text.solid`, `text.opposite`) — reuse these rather than hardcoding hex colors in components.
+- Shared constants (page sizes, layout dimensions, example doc shapes for reference) live in `utils/variables.js`.
+- Custom hooks live in `utils/clientFunctions.js` (`'use client'` module) — e.g. `useIsMobile`, `useGeolocation`, `useAppleDevice`. Prefer adding new cross-component browser-state hooks here over duplicating logic in a component.
+- `app/context/CommentRefreshContext.js` exists but is currently unused/dead code (`SUGGESTIONS.md` #13) — don't assume it's wired up.
+
+### External integrations
+
+- **Google Gemini** (`@google/genai`, `GEMINI_API_KEY`) — used by `app/api/coverBidJobs/extract` for extracting structured data.
+- **Buy Me a Coffee webhook** (`app/api/webhooks/buymeacoffee`, `BMC_WEBHOOK_SECRET`) — toggles `bmcMember` on the user record.
+- **Vercel Analytics** — pageview/usage data referenced in `README.md`.
+
+## Known issues / conventions to be aware of
+
+`SUGGESTIONS.md` is a live, checked-off punch list of security/perf/quality issues found in this codebase — check it before assuming an area is already fixed, and check items off as they're addressed. Notably still open: `db('test')` vs `db()` split (#10), duplicate SLIC form components in `newSlic/` vs `createEditSlic/` (#11), the SLIC PATCH/DELETE ID-field mismatch (#12), and inconsistent API error shapes (#14).

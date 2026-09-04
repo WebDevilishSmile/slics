@@ -6,7 +6,7 @@ import { deleteSlic, updateSlic } from '@/utils/slicsApi';
 
 // GET a single slic
 export async function GET(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   if (!id || !ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid slic ID' }, { status: 400 });
@@ -27,7 +27,7 @@ export async function GET(request, { params }) {
     console.error('Error fetching slic:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -38,9 +38,12 @@ export async function PATCH(request, { params }) {
   if (!session)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   if (session.user.role !== 'admin')
-    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Forbidden: Admin access required' },
+      { status: 403 },
+    );
 
-  const { id } = params;
+  const { id } = await params;
 
   if (!id) {
     return NextResponse.json({ error: 'Invalid slic ID' }, { status: 400 });
@@ -61,7 +64,7 @@ export async function PATCH(request, { params }) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -72,9 +75,12 @@ export async function DELETE(request, { params }) {
   if (!session)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   if (session.user.role !== 'admin')
-    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Forbidden: Admin access required' },
+      { status: 403 },
+    );
 
-  const { id } = params;
+  const { id } = await params;
 
   if (!id || !ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid slic ID' }, { status: 400 });

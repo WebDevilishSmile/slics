@@ -3,11 +3,30 @@ import { auth } from '@/auth';
 import { createComment } from '@/utils/commentsApi';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
+import { checkRateLimit } from '@/utils/rateLimit';
+
+// Keyed by user id, not IP — drivers share a building network, and one
+// driver's spam must not silence everyone else on the same wifi.
+const COMMENT_LIMIT = 10;
+const COMMENT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 
 export async function POST(request) {
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const rate = await checkRateLimit({
+    key: `comment:${session.user.id}`,
+    limit: COMMENT_LIMIT,
+    windowMs: COMMENT_WINDOW_MS,
+  });
+
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: 'You are posting too quickly. Please wait a moment.' },
+      { status: 429, headers: { 'Retry-After': String(rate.retryAfterSeconds) } }
+    );
+  }
 
   try {
     const { numSlic, content } = await request.json();

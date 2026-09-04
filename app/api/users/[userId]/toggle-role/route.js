@@ -26,7 +26,7 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    const { userId } = params;
+    const { userId } = await params;
 
     if (!userId) {
       return NextResponse.json(

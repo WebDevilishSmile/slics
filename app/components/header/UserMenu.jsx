@@ -102,6 +102,9 @@ function UserMenu({ children, user }) {
                 </ListItem>
               </>
             )}
+            <ListItem>
+              <Button href='/about'>About</Button>
+            </ListItem>
             {children}
           </List>
         </Box>

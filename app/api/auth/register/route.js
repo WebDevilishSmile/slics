@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import client from '@/lib/db';
+import { checkRateLimit, getClientIp } from '@/utils/rateLimit';
+
+// Generous on purpose: a whole building of drivers can share one egress IP,
+// so this has to stop scripted abuse without locking out a shift that signs
+// up together. Scripted abuse looks like thousands, not tens.
+const REGISTER_LIMIT = 10;
+const REGISTER_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
 function initialsAvatar(first, last) {
   const initials = `${first[0].toUpperCase()}${last[0].toUpperCase()}`;
@@ -9,6 +16,20 @@ function initialsAvatar(first, last) {
 }
 
 export async function POST(request) {
+  const ip = getClientIp(request);
+  const rate = await checkRateLimit({
+    key: `register:${ip}`,
+    limit: REGISTER_LIMIT,
+    windowMs: REGISTER_WINDOW_MS,
+  });
+
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: 'Too many sign-up attempts. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(rate.retryAfterSeconds) } }
+    );
+  }
+
   try {
     const { email, firstName, lastName, password } = await request.json();
 

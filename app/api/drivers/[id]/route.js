@@ -40,7 +40,7 @@ export async function DELETE(request, { params }) {
   if (session.user.role !== 'admin')
     return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
 
-  const { id } = params;
+  const { id } = await params;
 
   if (!id) {
     return NextResponse.json({ error: 'Invalid driver ID' }, { status: 400 });

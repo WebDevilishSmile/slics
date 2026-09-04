@@ -15,7 +15,7 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  const { userId } = params; // Get userId from params directly
+  const { userId } = await params;
 
   if (!userId) {
     console.warn(

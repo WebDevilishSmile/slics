@@ -217,30 +217,6 @@ export async function getSlicByNumSlic(slic) {
   }
 }
 
-/**
- * Caches a geocoded position on the slic so we only ever pay HERE for the
- * lookup once. Intentionally bypasses updateSlic — this is a derived field,
- * not an edit worth writing to slic history.
- */
-export async function setSlicCoordinates(numSlic, coordinates) {
-  try {
-    if (!numSlic) {
-      throw new Error('numSlic is required');
-    }
-
-    const db = client.db();
-    const slicsCollection = db.collection('slics');
-
-    return await slicsCollection.updateOne(
-      { numSlic },
-      { $set: { coordinates, geocodedAt: new Date().toISOString() } }
-    );
-  } catch (error) {
-    console.error('Error caching slic coordinates:', error);
-    throw error;
-  }
-}
-
 export async function setNumSlicsToString() {
   try {
     const db = client.db();

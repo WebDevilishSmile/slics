@@ -31,6 +31,30 @@ export async function getUserById(userId) {
   }
 }
 
+/**
+ * Public-facing author data for comment attribution. Deliberately projects to
+ * only the fields the UI renders — the full user document carries the bcrypt
+ * password hash and email, which must never reach the client.
+ * NOTE: uses db('test') to match getUserById above; both move to db() together.
+ */
+export async function getPublicUserById(userId) {
+  try {
+    if (!userId || !ObjectId.isValid(userId)) {
+      return null;
+    }
+    const db = client.db('test');
+    const usersCollection = db.collection('users');
+
+    return await usersCollection.findOne(
+      { _id: new ObjectId(userId) },
+      { projection: { name: 1, image: 1 } }
+    );
+  } catch (error) {
+    console.error('Error fetching public user:', error);
+    throw error;
+  }
+}
+
 export async function getUserByEmail(email) {
   try {
     if (!email) {

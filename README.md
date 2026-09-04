@@ -39,7 +39,6 @@ _(Numbers pulled from Vercel Analytics + app database — update periodically ra
 
 ## Notable Engineering Details
 
-- **Built for one-handed, in-cab use** — the Maps and click-to-call links exist specifically because a driver mid-route doesn't want to copy an address or dial a number manually.
 - **Admin CRUD without redeploys** — location data changes constantly (new stops, updated phone numbers), so the admin panel lets data stay current without touching code.
 - **Fast search over a growing dataset** — built to return a match instantly even as the number of stored SLICs has grown.
 - **Crowdsourced local knowledge** — official address data can't capture a hidden entrance, a bridge with a low clearance, or who to actually call when a dock is closed. Letting drivers comment directly on a SLIC turns the app from a static directory into a shared knowledge base built from what drivers have actually experienced on that route.

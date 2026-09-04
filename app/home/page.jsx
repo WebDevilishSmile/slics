@@ -40,7 +40,11 @@ export default async function Home({ searchParams }) {
       <Typography variant='h1'>SLICs</Typography>
 
       <HydrationGuard>
-        <Main slics={serializeSlics(slics)} commentsCount={commentsCount} />
+        <Main
+          slics={serializeSlics(slics)}
+          commentsCount={commentsCount}
+          user={user}
+        />
       </HydrationGuard>
 
       <Comments user={user} />

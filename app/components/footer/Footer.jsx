@@ -82,7 +82,7 @@ function Footer() {
         variant='caption'
         sx={{ position: 'absolute', bottom: '2rem' }}
       >
-        Copyright © 2025 Tiago Davila
+        Copyright © {new Date().getFullYear()} Tiago Davila
       </Typography>
     </FooterContainer>
   );

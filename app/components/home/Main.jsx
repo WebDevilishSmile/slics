@@ -8,7 +8,7 @@ import { serializeSlics } from '@/utils/functions';
 import SlicDisplay from './SlicDisplay';
 import SlicsSearch from './SlicsSearch';
 
-function Main({ slics, commentsCount }) {
+function Main({ slics, commentsCount, user }) {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [slic, setSlic] = useState(null);
@@ -32,7 +32,7 @@ function Main({ slics, commentsCount }) {
 
     if (numSlic) {
       const foundSlic = slics.find(
-        (s) => s.numSlic.toString() === numSlic.toString()
+        (s) => s.numSlic.toString() === numSlic.toString(),
       );
       setSlic(foundSlic || null);
     } else {
@@ -78,6 +78,7 @@ function Main({ slics, commentsCount }) {
         setLoading={setLoading}
         slic={slic}
         setSlic={setSlic}
+        user={user}
       />
     </>
   );

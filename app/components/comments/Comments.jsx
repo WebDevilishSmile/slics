@@ -9,6 +9,7 @@ import NoSlicComments from './NoSlicComments';
 
 function Comments({ user }) {
   const [comments, setComments] = useState([]);
+  const [slicName, setSlicName] = useState(null);
   const [authorsMap, setAuthorsMap] = useState({});
   const searchParams = useSearchParams();
   const numSlic = searchParams.get('slic');
@@ -18,9 +19,12 @@ function Comments({ user }) {
       const response = await fetch(`/api/comments?slic=${numSlic}`);
       if (!response.ok) throw new Error('Failed to fetch comments');
       const data = await response.json();
-      setComments(data);
+      setComments(data.comments);
+      setSlicName(data.slicName);
 
-      const uniqueUserIds = [...new Set(data.map((c) => c.userId).filter(Boolean))];
+      const uniqueUserIds = [
+        ...new Set(data.comments.map((c) => c.userId).filter(Boolean)),
+      ];
       const results = await Promise.all(
         uniqueUserIds.map((id) =>
           fetch(`/api/users/${id}`)
@@ -58,6 +62,7 @@ function Comments({ user }) {
             key={index}
             comment={comment}
             author={authorsMap[comment.userId?.toString()]}
+            slicName={slicName}
             refetchComments={fetchComments}
           />
         ))

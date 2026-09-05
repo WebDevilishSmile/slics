@@ -1,10 +1,17 @@
 import { useState } from 'react';
-import { Box, Button, Dialog, IconButton, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  IconButton,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 
-function CommentFooter({ comment, author, user, refetchComments }) {
+function CommentFooter({ comment, author, user, slicName, refetchComments }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -44,8 +51,8 @@ function CommentFooter({ comment, author, user, refetchComments }) {
         {/* COMMENT FOOTER */}
 
         <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-          <Typography>SLIC {comment.numSlic}</Typography>
-          <Typography>
+          <Typography variant='body2'>{slicName || comment.numSlic}</Typography>
+          <Typography variant='body2'>
             {dayjs(comment.created_at).format('MMMM D, YYYY')}
           </Typography>
         </Box>
@@ -54,12 +61,16 @@ function CommentFooter({ comment, author, user, refetchComments }) {
             (author._id.toString() === user.id || user.role === 'admin') && (
               // Only show edit and delete buttons if the comment belongs to the user or user is admin
 
-              <IconButton
-                onClick={() => setOpenConfirm(true)}
-                disabled={loading}
-              >
-                <Delete color='error' />
-              </IconButton>
+              <Tooltip title='Delete Comment' placement='top'>
+                <IconButton
+                  onClick={() => setOpenConfirm(true)}
+                  disabled={loading}
+                  size='small'
+                  aria-label='delete comment'
+                >
+                  <Delete color='error' />
+                </IconButton>
+              </Tooltip>
             )}
         </Box>
 

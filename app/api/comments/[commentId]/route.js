@@ -14,7 +14,7 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
 
   try {
-    const db = client.db('test');
+    const db = client.db();
     const commentsCollection = db.collection('comments');
 
     const comment = await commentsCollection.findOne({ _id: new ObjectId(commentId) });

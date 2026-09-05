@@ -37,24 +37,30 @@ function CommentFooter({ comment, author, user, refetchComments }) {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          py: '.25rem',
-          px: '.5rem',
+          py: 1,
+          px: 2,
         }}
       >
         {/* COMMENT FOOTER */}
 
-        <Typography>
-          {dayjs(comment.created_at).format('MMMM D, YYYY')}
-        </Typography>
-
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+          <Typography>SLIC {comment.numSlic}</Typography>
+          <Typography>
+            {dayjs(comment.created_at).format('MMMM D, YYYY')}
+          </Typography>
+        </Box>
         <Box>
-          {(author._id.toString() === user.id || user.role === 'admin') && (
-            // Only show edit and delete buttons if the comment belongs to the user or user is admin
+          {user &&
+            (author._id.toString() === user.id || user.role === 'admin') && (
+              // Only show edit and delete buttons if the comment belongs to the user or user is admin
 
-            <IconButton onClick={() => setOpenConfirm(true)} disabled={loading}>
-              <Delete color='error' />
-            </IconButton>
-          )}
+              <IconButton
+                onClick={() => setOpenConfirm(true)}
+                disabled={loading}
+              >
+                <Delete color='error' />
+              </IconButton>
+            )}
         </Box>
 
         <Dialog

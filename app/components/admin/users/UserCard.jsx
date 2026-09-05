@@ -8,6 +8,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
+  Button,
   Chip,
   Divider,
   IconButton,
@@ -17,6 +18,7 @@ import {
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import UserEmail from './UserEmail';
 import UserMembership from './UserMembership';
@@ -44,7 +46,8 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Failed to toggle membership.');
+      if (!response.ok)
+        throw new Error(data.message || 'Failed to toggle membership.');
       if (data.bmcMember !== undefined) {
         setUser(data);
         router.refresh();
@@ -62,7 +65,8 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Failed to toggle role.');
+      if (!response.ok)
+        throw new Error(data.message || 'Failed to toggle role.');
       if (data.role) {
         setUser(data);
         router.refresh();
@@ -99,7 +103,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           </Typography>
 
           {/* Cover — hidden on xs */}
-          {user.cover && (
+          {/* {user.cover && (
             <Typography
               variant='caption'
               sx={{
@@ -111,7 +115,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
             >
               · Cover {user.cover}
             </Typography>
-          )}
+          )} */}
 
           {/* Spacer */}
           <Box sx={{ flexGrow: 1 }} />
@@ -135,27 +139,48 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           />
 
           {/* Membership toggle — always visible, rendered as div to avoid nested <button> */}
-          <Tooltip title={user.bmcMember ? 'Revoke membership' : 'Grant membership'}>
+          <Tooltip
+            title={user.bmcMember ? 'Revoke membership' : 'Grant membership'}
+            placement='top'
+          >
             <IconButton
               component='div'
               size='small'
-              onClick={(e) => { e.stopPropagation(); handleMemberToggle(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMemberToggle();
+              }}
               disabled={isProtected}
               sx={{ flexShrink: 0 }}
             >
-              {user.bmcMember ? <Person fontSize='small' /> : <PersonOff fontSize='small' />}
+              {user.bmcMember ? (
+                <Person fontSize='small' />
+              ) : (
+                <PersonOff fontSize='small' />
+              )}
             </IconButton>
           </Tooltip>
 
           {/* Lookup count — abbreviated on xs */}
           <Typography
             variant='caption'
-            sx={{ flexShrink: 0, color: 'text.secondary', pr: 1, whiteSpace: 'nowrap' }}
+            sx={{
+              flexShrink: 0,
+              color: 'text.secondary',
+              pr: 1,
+              whiteSpace: 'nowrap',
+            }}
           >
-            <Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+            <Box
+              component='span'
+              sx={{ display: { xs: 'none', sm: 'inline' } }}
+            >
               {viewCount} lookup{viewCount !== 1 ? 's' : ''}
             </Box>
-            <Box component='span' sx={{ display: { xs: 'inline', sm: 'none' } }}>
+            <Box
+              component='span'
+              sx={{ display: { xs: 'inline', sm: 'none' } }}
+            >
               {viewCount}
             </Box>
           </Typography>
@@ -181,7 +206,9 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
             height={100}
           />
         </Box>
-        <Typography>Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}</Typography>
+        <Typography>
+          Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
+        </Typography>
         <UserMembership user={user} onToggle={handleMemberToggle} />
         <UserRole user={user} onToggle={handleRoleToggle} />
         <UserEmail email={user.email} />
@@ -190,6 +217,16 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
         ) : (
           <Typography>Phone: Not provided</Typography>
         )}
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Button
+            variant='outlined'
+            LinkComponent={Link}
+            href={`/admin/users/${user._id}`}
+          >
+            More...
+          </Button>
+        </Box>
       </AccordionDetails>
     </Accordion>
   );

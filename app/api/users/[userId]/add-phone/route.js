@@ -41,7 +41,7 @@ export async function PATCH(req, { params }) {
     );
   }
 
-  const { phone } = requestBody;
+  const { phone, name } = requestBody;
 
   if (phone !== undefined && typeof phone !== 'string') {
     console.warn(
@@ -49,6 +49,16 @@ export async function PATCH(req, { params }) {
     );
     return NextResponse.json(
       { message: 'Invalid phone format (must be string or undefined/null)' },
+      { status: 400 }
+    );
+  }
+
+  if (name !== undefined && (typeof name !== 'string' || !name.trim())) {
+    console.warn(
+      `API PATCH /users/[userId]/add-phone: Invalid name for userId: ${userId}`
+    );
+    return NextResponse.json(
+      { message: 'Invalid name (must be a non-empty string)' },
       { status: 400 }
     );
   }
@@ -68,6 +78,10 @@ export async function PATCH(req, { params }) {
 
     if (phone !== undefined) {
       updateDoc.$set.phone = phone;
+    }
+
+    if (name !== undefined) {
+      updateDoc.$set.name = name.trim();
     }
 
     if (Object.keys(updateDoc.$set).length === 0) {

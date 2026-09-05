@@ -88,6 +88,22 @@ export function serializeComments(commentsData) {
   return commentsData.map(serializeComment);
 }
 
+export function serializeSlicView(viewData) {
+  return {
+    ...viewData,
+    _id: viewData._id.toString(),
+    userId: viewData.userId ? viewData.userId.toString() : null,
+    viewedAt:
+      viewData.viewedAt instanceof Date
+        ? viewData.viewedAt.toISOString()
+        : viewData.viewedAt,
+  };
+}
+
+export function serializeSlicViews(viewsData) {
+  return viewsData.map(serializeSlicView);
+}
+
 export function serializeCover(coverData) {
   return {
     ...coverData,

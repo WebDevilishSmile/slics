@@ -82,7 +82,7 @@ Each `Comment` component fires a separate `fetch(/api/users/${userId})` inside `
 
 ---
 
-### [ ] 8. Move comment sorting to MongoDB
+### [x] 8. Move comment sorting to MongoDB
 **File:** `lib/` or wherever `commentsApi.js` / `getCommentsBySlic()` lives
 
 Currently fetches all comments and sorts them in JavaScript.
@@ -95,7 +95,7 @@ find({ numSlic }).sort({ upVotes: -1, created_at: -1 }).limit(50).toArray()
 
 ---
 
-### [ ] 9. Add MongoDB indexes
+### [x] 9. Add MongoDB indexes
 **File:** Create `scripts/createIndexes.js` (run once) or add to your DB init code.
 
 Missing indexes that will hurt as data grows:
@@ -108,7 +108,7 @@ db.collection('slics').createIndex({ numSlic: 1 })
 
 ---
 
-### [ ] 10. Remove hardcoded `'test'` database name
+### [x] 10. Remove hardcoded `'test'` database name
 **Files:** Check `lib/slicsApi.js`, `lib/usersApi.js`, `lib/commentsApi.js` and any file calling `db.db('test')`
 
 Several utility files explicitly connect to the `test` database instead of the default. In production this causes queries to hit the wrong database.
@@ -155,7 +155,7 @@ Some routes return `{ error: msg }`, others `{ message: msg }`. Client-side erro
 
 ---
 
-### [ ] 15. Fix date format inconsistency
+### [x] 15. Fix date format inconsistency
 **Files:** `app/components/newSlic/NewSlicForm.jsx`, `app/components/createEditSlic/SlicForm.jsx`
 
 `NewSlicForm` writes `created_at: dayjs().format('MM/DD/YY')` (a plain string).
@@ -169,7 +169,7 @@ MongoDB ends up with mixed types in the same field.
 
 ## 🟢 Low Priority — UX & Accessibility
 
-### [ ] 16. Add loading state to comment submit button
+### [x] 16. Add loading state to comment submit button
 **File:** `app/components/comments/CommentEditor.jsx`
 
 No disabled/loading state while the comment POST is in flight — users can double-submit.

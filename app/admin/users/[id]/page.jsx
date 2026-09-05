@@ -1,17 +1,30 @@
 import { getCommentsByUserId } from '@/utils/commentsApi';
 import { getUserById } from '@/utils/usersApi';
+import { getSlicViewsByUserId } from '@/utils/slicViewsApi';
+import { getAllSlics } from '@/utils/slicsApi';
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
 import parse, { domToReact } from 'html-react-parser';
 import Comment from '@/app/components/comments/Comment';
-import { serializeComment } from '@/utils/functions';
+import {
+  serializeSlicViews,
+  serializeSlics,
+  serializeComments,
+  serializeUser,
+} from '@/utils/functions';
 import { MAX_WIDTH } from '@/utils/variables';
 import dayjs from 'dayjs';
+import UserComments from '@/app/components/admin/user-page/UserComments';
+import UserSlics from '@/app/components/admin/user-page/UserSlics';
 
 async function UserPage({ params }) {
   const { id } = await params;
   const user = await getUserById(id); // Assuming you have a function to get user by ID
   const userComments = await getCommentsByUserId(id); // Fetch comments by user ID
+  const [userSlicViews, slics] = await Promise.all([
+    getSlicViewsByUserId(id),
+    getAllSlics(),
+  ]);
 
   if (!user) {
     return (
@@ -47,31 +60,15 @@ async function UserPage({ params }) {
         <strong>{user.bmcMember ? 'Member' : 'Not a member'}</strong>
       </Typography>
 
-      <Typography variant='h6' sx={{ mt: '2rem' }}>
-        Comments by {user.name}:
-      </Typography>
+      <UserSlics
+        userSlicViews={serializeSlicViews(userSlicViews)}
+        slics={serializeSlics(slics)}
+      />
 
-      <Box
-        sx={{
-          width: '100%',
-          maxWidth: MAX_WIDTH,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          mt: '1rem',
-        }}
-      >
-        {userComments.length > 0 ? (
-          userComments.map((comment) => (
-            <Comment key={comment._id} comment={serializeComment(comment)} />
-          ))
-        ) : (
-          <Typography variant='body2'>
-            No comments found for this user.
-          </Typography>
-        )}
-      </Box>
+      <UserComments
+        userComments={serializeComments(userComments)}
+        user={serializeUser(user)}
+      />
     </>
   );
 }

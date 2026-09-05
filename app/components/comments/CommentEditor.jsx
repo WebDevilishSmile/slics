@@ -21,6 +21,7 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
     userId: user.id,
     content: '',
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleCommentChange = (value) => {
     setComment((prev) => {
@@ -42,6 +43,7 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
     }
   };
   const handleCommentSubmit = async () => {
+    setSubmitting(true);
     try {
       const result = await fetch('/api/comment', {
         method: 'POST',
@@ -57,6 +59,8 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
       router.refresh();
     } catch (error) {
       console.error('Error submitting comment:', error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -119,11 +123,16 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
         <Button
           variant='contained'
           onClick={handleCommentSubmit}
-          disabled={!comment.content}
+          disabled={!comment.content || submitting}
         >
           Submit
         </Button>
-        <Button color='error' variant='contained' onClick={handleCommentClear}>
+        <Button
+          color='error'
+          variant='contained'
+          onClick={handleCommentClear}
+          disabled={submitting}
+        >
           Clear
         </Button>
       </Box>

@@ -11,7 +11,6 @@ import NumSlicField from './NumSlicField';
 import PhoneField from './PhoneField';
 import TypeRadio from './TypeRadio';
 import Warning from './Warning';
-import dayjs from 'dayjs';
 
 function NewSlicForm() {
   const [type, setType] = useState('center');
@@ -28,7 +27,7 @@ function NewSlicForm() {
   const [openWarning, setOpenWarning] = useState(false);
   const [warningMessage, setWarningMessage] = useState('');
   const [slicData, setSlicData] = useState({
-    created_at: dayjs().format('MM/DD/YY'),
+    created_at: new Date().toISOString(),
     type: 'center',
     numSlic: '',
     alphaSlic: '',
@@ -84,7 +83,7 @@ function NewSlicForm() {
 
   useEffect(() => {
     setSlicData({
-      created_at: dayjs().format('MM/DD/YY'),
+      created_at: new Date().toISOString(),
       type,
       numSlic,
       alphaSlic,

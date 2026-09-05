@@ -66,19 +66,17 @@ export async function getCommentsBySlic(numSlic) {
     const db = client.db();
     const commentsCollection = db.collection('comments');
 
+    // upVotes is an array of user IDs, not a count, so sorting requires
+    // computing its size — a raw `sort({ upVotes: -1 })` would sort by
+    // array element value, not vote count.
     const comments = await commentsCollection
-      .find({ numSlic }) // match the slic
+      .aggregate([
+        { $match: { numSlic } },
+        { $addFields: { upVoteCount: { $size: { $ifNull: ['$upVotes', []] } } } },
+        { $sort: { upVoteCount: -1, created_at: -1 } },
+        { $unset: 'upVoteCount' },
+      ])
       .toArray();
-
-    // Sort: by upVotes length descending, then by createdAt descending
-    comments.sort((a, b) => {
-      const aVotes = a.upVotes?.length || 0;
-      const bVotes = b.upVotes?.length || 0;
-
-      if (bVotes !== aVotes) return bVotes - aVotes;
-
-      return new Date(b.created_at) - new Date(a.created_at);
-    });
 
     return comments;
   } catch (error) {

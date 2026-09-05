@@ -9,7 +9,7 @@ import CommentFooter from './CommentFooter';
 import CommentHeader from './CommentHeader';
 import { ELEVATION } from '@/utils/variables';
 
-function Comment({ comment, author, refetchComments }) {
+function Comment({ comment, author, slicName, refetchComments }) {
   const session = useSession();
   const user = session.data?.user;
   const { mode } = useColorScheme();
@@ -71,6 +71,7 @@ function Comment({ comment, author, refetchComments }) {
         comment={comment}
         author={author}
         user={user}
+        slicName={slicName}
         refetchComments={refetchComments}
       />
     </Paper>

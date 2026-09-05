@@ -16,6 +16,7 @@ import { MAX_WIDTH } from '@/utils/variables';
 import dayjs from 'dayjs';
 import UserComments from '@/app/components/admin/user-page/UserComments';
 import UserSlics from '@/app/components/admin/user-page/UserSlics';
+import BackButton from '@/app/components/layout/BackButton';
 
 async function UserPage({ params }) {
   const { id } = await params;
@@ -36,11 +37,10 @@ async function UserPage({ params }) {
 
   return (
     <>
+      <BackButton />
       <Typography variant='h2'>User Details</Typography>
 
-      <Box
-        sx={{ position: 'relative', width: '6rem', height: '6rem', my: '1rem' }}
-      >
+      <Box sx={{ position: 'relative', width: '6rem', height: '6rem', my: 2 }}>
         <Image
           src={user.image}
           alt={`${user.name}'s avatar`}

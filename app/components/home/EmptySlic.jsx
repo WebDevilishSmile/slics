@@ -1,6 +1,7 @@
 import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
+import BuyMeACoffeeButton from '../layout/BuyMeACoffeeButton';
 
 function EmptySlic() {
   const OPTIONS = { loop: true, align: 'center' };
@@ -33,10 +34,15 @@ function EmptySlic() {
         <Image
           src='/slics-logo.png'
           alt='SLICs Logo'
-          width={200}
-          height={200}
+          width={100}
+          height={100}
         />
       </Box>
+
+      <Typography variant='body1' sx={{ textAlign: 'center', mt: 4 }}>
+        Support me on BuyMeACoffee to keep SLICs running smoothly!
+      </Typography>
+      <BuyMeACoffeeButton />
     </Paper>
   );
 }

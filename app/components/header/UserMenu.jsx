@@ -72,13 +72,15 @@ function UserMenu({ children, user }) {
                   <Button href={`/profile/${user.id}`}>Profile</Button>
                 </ListItem>
                 {user.bmcMember && (
-                  <ListItem>
-                    <Button href='/history'>My History</Button>
-                  </ListItem>
+                  <>
+                    <ListItem>
+                      <Button href='/history'>My History</Button>
+                    </ListItem>
+                    <ListItem>
+                      <Button href={`/cover-bid-jobs`}>Cover Bids</Button>
+                    </ListItem>
+                  </>
                 )}
-                <ListItem>
-                  <Button href={`/cover-bid-jobs`}>Cover Bids</Button>
-                </ListItem>
                 <ListItem>
                   <Button href={`/all`}>All Hubs</Button>
                 </ListItem>

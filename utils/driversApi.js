@@ -90,7 +90,7 @@ export async function deleteDriver(driverId) {
 
 export async function getAllDrivers() {
   try {
-    const db = client.db('test');
+    const db = client.db();
     const driversCollection = db.collection('drivers');
     const drivers = await driversCollection
       .find({})

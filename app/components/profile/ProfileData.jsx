@@ -6,17 +6,25 @@ import { useState } from 'react';
 import { capitalizeFirstLetter } from '@/utils/functions';
 import { MAX_WIDTH } from '@/utils/variables';
 
-import { Edit } from '@mui/icons-material';
-import { Alert, Box, IconButton, Snackbar, Typography } from '@mui/material';
+import { Settings as SettingsIcon } from '@mui/icons-material';
+import {
+  Alert,
+  Box,
+  Button,
+  IconButton,
+  Snackbar,
+  Typography,
+  Paper,
+} from '@mui/material';
+import Image from 'next/image';
 
-import AddEditPhone from './AddEditPhone';
+import EditProfileDialog from './EditProfileDialog';
 
 function ProfileData({ userData }) {
-  const [phone, setPhone] = useState(userData.phone || '');
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
   const [snackSeverity, setSnackSeverity] = useState('error');
-  const [editPhone, setEditPhone] = useState(!userData.phone);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
 
   const handleCloseSnack = () => {
     setOpenSnack(false);
@@ -38,19 +46,33 @@ function ProfileData({ userData }) {
   }
 
   return (
-    <Box
+    <Paper
       sx={{
         maxWidth: MAX_WIDTH,
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        py: 2,
+        px: 1,
       }}
     >
-      <Typography variant='h5' textAlign='center'>
-        {userData.name}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <Typography variant='h5' textAlign='center'>
+          {userData.name}
+        </Typography>
+
+        <IconButton
+          sx={{ height: '2rem', width: '2rem' }}
+          onClick={() => setEditProfileOpen(true)}
+        >
+          <SettingsIcon sx={{ fontSize: '1.2rem' }} />
+        </IconButton>
+      </Box>
+
+      <Typography textAlign='center'>
+        <strong>Email:</strong> {userData.email}
       </Typography>
-      <Typography textAlign='center'>{userData.email}</Typography>
       <Typography>
         <strong>Joined:</strong>{' '}
         {dayjs(userData.created_at).format('MMM D, YYYY')}
@@ -58,34 +80,43 @@ function ProfileData({ userData }) {
       <Typography>
         <strong>Role:</strong> {capitalizeFirstLetter(userData.role)}
       </Typography>
-      {/* <Typography>
+      <Typography>
         <strong>Membership:</strong>{' '}
         {userData.bmcMember ? 'Active' : 'Inactive'}
-      </Typography> */}
+      </Typography>
 
-      {!editPhone ? (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Typography>
-            <strong>Phone:</strong> {userData.phone}
-          </Typography>
-
-          <IconButton
-            sx={{ height: '2rem', width: '2rem' }}
-            onClick={() => setEditPhone(!editPhone)}
+      {!userData.bmcMember && (
+        <>
+          <Button
+            variant='contained'
+            href='https://buymeacoffee.com/tiagodavila'
+            target='_blank'
+            rel='noopener noreferrer'
+            sx={{ backgroundColor: '#f7f7f7', color: 'black', mt: 1 }}
           >
-            <Edit sx={{ fontSize: '1.2rem' }} />
-          </IconButton>
-        </Box>
-      ) : (
-        <AddEditPhone
-          phone={phone}
-          setPhone={setPhone}
-          showSnackbar={showSnackbar}
-          userData={userData}
-          setEditPhone={setEditPhone}
-          editPhone={editPhone}
-        />
+            <Image
+              src='/bmc-brand-logo.svg'
+              width={148}
+              height={24}
+              alt='Buy Me a Coffee'
+            />
+          </Button>
+          <Typography variant='caption' sx={{ mb: 1 }}>
+            Become a member
+          </Typography>
+        </>
       )}
+
+      <Typography>
+        <strong>Phone:</strong> {userData.phone || 'Not provided'}
+      </Typography>
+
+      <EditProfileDialog
+        open={editProfileOpen}
+        onClose={() => setEditProfileOpen(false)}
+        userData={userData}
+        showSnackbar={showSnackbar}
+      />
 
       <Snackbar
         open={openSnack}
@@ -97,7 +128,7 @@ function ProfileData({ userData }) {
           {snackMessage}
         </Alert>
       </Snackbar>
-    </Box>
+    </Paper>
   );
 }
 

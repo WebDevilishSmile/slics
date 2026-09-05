@@ -14,6 +14,8 @@ function Comment({ comment, author, refetchComments }) {
   const user = session.data?.user;
   const { mode } = useColorScheme();
 
+  console.log(comment);
+
   if (!author) {
     return (
       <Paper
@@ -36,7 +38,7 @@ function Comment({ comment, author, refetchComments }) {
       className={`${
         mode === 'light' ? 'border-[#eaf8fe]' : 'border-[#050505]'
       }`}
-      elevation={0}
+      elevation={1}
       sx={{
         width: '100%',
         minHeight: '7rem',
@@ -53,7 +55,7 @@ function Comment({ comment, author, refetchComments }) {
 
       <Divider />
 
-      <Box sx={{ minHeight: '5rem', py: '1rem', px: '1rem' }}>
+      <Box sx={{ minHeight: '5rem', py: 2, px: 2 }}>
         {/* COMMENT CONTENT */}
 
         {parse(comment.content, {

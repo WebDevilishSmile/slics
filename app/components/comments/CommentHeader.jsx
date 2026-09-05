@@ -32,8 +32,8 @@ function CommentHeader({ author, comment, refetchComments }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: '1rem',
-        py: '.25rem',
-        px: '.5rem',
+        py: 1,
+        px: 2,
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

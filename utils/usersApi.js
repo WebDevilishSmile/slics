@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 
 export async function getUsers() {
   try {
-    const db = client.db('test');
+    const db = client.db();
     const usersCollection = db.collection('users');
     const users = await usersCollection.find({}).toArray();
 
@@ -19,7 +19,7 @@ export async function getUserById(userId) {
     if (!userId) {
       throw new Error('User ID is required');
     }
-    const db = client.db('test');
+    const db = client.db();
     const usersCollection = db.collection('users');
 
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
@@ -35,14 +35,13 @@ export async function getUserById(userId) {
  * Public-facing author data for comment attribution. Deliberately projects to
  * only the fields the UI renders — the full user document carries the bcrypt
  * password hash and email, which must never reach the client.
- * NOTE: uses db('test') to match getUserById above; both move to db() together.
  */
 export async function getPublicUserById(userId) {
   try {
     if (!userId || !ObjectId.isValid(userId)) {
       return null;
     }
-    const db = client.db('test');
+    const db = client.db();
     const usersCollection = db.collection('users');
 
     return await usersCollection.findOne(
@@ -60,7 +59,7 @@ export async function getUserByEmail(email) {
     if (!email) {
       throw new Error('Email is required');
     }
-    const db = client.db('test');
+    const db = client.db();
     const usersCollection = db.collection('users');
 
     const user = await usersCollection.findOne({ email });
@@ -95,7 +94,7 @@ export async function toggleMembershipApi(userId) {
     if (!userId) {
       throw new Error('User ID is required');
     }
-    const db = client.db('test');
+    const db = client.db();
     const usersCollection = db.collection('users');
 
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });

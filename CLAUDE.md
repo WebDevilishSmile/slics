@@ -25,7 +25,7 @@ There is no test suite configured in this repo.
 
 - `lib/db.ts` exports a single shared `MongoClient` instance (cached on `global` in dev to survive HMR). Every data-access module imports this client directly — there is no repository abstraction beyond the `utils/*Api.js` files.
 - Domain data access lives in `utils/*Api.js` (`slicsApi.js`, `usersApi.js`, `commentsApi.js`, `driversApi.js`, `coverBidJobsApi.js`, `slicHistoryApi.js`). API routes call these instead of touching collections directly, though some inline routes (e.g. `comment` DELETE) still query `client.db()` directly for simple lookups.
-- **Known inconsistency:** most modules call `client.db()` (uses the default DB from `MONGODB_URI`), but several older ones — `usersApi.js`, `getAllSlics()`/`getAllHubs()` in `slicsApi.js` — explicitly call `client.db('test')`. These need to be unified (tracked in `SUGGESTIONS.md` #10); don't assume both point at the same data without checking.
+- All data-access modules now call `client.db()` with no argument (unified in `SUGGESTIONS.md` #10). `MONGODB_URI` has no db name in its path, so the driver's implicit default (`test`) was already what every `client.db('test')` call resolved to — the rename was behavior-preserving, not a data migration.
 - Mutations to `slics` go through `createSlic`/`updateSlic` in `utils/slicsApi.js`, which also write an audit trail via `utils/slicHistoryApi.js` (`addSlicHistoryEntry`, `diffSlicFields`). Don't bypass these with raw `updateOne` calls for anything a user should see in history.
 - Timestamps are `new Date().toISOString()` on write in most newer code (`created_at`, `updated_at`); some older code stored `MM/DD/YY` strings instead, so don't assume the field is always a parseable ISO string without checking the source.
 
@@ -69,4 +69,4 @@ Rate limiting (`utils/rateLimit.js`) is a MongoDB-backed fixed-window limiter, d
 
 ## Known issues / conventions to be aware of
 
-`SUGGESTIONS.md` is a live, checked-off punch list of security/perf/quality issues found in this codebase — check it before assuming an area is already fixed, and check items off as they're addressed. Notably still open: `db('test')` vs `db()` split (#10), duplicate SLIC form components in `newSlic/` vs `createEditSlic/` (#11), the SLIC PATCH/DELETE ID-field mismatch (#12), and inconsistent API error shapes (#14).
+`SUGGESTIONS.md` is a live, checked-off punch list of security/perf/quality issues found in this codebase — check it before assuming an area is already fixed, and check items off as they're addressed. Notably still open: duplicate SLIC form components in `newSlic/` vs `createEditSlic/` (#11), the SLIC PATCH/DELETE ID-field mismatch (#12), and inconsistent API error shapes (#14).

@@ -172,7 +172,7 @@ export async function deleteSlic(slicId) {
 
 export async function getAllSlics() {
   try {
-    const db = client.db('test');
+    const db = client.db();
     const slicsCollection = db.collection('slics');
     const slics = await slicsCollection.find({}).sort({ numSlic: 1 }).toArray();
 
@@ -185,7 +185,7 @@ export async function getAllSlics() {
 
 export async function getAllHubs() {
   try {
-    const db = client.db('test');
+    const db = client.db();
     const allHubsCollection = db.collection('allHubs');
     const allHubs = await allHubsCollection.find({}).toArray();
     return allHubs;

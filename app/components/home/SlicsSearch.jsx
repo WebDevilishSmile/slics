@@ -11,7 +11,7 @@ function getDonationMessage(count) {
   if (count <= 20)
     return `You've looked up ${count} slics — consider supporting us!`;
   if (count <= 50)
-    return `You're a power user! ${count} lookups and counting — your support matters.`;
+    return `You're a power user! ${count} lookups and counting — your support helps keep SLICs free.`;
   return `${count} lookups! SLICs runs on community support — thank you for being here.`;
 }
 
@@ -79,8 +79,8 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
         <Alert
           severity='info'
           sx={{
-            width: '90%',
-            maxWidth: `calc(${MAX_WIDTH} - 15%)`,
+            width: '100%',
+            maxWidth: MAX_WIDTH,
             mt: '1.5rem',
           }}
         >
@@ -90,7 +90,15 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
             target='_blank'
             rel='noopener noreferrer'
           >
-            Support us on Buy Me a Coffee
+            Buy Me a Coffee{' '}
+          </Link>
+          or{' '}
+          <Link
+            href='https://buymeacoffee.com/tiagodavila/membership'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            Become a member
           </Link>
         </Alert>
       )}
@@ -99,9 +107,10 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
         options={slicLabels}
         renderInput={(params) => <TextField {...params} label='Search Slics' />}
         sx={{
-          width: '90%',
-          maxWidth: `calc(${MAX_WIDTH} - 15%)`,
-          mt: '1.5rem',
+          width: '100%',
+          maxWidth: MAX_WIDTH,
+          mt: 3,
+          px: 2,
         }}
         onChange={handleSlicChange}
         value={selectedSlic}

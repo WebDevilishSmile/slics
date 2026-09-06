@@ -10,16 +10,6 @@ export default auth((req) => {
   const url = req.nextUrl.clone();
   const isLoggedIn = !!req.auth;
 
-  // console.log('Middleware - req.auth:', req.auth);
-  // console.log(
-  //   'Middleware - req.auth?.user?.bmcMember:',
-  //   req.auth?.user?.bmcMember
-  // );
-  // console.log(
-  //   'Middleware - req.auth?.token?.bmcMember:',
-  //   req.auth?.token?.bmcMember
-  // );
-
   // Define paths that require BMC membership
   const requiresBMCMembership = url.pathname.startsWith('/history');
 

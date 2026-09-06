@@ -16,7 +16,7 @@ export async function POST(req) {
     console.error('BMC_WEBHOOK_SECRET is not set in environment variables.');
     return NextResponse.json(
       { message: 'Server configuration error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -29,7 +29,7 @@ export async function POST(req) {
   if (!signature) {
     return NextResponse.json(
       { message: 'No signature provided' },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -49,14 +49,12 @@ export async function POST(req) {
     console.error('Error parsing webhook body:', error);
     return NextResponse.json(
       { message: 'Invalid JSON payload' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   const db = client.db();
   const usersCollection = db.collection('users');
-
-  console.log('Received BMC Webhook Event:', event);
 
   try {
     // --- FIX START ---
@@ -67,11 +65,11 @@ export async function POST(req) {
 
     if (!supporterEmail) {
       console.warn(
-        `BMC Webhook: Event type "${eventType}" received without supporter_email in data.`
+        `BMC Webhook: Event type "${eventType}" received without supporter_email in data.`,
       );
       return NextResponse.json(
         { message: 'Missing supporter_email in webhook data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
     // --- FIX END ---
@@ -81,7 +79,7 @@ export async function POST(req) {
       await usersCollection.updateOne(
         { email: supporterEmail }, // Use the correctly extracted supporterEmail
         { $set: { bmcMember: true } },
-        { upsert: false } // Do not create a new user if not found
+        { upsert: false }, // Do not create a new user if not found
       );
       console.log(`BMC Webhook: User ${supporterEmail} marked as BMC member.`);
     } else if (
@@ -92,26 +90,26 @@ export async function POST(req) {
       await usersCollection.updateOne(
         { email: supporterEmail }, // Use the correctly extracted supporterEmail
         { $set: { bmcMember: false } },
-        { upsert: false }
+        { upsert: false },
       );
       console.log(
-        `BMC Webhook: User ${supporterEmail} marked as NOT a BMC member.`
+        `BMC Webhook: User ${supporterEmail} marked as NOT a BMC member.`,
       );
     } else {
       console.log(
-        `BMC Webhook: Unhandled event type: ${eventType}. No action taken.`
+        `BMC Webhook: Unhandled event type: ${eventType}. No action taken.`,
       );
     }
 
     return NextResponse.json(
       { message: 'Webhook received and processed' },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error('BMC Webhook: Error processing webhook event:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

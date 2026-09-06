@@ -14,8 +14,6 @@ function Comment({ comment, author, slicName, refetchComments }) {
   const user = session.data?.user;
   const { mode } = useColorScheme();
 
-  console.log(comment);
-
   if (!author) {
     return (
       <Paper

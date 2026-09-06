@@ -21,7 +21,7 @@ function SlicDisplay({ commentsCount, loading, slic, user }) {
   }
 
   if (!slic) {
-    return <EmptySlic />;
+    return <EmptySlic user={user} />;
   }
 
   console.log('SlicDisplay user:', user);

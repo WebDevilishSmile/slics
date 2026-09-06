@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
 import { Box, Button, SvgIcon, Typography } from '@mui/material';
+import { MAX_WIDTH } from '@/utils/variables';
 import Link from 'next/link';
 import RequestAccess from './RequestAccess';
 import { isMobileDevice, serializeUser } from '@/utils/functions';
@@ -42,6 +43,7 @@ async function Membership() {
   return (
     <Box
       sx={{
+        maxWidth: MAX_WIDTH,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -53,7 +55,6 @@ async function Membership() {
       <Typography
         variant='body2'
         sx={{
-          maxWidth: '55rem',
           textAlign: 'center',
           my: '1rem',
           px: '1rem',
@@ -85,14 +86,13 @@ async function Membership() {
       <Typography
         variant='body2'
         sx={{
-          maxWidth: '55rem',
           textAlign: 'center',
           my: '1rem',
           px: '1rem',
         }}
       >
         If you would like immediate access, click the link below but don&apos;t
-        forget to support us in the future!
+        forget to support me in the future!
       </Typography>
       <Button variant='contained' href='/home'>
         Use SLICs now

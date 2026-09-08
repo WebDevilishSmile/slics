@@ -110,6 +110,27 @@ export async function getAllCoverBidJobs() {
   }
 }
 
+// weekEnding is a zero-padded 'YYYY-MM-DD' string, so a lexicographic $gte is a
+// correct date comparison.
+export async function getCoverBidJobsSince(weekEndingFrom) {
+  try {
+    if (!weekEndingFrom) {
+      throw new Error('weekEndingFrom is required');
+    }
+
+    const db = client.db();
+    const coverBidJobsCollection = db.collection('cover-bid-jobs');
+
+    return await coverBidJobsCollection
+      .find({ weekEnding: { $gte: weekEndingFrom } })
+      .sort({ weekEnding: -1, sortOrder: 1 })
+      .toArray();
+  } catch (error) {
+    console.error('Error fetching recent cover bid jobs:', error);
+    throw error;
+  }
+}
+
 export async function getCoverBidJobsByWeek(weekEnding) {
   try {
     if (!weekEnding) {
@@ -125,6 +146,30 @@ export async function getCoverBidJobsByWeek(weekEnding) {
       .toArray();
   } catch (error) {
     console.error('Error fetching cover bid jobs by week:', error);
+    throw error;
+  }
+}
+
+// Distinct weeks that have at least one job, newest first. Used to flag posted
+// weeks on the calendars without pulling the jobs themselves.
+export async function getCoverBidJobWeeks() {
+  try {
+    const db = client.db();
+    const coverBidJobsCollection = db.collection('cover-bid-jobs');
+
+    // $group rather than .distinct(): the shared client runs Stable API v1 with
+    // strict: true (lib/db.ts), and `distinct` is not in that command set.
+    const weeks = await coverBidJobsCollection
+      .aggregate([
+        { $match: { weekEnding: { $type: 'string' } } },
+        { $group: { _id: '$weekEnding' } },
+        { $sort: { _id: -1 } },
+      ])
+      .toArray();
+
+    return weeks.map((week) => week._id);
+  } catch (error) {
+    console.error('Error fetching cover bid job weeks:', error);
     throw error;
   }
 }

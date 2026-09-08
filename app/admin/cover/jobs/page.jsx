@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 
 import CoverCalendar from '@/app/components/covers/Calendar';
@@ -9,24 +9,66 @@ import CoverBidJobsManager from '@/app/components/admin/coverBidJobs/CoverBidJob
 import BackButton from '@/app/components/layout/BackButton';
 import StyledHeading from '@/app/components/layout/StyledHeading';
 import { getUpcomingSaturday } from '@/utils/functions';
+import { Box } from '@mui/material';
 
 function CoverJobs() {
-  const [weekEndDate, setWeekEndDate] = useState(() =>
-    getUpcomingSaturday(dayjs()),
-  );
+  // Default to next week — the week being posted — to match the driver-facing
+  // cover bid jobs page.
+  const [selectedDay, setSelectedDay] = useState(() => dayjs().add(1, 'week'));
+  const [postedWeeks, setPostedWeeks] = useState(() => new Set());
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Memoized because the children use it as a useEffect dependency — a fresh
+  // dayjs object each render would refetch forever.
+  const weekEndDate = useMemo(
+    () => getUpcomingSaturday(selectedDay),
+    [selectedDay],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchWeeks() {
+      try {
+        const res = await fetch('/api/coverBidJobs/weeks');
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to load posted weeks');
+        }
+        if (!cancelled) setPostedWeeks(new Set(data.data));
+      } catch (err) {
+        // The dots are a hint, not a requirement — the page works without them.
+        console.error(err);
+      }
+    }
+
+    fetchWeeks();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <>
       <BackButton />
       <StyledHeading>Cover Jobs</StyledHeading>
 
-      <CoverCalendar setWeekEndDate={setWeekEndDate} />
-      <BidSheetUploader
-        weekEndDate={weekEndDate}
-        onSaved={() => setRefreshKey((key) => key + 1)}
+      <CoverCalendar
+        value={selectedDay}
+        setValue={setSelectedDay}
+        postedWeeks={postedWeeks}
       />
-      <CoverBidJobsManager weekEndDate={weekEndDate} refreshKey={refreshKey} />
+      <Box sx={{ my: 2, px: { xs: 2, md: 1 } }}>
+        <BidSheetUploader
+          weekEndDate={weekEndDate}
+          onSaved={() => setRefreshKey((key) => key + 1)}
+        />
+        <CoverBidJobsManager
+          weekEndDate={weekEndDate}
+          refreshKey={refreshKey}
+        />
+      </Box>
     </>
   );
 }

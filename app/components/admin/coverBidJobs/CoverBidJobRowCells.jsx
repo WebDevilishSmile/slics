@@ -1,18 +1,7 @@
 'use client';
 
 import { TableCell, TextField } from '@mui/material';
-
-export const DAY_FIELDS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-
-export const DAY_LABELS = {
-  sun: 'Sun',
-  mon: 'Mon',
-  tue: 'Tue',
-  wed: 'Wed',
-  thu: 'Thu',
-  fri: 'Fri',
-  sat: 'Sat',
-};
+import { DAY_FIELDS, DAY_LABELS } from '@/app/components/coverBidJobs/dayFormat';
 
 export function CoverBidJobRowHeadCells() {
   return (

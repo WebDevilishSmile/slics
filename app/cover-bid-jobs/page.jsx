@@ -1,15 +1,25 @@
+import dayjs from 'dayjs';
+
 import PageContainer from '../components/layout/PageContainer';
 import {
-  getAllCoverBidJobs,
+  getCoverBidJobsSince,
   serializeCoverBidJobs,
 } from '@/utils/coverBidJobsApi';
 import CoverBidJobsTable from '../components/coverBidJobs/CoverBidJobsTable';
 import StyledHeading from '../components/layout/StyledHeading';
 import { auth } from '@/auth';
 import NotMember from '../components/coverBidJobs/NotMember';
+import { getUpcomingSaturday } from '@/utils/functions';
+import { COVER_BID_MONTHS_BACK } from '@/utils/variables';
 
 export default async function CoverBidJobsPage() {
-  const jobs = await getAllCoverBidJobs();
+  // Snap the cutoff to a Saturday so the oldest week loads whole, and compute it
+  // here so the server clock is the only one deciding the window.
+  const cutoffWeek = getUpcomingSaturday(
+    dayjs().subtract(COVER_BID_MONTHS_BACK, 'month'),
+  ).format('YYYY-MM-DD');
+
+  const jobs = await getCoverBidJobsSince(cutoffWeek);
   const serializedJobs = serializeCoverBidJobs(jobs);
 
   // Check if user is a BMC member
@@ -27,7 +37,7 @@ export default async function CoverBidJobsPage() {
   return (
     <PageContainer>
       <StyledHeading>Cover Bid Jobs</StyledHeading>
-      <CoverBidJobsTable jobs={serializedJobs} />
+      <CoverBidJobsTable jobs={serializedJobs} minWeekEnding={cutoffWeek} />
     </PageContainer>
   );
 }

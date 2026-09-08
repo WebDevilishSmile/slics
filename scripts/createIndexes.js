@@ -18,6 +18,9 @@ async function main() {
       { collection: 'comments', spec: { numSlic: 1, upVotes: -1 } },
       { collection: 'slicViews', spec: { userId: 1, viewedAt: -1 } },
       { collection: 'slics', spec: { numSlic: 1 } },
+      // Backs the six-month range scan on the cover bid jobs page and, as a
+      // prefix, the single-week equality match used by the admin manager.
+      { collection: 'cover-bid-jobs', spec: { weekEnding: -1, sortOrder: 1 } },
     ];
 
     for (const { collection, spec } of indexes) {

@@ -1,5 +1,9 @@
 export const SLICS_PER_PAGE = 5;
 
+// How far back the cover bid jobs page loads weeks. A display window only —
+// older weeks stay in the database and remain reachable from /admin/cover/jobs.
+export const COVER_BID_MONTHS_BACK = 12;
+
 export const ELEVATION = 6;
 export const MAX_WIDTH = '32rem';
 export const MIN_HEIGHT = '24rem';

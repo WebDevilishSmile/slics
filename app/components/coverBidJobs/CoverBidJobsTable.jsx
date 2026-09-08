@@ -7,7 +7,6 @@ import {
   Box,
   Chip,
   MenuItem,
-  Paper,
   Stack,
   TablePagination,
   TextField,
@@ -25,7 +24,8 @@ import {
   DAY_COLORS,
   formatDayValue,
 } from './dayFormat';
-import { ELEVATION } from '@/utils/variables';
+import CoverCalendar from '../covers/Calendar';
+import { getUpcomingSaturday } from '@/utils/functions';
 
 const DAY_COLUMNS = DAY_FIELDS.map((day) => ({
   field: day,
@@ -73,7 +73,7 @@ const DESKTOP_COLUMNS = [
 
 const CARDS_PER_PAGE = 50;
 
-function CoverBidJobsTable({ jobs }) {
+function CoverBidJobsTable({ jobs, minWeekEnding }) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -82,10 +82,32 @@ function CoverBidJobsTable({ jobs }) {
     [jobs],
   );
 
-  const [selectedWeek, setSelectedWeek] = useState(weeks[0] ?? null);
+  // Default to next week — that's the week drivers are bidding on. Today still
+  // gets its own ring on the calendar so the current date stays obvious.
+  const [selectedDay, setSelectedDay] = useState(() => dayjs().add(1, 'week'));
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [selectedJob, setSelectedJob] = useState(null);
+
+  // The picked day is the source of truth; the week it belongs to is derived.
+  const selectedWeek = useMemo(
+    () => getUpcomingSaturday(selectedDay).format('YYYY-MM-DD'),
+    [selectedDay],
+  );
+
+  const postedWeeks = useMemo(() => new Set(weeks), [weeks]);
+  const isWeekPosted = postedWeeks.has(selectedWeek);
+
+  // Start of the oldest loaded week, so that week's Sun-Fri stay clickable.
+  const minDate = useMemo(
+    () => (minWeekEnding ? dayjs(minWeekEnding).startOf('week') : undefined),
+    [minWeekEnding],
+  );
+
+  const selectWeek = (day) => {
+    setSelectedDay(day);
+    setPage(0);
+  };
 
   const weekJobs = jobs.filter((job) => job.weekEnding === selectedWeek);
 
@@ -103,14 +125,6 @@ function CoverBidJobsTable({ jobs }) {
     page * CARDS_PER_PAGE,
     page * CARDS_PER_PAGE + CARDS_PER_PAGE,
   );
-
-  if (jobs.length === 0) {
-    return (
-      <Typography color='text.secondary' textAlign='center' sx={{ py: 4 }}>
-        No cover bid jobs have been saved yet.
-      </Typography>
-    );
-  }
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -133,23 +147,35 @@ function CoverBidJobsTable({ jobs }) {
           gap: 1.5,
         }}
       >
-        <TextField
+        <Box sx={{ gridColumn: { md: '1 / -1' } }}>
+          <CoverCalendar
+            value={selectedDay}
+            setValue={selectWeek}
+            postedWeeks={postedWeeks}
+            minDate={minDate}
+          />
+        </Box>
+
+        {/*  */}
+        {/* <TextField
           select
           size='small'
           label='Week ending'
-          value={selectedWeek ?? ''}
-          onChange={(e) => {
-            setSelectedWeek(e.target.value);
-            setPage(0);
-          }}
+          value={selectedWeek}
+          onChange={(e) => selectWeek(dayjs(e.target.value))}
           fullWidth
         >
+          {!isWeekPosted && (
+            <MenuItem value={selectedWeek}>
+              {dayjs(selectedWeek).format('MM/DD/YYYY')} — not posted
+            </MenuItem>
+          )}
           {weeks.map((week) => (
             <MenuItem key={week} value={week}>
               {dayjs(week).format('MM/DD/YYYY')}
             </MenuItem>
           ))}
-        </TextField>
+        </TextField> */}
 
         <TextField
           size='small'
@@ -163,15 +189,24 @@ function CoverBidJobsTable({ jobs }) {
         />
       </Box>
 
-      <Typography
-        variant='caption'
-        color='text.secondary'
-        sx={{ px: 2, py: 1, display: 'block' }}
-      >
-        {filteredJobs.length} job{filteredJobs.length !== 1 ? 's' : ''} found
-      </Typography>
+      <Box sx={{ px: 2, py: 1 }}>
+        <Typography variant='caption' color='text.secondary' display='block'>
+          Today is {dayjs().format('MM/DD/YYYY')}
+        </Typography>
+        {isWeekPosted && (
+          <Typography variant='caption' color='text.secondary' display='block'>
+            {filteredJobs.length} job{filteredJobs.length !== 1 ? 's' : ''}{' '}
+            found for the week ending {dayjs(selectedWeek).format('MM/DD/YYYY')}
+          </Typography>
+        )}
+      </Box>
 
-      {isDesktop ? (
+      {!isWeekPosted ? (
+        <Alert severity='info' sx={{ mx: 2, my: 3 }}>
+          Cover bid jobs for the week ending{' '}
+          {dayjs(selectedWeek).format('MM/DD/YYYY')} have not been posted yet.
+        </Alert>
+      ) : isDesktop ? (
         <Box sx={{ px: 1 }}>
           <DataGrid
             rows={filteredJobs}
@@ -184,6 +219,17 @@ function CoverBidJobsTable({ jobs }) {
             autoHeight
             getRowHeight={() => 'auto'}
             onRowClick={(params) => setSelectedJob(params.row)}
+            slots={{
+              noRowsOverlay: () => (
+                <Typography
+                  color='text.secondary'
+                  textAlign='center'
+                  sx={{ py: 4 }}
+                >
+                  No jobs match your search.
+                </Typography>
+              ),
+            }}
             sx={{
               border: 'none',
               '& .MuiDataGrid-cell': { alignItems: 'center', py: 0.5 },
@@ -209,7 +255,7 @@ function CoverBidJobsTable({ jobs }) {
               textAlign='center'
               sx={{ py: 4 }}
             >
-              No jobs saved for this week yet.
+              No jobs match your search.
             </Typography>
           )}
 

@@ -1,17 +1,12 @@
 import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
-import { Box, Button, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
 import BuyMeACoffeeButton from '../layout/BuyMeACoffeeButton';
-import MemberDisplay from './MemberDisplay';
 
 function EmptySlic({ user }) {
   const OPTIONS = { loop: true, align: 'center' };
   const SLIDE_COUNT = 4;
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
-
-  if (user?.bmcMember) {
-    return <MemberDisplay user={user} />;
-  }
 
   return (
     <Paper

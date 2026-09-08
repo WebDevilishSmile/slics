@@ -102,6 +102,15 @@ function UserMenu({ children, user }) {
                     Socks
                   </Button>
                 </ListItem>
+                <ListItem>
+                  <Button
+                    href={`https://buymeacoffee.com/tiagodavila`}
+                    rel='noopener noreferrer'
+                    target='_blank'
+                  >
+                    Buy me a Coffee
+                  </Button>
+                </ListItem>
               </>
             )}
             <ListItem>

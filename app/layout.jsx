@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang='en' suppressHydrationWarning>
       <Providers>
-        <body className={`${font.className}`}>
+        <body className={font.variable}>
           <InitColorSchemeScript attribute='class' />
           <Container>
             <Header />

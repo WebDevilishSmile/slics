@@ -97,61 +97,28 @@ let theme = createTheme({
   },
 
   components: {
+    // Keep this to a single MuiButton key. Two keys in the same object collide
+    // silently — the later one replaces the earlier rather than merging with it.
+    //
+    // No color or hover rules here on purpose. MUI's `contained` variant already
+    // resolves to primary.main with contrast text and darkens to primary.dark on
+    // hover, so a blanket override buys nothing and breaks two cases: it would
+    // turn `color="error"` buttons blue on hover, and paint `text`/`outlined`
+    // buttons near-white on a light background. Components that need a specific
+    // button color set it at the call site (see footer/Footer.jsx, header/UserMenu.jsx).
     MuiButton: {
       styleOverrides: {
         root: {
-          fontFamily: 'var(--font-font)',
-          borderRadius: '1.5rem',
+          borderRadius: 18,
           textTransform: 'none',
         },
       },
-    },
-    MuiButton: {
-      variants: [
-        {
-          props: { variant: 'contained' },
-          style: {
-            fontFamily: 'var(--font-font)',
-            borderRadius: '1.5rem',
-            textTransform: 'none',
-            color: 'text.light',
-            '&:hover': {
-              backgroundColor: 'primary.dark',
-            },
-          },
-        },
-        {
-          props: { variant: 'text' },
-          style: {
-            fontFamily: 'var(--font-font)',
-            borderRadius: '1.5rem',
-            textTransform: 'none',
-            color: 'text.light',
-            '&:hover': {
-              backgroundColor: 'primary.dark',
-            },
-          },
-        },
-        {
-          props: { variant: 'outlined' },
-          style: {
-            fontFamily: 'var(--font-font)',
-            borderRadius: '1.5rem',
-            textTransform: 'none',
-            color: 'text.light',
-            '&:hover': {
-              backgroundColor: 'primary.dark',
-            },
-          },
-        },
-      ],
     },
 
     MuiButtonGroup: {
       styleOverrides: {
         root: {
-          fontFamily: 'var(--font-font)',
-          borderRadius: '1.5rem',
+          borderRadius: 18,
         },
       },
     },

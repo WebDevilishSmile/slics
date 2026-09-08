@@ -9,7 +9,7 @@ import MapPhoneLinks from './MapPhoneLinks';
 import PdfLink from './PdfLink';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
-import MoreDetailsLink from './MoreDetailsLink';
+import MemberDisplay from './MemberDisplay';
 
 function SlicDisplay({ commentsCount, loading, slic, user }) {
   if (loading) {
@@ -21,10 +21,12 @@ function SlicDisplay({ commentsCount, loading, slic, user }) {
   }
 
   if (!slic) {
-    return <EmptySlic user={user} />;
+    if (user?.bmcMember) {
+      return <MemberDisplay user={user} />;
+    } else {
+      return <EmptySlic user={user} />;
+    }
   }
-
-  console.log('SlicDisplay user:', user);
 
   return (
     <SlicDetailsContainer>

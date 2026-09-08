@@ -3,9 +3,11 @@
 import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import {
+  Alert,
   Box,
   Chip,
   MenuItem,
+  Paper,
   Stack,
   TablePagination,
   TextField,
@@ -23,6 +25,7 @@ import {
   DAY_COLORS,
   formatDayValue,
 } from './dayFormat';
+import { ELEVATION } from '@/utils/variables';
 
 const DAY_COLUMNS = DAY_FIELDS.map((day) => ({
   field: day,
@@ -111,6 +114,11 @@ function CoverBidJobsTable({ jobs }) {
 
   return (
     <Box sx={{ width: '100%' }}>
+      <Alert severity='info' sx={{ mb: 2 }}>
+        This is a work in progress. I'm working to see if I can show the weekly
+        cover bid jobs effectively. If you have some suggestions or feedback,
+        please let me know.
+      </Alert>
       <Box
         sx={{
           position: 'sticky',

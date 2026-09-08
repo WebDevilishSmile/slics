@@ -1,8 +1,9 @@
 import { auth } from '@/auth';
+import { Typography } from '@mui/material';
+
 import { getCommentsBySlic } from '@/utils/commentsApi';
 import { serializeSlics } from '@/utils/functions';
 import { getAllSlics } from '@/utils/slicsApi';
-import { Typography } from '@mui/material';
 
 import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';

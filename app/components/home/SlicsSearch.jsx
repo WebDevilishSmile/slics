@@ -3,7 +3,7 @@
 import { Alert, Autocomplete, Box, Link, TextField } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
-import { MAX_WIDTH } from '@/utils/variables';
+import theme from '@/utils/theme';
 
 function getDonationMessage(count) {
   if (count <= 0) return null;
@@ -80,7 +80,7 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
           severity='info'
           sx={{
             width: '100%',
-            maxWidth: MAX_WIDTH,
+            maxWidth: theme.layout.maxWidth,
             mt: '1.5rem',
           }}
         >
@@ -108,7 +108,7 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
         renderInput={(params) => <TextField {...params} label='Search Slics' />}
         sx={{
           width: '100%',
-          maxWidth: MAX_WIDTH,
+          maxWidth: theme.layout.maxWidth,
           mt: 3,
           px: 2,
         }}

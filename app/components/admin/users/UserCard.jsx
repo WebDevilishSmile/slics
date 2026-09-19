@@ -124,7 +124,6 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           <Chip
             component='div'
             label={user.role}
-            size='small'
             color={user.role === 'admin' ? 'primary' : 'default'}
             variant='outlined'
             onClick={(e) => {

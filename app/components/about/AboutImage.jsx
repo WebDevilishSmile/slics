@@ -11,7 +11,6 @@ export default function AboutImage({ source, altText, icon }) {
           width: 120,
           height: 120,
           margin: 'auto',
-          boxShadow: 3,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -29,7 +28,6 @@ export default function AboutImage({ source, altText, icon }) {
         width: 120,
         height: 120,
         margin: '0 auto',
-        boxShadow: 3,
       }}
     >
       <Image

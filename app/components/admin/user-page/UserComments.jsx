@@ -8,7 +8,7 @@ import CommentFoot from '@/app/components/profile/CommentFoot';
 import CommentDelete from '@/app/components/profile/CommentDelete';
 import { CommentRefreshProvider } from '@/app/context/CommentRefreshContext';
 import { serializeComment } from '@/utils/functions';
-import { ELEVATION, MAX_WIDTH } from '@/utils/variables';
+import theme from '@/utils/theme';
 
 const PAGE_SIZE = 3;
 
@@ -20,7 +20,7 @@ export default function UserComments({ userComments, user }) {
     <Box
       sx={{
         width: '100%',
-        maxWidth: MAX_WIDTH,
+        maxWidth: theme.layout.maxWidth,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -41,13 +41,12 @@ export default function UserComments({ userComments, user }) {
               return (
                 <Paper
                   key={serialized._id}
-                  elevation={ELEVATION}
+                  elevation={theme.layout.elevation}
                   sx={{
-                    maxWidth: MAX_WIDTH,
+                    maxWidth: theme.layout.maxWidth,
                     width: '100%',
                     mt: 2,
                     p: 2,
-                    borderRadius: '8px',
                     boxShadow: 1,
                   }}
                 >

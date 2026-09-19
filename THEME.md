@@ -126,62 +126,170 @@ scope it per variant and per color prop, or set it at the call site as
 
 ### 4. Dark-mode branch mishandles `'system'`
 
-- [ ] **Files:** `app/components/comments/Comment.jsx:37`,
-  `app/components/comments/CommentEditor.jsx:89, 101`
+- [x] **DONE.** **Files:** `app/components/comments/Comment.jsx:37`,
+  `app/components/comments/CommentEditor.jsx:89, 101`, `app/globals.css`
 
-These branch on `mode === 'light'`, but MUI's `mode` has three states — `'light'`,
-`'dark'`, and `'system'`. A user on **system-light** falls to the else branch and gets the
-**dark** hex. The hardcoded values also duplicate `background.comment`, which the very
-same elements already set via `sx` two lines below (`Comment.jsx:45`,
-`CommentEditor.jsx:120`).
+These branched on `mode === 'light'`, but MUI's `mode` has three states — `'light'`,
+`'dark'`, and `'system'` — plus `undefined` on the server and first client render.
+Both non-`'light'` cases fell to the else branch and got the **dark** hex.
 
-**Fix that keeps Tailwind and keeps tiptap working.** `utils/theme.js` sets
-`cssVariables: { colorSchemeSelector: 'class' }`, so MUI already emits
-`--mui-palette-background-comment` and redefines it under the dark class. A plain CSS
-class reading that variable follows the color scheme with **zero JS branching**, and
-tiptap keeps its `class` attribute:
+**This was worse than it looked.** `'system'` is not an edge case here — it is the
+default. The theme defines both schemes, so MUI's provider resolves `defaultMode` to
+`'system'` (`@mui/system/cssVars/createCssVarsProvider.js:92`), and the served
+`InitColorSchemeScript` confirms it: `localStorage.getItem('mui-mode') || 'system'`.
+So every driver who has never clicked the mode toggle was on `'system'`, and on a
+light-OS device got a `#050505` editor with dark text. The `undefined` case also meant
+the SSR HTML always carried the dark class and flipped on hydration.
+
+**Fix applied.** `globals.css` gains one class that reads the palette variable MUI
+already emits (`--mui-palette-background-comment`, redefined under `.dark` by
+`cssVariables: { colorSchemeSelector: 'class' }`):
 
 ```css
-/* globals.css */
 .comment-surface {
-  background: var(--mui-palette-background-comment);
-  border-color: var(--mui-palette-background-comment);
+  background-color: var(--mui-palette-background-comment);
 }
 ```
 
-Tailwind stays installed. The tiptap layout utilities on `CommentEditor.jsx:88`
-(`max-h-48 min-h-[10rem] text-base w-full border-none py-4 px-4 focus:outline-none`) are
-untouched — only the four arbitrary-value color classes go away. `useColorScheme()` can
-then be dropped from both components.
+The tiptap element (`CommentEditor.jsx:88`) uses it in place of the two `bg-[#…]`
+classes — tiptap renders that element itself, so it's the one place `sx` can't reach.
+The Tailwind layout utilities on it are untouched. `useColorScheme()` and the `mode`
+branches are gone from both components.
 
-*Caveat:* confirm in the running app that the variable is defined where tiptap renders
-before deleting the JS branch.
+**Not the way this item originally sketched it, in two respects:**
 
-*Blast radius:* comment editor and comment cards, both schemes.
+1. The `border-[#…]` classes on the two `Paper`s were deleted, not replaced. Both are
+   elevation variants, and Tailwind's preflight sets `border-width: 0` on everything,
+   so those classes never painted a single pixel. Hence no `border-color` in
+   `.comment-surface` — it would be a dead declaration on an element with
+   `border-none`.
+2. The `Paper`s keep their existing `sx` `bgcolor: 'background.comment'` rather than
+   taking the class. Emotion's style tags are appended after `globals.css`, so a plain
+   global class of equal specificity would lose to `MuiPaper-root`'s own
+   `background-color`. `sx` has no such ordering risk; the class is only for the
+   element MUI doesn't style.
+
+**Verified against the served output, not by reading code:**
+- The variable is defined at `:root,.light{…}` and redefined at `.dark{…}` in the
+  emitted CSS — document-global, so it resolves where tiptap renders (the caveat below).
+- Headless Chrome, using the *served* variable rules and the *served* init script,
+  computed the background of a `.comment-surface` element in all four states:
+
+  | stored `mui-mode` | `prefers-color-scheme` | `<html>` class | computed background |
+  |---|---|---|---|
+  | (none → `system`) | light | `light` | `rgb(234, 248, 254)` = `#eaf8fe` ✔ (was `#050505`) |
+  | (none → `system`) | dark | `dark` | `rgb(5, 5, 5)` = `#050505` ✔ |
+  | `light` | — | `light` | `#eaf8fe` ✔ |
+  | `dark` | — | `dark` | `#050505` ✔ |
+
+- The comment editor is only rendered behind auth, so the two components were syntax-
+  checked by transpiling them rather than via the dev bundle. `npm run lint` currently
+  fails at config level on every directory (`eslint.config.mjs` serialization) —
+  pre-existing and unrelated.
+
+*Caveat (retained from the original item, now satisfied):* the variable is defined
+where tiptap renders — see above.
+
+*Blast radius:* comment editor and comment cards, both schemes. Explicit light/dark
+users see no change; `system`+light-OS users get a readable editor for the first time.
 
 ### 5. Code blocks in comments are invisible in light mode
 
-- [ ] **File:** `app/globals.css:46, 51, 53` (also `:66, :73`)
+- [x] **DONE — the premise was off, and the fix is broader than the file list.**
+  **Files:** `app/globals.css:47-85`, `app/components/comments/Comment.jsx:52`,
+  `app/components/comments/CommentEditor.jsx:88`
 
-The tiptap styles reference CSS variables that are **never defined anywhere**:
-`--black`, `--white`, `--gray-2`, `--gray-3`. A `<pre>` therefore gets
-`background: var(--black)` → undefined → transparent, with `color: var(--white)` →
-undefined → inherited. Any comment containing a code block is unreadable in light mode.
+The tiptap styles referenced four CSS variables that were **never defined anywhere**:
+`--black`, `--white`, `--gray-2`, `--gray-3` — copy-pasted from the tiptap starter
+template, which defines them; this app never did.
 
-These were copy-pasted from the tiptap starter template. Replace with palette tokens
-(`var(--mui-palette-text-primary)` etc.) or delete the rules.
+**What was actually happening**, measured with the served CSS in headless Chrome rather
+than assumed. An undefined `var()` makes the declaration *invalid at computed-value
+time*, which does not mean "invisible": the property falls back to its initial value
+(`background` → transparent) or its inherited value (`color`). So:
 
-*Blast radius:* only comments containing code blocks.
+- Nothing was ever unreadable. Text kept the scheme's normal color in both modes.
+- Code blocks, inline code and blockquotes were **indistinguishable from plain text** —
+  no background, no left border. Only `<hr>` was truly invisible (`border: none` plus
+  an invalid `border-top` → `0px none`).
+- **And all of it applied only inside the editor.** `@tiptap/core` prepends the
+  `tiptap` class to its own contenteditable element (`dist/index.js:4669`); nothing
+  in `app/` puts it on a rendered comment. `Comment.jsx` renders the stored HTML via
+  `html-react-parser` into a plain `Box`, so posted comments never had *any* of these
+  rules — a `<blockquote>` was bare text, and `<hr>` was Tailwind preflight's hardcoded
+  `1px solid #e5e7eb`, which ignores the color scheme.
+
+**Fix applied.** The block is renamed `.comment-content` and both places comment
+content renders carry that class — the tiptap element (alongside `comment-surface`
+from item 4) and the rendered `Box` in `Comment.jsx` — so a code block looks the same
+while typing and after posting. The four undefined variables became two translucent
+MUI tokens, which sit correctly on any surface in either scheme:
+
+| was | now | light | dark |
+|---|---|---|---|
+| `--black` (code / pre background) | `--mui-palette-action-selected` | `rgba(0,0,0,.08)` | `rgba(255,255,255,.16)` |
+| `--gray-2`, `--gray-3` (hr / blockquote border) | `--mui-palette-divider` | `rgba(0,0,0,.12)` | `rgba(255,255,255,.12)` |
+| `--black`, `--white` (code / pre `color`) | *dropped — inherits* | | |
+
+Two smaller things went with it: `pre`'s `font-family: 'JetBrainsMono', monospace`
+was deleted (that font is loaded nowhere, so it always fell through to the generic
+family; now Tailwind preflight's `ui-monospace, …` stack applies uniformly), and the
+placeholder rule `.tiptap p.is-editor-empty…` stays as-is — it is editor-only by nature.
+
+**Verified by computed style, before and after, both schemes**, on markup containing
+`<code>`, `<pre><code>`, `<blockquote>` and `<hr>` — once under `.tiptap` (editor) and
+once as a bare rendered comment:
+
+| | before (editor) | before (rendered) | after (both) |
+|---|---|---|---|
+| `code` / `pre` background | transparent | transparent | `action.selected` ✔ |
+| `blockquote` border-left | `0px none` | `0px` | `3px solid divider` ✔ |
+| `hr` border-top | `0px none` (invisible) | `1px solid #e5e7eb` (fixed grey) | `1px solid divider` ✔ |
+| undefined `var()`s in served CSS | 5 | | **0** |
+
+Rendered and editor now compute identically in each scheme.
+
+*Blast radius:* larger than the original line said — it now includes **posted**
+comments that contain code, quotes or rules, which pick up a background/border for the
+first time. Those elements only arise from StarterKit's markdown-style shortcuts
+(backtick-wrapped text, a triple-backtick fence, a leading `>`, a `---` line) since the
+editor has no toolbar, so expect few. Plain paragraphs are untouched. To revert only the
+display half, remove `className='comment-content'` from `Comment.jsx`.
 
 ### 6. Theme toggle is asymmetric
 
-- [ ] **File:** `app/components/layout/ModeSwitch.jsx:13-24`
+- [x] **DONE — cleanup, not a behavior change.** **File:**
+  `app/components/layout/ModeSwitch.jsx:13-24`
 
-The second `if` is missing `else`, so the two `system` branches behave differently: in
-system+light it sets `'dark'` and then re-evaluates against the stale `mode`. Rewrite as a
-single expression over `colorScheme`.
+The second `if` was missing `else`, so after the `system`+dark branch fired, the
+`light`/`dark` chain below was evaluated again. **It was harmless in practice:** that
+chain compared the function *parameter* `mode`, still `'system'`, so nothing matched
+and nothing double-fired. The four branches were correct, just written as if
+`setMode` were synchronous.
 
-*Blast radius:* the toggle button only.
+**Fix applied:** one expression over the resolved scheme —
+
+```js
+const toggleMode = () => setMode(colorScheme === 'dark' ? 'light' : 'dark');
+```
+
+`colorScheme` is already what `system` resolves to (`useColorScheme` derives it from
+`systemMode` when `mode === 'system'`), and it is never `undefined` when `mode` is
+truthy, which the existing `if (!mode) return null` guard guarantees before the button
+can be clicked. It is the same source of truth the icon already used.
+
+**Verified by clicking the real button** on the running app over the DevTools Protocol,
+starting from a cleared `mui-mode` (i.e. `system`) under each OS preference:
+
+| start | initial | 1st click | 2nd click |
+|---|---|---|---|
+| system + OS light | `html.light`, moon icon | `html.dark`, stored `dark` | `html.light`, stored `light` |
+| system + OS dark | `html.dark`, sun icon | `html.light`, stored `light` | `html.dark`, stored `dark` |
+
+The same test against the **original** four-branch code produced identical output,
+confirming this is a pure simplification.
+
+*Blast radius:* none — the toggle button only, and its behavior is unchanged.
 
 ---
 
@@ -191,92 +299,174 @@ The core change: one place to edit colors.
 
 ### 7. Introduce a `tokens` object at the top of `utils/theme.js`
 
-- [ ] **File:** `utils/theme.js`
+- [x] **DONE.** **File:** `utils/theme.js:5-23`
 
-Today the dark scheme redefines colors by **copy-pasting hex values** — `#050505`,
-`#edf3fc` and `#222222` each appear in both the light `palette` and
-`colorSchemes.dark.palette`. Lift them into a single named block at the top that both
-schemes read from:
+The dark scheme redefined colors by **copy-pasting hex values** — `#050505`, `#edf3fc`
+and `#222222` each appeared in both the light `palette` and `colorSchemes.dark.palette`
+(5, 6 and 5 times respectively), and `primary` was spelled out twice in full.
+
+**Fix applied.** One named block at the top that both schemes read from, plus a single
+shared `primary`:
 
 ```js
 const tokens = {
-  brand:   lightBlue,
-  ink:     '#222222',
-  paper:   '#edf3fc',
-  void:    '#050505',
-  comment: '#eaf8fe',
+  brand: lightBlue,   // primary shades + the light scheme's paper
+  ink: '#222222',     // dark text
+  chalk: '#f7f7f7',   // light text
+  canvas: '#edf3fc',  // light page background; the dark scheme's "opposite"
+  void: '#050505',    // dark page background; the light scheme's "opposite"
+  comment: '#eaf8fe', // comment surface in the light scheme
 };
 ```
 
-Change a brand color once and both schemes follow. Keeps the existing two-scheme structure
-and all current key names, so no call sites change.
+The palette now contains **zero hex literals** — every raw color goes through `tokens`,
+so changing one line changes both schemes. All palette keys and the two-scheme structure
+are untouched, so no call sites change.
 
-*Blast radius:* intended to be a pure refactor with zero visual change — verify by
-comparing rendered colors before and after.
+**Two deliberate departures from the sketch above:**
+
+1. `paper` was renamed `canvas`. MUI already has `background.paper`, and in the light
+   scheme that key is `lightBlue[50]` (`#e1f5fe`), *not* `#edf3fc` — a token literally
+   named `paper` that isn't what `background.paper` resolves to would be a trap.
+   `canvas` is the light **page** background, which is what `#edf3fc` is.
+2. `chalk: '#f7f7f7'` was added. It appears once here (light `text.light`) so it wasn't
+   a duplication problem, but leaving it as the only inline hex would undercut the
+   "one place to change a color" rule. It's also the value item 26 wants five
+   components to stop hardcoding, so it now has a name to point them at.
+
+Not lifted, on purpose: `grey[300]`/`grey[800]`, `blue[300]`, `orange`, `green` were MUI
+color-object references, not literals, and every one of them backed a key that item 8
+marked as dead (`background.grey`, `containedButton`, `secondary`). Item 8 has since
+deleted them all.
+
+**Verified as a pure refactor by diffing the served output before and after:**
+
+| | before | after |
+|---|---|---|
+| `--mui-palette-*` variables (`:root,.light` + `.dark`) | 430 | 430, **byte-identical** |
+| emitted CSS rules (all `<style>` tags, boundary-independent) | 197 | 197, **0 added / 0 removed** |
+| hex literals in emitted CSS | 182 | 182, identical multiset |
+| hex literals in `theme.js` outside `tokens` | 18 | **0** |
+
+The served bundle was confirmed to contain the new `tokens` module at the time of the
+diff, so the comparison was against the refactored code, not a cached compile.
+
+*Blast radius:* none — nothing the browser receives changed.
 
 ### 8. Prune or wire up the dead palette keys
 
-- [ ] **File:** `utils/theme.js`
+- [x] **DONE.** **File:** `utils/theme.js`
 
-Verified zero references across `app/`:
+Verified zero references across `app/` and `utils/`, and **deleted** from both schemes:
 
-| Key | Defined at | Uses |
+| Key | Was defined at | Uses |
 |---|---|---|
-| `palette.containedButton` | `:42-45` | 0 |
-| `background.solid` | `:50`, `:22` (dark) | 0 |
-| `background.grey` | `:51`, `:23` (dark) | 0 |
-| `text.solid` | `:58`, `:28` (dark) | 0 |
-| `text.dark` | `:55`, `:27` (dark) | 0 |
+| `palette.containedButton` | `:54-57` | 0 |
+| `background.solid` | `:62`, `:38` (dark) | 0 |
+| `background.grey` | `:63`, `:39` (dark) | 0 |
+| `text.solid` | `:70`, `:44` (dark) | 0 |
+| `text.dark` | `:67`, `:43` (dark) | 0 |
 
-`palette.secondary` also diverges between schemes (`orange` light, `green` dark) and is
-never referenced. Decide per key: delete, or adopt — `containedButton` is a natural home
-for the button style in item 26.
+The `ink` token (`#222222`) and the `blue`/`grey` color imports only fed those keys, so
+they went too. `containedButton` was *not* adopted for item 26: its values (`blue[300]`
+on `#222222`) didn't match the Buy-Me-a-Coffee style anyway, so item 26 should add a
+purpose-named key if it wants one rather than resurrect this.
 
-Note `background.opposite` / `text.opposite` **are** load-bearing, but have exactly one
-consumer each (`ModeSwitch.jsx`). `background.comment` has two (`Comment.jsx:45`,
-`CommentEditor.jsx:120`).
+`palette.secondary` turned out **not** to be unreferenced — the original claim missed
+`DAY_COLORS.tue = 'secondary'` (`coverBidJobs/dayFormat.js`, duplicated in
+`bids/BidsJobCard.jsx` and `bids/BidsTable.jsx`), which colors every Tuesday `Chip`. That
+made the scheme divergence a visible defect: Tuesday was orange in light mode (same family
+as Sun/Sat's `warning`) and green in dark mode (same as Wed's `success`). Both overrides
+were removed so `secondary` is MUI's default purple in both schemes — distinct from every
+other day color. Visible change: Tuesday chips are now purple. The `Calendar.jsx` comment
+that justified `warning.main` for the today-ring by "secondary is green in dark mode" was
+reworded to match.
 
-*Blast radius:* none if truly unused — re-run the grep in Verification before deleting.
+Still load-bearing, unchanged: `background.opposite` / `text.opposite` (one consumer
+each, `ModeSwitch.jsx`), `background.comment` (`Comment.jsx`, `CommentEditor.jsx`),
+`text.light` (footer + `UserMenu.jsx`).
 
 ### 9. Correct the palette claim in `CLAUDE.md`
 
-- [ ] **File:** `CLAUDE.md`
+- [x] **DONE.** **File:** `CLAUDE.md`
 
-It states that `background.solid`, `text.dark` and `text.solid` are "used throughout" and
-should be reused instead of hardcoding hex. Per item 8 they have **zero** uses. Fix so the
-doc stops sending people toward dead keys.
+It stated that `background.solid`, `text.dark` and `text.solid` were "used throughout" and
+should be reused instead of hardcoding hex. Per item 8 they had **zero** uses and are now
+deleted. The sentence now lists the four keys that actually exist (`background.opposite`,
+`text.opposite`, `background.comment`, `text.light`), says what each is for, and points at
+the `tokens` object for raw values. The "Known issues" paragraph that referenced this item
+was replaced with the single-source-of-truth note from item 10.
 
 ### 10. Delete the shadow palette
 
-- [ ] **Files:** `app/globals.css:5-15`, `tailwind.config.mjs:10-13`
+- [x] **DONE.** **Files:** `app/globals.css:5-15`, `tailwind.config.mjs:10-13`
 
-`globals.css` defines a full second palette — `--foreground`, `--background`, `--primary`,
-`--secondary`, `--accent`, `--error`, `--warning`, `--info`, `--success` — that is
-**referenced nowhere** and whose values *conflict* with the real theme (`--primary:
+`globals.css` defined a full second palette — `--foreground`, `--background`, `--primary`,
+`--secondary`, `--accent`, `--error`, `--warning`, `--info`, `--success` — that was
+**referenced nowhere** and whose values *conflicted* with the real theme (`--primary:
 #0070f3` vs the actual `lightBlue[600]` = `#039be5`). The Tailwind
-`colors: { background, foreground }` extension that maps to them is equally unused:
-`bg-background`, `text-foreground`, `bg-foreground` and `text-background` appear nowhere.
+`colors: { background, foreground }` extension that mapped to them was equally unused:
+`bg-background`, `text-foreground`, `bg-foreground` and `text-background` appeared nowhere,
+and neither did any `var(--primary)`-style reference (checked `app/` and `utils/` across
+`.jsx`/`.js`/`.css`, including Tailwind arbitrary values).
 
-Removing both eliminates a false second source of truth for anyone trying to restyle the
-app. **This does not remove Tailwind** — only the unused color mapping.
+**Removed:** the `:root` block and the `theme.extend.colors` mapping. **Tailwind stays** —
+only the color mapping went, and a comment in the config says where colors do live.
 
-Also worth noting: `tailwind.config.mjs` scans `./pages` and `./components`, neither of
-which exists at the repo root, so two of its three content globs are dead.
+Also removed the `./pages` and `./components` content globs — neither directory exists at
+the repo root, so they were dead. `./app/**` is the only one that matched anything.
 
-*Blast radius:* none — all provably unreferenced.
+*Blast radius:* none — `npm run build` passes and the served CSS lost only the unused
+custom properties.
 
 ### 11. Fold layout constants into the theme
 
-- [ ] **Files:** `utils/variables.js`, `utils/theme.js`
+- [x] **DONE.** **Files:** `utils/variables.js`, `utils/theme.js`, 19 consumers
 
-`variables.js` mixes UI tokens with domain constants. Move `ELEVATION`, `MAX_WIDTH`,
-`MIN_HEIGHT` and `BORDER_RADIUS` into the theme (`shape.borderRadius` plus a custom
-`theme.layout` namespace); leave `SLICS_PER_PAGE` and `COVER_BID_MONTHS_BACK` where they
-are.
+`variables.js` mixed UI tokens with domain constants. `ELEVATION`, `MAX_WIDTH`,
+`MIN_HEIGHT` and `BORDER_RADIUS` are gone from it; `SLICS_PER_PAGE` and
+`COVER_BID_MONTHS_BACK` stay.
 
-`BORDER_RADIUS` (`'6px'`) is **dead** — zero imports — and has already drifted: components
-use `'8px'` (×2), the theme uses `'1.5rem'` for buttons, and `'50%'` appears 7×. Three
-uncoordinated radius values.
+**Where they went:**
+
+| Was | Now | Notes |
+|---|---|---|
+| `MAX_WIDTH = '32rem'` | `theme.layout.maxWidth` | |
+| `MIN_HEIGHT = '24rem'` | `theme.layout.minHeight` | |
+| `ELEVATION = 6` | `theme.layout.elevation` | |
+| `BORDER_RADIUS = '6px'` (dead) | `theme.shape.borderRadius = 8` | see below |
+
+**How consumers read them:** `import theme from '@/utils/theme'` and
+`theme.layout.maxWidth` — the idiom `Comment.jsx` / `TablePaginationActions.jsx` already
+used. This required dropping the `'use client'` directive from `utils/theme.js`: with it,
+the nine consumers that are server components (`history/page.jsx`, `home/EmptySlic.jsx`,
+`signIn/Membership.jsx`, …) would receive a client *reference* whose `.layout` is
+unreadable on the server. The directive was never load-bearing — `Providers.jsx` is
+already the client boundary, and `createTheme` is pure — so nothing else changes. Both
+server and client components now import the same plain object.
+
+MUI also emits every key as a CSS variable (`--mui-layout-maxWidth: 32rem`,
+`--mui-layout-minHeight: 24rem`, `--mui-shape-borderRadius: 8px`) so `globals.css` can
+use them. Ignore `--mui-layout-elevation: 6px` — MUI suffixes numbers with `px`; it's a
+prop value, not CSS.
+
+**Radius decision:** `BORDER_RADIUS` had zero imports and three uncoordinated values were
+in play (`'6px'` dead, `'8px'` ×2 on comment `Paper`s, `1.5rem` buttons). `shape.borderRadius`
+is now **8** — the value the two live sites had chosen — and those two literal overrides
+were deleted since `Paper` reads `shape.borderRadius` itself. Buttons keep their own pill
+radius. **This is a visible, app-wide change:** every `Paper`, `Card`, `TextField`,
+`Dialog`, `Menu` and `Alert` corner goes from MUI's default 4px to 8px. If that's not
+wanted, it's now one number in `theme.js`.
+
+Also: `admin/users/[id]/page.jsx` imported `MAX_WIDTH` without using it — that dead import
+is gone rather than rewritten. The pre-existing dead `theme` imports in `Comment.jsx`,
+`CommentEditor.jsx` and `TablePaginationActions.jsx` are item 23's and were left alone.
+
+**Verified:** `npm run build` passes; the served `/signin` HTML carries the three
+`--mui-layout-*` vars, `--mui-shape-borderRadius:8px`, and `max-width:32rem` on the
+content column.
+
+*Blast radius:* the radius change above. Everything else is value-preserving.
 
 ---
 
@@ -291,42 +481,78 @@ Each is a few lines in `theme.components`.
 
 ### 12. `MuiPaper.defaultProps.elevation = 6`
 
-- [ ] 9 sites pass `elevation={ELEVATION}`: `comments/CommentsContainer.jsx:45`,
-  `comments/NoSlicComments.jsx:7`, `home/EmptySlic.jsx:13`, `home/MemberDisplay.jsx:8`,
-  `home/SlicDetailsContainer.jsx:7`, `profile/ProfileComments.jsx:19`,
-  `profile/ProfileImage.jsx:8`, `admin/user-page/UserComments.jsx:44`,
-  `app/history/page.jsx:89`.
+- [x] **EVALUATED — not applied.** Superseded by item 17.
 
-  7 further call sites bypass the constant entirely with literal `elevation={3}`, `{1}`,
-  `{0}` — worth reconciling at the same time.
+The 9 `elevation={theme.layout.elevation}` sites (`comments/CommentsContainer.jsx`,
+`comments/NoSlicComments.jsx`, `home/EmptySlic.jsx`, `home/MemberDisplay.jsx`,
+`home/SlicDetailsContainer.jsx`, `profile/ProfileComments.jsx`, `profile/ProfileImage.jsx`,
+`admin/user-page/UserComments.jsx`, `app/history/page.jsx`) are the minority. A `Paper`
+default reaches every Paper-derived component with no explicit prop, and **13 sites rely
+on the implicit 1**: `admin/slics/SlicsTable.jsx`, `admin/comments/CommentsSection.jsx`,
+`newSlic/FormContainer.jsx`, `profile/ProfileData.jsx`, `comments/Comment.jsx:17`, four
+`TableContainer component={Paper}` (`admin/coverBidJobs/BidSheetUploader.jsx`,
+`admin/coverBidJobs/CoverBidJobsEditTable.jsx`, `covers/DriversTable.jsx`,
+`drivers/DriversTable.jsx`), three `Accordion`s (`admin/users/UserCard.jsx`,
+`covers/Calendar.jsx`, plus `admin/comments/Comment.jsx`'s `Card`), and every
+`Autocomplete` dropdown. Pinning `elevation={1}` on all of those to keep the app looking
+the same would add more props than the default removes.
+
+The 9 sites already share one value via `theme.layout.elevation` (item 11); the right
+absorber for them is the `panel` variant in item 17, which can carry the shadow together
+with the width/height they also share. The 7 literal sites (`elevation={3}` on
+`about/AboutContainer.jsx` and `slicPage/CommentsPage.jsx:17`; `{0}` on nested
+`Accordion`s/`Paper`s; `{1}` on `comments/Comment.jsx`) are deliberate nesting choices —
+left as is.
 
 ### 13. `MuiTextField.defaultProps = { size: 'small', fullWidth: true }`
 
-- [ ] `size='small'` appears 59× and `fullWidth` 28×. Densest:
-  `signIn/EmailAuth.jsx` (7), `admin/coverBidJobs/CoverBidJobEditCard.jsx` (6),
-  `bids/BidsFilters.jsx` (4). Note a second cluster in
-  `admin/coverBidJobs/CoverBidJobRowCells.jsx` uses `variant='standard'` — check it
-  doesn't regress.
+- [x] **EVALUATED — not applied.** The premise was off.
+
+The "59× `size='small'`" count included `Button`, `IconButton` and `Select`. Of the **41
+`TextField`s** in `app/`, only 12 pass both props. **18 have no `size`** at all — among them
+the home page's `home/SlicsSearch.jsx`, every `newSlic/*Field.jsx`, `profile/EditProfileDialog.jsx`,
+`comments/CommentsContainer.jsx`, `covers/CoverPosition.jsx`,
+`drivers/newDriver/NewDriverField.jsx` — and would shrink to small. **~20 have no
+`fullWidth`**, including inline filter rows (`bids/BidsFilters.jsx`,
+`coverBidJobs/CoverBidJobsTable.jsx`) and the five `variant='standard'` cells in
+`admin/coverBidJobs/CoverBidJobRowCells.jsx`, which would stretch. Keeping the current
+look would mean pinning ~38 props to delete 24. Net negative, so the default stays MUI's.
+
+If the app *should* move to all-small, all-full-width inputs, that's a design decision to
+make on purpose — set the default and walk the 18 + 20 sites above — not a cleanup.
 
 ### 14. `MuiChip.defaultProps.size = 'small'`
 
-- [ ] 5 sites, all day-of-week chips: `bids/BidsJobCard.jsx:87`, `bids/BidsTable.jsx:71`,
-  `coverBidJobs/CoverBidJobCard.jsx:59`, `coverBidJobs/CoverBidJobDetailDialog.jsx:60`,
-  `coverBidJobs/CoverBidJobsTable.jsx:38`. They also share `sx={{ fontWeight: 600 }}` — a
-  shared `DayChip` component would absorb both that and `DAY_COLORS`.
+- [x] **DONE.** Default set in `utils/theme.js`; `size='small'` removed from the 7 sites
+  that had it (the 5 day-of-week chips plus `bids/BidsJobCard.jsx:65` and
+  `admin/users/UserCard.jsx:124`). The one chip that had no size — the comment count on
+  `home/TitleAddress.jsx` — is pinned `size='medium'` so the home page doesn't change.
+
+  The shared `DayChip` idea was **not** done: the five day chips don't actually share
+  their `sx` (`fontWeight: 700, minWidth: 48` ×2, `fontWeight: 600, fontSize: '0.7rem'`
+  ×2, none ×1), so a component would just be a prop bag. `DAY_COLORS` is still duplicated
+  in `bids/BidsJobCard.jsx` and `bids/BidsTable.jsx` — collapsing those onto
+  `coverBidJobs/dayFormat.js` is a separate, non-styling cleanup.
 
 ### 15. `MuiCard.defaultProps.variant = 'outlined'`
 
-- [ ] 3 of the 4 `Card` uses: `admin/coverBidJobs/CoverBidJobEditCard.jsx:8`,
-  `bids/BidsJobCard.jsx:50`, `coverBidJobs/CoverBidJobCard.jsx:22`.
+- [x] **DONE.** Default set; `variant='outlined'` removed from
+  `admin/coverBidJobs/CoverBidJobEditCard.jsx`, `bids/BidsJobCard.jsx`,
+  `coverBidJobs/CoverBidJobCard.jsx`. **Visible change:** the fourth `Card`,
+  `admin/comments/Comment.jsx`, was implicitly elevated and is now outlined like the rest.
 
 ### 16. `MuiSnackbar.defaultProps` for `autoHideDuration` + `anchorOrigin`
 
-- [ ] Four identical `autoHideDuration={6000}` + top/center configs:
-  `admin/slics/SlicOptions.jsx:199`, `home/TitleAddress.jsx:92`,
-  `newSlic/FormActions.jsx:121`, `profile/ProfileData.jsx:124`. Two near-misses at 3000ms
-  (`drivers/editDriver/EditDriverField.jsx:129`) and 4000ms
-  (`profile/CommentDelete.jsx:87`) — decide whether those are deliberate.
+- [x] **DONE.** Default `autoHideDuration: 6000`, `anchorOrigin: top/center`. Both props
+  removed from the four identical sites (`admin/slics/SlicOptions.jsx`,
+  `home/TitleAddress.jsx`, `newSlic/FormActions.jsx`, `profile/ProfileData.jsx`); the
+  redundant `anchorOrigin` also removed from `drivers/editDriver/EditDriverField.jsx` and
+  `profile/CommentDelete.jsx`, which keep their explicit 3000/4000 ms — no reason to
+  believe those aren't deliberate, and changing a toast's timing isn't a cleanup.
+
+  One site needed pinning: `newSlic/Warning.jsx` had **no** `autoHideDuration`, i.e. it
+  stayed up until dismissed (it even suppresses click-away). It now passes
+  `autoHideDuration={null}` explicitly so the theme default can't start auto-closing it.
 
 ---
 
@@ -430,11 +656,12 @@ reconcile deliberately rather than preserving each variation.
   `coverBidJobs/NotMember.jsx:25`, `layout/BuyMeACoffeeButton.jsx:30`.
 
   `#f7f7f7` is exactly `palette.text.light`. `about/AboutLink.jsx:30` already accepts the
-  color as a prop, so this is half-done already. Good candidate for the otherwise-unused
-  `palette.containedButton` key (item 8).
+  color as a prop, so this is half-done already. If this wants a palette home, add a
+  purpose-named key (e.g. `palette.bmc`) — the old `containedButton` key was deleted in
+  item 8 and its values didn't match this style anyway.
 
-  Note these use literal `'black'` while the theme defines `text.dark`/`text.solid` as
-  `#222222` — a real, if subtle, inconsistency.
+  Note these use literal `'black'`; the theme's former `#222222` dark-text keys
+  (`text.dark`/`text.solid`) were deleted as unused in item 8, so pick one value here.
 
 ### 27. Duplicated `bounce` keyframe
 
@@ -468,10 +695,11 @@ reconcile deliberately rather than preserving each variation.
 
 ## Verification
 
-**Re-run before acting on items 8, 10, 22 and 23** — all should return nothing:
+**Re-run before acting on items 22 and 23** — all should return nothing (the item 8 and
+10 greps are kept as regression checks now that those keys are gone):
 
 ```bash
-grep -rn "containedButton\|background\.solid\|background\.grey\|text\.solid" app/
+grep -rn "containedButton\|background\.solid\|background\.grey\|text\.solid\|text\.dark" app/ utils/
 grep -rn "StyledPage\|layout/Wrapper" app/ --include=*.jsx | grep -i import
 grep -rn "bg-background\|text-foreground\|bg-foreground\|text-background" app/
 ```

@@ -4,6 +4,7 @@ function Warning({ open, message, onClose }) {
   return (
     <>
       <Snackbar
+        autoHideDuration={null} // stays up until dismissed — overrides the theme's 6s default
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={open}
         message={message}

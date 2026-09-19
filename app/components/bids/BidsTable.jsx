@@ -70,7 +70,6 @@ const DESKTOP_COLUMNS = [
             <Tooltip key={day} title={formatTime(time)} arrow>
               <Chip
                 label={`${DAY_LABELS[day]} ${formatTime(time)}`}
-                size='small'
                 color={DAY_COLORS[day] || 'default'}
                 sx={{ fontWeight: 600, fontSize: '0.7rem' }}
               />

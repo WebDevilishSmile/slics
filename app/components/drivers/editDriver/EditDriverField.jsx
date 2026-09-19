@@ -128,7 +128,6 @@ function EditDriverField({ driver, fieldName, label }) {
         open={snackbar.open}
         autoHideDuration={3000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert variant='filled' severity={snackbar.severity}>
           {snackbar.message}

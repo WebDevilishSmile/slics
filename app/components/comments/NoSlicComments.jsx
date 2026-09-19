@@ -1,15 +1,15 @@
-import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
+import theme from '@/utils/theme';
 import { Paper, Typography } from '@mui/material';
 
 function NoSlicComments() {
   return (
     <Paper
-      elevation={ELEVATION}
+      elevation={theme.layout.elevation}
       sx={{
         position: 'relative',
         width: '100%',
-        maxWidth: MAX_WIDTH,
-        minHeight: MIN_HEIGHT,
+        maxWidth: theme.layout.maxWidth,
+        minHeight: theme.layout.minHeight,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

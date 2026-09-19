@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Box, Button, Paper, useColorScheme } from '@mui/material';
+import { Box, Button, Paper } from '@mui/material';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { ELEVATION } from '@/utils/variables';
 import theme from '@/utils/theme';
 
 import Placeholder from '@tiptap/extension-placeholder';
@@ -14,7 +13,6 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const numSlic = searchParams.get('slic');
-  const { mode } = useColorScheme();
 
   const [comment, setComment] = useState({
     numSlic: numSlic,
@@ -85,9 +83,8 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: `max-h-48 min-h-[10rem] text-base w-full border-none py-4 px-4 focus:outline-none ${
-          mode === 'light' ? 'bg-[#eaf8fe]' : 'bg-[#050505]'
-        }`,
+        class:
+          'comment-surface comment-content max-h-48 min-h-[10rem] text-base w-full border-none py-4 px-4 focus:outline-none',
       },
     },
     onUpdate: ({ editor }) => {
@@ -97,9 +94,6 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
 
   return (
     <Paper
-      className={`${
-        mode === 'light' ? 'border-[#eaf8fe]' : 'border-[#050505]'
-      }`}
       elevation={0}
       sx={{
         width: '100%',

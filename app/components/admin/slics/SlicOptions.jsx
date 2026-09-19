@@ -196,8 +196,6 @@ function SlicOptions({ slic, onSlicDeleted }) {
       <Snackbar
         open={openSnack}
         onClose={handleCloseSnack}
-        autoHideDuration={6000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert severity={snackSeverity} onClose={handleCloseSnack}>
           {snackMessage}

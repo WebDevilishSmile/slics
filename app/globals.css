@@ -2,18 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground: #222;
-  --background: #edf3fc;
-  --primary: #0070f3;
-  --secondary: #1db954;
-  --accent: #ff4081;
-  --error: #f44336;
-  --warning: #ff9800;
-  --info: #2196f3;
-  --success: #4caf50;
-}
-
 * {
   box-sizing: border-box;
   padding: 0;
@@ -34,43 +22,52 @@ a {
   text-decoration: none;
 }
 
-/* Basic editor styles */
-.tiptap {
+/* Surface color for the comment editor. Reads the palette variable MUI emits
+   for background.comment (redefined under .dark by
+   cssVariables: { colorSchemeSelector: 'class' } in utils/theme.js), so it
+   follows the color scheme — including 'system' — with no JS branching.
+   Needed because tiptap renders its own element and sx can't reach it. */
+.comment-surface {
+  background-color: var(--mui-palette-background-comment);
+}
+
+/* Rich-text content styles, shared by the comment editor (tiptap) and rendered
+   comments (Comment.jsx) so a code block looks the same while typing and after
+   posting. StarterKit creates these elements from markdown-style shortcuts
+   (`code`, ```, >, ---). Colors are translucent MUI palette overlays, so they
+   sit correctly on any surface in both schemes. Text color is inherited. */
+.comment-content {
   :first-child {
     margin-top: 0;
   }
 
-  /* Code and preformatted text styles */
   code {
+    background-color: var(--mui-palette-action-selected);
     border-radius: 0.4rem;
-    color: var(--black);
     padding: 0.25em 0.3em;
   }
 
   pre {
-    background: var(--black);
+    background-color: var(--mui-palette-action-selected);
     border-radius: 0.5rem;
-    color: var(--white);
-    font-family: 'JetBrainsMono', monospace;
     margin: 1.5rem 0;
     padding: 0.75rem 1rem;
 
     code {
       background: none;
-      color: inherit;
       padding: 0;
     }
   }
 
   blockquote {
-    border-left: 3px solid var(--gray-3);
+    border-left: 3px solid var(--mui-palette-divider);
     margin: 1.5rem 0;
     padding-left: 1rem;
   }
 
   hr {
     border: none;
-    border-top: 1px solid var(--gray-2);
+    border-top: 1px solid var(--mui-palette-divider);
     margin: 2rem 0;
   }
 }

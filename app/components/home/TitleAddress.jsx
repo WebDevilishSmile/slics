@@ -1,4 +1,4 @@
-import { ContentCopy } from '@mui/icons-material';
+import { ChatBubbleOutline, ContentCopy } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { COMMENTS_SECTION_ID } from '@/utils/variables';
 
 function TitleAddress({ slic, commentsCount }) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -44,6 +45,14 @@ function TitleAddress({ slic, commentsCount }) {
     }
   };
 
+  const handleScrollToComments = () => {
+    // The comments section renders whenever a slic is selected, which is the
+    // only time this chip is shown — the guard is just belt-and-braces.
+    document
+      .getElementById(COMMENTS_SECTION_ID)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <>
       {slic?.type === 'customer' && (
@@ -56,11 +65,16 @@ function TitleAddress({ slic, commentsCount }) {
       </Typography>
 
       <Chip
+        size='medium' // the theme default is small; this one is a page-level stat
+        icon={<ChatBubbleOutline />}
         label={
           commentsCount < 1
             ? 'No comments yet'
             : `${commentsCount} comment${commentsCount > 1 ? 's' : ''}`
         }
+        clickable
+        onClick={handleScrollToComments}
+        aria-label='Scroll to comments'
       />
 
       <Box
@@ -89,8 +103,6 @@ function TitleAddress({ slic, commentsCount }) {
       <Snackbar
         open={openSnackbar}
         onClose={handleCloseSnack}
-        autoHideDuration={6000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert severity={snackSeverity} onClose={handleCloseSnack}>
           {snackMessage}

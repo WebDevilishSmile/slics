@@ -4,10 +4,10 @@ export const SLICS_PER_PAGE = 5;
 // older weeks stay in the database and remain reachable from /admin/cover/jobs.
 export const COVER_BID_MONTHS_BACK = 12;
 
-export const ELEVATION = 6;
-export const MAX_WIDTH = '32rem';
-export const MIN_HEIGHT = '24rem';
-export const BORDER_RADIUS = '6px';
+// DOM id on the comments section (comments/CommentsContainer.jsx). The comment
+// count chip in home/TitleAddress.jsx scrolls to it; the two live in sibling
+// client trees under the page, so a shared id beats threading a ref through.
+export const COMMENTS_SECTION_ID = 'comments';
 
 export const SLIC_CENTER_EXAMPLE = {
   id: 'SLIC_ID',
@@ -42,10 +42,11 @@ export const SLIC_CUSTOMER_EXAMPLE = {
 };
 
 export const SLIC_COMMENT_EXAMPLE = {
-  id: 'comment_id',
-  created_at: '05/26/2025',
+  _id: 'comment_id',
+  created_at: '2025-05-26T14:03:00.000Z', // ISO string (older docs may be MM/DD/YY)
   content: 'This is a comment',
-  author: 'user_id', // ID of the user who made the comment
-  slicId: 'SLIC_ID', // ID of the SLIC this comment belongs to
-  likes: ['user_id1', 'user_id2'], // Array of user IDs who liked the comment
+  userId: 'user_id', // ID of the user who made the comment
+  numSlic: 'SLIC_ID', // numSlic of the SLIC this comment belongs to
+  upVotes: ['user_id1', 'user_id2'], // Array of user IDs who upvoted the comment
+  downVotes: [], // Array of user IDs who downvoted the comment
 };

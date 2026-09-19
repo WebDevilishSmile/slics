@@ -37,7 +37,6 @@ const DAY_COLUMNS = DAY_FIELDS.map((day) => ({
       <Tooltip title={formatDayValue(value)} arrow>
         <Chip
           label={formatDayValue(value)}
-          size='small'
           color={DAY_COLORS[day] || 'default'}
           sx={{ fontWeight: 600, fontSize: '0.7rem' }}
         />

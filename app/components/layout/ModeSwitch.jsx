@@ -10,23 +10,15 @@ function ModeSwitch() {
     return null;
   }
 
-  function toggleMode(mode) {
-    if (mode === 'system' && colorScheme === 'dark') {
-      setMode('light');
-    }
-    if (mode === 'system' && colorScheme === 'light') {
-      setMode('dark');
-    } else if (mode === 'light') {
-      setMode('dark');
-    } else if (mode === 'dark') {
-      setMode('light');
-    }
-  }
+  // colorScheme is the *resolved* scheme ('light' | 'dark'), so this also
+  // covers mode === 'system': the toggle always flips whatever is on screen
+  // and pins the result as an explicit mode.
+  const toggleMode = () => setMode(colorScheme === 'dark' ? 'light' : 'dark');
 
   return (
     <IconButton
       size='large'
-      onClick={() => toggleMode(mode)}
+      onClick={toggleMode}
       sx={{
         zIndex: 2000,
         position: 'fixed',

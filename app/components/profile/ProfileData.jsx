@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 
 import { capitalizeFirstLetter } from '@/utils/functions';
-import { MAX_WIDTH } from '@/utils/variables';
+import theme from '@/utils/theme';
 
 import { Settings as SettingsIcon } from '@mui/icons-material';
 import {
@@ -48,7 +48,7 @@ function ProfileData({ userData }) {
   return (
     <Paper
       sx={{
-        maxWidth: MAX_WIDTH,
+        maxWidth: theme.layout.maxWidth,
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -121,8 +121,6 @@ function ProfileData({ userData }) {
       <Snackbar
         open={openSnack}
         onClose={handleCloseSnack}
-        autoHideDuration={6000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert severity={snackSeverity} onClose={handleCloseSnack}>
           {snackMessage}

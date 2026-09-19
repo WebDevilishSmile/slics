@@ -1,14 +1,31 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createContext, useCallback, useContext, useTransition } from 'react';
 
-const CommentRefreshContext = createContext();
+// Shared "the list is being refreshed" lock for the server-rendered comment
+// lists (profile/ProfileComments.jsx, admin/user-page/UserComments.jsx).
+// After one CommentDelete succeeds, every delete button in the list disables
+// until router.refresh() has actually re-rendered the list, so nobody can
+// act on a stale list. useTransition ties `isRefreshing` to the real refresh
+// rather than a guessed timeout.
+//
+// Not used by the home-page comments feature (components/comments/*), which
+// is client-fetched and refreshes through its own `refetchComments`.
+const CommentRefreshContext = createContext(null);
 
 export function CommentRefreshProvider({ children }) {
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const router = useRouter();
+  const [isRefreshing, startTransition] = useTransition();
+
+  const refresh = useCallback(() => {
+    startTransition(() => {
+      router.refresh();
+    });
+  }, [router]);
 
   return (
-    <CommentRefreshContext.Provider value={{ isRefreshing, setIsRefreshing }}>
+    <CommentRefreshContext.Provider value={{ isRefreshing, refresh }}>
       {children}
     </CommentRefreshContext.Provider>
   );

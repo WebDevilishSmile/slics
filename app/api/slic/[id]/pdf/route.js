@@ -1,11 +1,11 @@
 import { auth } from '@/auth';
+import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { getSlicByNumSlic, updateSlic } from '@/utils/slicsApi';
+import { getSlicById, updateSlic } from '@/utils/slicsApi';
 import { deleteSlicPdf, putSlicPdf } from '@/lib/blob';
 import { SLIC_PDF_MAX_BYTES } from '@/utils/variables';
 
-// `[id]` is the slic's numSlic — the same key the sibling PATCH route is
-// called with from slicForm/FormActions.jsx (see SUGGESTIONS.md #12).
+// `[id]` is the slic's MongoDB _id, same as the parent route's methods.
 
 async function requireAdmin() {
   const session = await auth();
@@ -39,9 +39,9 @@ export async function POST(request, { params }) {
   const { session, error } = await requireAdmin();
   if (error) return error;
 
-  const { id: numSlic } = await params;
+  const { id } = await params;
 
-  if (!numSlic) {
+  if (!id || !ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid slic ID' }, { status: 400 });
   }
 
@@ -77,12 +77,12 @@ export async function POST(request, { params }) {
   }
 
   try {
-    const slic = await getSlicByNumSlic(numSlic);
+    const slic = await getSlicById(id);
     const previousUrl = slic.pdfUrl || null;
 
     const { url } = await putSlicPdf(slic.alphaSlic, file);
 
-    await updateSlic(numSlic, { pdfUrl: url }, session.user);
+    await updateSlic(id, { pdfUrl: url }, session.user);
 
     // Only after the new URL is saved, so a failed save never orphans the slic
     // pointing at a deleted blob.
@@ -110,17 +110,17 @@ export async function DELETE(request, { params }) {
   const { session, error } = await requireAdmin();
   if (error) return error;
 
-  const { id: numSlic } = await params;
+  const { id } = await params;
 
-  if (!numSlic) {
+  if (!id || !ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid slic ID' }, { status: 400 });
   }
 
   try {
-    const slic = await getSlicByNumSlic(numSlic);
+    const slic = await getSlicById(id);
     const previousUrl = slic.pdfUrl || null;
 
-    await updateSlic(numSlic, { pdfUrl: null }, session.user);
+    await updateSlic(id, { pdfUrl: null }, session.user);
     await deleteSlicPdf(previousUrl);
 
     return NextResponse.json({ message: 'Slic PDF removed successfully' });

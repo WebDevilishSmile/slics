@@ -87,31 +87,54 @@ export async function createSlic(slicData, user) {
   }
 }
 
-export async function updateSlic(numSlic, updates, user) {
+// Keyed by _id like deleteSlic/getSlicById, so the [id] route segment means
+// the same thing for every method. `numSlic` is deliberately immutable here:
+// comments, slic_history and slicViews are all keyed by it, so changing it
+// would silently orphan them.
+export async function updateSlic(slicId, updates, user) {
   try {
-    if (!numSlic) {
-      throw new Error('numSlic is required');
+    if (!slicId) {
+      throw new Error('Slic ID is required');
+    }
+
+    if (!ObjectId.isValid(slicId)) {
+      throw new Error('Invalid slic ID format');
     }
 
     const db = client.db();
     const slicsCollection = db.collection('slics');
 
-    const existingSlic = await slicsCollection.findOne({ numSlic });
+    const existingSlic = await slicsCollection.findOne({
+      _id: new ObjectId(slicId),
+    });
 
     if (!existingSlic) {
-      throw new Error(`Slic with numSlic "${numSlic}" not found`);
+      throw new Error(`Slic with ID "${slicId}" not found`);
     }
 
-    const changes = diffSlicFields(existingSlic, updates);
+    // _id is immutable in MongoDB ($set on it throws); numSlic is immutable here.
+    const { _id, ...safeUpdates } = updates;
+
+    if (
+      safeUpdates.numSlic !== undefined &&
+      String(safeUpdates.numSlic) !== String(existingSlic.numSlic)
+    ) {
+      throw new Error(
+        'numSlic cannot be changed: comments, history and view counts are linked to it'
+      );
+    }
+
+    const numSlic = existingSlic.numSlic;
+    const changes = diffSlicFields(existingSlic, safeUpdates);
 
     const updatedFields = {
-      ...updates,
+      ...safeUpdates,
       updated_at: new Date().toISOString(),
       updatedBy: toUserStamp(user),
     };
 
     const result = await slicsCollection.updateOne(
-      { numSlic },
+      { _id: existingSlic._id },
       { $set: updatedFields }
     );
 
@@ -193,6 +216,31 @@ export async function getAllHubs() {
     return allHubs;
   } catch (error) {
     console.error('Error fetching all hubs:', error);
+    throw error;
+  }
+}
+
+export async function getSlicById(slicId) {
+  try {
+    if (!slicId) {
+      throw new Error('Slic ID is required');
+    }
+
+    if (!ObjectId.isValid(slicId)) {
+      throw new Error('Invalid slic ID format');
+    }
+
+    const db = client.db();
+    const slicsCollection = db.collection('slics');
+    const slic = await slicsCollection.findOne({ _id: new ObjectId(slicId) });
+
+    if (!slic) {
+      throw new Error(`Slic with ID "${slicId}" not found`);
+    }
+
+    return slic;
+  } catch (error) {
+    console.error('Error fetching slic by ID:', error);
     throw error;
   }
 }

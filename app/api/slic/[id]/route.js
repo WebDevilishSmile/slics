@@ -1,8 +1,9 @@
-import client from '@/lib/db';
 import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { deleteSlic, updateSlic } from '@/utils/slicsApi';
+import { deleteSlic, getSlicById, updateSlic } from '@/utils/slicsApi';
+
+// `[id]` is the slic's MongoDB _id for every method here and in ./pdf.
 
 // GET a single slic
 export async function GET(request, { params }) {
@@ -13,18 +14,15 @@ export async function GET(request, { params }) {
   }
 
   try {
-    const db = client.db();
-    const slic = await db
-      .collection('slics')
-      .findOne({ _id: new ObjectId(id) });
-
-    if (!slic) {
-      return NextResponse.json({ error: 'Slic not found' }, { status: 404 });
-    }
-
+    const slic = await getSlicById(id);
     return NextResponse.json(slic);
   } catch (error) {
     console.error('Error fetching slic:', error);
+
+    if (error.message?.includes('not found')) {
+      return NextResponse.json({ error: 'Slic not found' }, { status: 404 });
+    }
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
@@ -45,7 +43,7 @@ export async function PATCH(request, { params }) {
 
   const { id } = await params;
 
-  if (!id) {
+  if (!id || !ObjectId.isValid(id)) {
     return NextResponse.json({ error: 'Invalid slic ID' }, { status: 400 });
   }
 
@@ -60,6 +58,10 @@ export async function PATCH(request, { params }) {
 
     if (error.message?.includes('not found')) {
       return NextResponse.json({ error: error.message }, { status: 404 });
+    }
+
+    if (error.message?.includes('numSlic cannot be changed')) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(

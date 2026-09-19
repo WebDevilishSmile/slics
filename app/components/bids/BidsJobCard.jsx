@@ -47,7 +47,7 @@ function BidsJobCard({ job }) {
   );
 
   return (
-    <Card variant='outlined' sx={{ width: '100%' }}>
+    <Card sx={{ width: '100%' }}>
       <CardContent sx={{ pb: '8px !important' }}>
         {/* Header row */}
         <Box
@@ -64,7 +64,6 @@ function BidsJobCard({ job }) {
           {job.bid_destination && (
             <Chip
               label={job.bid_destination}
-              size='small'
               color='primary'
               variant='outlined'
               sx={{ ml: 1, fontWeight: 600, flexShrink: 0 }}
@@ -86,7 +85,6 @@ function BidsJobCard({ job }) {
             >
               <Chip
                 label={DAY_LABELS[day]}
-                size='small'
                 color={DAY_COLORS[day] || 'default'}
                 sx={{ fontWeight: 700, minWidth: 48 }}
               />

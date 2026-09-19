@@ -5,7 +5,7 @@ import { DAY_FIELDS, DAY_LABELS } from '@/app/components/coverBidJobs/dayFormat'
 
 export default function CoverBidJobEditCard({ row, onChange, actions }) {
   return (
-    <Card variant='outlined'>
+    <Card>
       <CardContent>
         <Stack spacing={1.5}>
           <Box

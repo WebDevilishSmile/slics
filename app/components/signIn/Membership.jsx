@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { Box, Button, SvgIcon, Typography } from '@mui/material';
-import { MAX_WIDTH } from '@/utils/variables';
+import theme from '@/utils/theme';
 import Link from 'next/link';
 import RequestAccess from './RequestAccess';
 import { isMobileDevice, serializeUser } from '@/utils/functions';
@@ -43,7 +43,7 @@ async function Membership() {
   return (
     <Box
       sx={{
-        maxWidth: MAX_WIDTH,
+        maxWidth: theme.layout.maxWidth,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

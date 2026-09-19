@@ -31,7 +31,7 @@ function SignIn() {
           oogle
         </Button>
       </Box>
-      <Box
+      {/* <Box
         component='form'
         action={async () => {
           'use server';
@@ -52,7 +52,7 @@ function SignIn() {
         <Typography variant='caption'>
           Microsoft sign-in is in development.
         </Typography>
-      </Box>
+      </Box> */}
       <EmailAuth />
     </Box>
   );

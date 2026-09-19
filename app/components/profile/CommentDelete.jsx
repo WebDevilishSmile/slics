@@ -86,7 +86,6 @@ function CommentDelete({ comment }) {
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={handleCloseSnack}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert
           onClose={handleCloseSnack}

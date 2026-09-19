@@ -1,6 +1,6 @@
 'use client';
 
-import { MAX_WIDTH } from '@/utils/variables';
+import theme from '@/utils/theme';
 import { Button, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -21,7 +21,7 @@ function NotFound() {
     <PageContainer>
       <StyledHeading>Oops! Page not found.</StyledHeading>
 
-      <Typography sx={{ maxWidth: MAX_WIDTH, my: '2rem', textAlign: 'center' }}>
+      <Typography sx={{ maxWidth: theme.layout.maxWidth, my: '2rem', textAlign: 'center' }}>
         Sorry, we couldn't find the page you're looking for. Redirecting you to
         the home page... If you are not redirected automatically, click the
         button below.

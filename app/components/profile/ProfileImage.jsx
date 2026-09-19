@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import { Paper } from '@mui/material';
-import { ELEVATION } from '@/utils/variables';
+import theme from '@/utils/theme';
 
 function ProfileImage({ userData }) {
   return (
     <Paper
-      elevation={ELEVATION}
+      elevation={theme.layout.elevation}
       sx={{
         position: 'relative',
         width: '100px',

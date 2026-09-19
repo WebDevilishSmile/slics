@@ -1,6 +1,6 @@
 'use client';
 
-import { MAX_WIDTH } from '@/utils/variables';
+import theme from '@/utils/theme';
 import {
   Box,
   Checkbox,
@@ -66,7 +66,7 @@ function UserList({ users, viewCounts = {} }) {
   );
 
   return (
-    <Box sx={{ maxWidth: MAX_WIDTH, width: '100%', p: '1rem' }}>
+    <Box sx={{ maxWidth: theme.layout.maxWidth, width: '100%', p: '1rem' }}>
       {/* Search */}
       <TextField
         placeholder='Search users...'

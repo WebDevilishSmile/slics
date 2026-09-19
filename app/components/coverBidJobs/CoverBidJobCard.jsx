@@ -19,7 +19,7 @@ function CoverBidJobCard({ job, onSelect }) {
   const activeDays = DAY_FIELDS.filter((day) => job[day]);
 
   return (
-    <Card variant='outlined' sx={{ width: '100%' }}>
+    <Card sx={{ width: '100%' }}>
       <CardContent sx={{ pb: '8px !important' }}>
         {/* Header row */}
         <Box
@@ -58,7 +58,6 @@ function CoverBidJobCard({ job, onSelect }) {
             >
               <Chip
                 label={DAY_LABELS[day]}
-                size='small'
                 color={DAY_COLORS[day] || 'default'}
                 sx={{ fontWeight: 700, minWidth: 48 }}
               />

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import LocalDate from '@/app/components/layout/LocalDate';
-import { MAX_WIDTH } from '@/utils/variables';
+import theme from '@/utils/theme';
 
 const PAGE_SIZE = 5;
 
@@ -38,7 +38,7 @@ export default function UserSlics({ userSlicViews, slics }) {
     <Box
       sx={{
         width: '100%',
-        maxWidth: MAX_WIDTH,
+        maxWidth: theme.layout.maxWidth,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

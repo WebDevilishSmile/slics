@@ -9,7 +9,7 @@ import PageContainer from '@/app/components/layout/PageContainer';
 import StyledHeading from '@/app/components/layout/StyledHeading';
 import LocalDate from '@/app/components/layout/LocalDate';
 import { Box, Divider, Paper, Typography } from '@mui/material';
-import { ELEVATION, MAX_WIDTH } from '@/utils/variables';
+import theme from '@/utils/theme';
 
 async function getViewHistory(userId) {
   const sixMonthsAgo = new Date();
@@ -86,10 +86,10 @@ export default async function HistoryPage() {
       <HomeButton />
 
       <Paper
-        elevation={ELEVATION}
+        elevation={theme.layout.elevation}
         sx={{
           width: '100%',
-          maxWidth: MAX_WIDTH,
+          maxWidth: theme.layout.maxWidth,
           mt: '2rem',
           px: { xs: '1rem', sm: '2rem' },
           py: '2rem',

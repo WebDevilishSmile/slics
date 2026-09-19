@@ -49,9 +49,8 @@ const WeekPickersDay = styled(PickersDay, {
   }),
   ...(isToday && {
     // MUI outlines today itself, which the squared-off week bar turns into a
-    // rectangle — drop it and draw the ring below instead. warning.main rather
-    // than secondary.main because secondary is green in dark mode and would
-    // collide with the posted dot.
+    // rectangle — drop it and draw the ring below instead. warning.main so the
+    // ring never shares a color with the success-green posted dot.
     '&.MuiPickersDay-today': {
       border: 'none',
     },

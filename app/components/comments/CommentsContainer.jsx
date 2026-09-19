@@ -1,6 +1,6 @@
 'use client';
 
-import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
+import theme from '@/utils/theme';
 import { AddComment, HideSource, ImageOutlined } from '@mui/icons-material';
 import {
   Box,
@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { useRef, useState } from 'react';
 import CommentEditor from './CommentEditor';
 import { useIsMobile } from '@/utils/clientFunctions';
+import { COMMENTS_SECTION_ID } from '@/utils/variables';
 
 function CommentsContainer({ children, user, numSlic, refetchComments }) {
   const [showEditor, setShowEditor] = useState(false);
@@ -42,18 +43,20 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
 
   return (
     <Paper
-      elevation={ELEVATION}
+      id={COMMENTS_SECTION_ID}
+      elevation={theme.layout.elevation}
       sx={{
         position: 'relative',
         width: '100%',
-        maxWidth: MAX_WIDTH,
-        minHeight: MIN_HEIGHT,
+        maxWidth: theme.layout.maxWidth,
+        minHeight: theme.layout.minHeight,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         mt: '2rem',
         py: '2rem',
         px: '1rem',
+        scrollMarginTop: '6rem', // breathing room when the comment chip scrolls here
       }}
     >
       <IconButton

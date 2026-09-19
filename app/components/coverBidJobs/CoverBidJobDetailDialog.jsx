@@ -60,7 +60,6 @@ export default function CoverBidJobDetailDialog({ job, open, onClose }) {
                   <Chip
                     key={day}
                     label={`${DAY_LABELS[day]}: ${formatDayValue(job[day])}`}
-                    size='small'
                     color={DAY_COLORS[day] || 'default'}
                   />
                 ))

@@ -12,7 +12,6 @@ import {
   serializeComments,
   serializeUser,
 } from '@/utils/functions';
-import { MAX_WIDTH } from '@/utils/variables';
 import dayjs from 'dayjs';
 import UserComments from '@/app/components/admin/user-page/UserComments';
 import UserSlics from '@/app/components/admin/user-page/UserSlics';

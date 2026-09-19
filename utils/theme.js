@@ -1,61 +1,74 @@
-'use client';
-import { blue, green, grey, lightBlue, orange } from '@mui/material/colors';
+import { lightBlue } from '@mui/material/colors';
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+
+// The raw colors both schemes are built from — the one place to change a color.
+// Components never see these names; they use the palette keys below
+// (background.opposite, text.light, …), which stay the same in both schemes and
+// just point at a different token in each.
+const tokens = {
+  brand: lightBlue, // primary shades + the light scheme's paper
+  chalk: '#f7f7f7', // light text
+  canvas: '#edf3fc', // light page background; the dark scheme's "opposite"
+  void: '#050505', // dark page background; the light scheme's "opposite"
+  comment: '#eaf8fe', // comment surface in the light scheme
+};
+
+// Identical in both schemes. `secondary` is deliberately left at MUI's default
+// (purple) in both schemes too: its only consumer is the Tuesday chip in
+// DAY_COLORS, which has to stay distinguishable from warning (Sun/Sat) and
+// success (Wed) — the two colors it used to collide with.
+const primary = {
+  light: tokens.brand[300],
+  main: tokens.brand[600],
+  dark: tokens.brand[800],
+};
 
 let theme = createTheme({
   cssVariables: {
     colorSchemeSelector: 'class',
   },
+  // Default corner radius for Paper, Card, TextField, Dialog, Alert, … (MUI's
+  // own default is 4). Buttons are pill-shaped separately, under `components`.
+  shape: {
+    borderRadius: 8,
+  },
+  // App-level layout tokens. Not MUI keys — read them as `theme.layout.*`
+  // (import the theme directly; that works in server components too because
+  // this module has no 'use client' directive). MUI also emits each one as
+  // `--mui-layout-<key>` for plain CSS.
+  layout: {
+    maxWidth: '32rem', // the single content column every page is built on
+    minHeight: '24rem', // keeps the home/comments panels from collapsing
+    elevation: 6, // Paper elevation for those panels
+  },
   colorSchemes: {
     dark: {
       palette: {
-        primary: {
-          light: lightBlue[300],
-          main: lightBlue[600],
-          dark: lightBlue[800],
-        },
-        secondary: green,
+        primary,
         background: {
-          default: '#050505',
-          opposite: '#edf3fc',
-          paper: '#050505',
-          solid: '#edf3fc',
-          grey: grey[800],
-          comment: '#050505',
+          default: tokens.void,
+          opposite: tokens.canvas,
+          paper: tokens.void,
+          comment: tokens.void,
         },
         text: {
-          dark: '#222222',
-          solid: '#222222',
-          opposite: '#050505',
-          light: '#edf3fc',
+          opposite: tokens.void,
+          light: tokens.canvas,
         },
       },
     },
   },
   palette: {
-    primary: {
-      light: lightBlue[300],
-      main: lightBlue[600],
-      dark: lightBlue[800],
-    },
-    secondary: orange,
-    containedButton: {
-      main: blue[300],
-      contrastText: '#222222',
-    },
+    primary,
     background: {
-      default: '#edf3fc',
-      opposite: '#050505',
-      paper: lightBlue[50],
-      solid: '#edf3fc',
-      grey: grey[300],
-      comment: '#eaf8fe',
+      default: tokens.canvas,
+      opposite: tokens.void,
+      paper: tokens.brand[50],
+      comment: tokens.comment,
     },
     text: {
-      dark: '#222222',
-      light: '#f7f7f7',
-      opposite: '#edf3fc',
-      solid: '#222222',
+      light: tokens.chalk,
+      opposite: tokens.canvas,
     },
   },
 
@@ -120,6 +133,25 @@ let theme = createTheme({
         root: {
           borderRadius: 18,
         },
+      },
+    },
+
+    // Component defaults (THEME.md tier 2). An explicit prop at a call site
+    // still wins, so pin the exception rather than repeating the rule.
+    MuiChip: {
+      defaultProps: {
+        size: 'small', // every chip but the home-page comment count
+      },
+    },
+    MuiCard: {
+      defaultProps: {
+        variant: 'outlined',
+      },
+    },
+    MuiSnackbar: {
+      defaultProps: {
+        autoHideDuration: 6000, // pass null for a toast that must stay up
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
       },
     },
   },

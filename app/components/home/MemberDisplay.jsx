@@ -1,15 +1,15 @@
 import { Button, Paper, Typography } from '@mui/material';
 import Link from 'next/link';
-import { ELEVATION, MAX_WIDTH, MIN_HEIGHT } from '@/utils/variables';
+import theme from '@/utils/theme';
 
 export default function MemberDisplay({ user }) {
   return (
     <Paper
-      elevation={ELEVATION}
+      elevation={theme.layout.elevation}
       sx={{
         width: '100%',
-        maxWidth: MAX_WIDTH,
-        minHeight: MIN_HEIGHT,
+        maxWidth: theme.layout.maxWidth,
+        minHeight: theme.layout.minHeight,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

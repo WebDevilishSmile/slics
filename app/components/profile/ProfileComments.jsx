@@ -1,5 +1,5 @@
 import { Paper } from '@mui/material';
-import { ELEVATION, MAX_WIDTH } from '@/utils/variables';
+import theme from '@/utils/theme';
 
 import CommentHeader from './CommentHeader';
 import CommentBody from './CommentBody';
@@ -16,13 +16,12 @@ function ProfileComments({ comments }) {
         {comments.map((comment) => (
           <Paper
             key={comment._id}
-            elevation={ELEVATION}
+            elevation={theme.layout.elevation}
             sx={{
-              maxWidth: MAX_WIDTH,
+              maxWidth: theme.layout.maxWidth,
               width: '100%',
               mt: 2,
               p: 2,
-              borderRadius: '8px',
               boxShadow: 1,
             }}
           >

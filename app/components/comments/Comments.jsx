@@ -15,6 +15,15 @@ function Comments({ user }) {
   const numSlic = searchParams.get('slic');
 
   const fetchComments = useCallback(async () => {
+    // No ?slic= in the URL (plain /home) — nothing to fetch. Without this the
+    // null is stringified into /api/comments?slic=null and the server logs a
+    // not-found error for a SLIC named "null" on every home-page visit.
+    if (!numSlic) {
+      setComments([]);
+      setSlicName(null);
+      setAuthorsMap({});
+      return;
+    }
     try {
       const response = await fetch(`/api/comments?slic=${numSlic}`);
       if (!response.ok) throw new Error('Failed to fetch comments');

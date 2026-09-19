@@ -64,6 +64,7 @@ Rate limiting (`utils/rateLimit.js`) is a MongoDB-backed fixed-window limiter, d
 ### External integrations
 
 - **Google Gemini** (`@google/genai`, `GEMINI_API_KEY`) — used by `app/api/coverBidJobs/extract` for extracting structured data.
+- **Vercel Blob** (`@vercel/blob`, `BLOB_READ_WRITE_TOKEN` — injected by Vercel once the store is connected to the project; `vercel env pull` locally) — stores the per-slic directions PDF. `lib/blob.js` is the only module that talks to it; `app/api/slic/[id]/pdf` (admin-only, keyed by `numSlic`) uploads/removes and saves the resulting `slic.pdfUrl` through `updateSlic` so history records it. Every upload gets a random-suffix URL and the old blob is deleted afterwards — never overwrite in place (CDN cache). **Migration in progress:** PDFs used to live in a public Supabase bucket, flagged by the legacy `slic.pdf` boolean. `home/PdfLink.jsx` prefers `pdfUrl` and falls back to the Supabase URL (`legacyPdfUrl` in `utils/variables.js`) when only `pdf` is set, so nothing breaks mid-migration. Don't remove the fallback or `$unset` `pdf` until the Supabase bucket is retired — `scripts/migratePdfsToBlob.js` / `scripts/rollbackPdfUrls.js` are the forward/reverse paths.
 - **Buy Me a Coffee webhook** (`app/api/webhooks/buymeacoffee`, `BMC_WEBHOOK_SECRET`) — toggles `bmcMember` on the user record.
 - **Vercel Analytics** — pageview/usage data referenced in `README.md`.
 

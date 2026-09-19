@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:indexes": "node --env-file=.env scripts/createIndexes.js"
+    "db:indexes": "node --env-file=.env scripts/createIndexes.js",
+    "pdfs:migrate": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/migratePdfsToBlob.mjs",
+    "pdfs:rollback": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/rollbackPdfUrls.mjs"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.9.1",
@@ -25,6 +27,7 @@
     "@tiptap/react": "^2.12.0",
     "@tiptap/starter-kit": "^2.12.0",
     "@vercel/analytics": "^1.6.1",
+    "@vercel/blob": "^2.8.0",
     "@vercel/speed-insights": "^2.0.0",
     "bcryptjs": "^3.0.3",
     "crypto": "^1.0.1",

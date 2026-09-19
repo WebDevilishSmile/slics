@@ -63,6 +63,8 @@ export async function createSlic(slicData, user) {
         zip: slicData.address.zip,
       },
       directions: slicData.directions || null,
+      // Set by the admin upload route (app/api/slic/[id]/pdf) after creation
+      pdfUrl: null,
     };
 
     const result = await slicsCollection.insertOne(slicDocument);

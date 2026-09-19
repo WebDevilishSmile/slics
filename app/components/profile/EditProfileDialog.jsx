@@ -35,7 +35,7 @@ function EditProfileDialog({ open, onClose, userData, showSnackbar }) {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update profile');
+        throw new Error(errorData.error || 'Failed to update profile');
       }
 
       showSnackbar('Profile updated successfully', 'success');

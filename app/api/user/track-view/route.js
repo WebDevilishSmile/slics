@@ -10,16 +10,13 @@ export async function POST(req) {
     const session = await auth();
 
     if (!session) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { numSlic } = await req.json();
 
     if (!numSlic) {
-      return NextResponse.json(
-        { message: 'numSlic is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'numSlic is required' }, { status: 400 });
     }
 
     const db = client.db();
@@ -37,9 +34,6 @@ export async function POST(req) {
     return NextResponse.json({ slicViews: total }, { status: 200 });
   } catch (error) {
     console.error('API Error: track-view POST:', error);
-    return NextResponse.json(
-      { message: 'Internal server error', error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -146,7 +146,7 @@ Originally dead code. It has since been wired up as the shared "list is refreshi
 
 ---
 
-### [ ] 14. Standardize API error response shape
+### [x] 14. Standardize API error response shape
 **Files:** All `app/api/*/route.js` files
 
 Some routes return `{ error: msg }`, others `{ message: msg }`. Client-side error handling has to guess which key to read.

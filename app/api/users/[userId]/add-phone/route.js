@@ -12,7 +12,7 @@ export async function PATCH(req, { params }) {
     console.warn(
       'API PATCH /users/[userId]/add-phone: Unauthorized attempt - No session.',
     );
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { userId } = await params;
@@ -21,10 +21,7 @@ export async function PATCH(req, { params }) {
     console.warn(
       'API PATCH /users/[userId]/add-phone: Missing userId in parameters.',
     );
-    return NextResponse.json(
-      { message: 'User ID is required' },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
   }
 
   let requestBody;
@@ -35,10 +32,7 @@ export async function PATCH(req, { params }) {
       'API PATCH /users/[userId]/add-phone: Error parsing request body:',
       error,
     );
-    return NextResponse.json(
-      { message: 'Invalid JSON payload' },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
   }
 
   const { phone, name } = requestBody;
@@ -48,8 +42,8 @@ export async function PATCH(req, { params }) {
       `API PATCH /users/[userId]/add-phone: Invalid phone format for userId: ${userId}`,
     );
     return NextResponse.json(
-      { message: 'Invalid phone format (must be string or undefined/null)' },
-      { status: 400 },
+      { error: 'Invalid phone format (must be string or undefined/null)' },
+      { status: 400 }
     );
   }
 
@@ -58,8 +52,8 @@ export async function PATCH(req, { params }) {
       `API PATCH /users/[userId]/add-phone: Invalid name for userId: ${userId}`,
     );
     return NextResponse.json(
-      { message: 'Invalid name (must be a non-empty string)' },
-      { status: 400 },
+      { error: 'Invalid name (must be a non-empty string)' },
+      { status: 400 }
     );
   }
 
@@ -83,11 +77,8 @@ export async function PATCH(req, { params }) {
         `API PATCH /users/[userId]/add-phone: No updatable fields provided for userId: ${userId}`,
       );
       return NextResponse.json(
-        {
-          message:
-            'No updatable fields provided (e.g., "phone" missing from body)',
-        },
-        { status: 400 },
+        { error: 'No updatable fields provided (e.g., "phone" missing from body)' },
+        { status: 400 }
       );
     }
 
@@ -101,8 +92,8 @@ export async function PATCH(req, { params }) {
         `API PATCH /users/[userId]/add-phone: Logged-in user email (${session.user.email}) not found in DB for authorization.`,
       );
       return NextResponse.json(
-        { message: 'Forbidden: Your user account could not be verified' },
-        { status: 403 },
+        { error: 'Forbidden: Your user account could not be verified' },
+        { status: 403 }
       );
     }
 
@@ -114,11 +105,8 @@ export async function PATCH(req, { params }) {
         `API PATCH /users/[userId]/add-phone: Forbidden - User ${loggedInUserFromDb.email} (ID: ${loggedInUserFromDb._id}) attempted to update user ${userId} without admin rights.`,
       );
       return NextResponse.json(
-        {
-          message:
-            'Forbidden: You can only update your own profile unless you are an admin',
-        },
-        { status: 403 },
+        { error: 'Forbidden: You can only update your own profile unless you are an admin' },
+        { status: 403 }
       );
     }
 
@@ -137,11 +125,8 @@ export async function PATCH(req, { params }) {
         `API PATCH /users/[userId]/add-phone: findOneAndUpdate returned null result for userId: ${userId}.`,
       );
       return NextResponse.json(
-        {
-          message:
-            'User not found for update (ID may not exist or database issue).',
-        },
-        { status: 404 },
+        { error: 'User not found for update (ID may not exist or database issue).' },
+        { status: 404 }
       );
     }
 
@@ -155,14 +140,8 @@ export async function PATCH(req, { params }) {
   } catch (error) {
     console.error(`API Error: Error updating user ${userId}:`, error);
     if (error.name === 'BSONTypeError' || error.message.includes('ObjectId')) {
-      return NextResponse.json(
-        { message: 'Invalid User ID format' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Invalid User ID format' }, { status: 400 });
     }
-    return NextResponse.json(
-      { message: 'Internal server error', error: error.message },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -14,10 +14,7 @@ export async function POST(req) {
 
   if (!BMC_WEBHOOK_SECRET) {
     console.error('BMC_WEBHOOK_SECRET is not set in environment variables.');
-    return NextResponse.json(
-      { message: 'Server configuration error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
 
   const signature = req.headers.get('x-signature-sha256'); // Check BMC documentation for exact header name
@@ -27,10 +24,7 @@ export async function POST(req) {
 
   // 1. Verify Webhook Signature (CRITICAL SECURITY STEP)
   if (!signature) {
-    return NextResponse.json(
-      { message: 'No signature provided' },
-      { status: 401 },
-    );
+    return NextResponse.json({ error: 'No signature provided' }, { status: 401 });
   }
 
   const hmac = crypto.createHmac('sha256', BMC_WEBHOOK_SECRET);
@@ -39,7 +33,7 @@ export async function POST(req) {
 
   if (digest !== signature) {
     console.warn('Webhook signature mismatch!');
-    return NextResponse.json({ message: 'Invalid signature' }, { status: 403 });
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 403 });
   }
 
   let event;
@@ -47,10 +41,7 @@ export async function POST(req) {
     event = JSON.parse(rawBody);
   } catch (error) {
     console.error('Error parsing webhook body:', error);
-    return NextResponse.json(
-      { message: 'Invalid JSON payload' },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
   }
 
   const db = client.db();
@@ -68,8 +59,8 @@ export async function POST(req) {
         `BMC Webhook: Event type "${eventType}" received without supporter_email in data.`,
       );
       return NextResponse.json(
-        { message: 'Missing supporter_email in webhook data' },
-        { status: 400 },
+        { error: 'Missing supporter_email in webhook data' },
+        { status: 400 }
       );
     }
     // --- FIX END ---
@@ -107,9 +98,6 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error('BMC Webhook: Error processing webhook event:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -47,7 +47,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
       });
       const data = await response.json();
       if (!response.ok)
-        throw new Error(data.message || 'Failed to toggle membership.');
+        throw new Error(data.error || 'Failed to toggle membership.');
       if (data.bmcMember !== undefined) {
         setUser(data);
         router.refresh();
@@ -66,7 +66,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
       });
       const data = await response.json();
       if (!response.ok)
-        throw new Error(data.message || 'Failed to toggle role.');
+        throw new Error(data.error || 'Failed to toggle role.');
       if (data.role) {
         setUser(data);
         router.refresh();

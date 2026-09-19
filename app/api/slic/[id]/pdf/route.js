@@ -5,7 +5,7 @@ import { deleteSlicPdf, putSlicPdf } from '@/lib/blob';
 import { SLIC_PDF_MAX_BYTES } from '@/utils/variables';
 
 // `[id]` is the slic's numSlic — the same key the sibling PATCH route is
-// called with from newSlic/FormActions.jsx (see SUGGESTIONS.md #12).
+// called with from slicForm/FormActions.jsx (see SUGGESTIONS.md #12).
 
 async function requireAdmin() {
   const session = await auth();

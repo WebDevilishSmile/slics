@@ -2,9 +2,9 @@ import { serializeSlic, serializeSlicHistory } from '@/utils/functions';
 import { getSlicByNumSlic } from '@/utils/slicsApi';
 import { getSlicHistory } from '@/utils/slicHistoryApi';
 
-import SlicForm from '@/app/components/createEditSlic/SlicForm';
-import SlicAuditInfo from '@/app/components/createEditSlic/SlicAuditInfo';
-import SlicHistoryList from '@/app/components/createEditSlic/SlicHistoryList';
+import SlicForm from '@/app/components/slicForm/SlicForm';
+import SlicAuditInfo from '@/app/components/slicForm/SlicAuditInfo';
+import SlicHistoryList from '@/app/components/slicForm/SlicHistoryList';
 import BackButton from '@/app/components/layout/BackButton';
 import StyledHeading from '@/app/components/layout/StyledHeading';
 

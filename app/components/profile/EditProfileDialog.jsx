@@ -8,7 +8,7 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
-import PhoneField from '../newSlic/PhoneField';
+import PhoneField from '../form/PhoneField';
 
 function EditProfileDialog({ open, onClose, userData, showSnackbar }) {
   const [name, setName] = useState(userData.name || '');

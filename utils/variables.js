@@ -22,7 +22,7 @@ export function legacyPdfUrl(alphaSlic) {
   return `${LEGACY_PDF_BASE_URL}/${String(alphaSlic).toLowerCase()}.pdf`;
 }
 
-// Upload cap for slic PDFs, checked in both newSlic/PdfUpload.jsx and the
+// Upload cap for slic PDFs, checked in both slicForm/PdfUpload.jsx and the
 // upload route. Vercel serverless functions reject request bodies over
 // 4.5 MB, so this sits a little under that; directions PDFs are one-pagers.
 export const SLIC_PDF_MAX_BYTES = 4 * 1024 * 1024;

@@ -489,7 +489,7 @@ The 9 `elevation={theme.layout.elevation}` sites (`comments/CommentsContainer.js
 `admin/user-page/UserComments.jsx`, `app/history/page.jsx`) are the minority. A `Paper`
 default reaches every Paper-derived component with no explicit prop, and **13 sites rely
 on the implicit 1**: `admin/slics/SlicsTable.jsx`, `admin/comments/CommentsSection.jsx`,
-`newSlic/FormContainer.jsx`, `profile/ProfileData.jsx`, `comments/Comment.jsx:17`, four
+`slicForm/FormContainer.jsx`, `profile/ProfileData.jsx`, `comments/Comment.jsx:17`, four
 `TableContainer component={Paper}` (`admin/coverBidJobs/BidSheetUploader.jsx`,
 `admin/coverBidJobs/CoverBidJobsEditTable.jsx`, `covers/DriversTable.jsx`,
 `drivers/DriversTable.jsx`), three `Accordion`s (`admin/users/UserCard.jsx`,
@@ -510,7 +510,7 @@ left as is.
 
 The "59× `size='small'`" count included `Button`, `IconButton` and `Select`. Of the **41
 `TextField`s** in `app/`, only 12 pass both props. **18 have no `size`** at all — among them
-the home page's `home/SlicsSearch.jsx`, every `newSlic/*Field.jsx`, `profile/EditProfileDialog.jsx`,
+the home page's `home/SlicsSearch.jsx`, every `slicForm/*Field.jsx`, `profile/EditProfileDialog.jsx`,
 `comments/CommentsContainer.jsx`, `covers/CoverPosition.jsx`,
 `drivers/newDriver/NewDriverField.jsx` — and would shrink to small. **~20 have no
 `fullWidth`**, including inline filter rows (`bids/BidsFilters.jsx`,
@@ -545,12 +545,12 @@ make on purpose — set the default and walk the 18 + 20 sites above — not a c
 
 - [x] **DONE.** Default `autoHideDuration: 6000`, `anchorOrigin: top/center`. Both props
   removed from the four identical sites (`admin/slics/SlicOptions.jsx`,
-  `home/TitleAddress.jsx`, `newSlic/FormActions.jsx`, `profile/ProfileData.jsx`); the
+  `home/TitleAddress.jsx`, `slicForm/FormActions.jsx`, `profile/ProfileData.jsx`); the
   redundant `anchorOrigin` also removed from `drivers/editDriver/EditDriverField.jsx` and
   `profile/CommentDelete.jsx`, which keep their explicit 3000/4000 ms — no reason to
   believe those aren't deliberate, and changing a toast's timing isn't a cleanup.
 
-  One site needed pinning: `newSlic/Warning.jsx` had **no** `autoHideDuration`, i.e. it
+  One site needed pinning: `slicForm/Warning.jsx` had **no** `autoHideDuration`, i.e. it
   stayed up until dismissed (it even suppresses click-away). It now passes
   `autoHideDuration={null}` explicitly so the theme default can't start auto-closing it.
 

@@ -9,6 +9,24 @@ export const COVER_BID_MONTHS_BACK = 12;
 // client trees under the page, so a shared id beats threading a ref through.
 export const COMMENTS_SECTION_ID = 'comments';
 
+// Where slic PDFs lived before Vercel Blob: a public Supabase Storage bucket
+// with one `<alphaSlic>.pdf` per slic, flagged by the legacy `slic.pdf` boolean.
+// Still read by home/PdfLink.jsx as a fallback for any slic without a
+// `pdfUrl`, and by the migration/rollback scripts. Remove once every slic has
+// been migrated and the bucket is retired.
+export const LEGACY_PDF_BASE_URL =
+  'https://ndjeljyamsbvaibhgjmk.supabase.co/storage/v1/object/public/Customer%20Center%20Directions';
+
+export function legacyPdfUrl(alphaSlic) {
+  if (!alphaSlic) return null;
+  return `${LEGACY_PDF_BASE_URL}/${String(alphaSlic).toLowerCase()}.pdf`;
+}
+
+// Upload cap for slic PDFs, checked in both newSlic/PdfUpload.jsx and the
+// upload route. Vercel serverless functions reject request bodies over
+// 4.5 MB, so this sits a little under that; directions PDFs are one-pagers.
+export const SLIC_PDF_MAX_BYTES = 4 * 1024 * 1024;
+
 export const SLIC_CENTER_EXAMPLE = {
   id: 'SLIC_ID',
   created_at: '05/26/2025',

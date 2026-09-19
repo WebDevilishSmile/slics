@@ -34,6 +34,7 @@ _(Numbers pulled from Vercel Analytics + app database — update periodically ra
 
 - **Framework:** Next.js / React / TypeScript
 - **Database:** MongoDB
+- **File storage:** Vercel Blob (per-destination directions PDFs)
 - **Auth:** Google sign-in / Email/password
 - **Hosting/Analytics:** Vercel
 

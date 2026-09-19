@@ -10,8 +10,7 @@ import NumSlicField from '../newSlic/NumSlicField';
 import PhoneField from '../newSlic/PhoneField';
 import TypeRadio from '../newSlic/TypeRadio';
 import Warning from '../newSlic/Warning';
-import { Box, Checkbox, InputLabel, Typography } from '@mui/material';
-import PdfCheckbox from '../newSlic/PdfCheckbox';
+import PdfUpload from '../newSlic/PdfUpload';
 
 export default function SlicForm({
   initialData = null,
@@ -26,7 +25,6 @@ export default function SlicForm({
   const [address, setAddress] = useState(
     initialData?.address || { street: '', city: '', state: '', zip: '' }
   );
-  const [pdf, setPdf] = useState(initialData?.pdf || false);
 
   const [openWarning, setOpenWarning] = useState(false);
   const [warningMessage, setWarningMessage] = useState('');
@@ -40,7 +38,6 @@ export default function SlicForm({
     setAddress({ street: '', city: '', state: '', zip: '' });
     setOpenWarning(false);
     setWarningMessage('');
-    setPdf(false);
   };
 
   const handleWarningClose = () => {
@@ -57,7 +54,8 @@ export default function SlicForm({
     phone,
     address,
     directions: initialData?.directions || null,
-    pdf,
+    // `pdfUrl` is deliberately not here: PdfUpload writes it through its own
+    // route, so a form Update never overwrites a PDF attached mid-edit.
   };
 
   useEffect(() => {
@@ -86,7 +84,12 @@ export default function SlicForm({
       <NameField name={name} setName={setName} />
       <PhoneField phone={phone} setPhone={setPhone} />
       <AddressFields address={address} setAddress={setAddress} />
-      <PdfCheckbox pdf={pdf} setPdf={setPdf} />
+      {mode === 'edit' && (
+        <PdfUpload
+          numSlic={initialData?.numSlic}
+          pdfUrl={initialData?.pdfUrl}
+        />
+      )}
 
       <FormActions
         handleClear={handleClear}

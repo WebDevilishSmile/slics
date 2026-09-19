@@ -10,7 +10,7 @@ export async function PATCH(req, { params }) {
     const session = await auth();
 
     if (!session) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = client.db();
@@ -21,18 +21,15 @@ export async function PATCH(req, { params }) {
 
     if (!loggedInUser || loggedInUser.role !== 'admin') {
       return NextResponse.json(
-        { message: 'Forbidden: Admin access required' },
-        { status: 403 },
+        { error: 'Forbidden: Admin access required' },
+        { status: 403 }
       );
     }
 
     const { userId } = await params;
 
     if (!userId) {
-      return NextResponse.json(
-        { message: 'User ID is required' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
     let objectIdUserId;
@@ -43,16 +40,13 @@ export async function PATCH(req, { params }) {
         'API Error: Invalid User ID format for ObjectId:',
         objIdError,
       );
-      return NextResponse.json(
-        { message: 'Invalid User ID format' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Invalid User ID format' }, { status: 400 });
     }
 
     const userToUpdate = await usersCollection.findOne({ _id: objectIdUserId });
 
     if (!userToUpdate) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const newMembership = userToUpdate.bmcMember === true ? false : true;
@@ -81,11 +75,8 @@ export async function PATCH(req, { params }) {
         'API Error: findOneAndUpdate unexpectedly returned null, indicating no document matched filter during update.',
       );
       return NextResponse.json(
-        {
-          message:
-            'Failed to update user role. Document not found during update or disappeared.',
-        },
-        { status: 500 },
+        { error: 'Failed to update user role. Document not found during update or disappeared.' },
+        { status: 500 }
       );
     }
 
@@ -93,12 +84,6 @@ export async function PATCH(req, { params }) {
   } catch (error) {
     console.error('API Error: Uncaught error in PATCH /toggle-role:', error);
     console.error('API Error Stack:', error.stack);
-    return NextResponse.json(
-      {
-        message: 'Internal server error',
-        error: error.message || 'An unknown error occurred on the server.',
-      },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

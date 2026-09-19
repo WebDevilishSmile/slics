@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb';
 export async function POST(request, { params }) {
   const session = await auth();
   if (!session || !session.user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { voteType } = await request.json(); // "up" or "down"
@@ -14,7 +14,7 @@ export async function POST(request, { params }) {
   const { commentId } = await params;
 
   if (!['up', 'down'].includes(voteType)) {
-    return NextResponse.json({ message: 'Invalid vote type' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid vote type' }, { status: 400 });
   }
 
   const db = client.db();
@@ -35,6 +35,6 @@ export async function POST(request, { params }) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Vote update error:', error);
-    return NextResponse.json({ message: 'Server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

@@ -10,7 +10,7 @@ export async function GET() {
     const session = await auth();
 
     if (!session) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const db = client.db();
@@ -22,9 +22,6 @@ export async function GET() {
     return NextResponse.json({ slicViews: total }, { status: 200 });
   } catch (error) {
     console.error('API Error: views GET:', error);
-    return NextResponse.json(
-      { message: 'Internal server error', error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

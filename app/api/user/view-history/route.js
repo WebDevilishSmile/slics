@@ -10,11 +10,11 @@ export async function GET() {
     const session = await auth();
 
     if (!session) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     if (!session.user.bmcMember) {
-      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const sixMonthsAgo = new Date();
@@ -34,9 +34,6 @@ export async function GET() {
     return NextResponse.json({ views }, { status: 200 });
   } catch (error) {
     console.error('API Error: view-history GET:', error);
-    return NextResponse.json(
-      { message: 'Internal server error', error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,16 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import AddressFields from '../newSlic/AddressFields';
-import AlphaSlicField from '../newSlic/AlphaSlicField';
-import FormActions from '../newSlic/FormActions';
-import FormContainer from '../newSlic/FormContainer';
-import NameField from '../newSlic/NameField';
-import NumSlicField from '../newSlic/NumSlicField';
-import PhoneField from '../newSlic/PhoneField';
-import TypeRadio from '../newSlic/TypeRadio';
-import Warning from '../newSlic/Warning';
-import PdfUpload from '../newSlic/PdfUpload';
+import AddressFields from './AddressFields';
+import AlphaSlicField from './AlphaSlicField';
+import FormActions from './FormActions';
+import FormContainer from './FormContainer';
+import NameField from './NameField';
+import NumSlicField from './NumSlicField';
+import PhoneField from '../form/PhoneField';
+import TypeRadio from './TypeRadio';
+import Warning from './Warning';
+import PdfUpload from './PdfUpload';
 
 export default function SlicForm({
   initialData = null,

@@ -119,7 +119,7 @@ Several utility files explicitly connect to the `test` database instead of the d
 
 ## 🟡 Medium Priority — Code Quality
 
-### [ ] 11. Merge duplicate form components
+### [x] 11. Merge duplicate form components
 **Files:** `app/components/newSlic/NewSlicForm.jsx`, `app/components/createEditSlic/SlicForm.jsx`
 
 These two files are ~90% identical — same fields, same validation `useEffect`, same submission logic. `SlicForm.jsx` already accepts a `mode` prop.

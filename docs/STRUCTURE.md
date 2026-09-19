@@ -160,7 +160,7 @@ Pure deletion. Every item here has been verified to have zero importers.
 - [ ] `app/components/home/MoreDetailsLink.jsx` — only reference is a commented-out tag at
   `home/SlicDisplay.jsx:39`. Delete both.
 - [ ] `app/components/admin/users/UserCardActions.jsx` — zero importers.
-- [ ] `app/components/newSlic/NewSlicForm.jsx` — zero importers. `admin/new/page.jsx`
+- [x] `app/components/newSlic/NewSlicForm.jsx` — zero importers. `admin/new/page.jsx`
   already uses `createEditSlic/SlicForm`, so `SUGGESTIONS.md` #11 is done **except this
   deletion**. Note that #11 says to delete NewSlicForm "and its sub-components" — don't.
   `SlicForm.jsx` still imports ten of them, and `profile/EditProfileDialog.jsx` imports
@@ -403,7 +403,7 @@ hand or with a second pattern per depth. Update the `tailwind.config.mjs` conten
 
 ### 23. Merge `newSlic/` and `createEditSlic/` into `slicForm/`
 
-- [ ] **Folders:** `components/newSlic/` (10 field components after item 8),
+- [x] **Folders:** `components/newSlic/` (10 field components after item 8),
   `components/createEditSlic/` (3 files)
 
 After item 8 there is no "new SLIC form" — `SlicForm.jsx` handles both modes and imports

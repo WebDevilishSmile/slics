@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Alert, Box, Button, Snackbar, CircularProgress } from '@mui/material';
 import { DeleteForeverOutlined } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 
 function CommentDelete({ comment }) {
@@ -13,8 +12,7 @@ function CommentDelete({ comment }) {
     severity: 'success',
   });
   const [isDeleting, setIsDeleting] = useState(false);
-  const router = useRouter();
-  const { isRefreshing, setIsRefreshing } = useCommentRefresh();
+  const { isRefreshing, refresh } = useCommentRefresh();
 
   const handleCloseSnack = () => setSnackbar({ ...snackbar, open: false });
 
@@ -38,15 +36,9 @@ function CommentDelete({ comment }) {
         severity: 'success',
       });
 
-      // Give the user a moment to see the success message before refreshing
-      setTimeout(() => {
-        setIsRefreshing(true);
-        router.refresh();
-        // Reset the refreshing state after a reasonable delay
-        setTimeout(() => {
-          setIsRefreshing(false);
-        }, 1000);
-      }, 1500);
+      // Give the user a moment to see the success message before the
+      // refresh unmounts this comment (and its snackbar) from the list.
+      setTimeout(refresh, 1500);
     } catch (error) {
       console.error('Error deleting comment:', error);
       setSnackbar({

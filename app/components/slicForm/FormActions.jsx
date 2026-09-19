@@ -2,7 +2,13 @@ import { Alert, Box, Button, Snackbar } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-function FormActions({ handleClear, slicData, mode = 'create', onSubmit }) {
+function FormActions({
+  handleClear,
+  slicData,
+  slicId,
+  mode = 'create',
+  onSubmit,
+}) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
   const [snackSeverity, setSnackSeverity] = useState('error');
@@ -28,12 +34,12 @@ function FormActions({ handleClear, slicData, mode = 'create', onSubmit }) {
       let method = 'POST';
 
       if (mode === 'edit') {
-        if (!slicData.numSlic) {
-          throw new Error('Missing numSlic for edit');
+        if (!slicId) {
+          throw new Error('Missing slic ID for edit');
         }
 
-        endpoint = `/api/slic/${slicData.numSlic}`;
-        method = 'PATCH'; // or 'PUT' depending on your route
+        endpoint = `/api/slic/${slicId}`;
+        method = 'PATCH';
       }
 
       const response = await fetch(endpoint, {

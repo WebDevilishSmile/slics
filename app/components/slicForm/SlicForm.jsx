@@ -79,21 +79,23 @@ export default function SlicForm({
   return (
     <FormContainer>
       <TypeRadio type={type} setType={setType} />
-      <NumSlicField numSlic={numSlic} setNumSlic={setNumSlic} />
+      <NumSlicField
+        numSlic={numSlic}
+        setNumSlic={setNumSlic}
+        readOnly={mode === 'edit'}
+      />
       <AlphaSlicField alphaSlic={alphaSlic} setAlphaSlic={setAlphaSlic} />
       <NameField name={name} setName={setName} />
       <PhoneField phone={phone} setPhone={setPhone} />
       <AddressFields address={address} setAddress={setAddress} />
       {mode === 'edit' && (
-        <PdfUpload
-          numSlic={initialData?.numSlic}
-          pdfUrl={initialData?.pdfUrl}
-        />
+        <PdfUpload slicId={initialData?._id} pdfUrl={initialData?.pdfUrl} />
       )}
 
       <FormActions
         handleClear={handleClear}
         slicData={slicData}
+        slicId={initialData?._id}
         onSubmit={onSubmit}
         mode={mode}
       />

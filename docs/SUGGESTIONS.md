@@ -128,7 +128,7 @@ These two files are ~90% identical — same fields, same validation `useEffect`,
 
 ---
 
-### [ ] 12. Fix SLIC update/delete ID mismatch
+### [x] 12. Fix SLIC update/delete ID mismatch
 **File:** `app/api/slic/[id]/route.js`
 
 PATCH looks up by `numSlic` (string), DELETE looks up by `_id` (ObjectId). The route param `id` means something different per HTTP method — confusing and fragile.
@@ -137,12 +137,12 @@ PATCH looks up by `numSlic` (string), DELETE looks up by `_id` (ObjectId). The r
 
 ---
 
-### [ ] 13. Remove or wire up `CommentRefreshContext`
+### [x] 13. Remove or wire up `CommentRefreshContext`
 **File:** `app/context/CommentRefreshContext.js`
 
-This context is defined but never imported anywhere. It's dead code.
+Originally dead code. It has since been wired up as the shared "list is refreshing" lock for the server-rendered comment lists (`profile/ProfileComments.jsx`, `admin/user-page/UserComments.jsx`): after one `CommentDelete` succeeds, every delete button in that list disables until `router.refresh()` has re-rendered it. It is unrelated to the home-page `comments/` feature, whose `refetchComments` is client-side and now only prop-drilled two levels — not worth a context.
 
-**Fix:** Either delete it, or use it to replace the `refetchComments` callback that is currently prop-drilled 4+ levels deep.
+**Done:** kept, and rebuilt on `useTransition` so `isRefreshing` reflects the real `router.refresh()` completion instead of a guessed `setTimeout`. The provider exposes `{ isRefreshing, refresh }`.
 
 ---
 

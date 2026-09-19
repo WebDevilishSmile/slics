@@ -144,8 +144,9 @@ Pure deletion. Every item here has been verified to have zero importers.
 - [ ] `lib/stripe.js` — imports the `stripe` package, which is **not in `package.json`**.
   Zero importers. Would crash on import.
 - [ ] `utils/pdfs.js` — an array of PDF filenames. Zero importers.
-- [ ] `app/context/CommentRefreshContext.js` — this is `SUGGESTIONS.md` #13. Tracked
-  there; listed here only for completeness. Delete it under that item.
+- [x] `app/context/CommentRefreshContext.js` — this is `SUGGESTIONS.md` #13. Resolved
+  there by keeping it: it's now the `useTransition`-backed refresh lock for the
+  profile/admin comment lists, not dead code.
 
 *Blast radius:* none.
 
@@ -518,8 +519,9 @@ for the item segment.
 - [ ] `api/users/[userId]` → `api/users/[id]` (and its three sub-routes)
 
 Each rename is one `grep -rn "'/api/<old>"` over `app/` and `components/` to find the
-`fetch` calls. `SUGGESTIONS.md` #12 (the PATCH-by-`numSlic` / DELETE-by-`_id` mismatch on
-the SLIC route) should land in the same commit as its rename.
+`fetch` calls. (`SUGGESTIONS.md` #12 — the PATCH-by-`numSlic` / DELETE-by-`_id` mismatch on
+the SLIC route — is already done; `[id]` means `_id` for every method, so the `slic/[id]`
+rename is purely a folder move plus its three `fetch` paths.)
 
 *Blast radius:* every client `fetch` to a renamed path. Grep is exhaustive here — there
 is no dynamic path construction except the `[id]` segment.

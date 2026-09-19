@@ -6,18 +6,22 @@ import FooterContainer from './FooterContainer';
 function Footer() {
   const socialLinks = [
     {
+      name: 'Instagram',
       icon: <Instagram sx={{ fontSize: '3rem' }} />,
       url: 'https://www.instagram.com/webdevilishsmile/',
     },
     {
+      name: 'Facebook',
       icon: <Facebook sx={{ fontSize: '3rem' }} />,
       url: 'https://www.facebook.com/webdevilishsmile/',
     },
     {
+      name: 'X',
       icon: <X sx={{ fontSize: '3rem' }} />,
       url: 'https://www.x.com/webdavila',
     },
     {
+      name: 'GitHub',
       icon: <GitHub sx={{ fontSize: '3rem' }} />,
       url: 'https://www.github.com/webdevilishsmile',
     },
@@ -41,6 +45,8 @@ function Footer() {
             sx={{ color: 'text.light' }}
             href={link.url}
             target='_blank'
+            rel='noopener'
+            aria-label={link.name}
           >
             {link.icon}
           </IconButton>

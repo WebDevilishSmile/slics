@@ -9,6 +9,7 @@ import {
   IconButton,
   Paper,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import Image from 'next/image';
@@ -59,27 +60,42 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
         scrollMarginTop: '6rem', // breathing room when the comment chip scrolls here
       }}
     >
-      <IconButton
-        sx={{ position: 'absolute', top: '2rem', left: '2rem' }}
-        onClick={toggleImage}
-        disabled={
-          true // Temporarily disable image upload use !numSlic
-        }
-      >
-        {showImage ? <HideSource /> : <ImageOutlined />}
-      </IconButton>
+      {/* A disabled button fires no pointer events, so the Tooltip listens on a
+          wrapper span — which also takes the positioning so the tip anchors to
+          the icon, not the container. */}
+      <Tooltip title='Coming soon' placement='top'>
+        <Box
+          component='span'
+          sx={{ position: 'absolute', top: '2rem', left: '2rem' }}
+        >
+          <IconButton
+            aria-label='Add image (coming soon)'
+            onClick={toggleImage}
+            disabled={
+              true // Temporarily disable image upload use !numSlic
+            }
+          >
+            {showImage ? <HideSource /> : <ImageOutlined />}
+          </IconButton>
+        </Box>
+      </Tooltip>
 
       <Typography variant='h4' sx={{ textAlign: 'center', mb: '1rem' }}>
         Comments
       </Typography>
 
-      <IconButton
-        sx={{ position: 'absolute', top: '2rem', right: '2rem' }}
-        onClick={toggleEditor}
-        disabled={!numSlic}
+      <Tooltip
+        title={showEditor ? 'Hide comment editor' : 'Add comment'}
+        placement='top'
       >
-        {showEditor ? <HideSource /> : <AddComment />}
-      </IconButton>
+        <IconButton
+          sx={{ position: 'absolute', top: '2rem', right: '2rem' }}
+          onClick={toggleEditor}
+          disabled={!numSlic}
+        >
+          {showEditor ? <HideSource /> : <AddComment />}
+        </IconButton>
+      </Tooltip>
 
       <Collapse in={showEditor} sx={{ width: '100%' }}>
         <CommentEditor

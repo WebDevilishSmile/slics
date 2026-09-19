@@ -8,7 +8,7 @@ import theme from '@/utils/theme';
 import CommentFooter from './CommentFooter';
 import CommentHeader from './CommentHeader';
 
-function Comment({ comment, author, slicName, refetchComments }) {
+function Comment({ comment, author, slicName, refetchComments, onVote }) {
   const session = useSession();
   const user = session.data?.user;
 
@@ -40,11 +40,7 @@ function Comment({ comment, author, slicName, refetchComments }) {
         bgcolor: 'background.comment',
       }}
     >
-      <CommentHeader
-        author={author}
-        comment={comment}
-        refetchComments={refetchComments}
-      />
+      <CommentHeader author={author} comment={comment} onVote={onVote} />
 
       <Divider />
 

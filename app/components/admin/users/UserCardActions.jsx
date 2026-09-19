@@ -21,6 +21,7 @@ function UserCardActions({ user }) {
       <IconButton
         sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
         onClick={handleMenuOpen}
+        aria-label={`Options for ${user.name || user.email}`}
       >
         <MoreVert />
       </IconButton>

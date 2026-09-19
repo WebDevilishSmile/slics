@@ -24,7 +24,8 @@ function Main({ slics, commentsCount, user }) {
       .then((data) => {
         if (data.slicViews !== undefined) setViewCount(data.slicViews);
       })
-      .catch(() => {});
+      // Best-effort stat: a failed counter must not disturb the lookup itself.
+      .catch((err) => console.error('Error fetching view count:', err));
   }, []);
 
   useEffect(() => {
@@ -55,7 +56,7 @@ function Main({ slics, commentsCount, user }) {
         .then((data) => {
           if (data.slicViews !== undefined) setViewCount(data.slicViews);
         })
-        .catch(() => {});
+        .catch((err) => console.error('Error tracking slic view:', err));
     } else if (!slic) {
       prevSlicNumRef.current = null;
     }

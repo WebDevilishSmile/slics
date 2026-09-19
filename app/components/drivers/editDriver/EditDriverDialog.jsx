@@ -29,6 +29,7 @@ export default function EditDriverDialog({
       <IconButton
         onClick={() => setOpenDialog(false)}
         sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
+        aria-label='Close'
       >
         <Close />
       </IconButton>

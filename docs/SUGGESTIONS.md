@@ -178,7 +178,7 @@ No disabled/loading state while the comment POST is in flight — users can doub
 
 ---
 
-### [ ] 17. Remove or explain the disabled image upload button
+### [x] 17. Remove or explain the disabled image upload button
 **File:** `app/components/comments/CommentsContainer.jsx` (line ~63)
 
 An image upload button is rendered but hardcoded `disabled={true}` with no tooltip or explanation.
@@ -196,7 +196,7 @@ An image upload button is rendered but hardcoded `disabled={true}` with no toolt
 
 ---
 
-### [ ] 19. Add ARIA labels to icon-only buttons
+### [x] 19. Add ARIA labels to icon-only buttons
 **Files:** Various components using MUI `IconButton` without text labels
 
 Icon buttons without labels are invisible to screen readers.
@@ -205,7 +205,7 @@ Icon buttons without labels are invisible to screen readers.
 
 ---
 
-### [ ] 20. Add an error boundary
+### [x] 20. Add an error boundary
 **File:** `app/components/layout/Providers.jsx` (or a new `ErrorBoundary.jsx`)
 
 Many `fetch` calls have empty `.catch(() => {})` handlers, leaving users with a blank/broken screen on error.
@@ -214,7 +214,7 @@ Many `fetch` calls have empty `.catch(() => {})` handlers, leaving users with a 
 
 ---
 
-### [ ] 21. Optimistic updates on comment votes
+### [x] 21. Optimistic updates on comment votes
 **File:** `app/components/comments/CommentFooter.jsx` (or wherever vote click is handled)
 
 After clicking vote, the UI waits for a full refetch before updating the count. Feels sluggish.

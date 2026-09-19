@@ -16,6 +16,7 @@ function UserRole({ user, onToggle }) {
       <IconButton
         onClick={onToggle}
         disabled={user.email === 'webdevilishsmile@gmail.com'}
+        aria-label={user.role === 'admin' ? 'Revoke admin role' : 'Grant admin role'}
       >
         {user.role === 'admin' ? <VerifiedUser /> : <AccountCircle />}
       </IconButton>

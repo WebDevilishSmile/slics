@@ -38,7 +38,11 @@ function DriversTableOptions({ driver }) {
 
   return (
     <TableCell sx={{ width: '2rem' }}>
-      <IconButton size='small' onClick={handleClick}>
+      <IconButton
+        size='small'
+        onClick={handleClick}
+        aria-label={`Options for ${driver.name}`}
+      >
         <MoreHoriz />
       </IconButton>
 

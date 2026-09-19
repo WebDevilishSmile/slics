@@ -75,7 +75,11 @@ function EditDriverField({ driver, fieldName, label }) {
             disabled={isLoading}
             autoFocus
           />
-          <IconButton onClick={handleSaveClick} disabled={isLoading}>
+          <IconButton
+            onClick={handleSaveClick}
+            disabled={isLoading}
+            aria-label={`Save ${label}`}
+          >
             {isLoading ? (
               <CircularProgress size={20} />
             ) : (
@@ -88,6 +92,7 @@ function EditDriverField({ driver, fieldName, label }) {
               setValue(currentDisplayValue);
             }}
             disabled={isLoading}
+            aria-label={`Cancel editing ${label}`}
           >
             <Cancel color='error' />
           </IconButton>
@@ -118,7 +123,11 @@ function EditDriverField({ driver, fieldName, label }) {
               </Button>
             )}
           </Typography>
-          <IconButton size='small' onClick={() => setIsEditing(true)}>
+          <IconButton
+            size='small'
+            onClick={() => setIsEditing(true)}
+            aria-label={`Edit ${label}`}
+          >
             <Edit fontSize='small' />
           </IconButton>
         </>

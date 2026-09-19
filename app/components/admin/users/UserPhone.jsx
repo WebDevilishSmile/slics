@@ -17,10 +17,10 @@ function UserPhone({ phone }) {
       <Typography>Phone: {phone}</Typography>
 
       <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-        <IconButton href={smsHref}>
+        <IconButton href={smsHref} aria-label={`Text ${phone}`}>
           <Sms />
         </IconButton>
-        <IconButton href={phoneHref}>
+        <IconButton href={phoneHref} aria-label={`Call ${phone}`}>
           <Phone />
         </IconButton>
       </Box>

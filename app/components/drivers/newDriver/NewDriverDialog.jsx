@@ -94,6 +94,7 @@ export default function NewDriverDialog({ open, onClose }) {
       <IconButton
         sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
         onClick={handleClose}
+        aria-label='Close'
       >
         <Close />
       </IconButton>

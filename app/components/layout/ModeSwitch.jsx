@@ -19,6 +19,9 @@ function ModeSwitch() {
     <IconButton
       size='large'
       onClick={toggleMode}
+      aria-label={
+        colorScheme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
+      }
       sx={{
         zIndex: 2000,
         position: 'fixed',

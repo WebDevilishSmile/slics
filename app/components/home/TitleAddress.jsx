@@ -14,7 +14,7 @@ import { COMMENTS_SECTION_ID } from '@/utils/variables';
 function TitleAddress({ slic, commentsCount }) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackMessage, setSnackMessage] = useState(
-    'Address copied to clipboard'
+    'Address copied to clipboard',
   );
   const [snackSeverity, setSnackSeverity] = useState('success');
 
@@ -64,18 +64,20 @@ function TitleAddress({ slic, commentsCount }) {
         {slic?.numSlic} - {slic?.alphaSlic}
       </Typography>
 
-      <Chip
-        size='medium' // the theme default is small; this one is a page-level stat
-        icon={<ChatBubbleOutline />}
-        label={
-          commentsCount < 1
-            ? 'No comments yet'
-            : `${commentsCount} comment${commentsCount > 1 ? 's' : ''}`
-        }
-        clickable
-        onClick={handleScrollToComments}
-        aria-label='Scroll to comments'
-      />
+      <Tooltip title='Scroll to comments' placement='top'>
+        <Chip
+          size='medium' // the theme default is small; this one is a page-level stat
+          icon={<ChatBubbleOutline />}
+          label={
+            commentsCount < 1
+              ? 'No comments yet'
+              : `${commentsCount} comment${commentsCount > 1 ? 's' : ''}`
+          }
+          clickable
+          onClick={handleScrollToComments}
+          aria-label='Scroll to comments'
+        />
+      </Tooltip>
 
       <Box
         sx={{
@@ -90,7 +92,7 @@ function TitleAddress({ slic, commentsCount }) {
           {slic.address.city}, {slic.address.state} {slic.address.zip}
         </Typography>
 
-        <Tooltip title='Copy address'>
+        <Tooltip title='Copy address' placement='top'>
           <IconButton
             sx={{ position: 'absolute', top: '0', right: '0' }}
             onClick={handleCopyAddress}
@@ -100,10 +102,7 @@ function TitleAddress({ slic, commentsCount }) {
         </Tooltip>
       </Box>
 
-      <Snackbar
-        open={openSnackbar}
-        onClose={handleCloseSnack}
-      >
+      <Snackbar open={openSnackbar} onClose={handleCloseSnack}>
         <Alert severity={snackSeverity} onClose={handleCloseSnack}>
           {snackMessage}
         </Alert>

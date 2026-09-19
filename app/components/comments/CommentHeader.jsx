@@ -51,7 +51,7 @@ function VoterList({ title, voters, emptyText }) {
   );
 }
 
-function CommentHeader({ author, comment, refetchComments }) {
+function CommentHeader({ author, comment, onVote }) {
   const user = useSession().data?.user;
   const pathname = usePathname();
 
@@ -64,21 +64,8 @@ function CommentHeader({ author, comment, refetchComments }) {
   // enforces the same rule, this only decides whether the count is tappable.
   const canViewVoters = !!user && (user.bmcMember || user.role === 'admin');
 
-  const handleVote = async (commentId, type) => {
-    const res = await fetch(`/api/comments/${commentId}/vote`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ voteType: type }), // "up" or "down"
-    });
-
-    if (res.ok) {
-      // Re-fetch or optimistically update the comment state
-      refetchComments();
-    }
-  };
-
   // Fetched fresh on every open — it's one small request and it means the
-  // list always matches the counts after a vote triggers refetchComments().
+  // list always matches the counts after a vote's background refetch.
   const handleOpenVotes = async () => {
     setOpenVotes(true);
     setVoters(null);
@@ -137,7 +124,7 @@ function CommentHeader({ author, comment, refetchComments }) {
           <Tooltip title='Upvote Comment' placement='top'>
             <IconButton
               size='small'
-              onClick={() => handleVote(comment._id, 'up')}
+              onClick={() => onVote(comment._id, 'up')}
               disabled={
                 comment.upVotes.includes(user?.id) ||
                 pathname.startsWith('/admin/users')
@@ -155,7 +142,7 @@ function CommentHeader({ author, comment, refetchComments }) {
           <Tooltip title='Downvote Comment' placement='top'>
             <IconButton
               size='small'
-              onClick={() => handleVote(comment._id, 'down')}
+              onClick={() => onVote(comment._id, 'down')}
               disabled={
                 comment.downVotes.includes(user?.id) ||
                 pathname.startsWith('/admin/users')

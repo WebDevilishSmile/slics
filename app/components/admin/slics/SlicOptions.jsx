@@ -125,7 +125,11 @@ function SlicOptions({ slic, onSlicDeleted }) {
 
   return (
     <>
-      <IconButton onClick={handleClick} size='small'>
+      <IconButton
+        onClick={handleClick}
+        size='small'
+        aria-label={`Options for ${slic.alphaSlic || slic.numSlic}`}
+      >
         <MoreVertOutlined />
       </IconButton>
 

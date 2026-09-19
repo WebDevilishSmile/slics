@@ -65,6 +65,7 @@ function ProfileData({ userData }) {
         <IconButton
           sx={{ height: '2rem', width: '2rem' }}
           onClick={() => setEditProfileOpen(true)}
+          aria-label='Edit profile'
         >
           <SettingsIcon sx={{ fontSize: '1.2rem' }} />
         </IconButton>

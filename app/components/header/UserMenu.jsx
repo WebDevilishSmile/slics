@@ -39,6 +39,7 @@ function UserMenu({ children, user }) {
           color: 'text.light',
         }}
         onClick={handleOpen}
+        aria-label='Open menu'
       >
         <MenuOutlined />
       </IconButton>
@@ -47,6 +48,7 @@ function UserMenu({ children, user }) {
         <IconButton
           onClick={handleClose}
           sx={{ position: 'absolute', top: '2rem', right: '2rem' }}
+          aria-label='Close menu'
         >
           <CloseOutlined />
         </IconButton>

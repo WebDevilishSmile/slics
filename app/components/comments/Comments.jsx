@@ -1,6 +1,6 @@
 'use client';
 
-import { Typography } from '@mui/material';
+import { Alert, Snackbar, Typography } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import Comment from './Comment';
@@ -11,6 +11,7 @@ function Comments({ user }) {
   const [comments, setComments] = useState([]);
   const [slicName, setSlicName] = useState(null);
   const [authorsMap, setAuthorsMap] = useState({});
+  const [voteError, setVoteError] = useState(false);
   const searchParams = useSearchParams();
   const numSlic = searchParams.get('slic');
 
@@ -55,6 +56,55 @@ function Comments({ user }) {
     fetchComments();
   }, [fetchComments, searchParams]);
 
+  // Optimistic vote: mirror what the API does (`$addToSet` on one side,
+  // `$pull` from the other) so the count and the button's disabled state
+  // update on tap. The background refetch then re-sorts the list by votes;
+  // on failure only this comment's arrays are put back.
+  const handleVote = useCallback(
+    async (commentId, voteType) => {
+      const userId = user?.id;
+      if (!userId) return;
+
+      const add = voteType === 'up' ? 'upVotes' : 'downVotes';
+      const remove = voteType === 'up' ? 'downVotes' : 'upVotes';
+
+      const before = comments.find((c) => c._id === commentId);
+      if (!before) return;
+      const snapshot = { upVotes: before.upVotes, downVotes: before.downVotes };
+
+      setComments((prev) =>
+        prev.map((c) =>
+          c._id === commentId
+            ? {
+                ...c,
+                [add]: (c[add] ?? []).includes(userId)
+                  ? c[add]
+                  : [...(c[add] ?? []), userId],
+                [remove]: (c[remove] ?? []).filter((id) => id !== userId),
+              }
+            : c
+        )
+      );
+
+      try {
+        const res = await fetch(`/api/comments/${commentId}/vote`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ voteType }),
+        });
+        if (!res.ok) throw new Error(`Vote failed with status ${res.status}`);
+        fetchComments();
+      } catch (error) {
+        console.error('Error saving vote:', error);
+        setComments((prev) =>
+          prev.map((c) => (c._id === commentId ? { ...c, ...snapshot } : c))
+        );
+        setVoteError(true);
+      }
+    },
+    [comments, user?.id, fetchComments]
+  );
+
   if (!numSlic) {
     return <NoSlicComments />;
   }
@@ -66,13 +116,14 @@ function Comments({ user }) {
       refetchComments={fetchComments}
     >
       {comments.length > 0 ? (
-        comments.map((comment, index) => (
+        comments.map((comment) => (
           <Comment
-            key={index}
+            key={comment._id}
             comment={comment}
             author={authorsMap[comment.userId?.toString()]}
             slicName={slicName}
             refetchComments={fetchComments}
+            onVote={handleVote}
           />
         ))
       ) : (
@@ -85,6 +136,16 @@ function Comments({ user }) {
           </Typography>
         </>
       )}
+
+      <Snackbar
+        open={voteError}
+        autoHideDuration={4000}
+        onClose={() => setVoteError(false)}
+      >
+        <Alert severity='error' onClose={() => setVoteError(false)}>
+          Couldn&apos;t save your vote. Please try again.
+        </Alert>
+      </Snackbar>
     </CommentsContainer>
   );
 }

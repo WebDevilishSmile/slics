@@ -14,7 +14,7 @@ function UserEmail({ email }) {
         <Typography>Email:</Typography>
         <Typography variant='caption'>{email}</Typography>
       </Box>
-      <IconButton href={`mailto:${email}`}>
+      <IconButton href={`mailto:${email}`} aria-label={`Email ${email}`}>
         <Mail />
       </IconButton>
     </Box>

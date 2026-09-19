@@ -63,6 +63,7 @@ export default function DeleteDriverDialog({
       {/* Driver details pop-up */}
       <IconButton
         sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
+        aria-label='Close'
         onClick={() => {
           setOpenDialog(false);
           setError('');

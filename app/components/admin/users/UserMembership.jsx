@@ -16,6 +16,7 @@ function UserMembership({ user, onToggle }) {
       <IconButton
         onClick={onToggle}
         disabled={user.email === 'webdevilishsmile@gmail.com'}
+        aria-label={user.bmcMember ? 'Revoke membership' : 'Grant membership'}
       >
         {user.bmcMember ? <Person /> : <PersonOff />}
       </IconButton>

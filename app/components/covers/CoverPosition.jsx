@@ -51,6 +51,7 @@ function CoverPosition({ cover, isEditing, setIsEditing, onSaveSuccess }) {
           size='small'
           onClick={handleClick}
           disabled={isEditing !== cover._id && isEditing !== 0}
+          aria-label={`Options for position ${cover.position}`}
         >
           <MoreHoriz />
         </IconButton>

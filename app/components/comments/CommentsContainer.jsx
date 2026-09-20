@@ -1,6 +1,5 @@
 'use client';
 
-import theme from '@/utils/theme';
 import { AddComment, HideSource, ImageOutlined } from '@mui/icons-material';
 import {
   Box,
@@ -45,18 +44,10 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
   return (
     <Paper
       id={COMMENTS_SECTION_ID}
-      elevation={theme.layout.elevation}
+      variant='panel'
       sx={{
         position: 'relative',
-        width: '100%',
-        maxWidth: theme.layout.maxWidth,
-        minHeight: theme.layout.minHeight,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        mt: '2rem',
-        py: '2rem',
-        px: '1rem',
+        px: 2, // tighter than the panel default so comment cards get the width
         scrollMarginTop: '6rem', // breathing room when the comment chip scrolls here
       }}
     >
@@ -80,7 +71,7 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
         </Box>
       </Tooltip>
 
-      <Typography variant='h4' sx={{ textAlign: 'center', mb: '1rem' }}>
+      <Typography variant='h4' sx={{ textAlign: 'center', mb: 2 }}>
         Comments
       </Typography>
 
@@ -125,7 +116,7 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
           <Button
             variant='contained'
             color='primary'
-            sx={{ my: '1rem', mr: '0.5rem' }}
+            sx={{ my: 2, mr: 1 }}
             onClick={handleLibraryClick}
           >
             Add Picture
@@ -135,7 +126,7 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
         {selectedImage && (
           <Box
             sx={{
-              mb: '1rem',
+              mb: 2,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -150,11 +141,11 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
               />
             </Box>
 
-            <Box sx={{ display: 'flex', gap: '1rem' }}>
+            <Box sx={{ display: 'flex', gap: 2 }}>
               <Button
                 variant='contained'
                 color='error'
-                sx={{ mt: '1rem' }}
+                sx={{ mt: 2 }}
                 onClick={() => setSelectedImage(null)}
               >
                 Cancel
@@ -162,7 +153,7 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
               <Button
                 variant='contained'
                 color='primary'
-                sx={{ mt: '1rem' }}
+                sx={{ mt: 2 }}
                 onClick={() => {
                   // Handle image upload logic here
                   console.log('Image uploaded:', selectedImage);

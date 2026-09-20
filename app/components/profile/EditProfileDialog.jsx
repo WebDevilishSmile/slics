@@ -57,7 +57,7 @@ function EditProfileDialog({ open, onClose, userData, showSnackbar }) {
           value={name}
           onChange={(event) => setName(event.target.value)}
           fullWidth
-          sx={{ mt: '0.5rem' }}
+          sx={{ mt: 1 }}
         />
         <PhoneField phone={phone} setPhone={setPhone} />
       </DialogContent>

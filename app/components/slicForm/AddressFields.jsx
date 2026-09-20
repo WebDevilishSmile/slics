@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { capitalizeWords } from '@/utils/functions';
 import { FormControl, TextField } from '@mui/material';
 
@@ -27,7 +28,7 @@ function AddressFields({ address, setAddress }) {
   };
   return (
     <FormControl
-      sx={{ width: '100%', maxWidth: '30rem', mt: '2rem', gap: '2rem' }}
+      sx={{ width: '100%', maxWidth: theme.layout.width.field, mt: 4, gap: 4 }}
     >
       <TextField
         required

@@ -16,7 +16,9 @@ export default auth((req) => {
   // --- MODIFICATION STARTS HERE ---
 
   // List of public paths (accessible to anyone, logged in or not)
-  const publicPaths = ['/', '/signin']; // Add any other public paths here
+  // Legal pages stay public: the footer links to them before sign-in, and the
+  // Google OAuth consent screen needs a reachable privacy policy URL.
+  const publicPaths = ['/', '/signin', '/privacy', '/terms'];
 
   // 1. Handle unauthenticated users
   if (!isLoggedIn) {

@@ -55,7 +55,7 @@ function CommentsDisplay({ comments = [], slics = [], users = [] }) {
 
   return (
     <Box
-      sx={{ mt: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}
+      sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 2 }}
     >
       <CommentsSearch
         comments={processedComments}
@@ -70,7 +70,7 @@ function CommentsDisplay({ comments = [], slics = [], users = [] }) {
           justifyContent: 'space-between',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Button
             size='small'
             variant='outlined'
@@ -88,7 +88,7 @@ function CommentsDisplay({ comments = [], slics = [], users = [] }) {
 
       <Divider />
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {processedComments.length > 0 ? (
           processedComments.map((comment) => (
             <Comment

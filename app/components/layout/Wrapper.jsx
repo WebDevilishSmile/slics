@@ -23,8 +23,8 @@ export default function Wrapper({ children }) {
   return (
     <Box
       sx={{
-        px: '1rem',
-        py: '4rem',
+        px: 2,
+        py: 8,
         bgcolor: 'background.default',
         color: 'text.primary',
       }}

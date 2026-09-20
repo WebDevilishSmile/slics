@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import DriversTable from '@/app/components/covers/DriversTable';
 import BackButton from '@/app/components/layout/BackButton';
 import LoadingFallback from '@/app/components/layout/LoadingFallback';
-import StyledHeading from '@/app/components/layout/StyledHeading';
+import { Typography } from '@mui/material';
 import { getCovers } from '@/utils/covers';
 import { serializeCovers } from '@/utils/functions';
 
@@ -13,7 +13,7 @@ async function CoverDrivers() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <BackButton />
-      <StyledHeading>Cover Drivers</StyledHeading>
+      <Typography variant='sectionHeading'>Cover Drivers</Typography>
 
       <DriversTable covers={serializeCovers(covers)} />
     </Suspense>

@@ -192,10 +192,10 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
             position: 'relative',
             width: '100px',
             height: '100px',
-            marginRight: '1rem',
+            marginRight: 2,
             borderRadius: '50%',
             overflow: 'hidden',
-            mb: '1rem',
+            mb: 2,
           }}
         >
           <Image

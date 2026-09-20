@@ -30,7 +30,7 @@ function Comment({ comment, slic, author }) {
 
         <Divider />
 
-        <Box sx={{ mt: '1rem' }}>
+        <Box sx={{ mt: 2 }}>
           {/* COMMENT CONTENT */}
 
           {parse(comment.content, {
@@ -51,7 +51,7 @@ function Comment({ comment, slic, author }) {
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
-            mt: '1rem',
+            mt: 2,
           }}
         >
           <Typography variant='caption'>Posted by {author.name}</Typography>

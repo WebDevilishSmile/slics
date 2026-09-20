@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { Paper, Typography } from '@mui/material';
 import parse, { domToReact } from 'html-react-parser';
 
@@ -6,9 +7,9 @@ export default function CommentsPage({ user, comments, slic }) {
   return (
     <Paper
       sx={{
-        p: '1rem',
+        p: 2,
         width: '100%',
-        maxWidth: '600px',
+        maxWidth: theme.layout.width.prose,
         margin: '2rem auto',
         display: 'flex',
         flexDirection: 'column',
@@ -19,7 +20,7 @@ export default function CommentsPage({ user, comments, slic }) {
       <Typography variant='h6' textAlign='center'>
         Comments for
       </Typography>
-      <Typography variant='h6' sx={{ mb: '1rem' }} textAlign='center'>
+      <Typography variant='h6' sx={{ mb: 2 }} textAlign='center'>
         {slic.alphaSlic} / {slic.numSlic}
       </Typography>
 
@@ -28,9 +29,9 @@ export default function CommentsPage({ user, comments, slic }) {
           <Paper
             key={index}
             sx={{
-              p: '1rem',
+              p: 2,
               width: '100%',
-              maxWidth: '600px',
+              maxWidth: theme.layout.width.prose,
               margin: '1rem auto',
               display: 'flex',
               flexDirection: 'column',

@@ -1,18 +1,19 @@
+import theme from '@/utils/theme';
 import { Box } from '@mui/material';
 
 export default function PageContainer({ children }) {
   return (
     <Box
       sx={{
-        maxWidth: '1436px',
+        maxWidth: theme.layout.width.page,
         width: '100%',
         minHeight: '100dvh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        my: '8rem',
+        my: 16,
         mx: { xs: '0%', md: '10%', lg: '5%', xl: '15%' },
-        px: { xs: '0.25rem', sm: '1rem', md: '2rem', lg: '3rem' },
+        px: { xs: 0.5, sm: 2, md: 4, lg: 6 },
       }}
     >
       {children}

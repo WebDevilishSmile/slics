@@ -64,7 +64,7 @@ function EditDriverField({ driver, fieldName, label }) {
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', mb: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
       {isEditing ? (
         <>
           <TextField
@@ -114,7 +114,7 @@ function EditDriverField({ driver, fieldName, label }) {
             {currentDisplayValue || 'Not set'}{' '}
             {label === 'Phone' && (
               <Button
-                sx={{ mt: '.3rem' }}
+                sx={{ mt: 0.6 }}
                 variant='outlined'
                 href={`tel:${currentDisplayValue}`}
                 disabled={!currentDisplayValue}

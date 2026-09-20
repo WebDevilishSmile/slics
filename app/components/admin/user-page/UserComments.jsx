@@ -20,12 +20,12 @@ export default function UserComments({ userComments, user }) {
     <Box
       sx={{
         width: '100%',
-        maxWidth: theme.layout.maxWidth,
+        maxWidth: theme.layout.width.panel,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        mt: '1rem',
+        mt: 2,
         px: 2,
       }}
     >
@@ -43,7 +43,7 @@ export default function UserComments({ userComments, user }) {
                   key={serialized._id}
                   elevation={theme.layout.elevation}
                   sx={{
-                    maxWidth: theme.layout.maxWidth,
+                    maxWidth: theme.layout.width.panel,
                     width: '100%',
                     mt: 2,
                     p: 2,

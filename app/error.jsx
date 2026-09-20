@@ -4,7 +4,6 @@ import theme from '@/utils/theme';
 import { Box, Button, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import PageContainer from './components/layout/PageContainer';
-import StyledHeading from './components/layout/StyledHeading';
 
 // Route-segment error boundary (Next.js App Router). Catches render errors
 // anywhere below the root layout, so the header/footer stay up and the
@@ -20,16 +19,16 @@ function Error({ error, reset }) {
 
   return (
     <PageContainer>
-      <StyledHeading>Something went wrong.</StyledHeading>
+      <Typography variant='sectionHeading'>Something went wrong.</Typography>
 
       <Typography
-        sx={{ maxWidth: theme.layout.maxWidth, my: '2rem', textAlign: 'center' }}
+        sx={{ maxWidth: theme.layout.width.panel, my: 4, textAlign: 'center' }}
       >
         Sorry about that. Try the page again — if it keeps happening, head back
         to the home page and look the SLIC up from there.
       </Typography>
 
-      <Box sx={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
         <Button variant='contained' color='primary' onClick={() => reset()}>
           Try again
         </Button>
@@ -43,7 +42,7 @@ function Error({ error, reset }) {
       {error?.digest && (
         <Typography
           variant='caption'
-          sx={{ mt: '2rem', color: 'text.secondary', textAlign: 'center' }}
+          sx={{ mt: 4, color: 'text.secondary', textAlign: 'center' }}
         >
           Error reference: {error.digest}
         </Typography>

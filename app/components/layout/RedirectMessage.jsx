@@ -1,5 +1,6 @@
 'use client';
 
+import theme from '@/utils/theme';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -24,13 +25,13 @@ function RedirectMessage({
     <PageContainer>
       <Typography
         variant='h2'
-        sx={{ maxWidth: '55rem', textAlign: 'center', px: '1rem' }}
+        sx={{ maxWidth: theme.layout.width.wide, textAlign: 'center', px: 2 }}
       >
         {heading}
       </Typography>
       <Typography
         variant='h6'
-        sx={{ maxWidth: '55rem', textAlign: 'center', mt: '1rem', px: '1rem' }}
+        sx={{ maxWidth: theme.layout.width.wide, textAlign: 'center', mt: 2, px: 2 }}
       >
         {subheading}
       </Typography>
@@ -40,21 +41,21 @@ function RedirectMessage({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          mt: '2rem',
+          mt: 4,
         }}
       >
         <Typography
           variant='body1'
           sx={{
-            maxWidth: '55rem',
+            maxWidth: theme.layout.width.wide,
             textAlign: 'center',
-            mt: '1rem',
-            px: '1rem',
+            mt: 2,
+            px: 2,
           }}
         >
           If you are not redirected automatically,
         </Typography>
-        <Button variant='outlined' href={redirect} sx={{ ml: '.5rem' }}>
+        <Button variant='outlined' href={redirect} sx={{ ml: 1 }}>
           click here
         </Button>
       </Box>

@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { Alert, Box, Button, Snackbar } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -90,11 +91,11 @@ function FormActions({
     <Box
       sx={{
         width: '100%',
-        maxWidth: '30rem',
+        maxWidth: theme.layout.width.field,
         display: 'flex',
         justifyContent: 'center',
-        gap: '2rem',
-        mt: '2rem',
+        gap: 4,
+        mt: 4,
       }}
     >
       <Button variant='contained' onClick={handleSave} disabled={isLoading}>

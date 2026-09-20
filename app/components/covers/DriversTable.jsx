@@ -1,5 +1,6 @@
 'use client';
 
+import theme from '@/utils/theme';
 import { Paper, Table, TableBody, TableContainer } from '@mui/material';
 import CoverPosition from './CoverPosition';
 import DriverTableHead from './DriverTableHead';
@@ -16,7 +17,7 @@ function DriversTable({ covers }) {
   };
 
   return (
-    <TableContainer component={Paper} sx={{ marginTop: 2, maxWidth: '40rem' }}>
+    <TableContainer component={Paper} sx={{ marginTop: 2, maxWidth: theme.layout.width.prose }}>
       <Table
         size='small'
         sx={{ minWidth: '20rem', width: '100%', tableLayout: 'fixed' }}

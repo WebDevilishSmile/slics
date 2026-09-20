@@ -6,7 +6,7 @@ import {
   serializeCoverBidJobs,
 } from '@/utils/coverBidJobsApi';
 import CoverBidJobsTable from '../components/coverBidJobs/CoverBidJobsTable';
-import StyledHeading from '../components/layout/StyledHeading';
+import { Typography } from '@mui/material';
 import { auth } from '@/auth';
 import NotMember from '../components/coverBidJobs/NotMember';
 import { getUpcomingSaturday } from '@/utils/functions';
@@ -36,7 +36,7 @@ export default async function CoverBidJobsPage() {
 
   return (
     <PageContainer>
-      <StyledHeading>Cover Bid Jobs</StyledHeading>
+      <Typography variant='sectionHeading'>Cover Bid Jobs</Typography>
       <CoverBidJobsTable jobs={serializedJobs} minWeekEnding={cutoffWeek} />
     </PageContainer>
   );

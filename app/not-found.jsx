@@ -5,7 +5,6 @@ import { Button, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import PageContainer from './components/layout/PageContainer';
-import StyledHeading from './components/layout/StyledHeading';
 
 function NotFound() {
   const router = useRouter();
@@ -19,9 +18,9 @@ function NotFound() {
 
   return (
     <PageContainer>
-      <StyledHeading>Oops! Page not found.</StyledHeading>
+      <Typography variant='sectionHeading'>Oops! Page not found.</Typography>
 
-      <Typography sx={{ maxWidth: theme.layout.maxWidth, my: '2rem', textAlign: 'center' }}>
+      <Typography sx={{ maxWidth: theme.layout.width.panel, my: 4, textAlign: 'center' }}>
         Sorry, we couldn't find the page you're looking for. Redirecting you to
         the home page... If you are not redirected automatically, click the
         button below.

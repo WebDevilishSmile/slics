@@ -115,3 +115,52 @@ export async function toggleMembershipApi(userId) {
     throw error;
   }
 }
+
+/**
+ * Removes a user and everything keyed by them. Dependent data goes first and
+ * the user row last, so a failure part-way leaves an account the user can
+ * retry from rather than orphaned comments (which render as a permanent
+ * "Loading comment…" on the home page once their author is gone).
+ *
+ * `comments.userId` and the vote arrays hold the id as a string; `slicViews`
+ * and the Auth.js `accounts` collection hold it as an ObjectId.
+ *
+ * Left alone on purpose: the `{ id, name, email }` audit stamps in
+ * `slic_history`, `slics.createdBy/updatedBy` and `cover-bid-jobs` (written
+ * only by admins, who can't use this flow), and `rateLimits` (TTL-expired).
+ */
+export async function deleteUserAccount(userId) {
+  try {
+    if (!userId || !ObjectId.isValid(userId)) {
+      throw new Error('Valid user ID is required');
+    }
+    const db = client.db();
+    const objectId = new ObjectId(userId);
+
+    const comments = await db.collection('comments').deleteMany({ userId });
+    const votes = await db
+      .collection('comments')
+      .updateMany({}, { $pull: { upVotes: userId, downVotes: userId } });
+    const views = await db
+      .collection('slicViews')
+      .deleteMany({ userId: objectId });
+    const accounts = await db
+      .collection('accounts')
+      .deleteMany({ userId: objectId });
+    const user = await db.collection('users').deleteOne({ _id: objectId });
+
+    if (user.deletedCount === 0) {
+      throw new Error('User not found');
+    }
+
+    return {
+      deletedComments: comments.deletedCount,
+      votesPulled: votes.modifiedCount,
+      deletedViews: views.deletedCount,
+      deletedAccounts: accounts.deletedCount,
+    };
+  } catch (error) {
+    console.error('Error deleting user account:', error);
+    throw error;
+  }
+}

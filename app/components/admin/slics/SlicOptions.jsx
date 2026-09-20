@@ -159,10 +159,10 @@ function SlicOptions({ slic, onSlicDeleted }) {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            px: '2rem',
+            px: 4,
           }}
         >
-          <Typography textAlign='center' variant='h4' sx={{ mb: '2rem' }}>
+          <Typography textAlign='center' variant='h4' sx={{ mb: 4 }}>
             Are you sure you want to delete slic{' '}
             {slic.alphaSlic || slic.numSlic}?
           </Typography>
@@ -170,13 +170,13 @@ function SlicOptions({ slic, onSlicDeleted }) {
           <Typography
             textAlign='center'
             variant='body1'
-            sx={{ mb: '3rem', color: 'text.secondary' }}
+            sx={{ mb: 6, color: 'text.secondary' }}
           >
             This action cannot be undone. All data associated with this slic
             will be permanently removed.
           </Typography>
 
-          <Box sx={{ display: 'flex', gap: '1rem' }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
               variant='outlined'
               color='error'

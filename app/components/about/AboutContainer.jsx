@@ -1,10 +1,11 @@
+import theme from '@/utils/theme';
 import { Paper } from '@mui/material';
 
 export default function AboutContainer({ children }) {
   return (
     <Paper
       elevation={3}
-      sx={{ padding: '2rem', margin: '2rem auto', maxWidth: '40rem' }}
+      sx={{ padding: 4, margin: '2rem auto', maxWidth: theme.layout.width.prose }}
     >
       {children}
     </Paper>

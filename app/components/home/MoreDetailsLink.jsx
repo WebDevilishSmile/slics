@@ -8,7 +8,7 @@ export default function MoreDetailsLink({ slic }) {
   return (
     <Button
       variant='contained'
-      sx={{ mt: '1rem' }}
+      sx={{ mt: 2 }}
       href={`/home/${slic.numSlic}`}
       LinkComponent={Link}
     >

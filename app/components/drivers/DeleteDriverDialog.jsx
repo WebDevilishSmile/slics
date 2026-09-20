@@ -55,7 +55,7 @@ export default function DeleteDriverDialog({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            py: '2rem',
+            py: 4,
           },
         },
       }}
@@ -80,9 +80,9 @@ export default function DeleteDriverDialog({
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          px: '2rem',
-          mt: '2rem',
-          gap: '1rem',
+          px: 4,
+          mt: 4,
+          gap: 2,
         }}
       >
         <Typography>
@@ -90,7 +90,7 @@ export default function DeleteDriverDialog({
           action cannot be undone.
         </Typography>
         {error && (
-          <Alert severity='error' sx={{ mt: '0.5rem' }}>
+          <Alert severity='error' sx={{ mt: 1 }}>
             {error}
           </Alert>
         )}
@@ -99,9 +99,9 @@ export default function DeleteDriverDialog({
         sx={{
           display: 'flex',
           justifyContent: 'flex-end',
-          gap: '1rem',
-          mt: '2rem',
-          px: '2rem',
+          gap: 2,
+          mt: 4,
+          px: 4,
         }}
       >
         {/* Action buttons */}

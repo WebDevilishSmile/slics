@@ -10,7 +10,7 @@ function AllHubsButton() {
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        mt: '1rem',
+        mt: 2,
       }}
     >
       <Typography sx={{ maxWidth: '12rem' }} variant='caption'>

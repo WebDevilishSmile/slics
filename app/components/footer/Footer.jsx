@@ -34,23 +34,37 @@ function Footer() {
           width: { xs: '100%', md: '50%' },
           height: '100%',
           display: 'flex',
+          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
           color: 'text.light',
         }}
       >
-        {socialLinks.map((link, index) => (
-          <IconButton
-            key={index}
-            sx={{ color: 'text.light' }}
-            href={link.url}
-            target='_blank'
-            rel='noopener'
-            aria-label={link.name}
-          >
-            {link.icon}
-          </IconButton>
-        ))}
+        <Box>
+          {/* Social Links */}
+          {socialLinks.map((link, index) => (
+            <IconButton
+              key={index}
+              sx={{ color: 'text.light' }}
+              href={link.url}
+              target='_blank'
+              rel='noopener'
+              aria-label={link.name}
+            >
+              {link.icon}
+            </IconButton>
+          ))}
+        </Box>
+
+        <Box>
+          {/* Links */}
+          <Button variant='text' href='/privacy' sx={{ color: 'text.light' }}>
+            Privacy Policy
+          </Button>
+          <Button variant='text' href='/terms' sx={{ color: 'text.light' }}>
+            Terms of Service
+          </Button>
+        </Box>
       </Box>
       <Box>
         <Image
@@ -68,7 +82,7 @@ function Footer() {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '1rem',
+          gap: 2,
         }}
       >
         <Typography

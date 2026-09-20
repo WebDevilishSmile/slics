@@ -18,7 +18,7 @@ function ProfileComments({ comments }) {
             key={comment._id}
             elevation={theme.layout.elevation}
             sx={{
-              maxWidth: theme.layout.maxWidth,
+              maxWidth: theme.layout.width.panel,
               width: '100%',
               mt: 2,
               p: 2,

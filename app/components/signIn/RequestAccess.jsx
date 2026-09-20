@@ -11,7 +11,7 @@ function RequestAccess({ user, isMobile }) {
   if (isMobile) {
     return (
       <>
-        <Typography variant='body2' sx={{ mt: '2rem', mb: '1rem', px: '1rem' }}>
+        <Typography variant='body2' sx={{ mt: 4, mb: 2, px: 2 }}>
           If you would like to request access to SLICs please click the button
           below.
         </Typography>
@@ -31,7 +31,7 @@ function RequestAccess({ user, isMobile }) {
 
   return (
     <>
-      <Typography variant='body2' sx={{ mt: '2rem', mb: '1rem', px: '1rem' }}>
+      <Typography variant='body2' sx={{ mt: 4, mb: 2, px: 2 }}>
         If you would like to request access to SLICs please click the button
         below.
       </Typography>

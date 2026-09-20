@@ -84,7 +84,7 @@ function TitleAddress({ slic, commentsCount }) {
           position: 'relative',
           width: '100%',
           textAlign: 'center',
-          mt: '1rem',
+          mt: 2,
         }}
       >
         <Typography>{slic.address.street}</Typography>

@@ -15,7 +15,7 @@ function PdfLink({ slic }) {
       href={href || undefined}
       target='_blank'
       rel='noopener'
-      sx={{ mt: '1rem' }}
+      sx={{ mt: 2 }}
     >
       View PDF
     </Button>

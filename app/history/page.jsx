@@ -6,7 +6,6 @@ import { getAllSlics } from '@/utils/slicsApi';
 import HomeButton from '@/app/components/layout/HomeButton';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import PageContainer from '@/app/components/layout/PageContainer';
-import StyledHeading from '@/app/components/layout/StyledHeading';
 import LocalDate from '@/app/components/layout/LocalDate';
 import { Box, Divider, Paper, Typography } from '@mui/material';
 import theme from '@/utils/theme';
@@ -82,17 +81,17 @@ export default async function HistoryPage() {
 
   return (
     <PageContainer>
-      <StyledHeading>Slic History</StyledHeading>
+      <Typography variant='sectionHeading'>Slic History</Typography>
       <HomeButton />
 
       <Paper
         elevation={theme.layout.elevation}
         sx={{
           width: '100%',
-          maxWidth: theme.layout.maxWidth,
-          mt: '2rem',
-          px: { xs: '1rem', sm: '2rem' },
-          py: '2rem',
+          maxWidth: theme.layout.width.panel,
+          mt: 4,
+          px: { xs: 2, sm: 4 },
+          py: 4,
         }}
       >
         {months.length === 0 ? (
@@ -104,18 +103,18 @@ export default async function HistoryPage() {
           </Typography>
         ) : (
           months.map((month, i) => (
-            <Box key={month} sx={{ mb: '2rem' }}>
-              <Typography variant='h6' sx={{ fontWeight: 700, mb: '0.5rem' }}>
+            <Box key={month} sx={{ mb: 4 }}>
+              <Typography variant='h6' sx={{ fontWeight: 700, mb: 1 }}>
                 {month}
               </Typography>
-              <Divider sx={{ mb: '0.75rem' }} />
+              <Divider sx={{ mb: 1.5 }} />
               {grouped[month].map((view, j) => (
                 <Box
                   key={j}
                   sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    py: '0.4rem',
+                    py: 0.8,
                     borderBottom:
                       j < grouped[month].length - 1 ? '1px solid' : 'none',
                     borderColor: 'divider',

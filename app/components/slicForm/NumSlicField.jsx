@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { FormControl, FormLabel, TextField } from '@mui/material';
 
 // `readOnly` on edit: numSlic is the key comments, history and view counts
@@ -8,7 +9,7 @@ function NumSlicField({ numSlic, setNumSlic, readOnly = false }) {
   };
 
   return (
-    <FormControl sx={{ width: '100%', maxWidth: '30rem', mt: '2rem' }}>
+    <FormControl sx={{ width: '100%', maxWidth: theme.layout.width.field, mt: 4 }}>
       <TextField
         required
         autoFocus

@@ -3,7 +3,7 @@ import { getSlicViewCounts, getUsers } from '@/utils/usersApi';
 
 import UserList from '@/app/components/admin/users/UserList';
 import BackButton from '@/app/components/layout/BackButton';
-import StyledHeading from '@/app/components/layout/StyledHeading';
+import { Typography } from '@mui/material';
 import HydrationGuard from '@/app/components/utility/HydrationGuard';
 
 async function UsersPage() {
@@ -12,7 +12,7 @@ async function UsersPage() {
   return (
     <>
       <BackButton />
-      <StyledHeading>Users Page</StyledHeading>
+      <Typography variant='sectionHeading'>Users Page</Typography>
 
       <HydrationGuard>
         <UserList users={serializeUsers(users)} viewCounts={viewCounts} />

@@ -1,13 +1,13 @@
+import theme from '@/utils/theme';
 import Image from 'next/image';
-import StyledHeading from '../layout/StyledHeading';
 import { Typography, Button, Box } from '@mui/material';
 
 export default function NotMember() {
   return (
     <>
-      <StyledHeading>Cover Bid Jobs</StyledHeading>
+      <Typography variant='sectionHeading'>Cover Bid Jobs</Typography>
       <Box
-        sx={{ textAlign: 'center', my: '2rem', px: '1rem', maxWidth: '45rem' }}
+        sx={{ textAlign: 'center', my: 4, px: 2, maxWidth: theme.layout.width.wide }}
       >
         <Typography sx={{ mt: 2 }}>
           You must be a SLICs supporter or member to view this page.

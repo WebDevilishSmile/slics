@@ -20,7 +20,7 @@ export default function EditDriverDialog({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            pt: '10rem',
+            pt: 20,
           },
         },
       }}
@@ -42,9 +42,9 @@ export default function EditDriverDialog({
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          px: '2rem',
-          mt: '2rem',
-          gap: '1rem',
+          px: 4,
+          mt: 4,
+          gap: 2,
         }}
       >
         <EditDriverField driver={driver} fieldName='name' label='Driver Name' />

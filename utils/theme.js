@@ -35,11 +35,20 @@ let theme = createTheme({
   // App-level layout tokens. Not MUI keys — read them as `theme.layout.*`
   // (import the theme directly; that works in server components too because
   // this module has no 'use client' directive). MUI also emits each one as
-  // `--mui-layout-<key>` for plain CSS.
+  // `--mui-layout-<key>` (nested: `--mui-layout-width-panel`) for plain CSS.
   layout: {
-    maxWidth: '32rem', // the single content column every page is built on
+    // The width scale (THEME.md #19). Every page-level `maxWidth` is one of
+    // these five steps — pick by role, don't add a sixth for a one-off. They
+    // only bite above phone width; on phones everything is `width: 100%`.
+    width: {
+      field: '30rem', // a single form control column (slic form fields, sign-in)
+      panel: '32rem', // the content column every page is built on (panels, comments)
+      prose: '40rem', // readable text: about page, page intros, comment threads
+      wide: '55rem', // full-width messaging and admin tables/forms
+      page: '1436px', // PageContainer's outer bound
+    },
     minHeight: '24rem', // keeps the home/comments panels from collapsing
-    elevation: 6, // Paper elevation for those panels
+    elevation: 6, // Paper elevation for those panels (read by the `panel` variant below)
   },
   colorSchemes: {
     dark: {
@@ -153,6 +162,60 @@ let theme = createTheme({
         autoHideDuration: 6000, // pass null for a toast that must stay up
         anchorOrigin: { vertical: 'top', horizontal: 'center' },
       },
+    },
+
+    // `<Paper variant="panel">` — the content panel the home and comments
+    // pages are built on (THEME.md #17). Only the structural block lives here;
+    // content alignment (`justifyContent`) and tighter side padding are set by
+    // the call sites that need them. Paper applies its shadow and elevation
+    // overlay only for variant="elevation" (see Paper.js), so a custom variant
+    // has to set both itself. `theme.vars.overlays[n]` is the same
+    // `var(--mui-overlays-n, <fallback>)` MUI's own elevation path uses, so
+    // this renders identically to `elevation={6}` in both color schemes.
+    MuiPaper: {
+      variants: [
+        {
+          props: { variant: 'panel' },
+          style: ({ theme }) => ({
+            width: '100%',
+            maxWidth: theme.layout.width.panel,
+            minHeight: theme.layout.minHeight,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: theme.spacing(4),
+            padding: theme.spacing(4),
+            boxShadow: (theme.vars || theme).shadows[theme.layout.elevation],
+            backgroundImage: theme.vars.overlays[theme.layout.elevation],
+          }),
+        },
+      ],
+    },
+
+    // `<Typography variant="sectionHeading">` — every page/section title
+    // (THEME.md #18; replaced the StyledHeading wrapper). It is h2 plus the
+    // house treatment. Spreading `theme.typography.h2` inside the callback,
+    // rather than copying its metrics, keeps it in lockstep with h2 —
+    // including the breakpoint font sizes responsiveFontSizes() adds, since
+    // the callback sees the final theme. `variantMapping` keeps the <h2> tag.
+    MuiTypography: {
+      defaultProps: {
+        variantMapping: { sectionHeading: 'h2' },
+      },
+      variants: [
+        {
+          props: { variant: 'sectionHeading' },
+          style: ({ theme }) => ({
+            ...theme.typography.h2,
+            fontWeight: 800,
+            textTransform: 'uppercase',
+            textAlign: 'center',
+            maxWidth: theme.layout.width.panel,
+            paddingLeft: theme.spacing(1),
+            paddingRight: theme.spacing(1),
+          }),
+        },
+      ],
     },
   },
 });

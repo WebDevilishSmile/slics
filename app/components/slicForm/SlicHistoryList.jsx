@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 
@@ -16,8 +17,8 @@ function SlicHistoryList({ history }) {
   if (!history || history.length === 0) return null;
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '30rem', mt: '3rem' }}>
-      <Typography variant='h6' sx={{ mb: '1rem' }}>
+    <Box sx={{ width: '100%', maxWidth: theme.layout.width.field, mt: 6 }}>
+      <Typography variant='h6' sx={{ mb: 2 }}>
         Change History
       </Typography>
 
@@ -25,8 +26,8 @@ function SlicHistoryList({ history }) {
         <Box
           key={entry._id}
           sx={{
-            mb: '1rem',
-            pb: '1rem',
+            mb: 2,
+            pb: 2,
             borderBottom: '1px solid',
             borderColor: 'divider',
           }}
@@ -38,7 +39,7 @@ function SlicHistoryList({ history }) {
           </Typography>
 
           {entry.changes?.length > 0 && (
-            <Box component='ul' sx={{ mt: '0.5rem', mb: 0, pl: '1.5rem' }}>
+            <Box component='ul' sx={{ mt: 1, mb: 0, pl: 3 }}>
               {entry.changes.map((change) => (
                 <Typography
                   component='li'

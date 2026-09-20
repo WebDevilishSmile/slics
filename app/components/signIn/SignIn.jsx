@@ -1,6 +1,6 @@
 import theme from '@/utils/theme';
 import { signIn } from '@/auth';
-import { Google, Microsoft } from '@mui/icons-material';
+import { Google } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import EmailAuth from './EmailAuth';
 
@@ -32,28 +32,6 @@ function SignIn() {
           oogle
         </Button>
       </Box>
-      {/* <Box
-        component='form'
-        action={async () => {
-          'use server';
-          await signIn('azure-ad', {
-            redirectTo: '/',
-          });
-        }}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          mt: 2,
-        }}
-      >
-        <Button type='submit' variant='contained' disabled>
-          <Microsoft /> Microsoft
-        </Button>
-        <Typography variant='caption'>
-          Microsoft sign-in is in development.
-        </Typography>
-      </Box> */}
       <EmailAuth />
     </Box>
   );

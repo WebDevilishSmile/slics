@@ -56,7 +56,7 @@ module.
 
 ### 2. Delete the seed comments and the data-manipulation stub
 
-- [ ] **Files:** `utils/comments.js` (995 lines), `app/components/home/DataManipulation.jsx`
+- [x] **Files:** `utils/comments.js` (995 lines), `app/components/home/DataManipulation.jsx`
 
 `comments.js` is a 2023 export of the comments table including user emails, avatar URLs
 and user IDs. Its only importer is `DataManipulation.jsx`, which is imported by nothing,
@@ -68,7 +68,7 @@ ever wired it up.
 
 ### 3. Remove the bid sheet from `public/`
 
-- [ ] **Files:** `public/data/2026-spring-jobs.csv`, `public/data/2026-spring-jobs.xlsx`
+- [x] **Files:** `public/data/2026-spring-jobs.csv`, `public/data/2026-spring-jobs.xlsx`
 
 Everything under `public/` is served unauthenticated. These two files are reachable at
 `/data/2026-spring-jobs.csv` by anyone with the URL, bypass the sign-in gate entirely, and
@@ -94,7 +94,7 @@ HEAD is enough, but still do items 1–3 so a future "make public" toggle isn't 
 
 ### 5. Add `.env.example` and resolve the Azure AD provider
 
-- [ ] **Files:** create `.env.example`; review `auth.config.js:19-21`
+- [x] **Files:** create `.env.example`; review `auth.config.js:19-21`
 
 The code reads eleven env vars. `.env` defines seven. The three `AUTH_AZURE_AD_*` values
 used by the Microsoft provider in `auth.config.js` are not among them, so locally that
@@ -117,6 +117,15 @@ GEMINI_API_KEY=
 BMC_WEBHOOK_SECRET=
 NEXT_PUBLIC_APP_URL=
 ```
+
+*Resolved 2026-09-20:* abandoned. The Microsoft button in `signIn/SignIn.jsx` was commented
+out (and `disabled` with "in development" copy before that), no `AUTH_AZURE_AD_*` key
+existed locally after a `vercel env pull`, and `next-auth/providers/azure-ad` is
+`@deprecated` in the installed `@auth/core`. Deleted the provider block, the well-known
+route, and the dead button. `NEXT_PUBLIC_APP_URL` went with the route — it was its only
+reader — so the shipped `.env.example` lists seven keys, not ten: the block above minus
+the three `AUTH_AZURE_AD_*` and `NEXT_PUBLIC_APP_URL`, plus `BLOB_READ_WRITE_TOKEN`
+(added after this list was written). `.gitignore` gained `!.env.example`.
 
 *Blast radius:* none.
 

@@ -15,6 +15,8 @@ SLICs replaces a paper binder that UPS Feeder drivers used to look up destinatio
 
 There is no test suite configured in this repo.
 
+Environment variables: `.env.example` lists every key the code reads, with a one-line comment each — copy it to `.env` and fill it in. It is the only `.env*` file that is tracked (`.gitignore` has `!.env.example`); keep it current when a `process.env.*` read is added or removed.
+
 ## Architecture
 
 **Stack:** Next.js 15 (App Router) + React 19, MongoDB (native driver, no ODM), NextAuth v5 (beta) for auth, MUI v7 for components, Tailwind for utility classes alongside MUI's `sx` prop, Emotion as the styling engine under MUI.

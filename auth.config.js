@@ -1,6 +1,5 @@
 // auth.config.js
 import Google from 'next-auth/providers/google';
-import AzureActiveDirectory from 'next-auth/providers/azure-ad';
 
 // This configuration is purely for the Auth.js core logic that can run on the Edge.
 // NO DATABASE ADAPTER HERE.
@@ -9,16 +8,6 @@ export const authConfig = {
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
-      authorization: {
-        params: {
-          prompt: 'select_account',
-        },
-      },
-    }),
-    AzureActiveDirectory({
-      clientId: process.env.AUTH_AZURE_AD_ID,
-      clientSecret: process.env.AUTH_AZURE_AD_SECRET,
-      tenantId: process.env.AUTH_AZURE_AD_TENANT_ID,
       authorization: {
         params: {
           prompt: 'select_account',

@@ -17,10 +17,10 @@ function RedirectMember({ userName }) {
 
   return (
     <PageContainer>
-      <Typography variant='h2' sx={{ textAlign: 'center', my: '2rem' }}>
+      <Typography variant='h2' sx={{ textAlign: 'center', my: 4 }}>
         Welcome back {userName}
       </Typography>
-      <Typography sx={{ my: '2rem', textAlign: 'center' }}>
+      <Typography sx={{ my: 4, textAlign: 'center' }}>
         Redirecting you to the home page...
       </Typography>
       <CircularProgress size='3rem' />

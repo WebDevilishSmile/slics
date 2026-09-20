@@ -10,8 +10,8 @@ function StyledPage({ children }) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'start',
-        px: '1rem',
-        pt: '2.5rem',
+        px: 2,
+        pt: 5,
         bgcolor: 'background.default',
         color: 'text.primary',
       }}

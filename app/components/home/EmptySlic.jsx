@@ -1,4 +1,3 @@
-import theme from '@/utils/theme';
 import { Box, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
 import BuyMeACoffeeButton from '../layout/BuyMeACoffeeButton';
@@ -9,22 +8,8 @@ function EmptySlic({ user }) {
   const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
 
   return (
-    <Paper
-      elevation={theme.layout.elevation}
-      sx={{
-        width: '100%',
-        maxWidth: theme.layout.maxWidth,
-        minHeight: theme.layout.minHeight,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        mt: '2rem',
-        py: '2rem',
-        px: '2rem',
-      }}
-    >
-      <Typography variant='h5' sx={{ textAlign: 'center', mb: '1rem' }}>
+    <Paper variant='panel' sx={{ justifyContent: 'center' }}>
+      <Typography variant='h5' sx={{ textAlign: 'center', mb: 2 }}>
         Welcome to SLICs 5.0
       </Typography>
 

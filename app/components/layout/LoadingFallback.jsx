@@ -5,10 +5,10 @@ import PageContainer from './PageContainer';
 function LoadingFallback() {
   return (
     <PageContainer>
-      <Typography variant='h6' sx={{ p: '1rem' }}>
+      <Typography variant='h6' sx={{ p: 2 }}>
         Loading...
       </Typography>
-      <CircularProgress sx={{ p: '1rem' }} size='3rem' />
+      <CircularProgress sx={{ p: 2 }} size='3rem' />
     </PageContainer>
   );
 }

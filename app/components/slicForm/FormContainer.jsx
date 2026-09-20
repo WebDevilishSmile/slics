@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { Paper } from '@mui/material';
 
 function FormContainer({ children }) {
@@ -5,13 +6,13 @@ function FormContainer({ children }) {
     <Paper
       sx={{
         width: '100%',
-        maxWidth: '52rem',
+        maxWidth: theme.layout.width.wide,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        p: '2rem',
-        mt: '2rem',
+        p: 4,
+        mt: 4,
       }}
     >
       {children}

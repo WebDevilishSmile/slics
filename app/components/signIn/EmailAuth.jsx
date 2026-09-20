@@ -1,5 +1,6 @@
 'use client';
 
+import theme from '@/utils/theme';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -106,15 +107,15 @@ function EmailAuth() {
   }
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '22rem', mx: 'auto', mt: '1.5rem' }}>
-      <Divider sx={{ mb: '1.5rem' }}>
+    <Box sx={{ width: '100%', maxWidth: theme.layout.width.field, mx: 'auto', mt: 3 }}>
+      <Divider sx={{ mb: 3 }}>
         <Typography variant='caption' color='text.secondary'>
           or continue with email
         </Typography>
       </Divider>
 
       {error && (
-        <Alert severity='error' sx={{ mb: '1rem' }}>
+        <Alert severity='error' sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
@@ -132,7 +133,7 @@ function EmailAuth() {
             onChange={(e) =>
               setSignInFields((f) => ({ ...f, email: e.target.value }))
             }
-            sx={{ mb: '0.75rem' }}
+            sx={{ mb: 1.5 }}
           />
           <TextField
             label='Password'
@@ -145,7 +146,7 @@ function EmailAuth() {
             onChange={(e) =>
               setSignInFields((f) => ({ ...f, password: e.target.value }))
             }
-            sx={{ mb: '1rem' }}
+            sx={{ mb: 2 }}
           />
           <Button
             type='submit'
@@ -158,7 +159,7 @@ function EmailAuth() {
           >
             {loading ? 'Signing in…' : 'Sign In'}
           </Button>
-          <Typography variant='body2' sx={{ mt: '0.75rem', textAlign: 'center' }}>
+          <Typography variant='body2' sx={{ mt: 1.5, textAlign: 'center' }}>
             Don&apos;t have an account?{' '}
             <Box
               component='span'
@@ -171,7 +172,7 @@ function EmailAuth() {
         </Box>
       ) : (
         <Box component='form' onSubmit={handleSignUp}>
-          <Box sx={{ display: 'flex', gap: '0.75rem', mb: '0.75rem' }}>
+          <Box sx={{ display: 'flex', gap: 1.5, mb: 1.5 }}>
             <TextField
               label='First Name'
               size='small'
@@ -206,7 +207,7 @@ function EmailAuth() {
             onChange={(e) =>
               setSignUpFields((f) => ({ ...f, email: e.target.value }))
             }
-            sx={{ mb: '0.75rem' }}
+            sx={{ mb: 1.5 }}
           />
           <TextField
             label='Password'
@@ -220,7 +221,7 @@ function EmailAuth() {
             onChange={(e) =>
               setSignUpFields((f) => ({ ...f, password: e.target.value }))
             }
-            sx={{ mb: '0.75rem' }}
+            sx={{ mb: 1.5 }}
           />
           <TextField
             label='Confirm Password'
@@ -236,7 +237,7 @@ function EmailAuth() {
                 confirmPassword: e.target.value,
               }))
             }
-            sx={{ mb: '1rem' }}
+            sx={{ mb: 2 }}
           />
           <Button
             type='submit'
@@ -249,7 +250,7 @@ function EmailAuth() {
           >
             {loading ? 'Creating account…' : 'Create Account'}
           </Button>
-          <Typography variant='body2' sx={{ mt: '0.75rem', textAlign: 'center' }}>
+          <Typography variant='body2' sx={{ mt: 1.5, textAlign: 'center' }}>
             Already have an account?{' '}
             <Box
               component='span'

@@ -1,5 +1,6 @@
 'use client';
 
+import theme from '@/utils/theme';
 import { SLICS_PER_PAGE } from '@/utils/variables';
 import {
   Box,
@@ -66,15 +67,15 @@ function SlicsTable({ slics }) {
   }, [search, slics, sort, sortCategory]);
 
   return (
-    <Paper sx={{ width: '100%', maxWidth: '50rem', mt: '2rem' }}>
+    <Paper sx={{ width: '100%', maxWidth: theme.layout.width.wide, mt: 4 }}>
       <Box
         sx={{
           width: '100%',
           display: 'flex',
           justifyContent: 'space-between',
-          px: '1rem',
-          pt: '1rem',
-          pb: '1rem',
+          px: 2,
+          pt: 2,
+          pb: 2,
         }}
       >
         <SlicsFilter search={search} setSearch={setSearch} />

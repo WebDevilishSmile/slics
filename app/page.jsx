@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { getUserByEmail } from '@/utils/usersApi';
 
 import PageContainer from './components/layout/PageContainer';
-import StyledHeading from './components/layout/StyledHeading';
+import { Typography } from '@mui/material';
 import Membership from './components/signIn/Membership';
 import SignIn from './components/signIn/SignIn';
 import RedirectMember from './components/home/RedirectMember';
@@ -31,7 +31,7 @@ export default async function Main() {
   // If the user is logged in but not a member, we display the Membership component
   return (
     <PageContainer>
-      <StyledHeading heading='h1'>SLICs</StyledHeading>
+      <Typography variant='h1'>SLICs</Typography>
       {!isLoggedIn && !isMember && <SignIn />}
       {isLoggedIn && !isMember && <Membership />}
     </PageContainer>

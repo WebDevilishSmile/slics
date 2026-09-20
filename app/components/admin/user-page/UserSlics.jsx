@@ -38,12 +38,12 @@ export default function UserSlics({ userSlicViews, slics }) {
     <Box
       sx={{
         width: '100%',
-        maxWidth: theme.layout.maxWidth,
+        maxWidth: theme.layout.width.panel,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        mt: '1rem',
+        mt: 2,
       }}
     >
       <Typography variant='h6' sx={{ mt: 2, mb: 1 }}>
@@ -54,21 +54,21 @@ export default function UserSlics({ userSlicViews, slics }) {
         <>
           <Box sx={{ width: '100%', px: 2 }}>
             {months.map((month) => (
-              <Box key={month} sx={{ mb: '1.5rem' }}>
+              <Box key={month} sx={{ mb: 3 }}>
                 <Typography
                   variant='subtitle1'
-                  sx={{ fontWeight: 700, mb: '0.5rem' }}
+                  sx={{ fontWeight: 700, mb: 1 }}
                 >
                   {month}
                 </Typography>
-                <Divider sx={{ mb: '0.5rem' }} />
+                <Divider sx={{ mb: 1 }} />
                 {grouped[month].map((view, i) => (
                   <Box
                     key={view._id}
                     sx={{
                       display: 'flex',
                       justifyContent: 'space-between',
-                      py: '0.4rem',
+                      py: 0.8,
                       borderBottom:
                         i < grouped[month].length - 1 ? '1px solid' : 'none',
                       borderColor: 'divider',

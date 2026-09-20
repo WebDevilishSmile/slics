@@ -7,9 +7,8 @@ import CoverCalendar from '@/app/components/covers/Calendar';
 import BidSheetUploader from '@/app/components/admin/coverBidJobs/BidSheetUploader';
 import CoverBidJobsManager from '@/app/components/admin/coverBidJobs/CoverBidJobsManager';
 import BackButton from '@/app/components/layout/BackButton';
-import StyledHeading from '@/app/components/layout/StyledHeading';
 import { getUpcomingSaturday } from '@/utils/functions';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 function CoverJobs() {
   // Default to next week — the week being posted — to match the driver-facing
@@ -52,7 +51,7 @@ function CoverJobs() {
   return (
     <>
       <BackButton />
-      <StyledHeading>Cover Jobs</StyledHeading>
+      <Typography variant='sectionHeading'>Cover Jobs</Typography>
 
       <CoverCalendar
         value={selectedDay}

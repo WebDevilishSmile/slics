@@ -86,7 +86,7 @@ export default function NewDriverDialog({ open, onClose }) {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            py: '2rem',
+            py: 4,
           },
         },
       }}
@@ -109,12 +109,12 @@ export default function NewDriverDialog({ open, onClose }) {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          px: '2rem',
-          mt: '2rem',
-          gap: '1rem',
+          px: 4,
+          mt: 4,
+          gap: 2,
         }}
       >
-        <Box sx={{ display: 'flex', gap: '1rem' }}>
+        <Box sx={{ display: 'flex', gap: 2 }}>
           <NewDriverField
             label='First Name'
             value={fields.firstName}
@@ -165,8 +165,8 @@ export default function NewDriverDialog({ open, onClose }) {
           sx={{
             display: 'flex',
             justifyContent: 'flex-end',
-            gap: '1rem',
-            mt: '0.5rem',
+            gap: 2,
+            mt: 1,
           }}
         >
           <Button

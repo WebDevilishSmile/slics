@@ -10,7 +10,7 @@ function UserEmail({ email }) {
         justifyContent: 'space-between',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography>Email:</Typography>
         <Typography variant='caption'>{email}</Typography>
       </Box>

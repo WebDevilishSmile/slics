@@ -1,17 +1,14 @@
+import { auth } from '@/auth';
+import { getDriverById } from '@/utils/driversApi';
+import { serializeDriver, serializeUser } from '@/utils/functions';
+import { getUserById } from '@/utils/usersApi';
+import { Typography } from '@mui/material';
 import { Suspense } from 'react';
 import CoversDate from '../components/covers/CoversDate';
 import BackButton from '../components/layout/BackButton';
 import PageContainer from '../components/layout/PageContainer';
-import StyledHeading from '../components/layout/StyledHeading';
+import RedirectMessage from '../components/layout/RedirectMessage';
 import HydrationGuard from '../components/utility/HydrationGuard';
-import { auth } from '@/auth';
-import { getUserById } from '@/utils/usersApi';
-import {
-  serializeDriver,
-  serializeDrivers,
-  serializeUser,
-} from '@/utils/functions';
-import { getAllDrivers, getDriverById } from '@/utils/driversApi';
 
 async function CoversPage() {
   const session = await auth();
@@ -52,7 +49,7 @@ async function CoversPage() {
     <Suspense fallback={<div>Loading...</div>}>
       <PageContainer>
         <BackButton />
-        <StyledHeading>Covers</StyledHeading>
+        <Typography variant='sectionHeading'>Covers</Typography>
 
         <HydrationGuard>
           <CoversDate

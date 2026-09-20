@@ -3,7 +3,7 @@ import parse, { domToReact } from 'html-react-parser';
 
 function CommentBody({ comment }) {
   return (
-    <Box sx={{ minHeight: '5rem', py: '1rem', px: '1rem' }}>
+    <Box sx={{ minHeight: '5rem', py: 2, px: 2 }}>
       {/* COMMENT CONTENT */}
 
       {parse(comment.content, {

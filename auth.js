@@ -97,17 +97,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.bmcMember = dbUser.bmcMember ?? false;
             token.created_at = dbUser.created_at || new Date();
           } else {
-            console.warn(
-              `User with ID ${token.id} not found in DB during Main Auth.js JWT callback.`
-            );
+            // The user row is gone (deleted account). Returning null makes
+            // Auth.js clear the session cookie, so every device signed in as
+            // this user is logged out on its next request. A lookup *failure*
+            // (catch below) is deliberately not treated the same way.
+            return null;
           }
         } catch (error) {
           console.error(
             'Error fetching user data in Main Auth.js JWT callback:',
             error
           );
-          // Depending on your error handling, you might want to log this and proceed,
-          // or throw an error to prevent token creation with stale data.
+          // Mongo unreachable: keep the existing token rather than signing
+          // everyone out during an outage.
         }
       }
 

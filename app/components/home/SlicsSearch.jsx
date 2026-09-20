@@ -80,8 +80,8 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
           severity='info'
           sx={{
             width: '100%',
-            maxWidth: theme.layout.maxWidth,
-            mt: '1.5rem',
+            maxWidth: theme.layout.width.panel,
+            mt: 3,
           }}
         >
           {donationMessage}{' '}
@@ -108,7 +108,7 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
         renderInput={(params) => <TextField {...params} label='Search Slics' />}
         sx={{
           width: '100%',
-          maxWidth: theme.layout.maxWidth,
+          maxWidth: theme.layout.width.panel,
           mt: 3,
           px: 2,
         }}

@@ -27,9 +27,9 @@ export default function SearchAddDriver({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        px: { xs: '1rem' },
-        gap: '1rem',
-        my: '2rem',
+        px: { xs: 2 },
+        gap: 2,
+        my: 4,
       }}
     >
       <TextField

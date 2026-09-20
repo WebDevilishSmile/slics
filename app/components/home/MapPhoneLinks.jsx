@@ -11,8 +11,8 @@ function MapPhoneLinks({ slic }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        mt: '1rem',
-        gap: '1rem',
+        mt: 2,
+        gap: 2,
       }}
     >
       <Button
@@ -28,7 +28,7 @@ function MapPhoneLinks({ slic }) {
           variant='contained'
           href={`http://maps.apple.com/?q=${slic.address.street},${slic.address.city},${slic.address.zip}`}
           target='_blank'
-          sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
           <Apple />
           Apple Maps
@@ -39,7 +39,7 @@ function MapPhoneLinks({ slic }) {
           variant='contained'
           href={`tel:${slic.phone}`}
           target='_blank'
-          sx={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
           <PhoneOutlined /> {slic.alphaSlic} Dispatch
         </Button>

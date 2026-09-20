@@ -66,12 +66,12 @@ function UserList({ users, viewCounts = {} }) {
   );
 
   return (
-    <Box sx={{ maxWidth: theme.layout.maxWidth, width: '100%', p: '1rem' }}>
+    <Box sx={{ maxWidth: theme.layout.width.panel, width: '100%', p: 2 }}>
       {/* Search */}
       <TextField
         placeholder='Search users...'
         fullWidth
-        sx={{ mb: '1rem' }}
+        sx={{ mb: 2 }}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
@@ -84,7 +84,7 @@ function UserList({ users, viewCounts = {} }) {
           alignItems: { sm: 'center' },
           flexWrap: 'wrap',
           gap: 1,
-          mb: '1rem',
+          mb: 2,
         }}
       >
         <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -136,7 +136,7 @@ function UserList({ users, viewCounts = {} }) {
       <Typography
         variant='caption'
         color='text.secondary'
-        sx={{ mb: '0.5rem', display: 'block' }}
+        sx={{ mb: 1, display: 'block' }}
       >
         {sortedUsers.length} user{sortedUsers.length !== 1 ? 's' : ''}
       </Typography>
@@ -154,7 +154,7 @@ function UserList({ users, viewCounts = {} }) {
 
       {/* Pagination */}
       {pageCount > 1 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '1.5rem' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
           <Pagination
             count={pageCount}
             page={page + 1}

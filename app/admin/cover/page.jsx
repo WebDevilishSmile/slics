@@ -1,11 +1,11 @@
 import BackButton from '@/app/components/layout/BackButton';
-import StyledHeading from '@/app/components/layout/StyledHeading';
+import { Typography } from '@mui/material';
 
 function Cover() {
   return (
     <>
       <BackButton />
-      <StyledHeading>Cover</StyledHeading>
+      <Typography variant='sectionHeading'>Cover</Typography>
     </>
   );
 }

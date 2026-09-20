@@ -4,7 +4,6 @@ import { getAllSlics } from '@/utils/slicsApi';
 import CommentsSection from '@/app/components/admin/comments/CommentsSection';
 import BackButton from '@/app/components/layout/BackButton';
 import LoadingFallback from '@/app/components/layout/LoadingFallback';
-import StyledHeading from '@/app/components/layout/StyledHeading';
 import { getAllComments } from '@/utils/commentsApi';
 import {
   serializeComments,
@@ -53,7 +52,7 @@ async function CommentsPage() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <BackButton />
-      <StyledHeading>Comments</StyledHeading>
+      <Typography variant='sectionHeading'>Comments</Typography>
 
       <HydrationGuard>
         <CommentsSection

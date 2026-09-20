@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 
@@ -10,7 +11,7 @@ function SlicAuditInfo({ slic }) {
   if (!slic?.createdBy && !slic?.updatedBy) return null;
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '30rem', mb: '1rem' }}>
+    <Box sx={{ width: '100%', maxWidth: theme.layout.width.field, mb: 2 }}>
       {slic.createdBy && (
         <Typography variant='body2' color='text.secondary'>
           Created by {formatUser(slic.createdBy)}

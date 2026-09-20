@@ -15,7 +15,7 @@ function SlicDisplay({ commentsCount, loading, slic, user }) {
   if (loading) {
     return (
       <SlicDetailsContainer title='Loading...'>
-        <CircularProgress sx={{ mt: '1rem' }} />
+        <CircularProgress sx={{ mt: 2 }} />
       </SlicDetailsContainer>
     );
   }
@@ -30,7 +30,7 @@ function SlicDisplay({ commentsCount, loading, slic, user }) {
 
   return (
     <SlicDetailsContainer>
-      <Suspense fallback={<CircularProgress sx={{ mt: '1rem' }} />}>
+      <Suspense fallback={<CircularProgress sx={{ mt: 2 }} />}>
         <TitleAddress slic={slic} commentsCount={commentsCount} />
         <MapPhoneLinks slic={slic} />
         <PdfLink slic={slic} />

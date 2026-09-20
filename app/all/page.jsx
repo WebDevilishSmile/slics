@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { Typography } from '@mui/material';
@@ -35,7 +36,7 @@ async function AllHubs({ searchParams }) {
     <PageContainer>
       <HomeButton />
 
-      <Typography variant='h2' sx={{ textAlign: 'center', maxWidth: '40rem' }}>
+      <Typography variant='h2' sx={{ textAlign: 'center', maxWidth: theme.layout.width.prose }}>
         All Hubs
       </Typography>
 

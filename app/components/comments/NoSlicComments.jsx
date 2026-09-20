@@ -1,27 +1,12 @@
-import theme from '@/utils/theme';
 import { Paper, Typography } from '@mui/material';
 
 function NoSlicComments() {
   return (
-    <Paper
-      elevation={theme.layout.elevation}
-      sx={{
-        position: 'relative',
-        width: '100%',
-        maxWidth: theme.layout.maxWidth,
-        minHeight: theme.layout.minHeight,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        mt: '2rem',
-        py: '2rem',
-        px: '1rem',
-      }}
-    >
-      <Typography variant='h4' sx={{ textAlign: 'center', mb: '1rem' }}>
+    <Paper variant='panel' sx={{ position: 'relative', px: 2 }}>
+      <Typography variant='h4' sx={{ textAlign: 'center', mb: 2 }}>
         Comments
       </Typography>
-      <Typography sx={{ mt: '1rem' }}>
+      <Typography sx={{ mt: 2 }}>
         Please select a SLIC to view comments.
       </Typography>
     </Paper>

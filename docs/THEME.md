@@ -431,7 +431,7 @@ custom properties.
 
 | Was | Now | Notes |
 |---|---|---|
-| `MAX_WIDTH = '32rem'` | `theme.layout.maxWidth` | |
+| `MAX_WIDTH = '32rem'` | `theme.layout.maxWidth` → since item 19, `theme.layout.width.panel` | |
 | `MIN_HEIGHT = '24rem'` | `theme.layout.minHeight` | |
 | `ELEVATION = 6` | `theme.layout.elevation` | |
 | `BORDER_RADIUS = '6px'` (dead) | `theme.shape.borderRadius = 8` | see below |
@@ -445,7 +445,7 @@ unreadable on the server. The directive was never load-bearing — `Providers.js
 already the client boundary, and `createTheme` is pure — so nothing else changes. Both
 server and client components now import the same plain object.
 
-MUI also emits every key as a CSS variable (`--mui-layout-maxWidth: 32rem`,
+MUI also emits every key as a CSS variable (`--mui-layout-width-panel: 32rem`,
 `--mui-layout-minHeight: 24rem`, `--mui-shape-borderRadius: 8px`) so `globals.css` can
 use them. Ignore `--mui-layout-elevation: 6px` — MUI suffixes numbers with `px`; it's a
 prop value, not CSS.
@@ -560,7 +560,7 @@ make on purpose — set the default and walk the 18 + 20 sites above — not a c
 
 ### 17. A `panel` variant for `Paper`
 
-- [ ] **Highest-value item in this tier.** This block is near-verbatim in 6 files:
+- [x] **Highest-value item in this tier.** This block was near-verbatim in 5 files:
 
 ```js
 width: '100%', maxWidth: MAX_WIDTH, minHeight: MIN_HEIGHT,
@@ -569,42 +569,74 @@ mt: '2rem', py: '2rem', px: '1rem'
 ```
 
 `comments/CommentsContainer.jsx`, `comments/NoSlicComments.jsx`, `home/EmptySlic.jsx`,
-`home/MemberDisplay.jsx`, `home/SlicDetailsContainer.jsx`, `profile/ProfileComments.jsx`.
-Minor drift between them (`px` is `'2rem'` in one, `justifyContent` present in another) —
-reconcile deliberately rather than preserving each variation.
+`home/MemberDisplay.jsx`, `home/SlicDetailsContainer.jsx`. (`profile/ProfileComments.jsx`
+was originally listed too, but it had drifted into a comment *card* — `mt: 2, p: 2`, no
+min-height/flex — and is the twin of `admin/user-page/UserComments.jsx`; that pair is
+item 28, not this one.)
 
-*Blast radius:* six of the app's most visible surfaces. Check each in both schemes.
+**Done:** `MuiPaper.variants` in `utils/theme.js` defines `variant="panel"` with only the
+structural block; the five sites are now `<Paper variant='panel' sx={{ …delta }}>`.
+Reconciled deliberately: padding defaults to `2rem` all round (the majority), the two
+comments panels override `px: 2` so comment cards get the width; `justifyContent:
+'center'` is content alignment, so the three text-centered panels set it themselves.
+**Gotcha worth remembering:** `Paper` only applies its shadow and elevation overlay for
+`variant="elevation"` (see `Paper.js`), so a custom variant must set `boxShadow` and
+`backgroundImage` itself — the variant reads `theme.vars.shadows[6]` / `theme.vars.overlays[6]`,
+the same vars MUI's own path uses, so it renders identically in both schemes.
+
+*Blast radius:* five of the app's most visible surfaces. Check each in both schemes.
 
 ### 18. A `sectionHeading` typography variant
 
-- [ ] Replaces `app/components/layout/StyledHeading.jsx`, imported by **17** files. Moves
-  the style from a component wrapper into the theme, so heading style becomes a theme
-  edit. (Note its `fontWeight: '800'` is a string; the rest of the codebase uses numbers.)
+- [x] Replaced `app/components/layout/StyledHeading.jsx` (18 sites). Heading style is now
+  a theme edit: `MuiTypography.variants` in `utils/theme.js` defines `sectionHeading` as
+  `{ ...theme.typography.h2, fontWeight: 800, uppercase, centered, maxWidth, px }` inside
+  a `({ theme })` callback, so it stays in lockstep with h2 — including the breakpoint
+  sizes `responsiveFontSizes()` adds, which a static custom `typography.*` entry would
+  have missed. `variantMapping` keeps the `<h2>` element. (`fontWeight` is a number now.)
+
+  Reconciled while doing it: the two admin sub-page titles that used `heading='h3'`
+  (`/admin/new`, `/admin/edit`) now use `sectionHeading` like every other admin title;
+  and the landing page's app name is a plain `variant='h1'` like `/home`'s — the wrapper
+  had been uppercasing it to "SLICS", against the brand casing.
 
 ### 19. Name the width scale
 
-- [ ] `MAX_WIDTH` (`'32rem'`, 16 importers) is one of about ten unnamed widths:
+- [x] `MAX_WIDTH` (`'32rem'`, 16 importers) was one of about ten unnamed widths:
   `'30rem'` ×10 (form fields), `'40rem'` ×5 (prose), `'55rem'` ×4 (wide pages), plus
   `'52rem'`, `'50rem'`, `'45rem'`, `'22rem'`, `'12rem'`, `'600px'` ×2, `'1436px'`.
 
-  Naming these (`form` / `prose` / `wide` / `panel`) covers far more surface than
-  `MAX_WIDTH` does today. Also: `admin/comments/CommentsSection.jsx:9` hardcodes
-  `maxWidth: '32rem'` instead of importing the constant.
+  **Done:** `theme.layout.width` is a five-step scale — `field` 30rem · `panel` 32rem (the
+  old `layout.maxWidth`, renamed) · `prose` 40rem · `wide` 55rem · `page` 1436px — and
+  every page-level `maxWidth` in the app (27 sites, 24 files) reads one of them. The
+  hard-coded `'32rem'` in `admin/comments/CommentsSection.jsx` now reads `panel`.
+
+  Snapped to the nearest step rather than given a sixth name (all desktop-only —
+  on phones these are `width: 100%`): `FormContainer` 52→55 (`wide`), `SlicsTable`
+  50→55 (`wide`), `NotMember` 45→55 (`wide`), `EmailAuth` 22→30 (`field`; the sign-in
+  inputs are 8rem wider on desktop), `slicPage/CommentsPage` 600px→40rem (`prose`).
+  Left alone: `global-error.jsx` (plain `style`, MUI-free by design) and the `'12rem'`
+  in the dead `home/AllHubsButton.jsx` (STRUCTURE.md deletes it). Table-cell and icon
+  widths (`width: '2rem'`, `minWidth: '7rem'`…) are component-local sizing, not this
+  scale.
 
 ### 20. Pick one spacing dialect
 
-- [ ] **Largest item on this list — scope it to one folder at a time.**
+- [x] **Spacing half done.** `theme.spacing` is MUI's default 8px and the root font size
+  is the browser default 16px, so `mt: '1rem'` and `mt: 2` were the same pixel value
+  written two ways. Every spacing prop in an `sx` object (`m*`, `p*`, `gap*`, the
+  longhands, and responsive objects like `px: { xs: '1rem', sm: '2rem' }`) now uses the
+  number dialect — 188 values across 69 files, `'1rem'` → `2`, `'2rem'` → `4`, etc. A
+  scripted, zero-visual-change transform; the only non-grid values kept their exact
+  fraction (`py: 0.8`, `mt: 0.6`). `app/global-error.jsx` keeps its rem strings on
+  purpose — it uses plain `style`, where a number would mean px.
 
-  Two systems run side by side. `theme.spacing` is never configured, so it defaults to 8px,
-  which means `mt: 2` and `mt: '1rem'` are **the same value written two ways** — used 10×
-  and 19× respectively.
+  **Rule going forward:** spacing props in `sx` take numbers, never rem strings. Widths,
+  heights, offsets (`top`/`left`…) and `fontSize` still use rem strings — a bare number
+  there is *pixels*, not spacing, so they're not part of this dialect (see 19 for widths).
 
-  String rems dominate: `'1rem'` appears 109× and `'2rem'` 85× across all properties.
-  Top repeats: `mt:'2rem'` ×30, `mb:'1rem'` ×20, `mt:'1rem'` ×19, `px:'1rem'` ×18,
-  `gap:'1rem'` ×17.
-
-  Also in scope: ~20 `fontSize` overrides in `sx` that bypass the typography scale
-  entirely.
+- [ ] Still open from this item: ~20 `fontSize` overrides in `sx` that bypass the
+  typography scale entirely.
 
 ### 21. Move `zIndex` literals into the theme
 
@@ -702,6 +734,10 @@ reconcile deliberately rather than preserving each variation.
 grep -rn "containedButton\|background\.solid\|background\.grey\|text\.solid\|text\.dark" app/ utils/
 grep -rn "StyledPage\|layout/Wrapper" app/ --include=*.jsx | grep -i import
 grep -rn "bg-background\|text-foreground\|bg-foreground\|text-background" app/
+# item 20: spacing props in sx never use rem strings (global-error.jsx is plain `style` and exempt)
+grep -rnE "\b(m[trblxy]?|p[trblxy]?|gap|rowGap|columnGap|margin[A-Za-z]*|padding[A-Za-z]*):\s*'-?[0-9.]+rem'" app/ | grep -v global-error
+# item 17: the panel block lives in the theme, not at call sites
+grep -rn "layout\.minHeight" app/
 ```
 
 **Confirm the font bug (item 1) before fixing it**, since it justifies the whole tier:

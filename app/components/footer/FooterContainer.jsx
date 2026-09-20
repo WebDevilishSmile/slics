@@ -20,8 +20,8 @@ function FooterContainer({ children }) {
           flexDirection: { xs: 'column', md: 'row' },
           justifyContent: 'center',
           alignItems: 'center',
-          px: '2rem',
-          py: '1rem',
+          px: 4,
+          py: 2,
         }}
       >
         {children}

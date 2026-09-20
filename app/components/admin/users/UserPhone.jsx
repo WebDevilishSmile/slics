@@ -16,7 +16,7 @@ function UserPhone({ phone }) {
     >
       <Typography>Phone: {phone}</Typography>
 
-      <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+      <Box sx={{ display: 'flex', gap: 1 }}>
         <IconButton href={smsHref} aria-label={`Text ${phone}`}>
           <Sms />
         </IconButton>

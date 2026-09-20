@@ -23,14 +23,14 @@ async function Membership() {
   // If the user is not logged in, we return a message prompting them to sign in
   if (!user) {
     return (
-      <Box sx={{ textAlign: 'center', my: '2rem' }}>
+      <Box sx={{ textAlign: 'center', my: 4 }}>
         <Typography
           variant='body2'
           sx={{
-            maxWidth: '55rem',
+            maxWidth: theme.layout.width.wide,
             textAlign: 'center',
-            my: '1rem',
-            px: '1rem',
+            my: 2,
+            px: 2,
           }}
         >
           You must be signed in to access your membership.
@@ -43,21 +43,21 @@ async function Membership() {
   return (
     <Box
       sx={{
-        maxWidth: theme.layout.maxWidth,
+        maxWidth: theme.layout.width.panel,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         textAlign: 'center',
-        my: '2rem',
-        gap: '1rem',
+        my: 4,
+        gap: 2,
       }}
     >
       <Typography
         variant='body2'
         sx={{
           textAlign: 'center',
-          my: '1rem',
-          px: '1rem',
+          my: 2,
+          px: 2,
         }}
       >
         Welcome {user.name.split(' ')[0]}! Now that you have an account, you can
@@ -87,8 +87,8 @@ async function Membership() {
         variant='body2'
         sx={{
           textAlign: 'center',
-          my: '1rem',
-          px: '1rem',
+          my: 2,
+          px: 2,
         }}
       >
         If you would like immediate access, click the link below but don&apos;t

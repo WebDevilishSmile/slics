@@ -48,7 +48,7 @@ function ProfileData({ userData }) {
   return (
     <Paper
       sx={{
-        maxWidth: theme.layout.maxWidth,
+        maxWidth: theme.layout.width.panel,
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -57,7 +57,7 @@ function ProfileData({ userData }) {
         px: 1,
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography variant='h5' textAlign='center'>
           {userData.name}
         </Typography>

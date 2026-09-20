@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { formatPhoneNumber } from '@/utils/functions';
 import { FormControl, FormLabel, TextField } from '@mui/material';
 
@@ -9,7 +10,7 @@ function PhoneField({ phone, setPhone }) {
   };
 
   return (
-    <FormControl sx={{ width: '100%', maxWidth: '30rem', mt: '2rem' }}>
+    <FormControl sx={{ width: '100%', maxWidth: theme.layout.width.field, mt: 4 }}>
       <TextField label='Phone' value={phone} onChange={handleChange} />
     </FormControl>
   );

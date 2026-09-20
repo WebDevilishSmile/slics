@@ -1,5 +1,6 @@
 'use client';
 
+import theme from '@/utils/theme';
 import { useRef, useState } from 'react';
 import { Alert, Box, Button, Typography } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -94,7 +95,7 @@ function PdfUpload({ slicId, pdfUrl: initialPdfUrl }) {
   };
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '30rem', mt: '2rem' }}>
+    <Box sx={{ width: '100%', maxWidth: theme.layout.width.field, mt: 4 }}>
       <Typography variant='subtitle1' sx={{ mb: 1 }}>
         Directions PDF
       </Typography>

@@ -18,7 +18,7 @@ function Comment({ comment, author, slicName, refetchComments, onVote }) {
         sx={{
           width: '100%',
           minHeight: '7rem',
-          mb: '1rem',
+          mb: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -35,7 +35,7 @@ function Comment({ comment, author, slicName, refetchComments, onVote }) {
       sx={{
         width: '100%',
         minHeight: '7rem',
-        mb: '1rem',
+        mb: 2,
         overflow: 'hidden',
         bgcolor: 'background.comment',
       }}

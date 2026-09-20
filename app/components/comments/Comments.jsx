@@ -128,10 +128,10 @@ function Comments({ user }) {
         ))
       ) : (
         <>
-          <Typography sx={{ mt: '1rem' }}>
+          <Typography sx={{ mt: 2 }}>
             Be the first to post a comment!
           </Typography>
-          <Typography sx={{ mt: '0.5rem' }}>
+          <Typography sx={{ mt: 1 }}>
             Click the plus icon to add a comment.
           </Typography>
         </>

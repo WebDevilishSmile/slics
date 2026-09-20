@@ -1,3 +1,4 @@
+import theme from '@/utils/theme';
 import { capitalizeWords } from '@/utils/functions';
 import { FormControl, FormLabel, TextField } from '@mui/material';
 
@@ -9,7 +10,7 @@ function NameField({ name, setName }) {
   };
 
   return (
-    <FormControl sx={{ width: '100%', maxWidth: '30rem', mt: '2rem' }}>
+    <FormControl sx={{ width: '100%', maxWidth: theme.layout.width.field, mt: 4 }}>
       <TextField label='Name' value={name} onChange={handleChange} />
     </FormControl>
   );

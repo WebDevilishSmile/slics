@@ -99,7 +99,7 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
         width: '100%',
         transition: 'all 0.3s ease',
         overflow: 'hidden',
-        mb: '1rem',
+        mb: 2,
       }}
     >
       <EditorContent editor={editor} />
@@ -108,9 +108,9 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
         sx={{
           display: 'flex',
           justifyContent: 'flex-end',
-          gap: '1rem',
-          px: '1rem',
-          py: '1rem',
+          gap: 2,
+          px: 2,
+          py: 2,
           bgcolor: 'background.comment',
         }}
       >

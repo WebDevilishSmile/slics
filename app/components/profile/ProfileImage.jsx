@@ -10,7 +10,7 @@ function ProfileImage({ userData }) {
         position: 'relative',
         width: '100px',
         height: '100px',
-        marginTop: '1rem',
+        marginTop: 2,
         borderRadius: '50%',
         overflow: 'hidden',
       }}

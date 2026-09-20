@@ -1,34 +1,24 @@
-import client from '@/lib/db';
+import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
+import { getAllSlics } from '@/utils/slicsApi';
 
-// 1. Handle the "Preflight" OPTIONS request
-export async function OPTIONS() {
-  return NextResponse.json(
-    {},
-    {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    }
-  );
-}
-
-// 2. Your actual GET request
+// GET every slic. Any signed-in user may read. Nothing in the app calls this
+// today (pages load slics server-side via getAllSlics), so it exists for
+// tooling and external clients — which is exactly why it must not be open:
+// this is the whole address/phone dataset the sign-in gate protects.
 export async function GET() {
-  try {
-    const db = client.db();
-    const slicData = await db.collection('slics').find({}).toArray();
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    return NextResponse.json(slicData, {
-      headers: {
-        'Access-Control-Allow-Origin': '*', // Allows your Expo port 8081
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-    });
+  try {
+    const slics = await getAllSlics();
+    return NextResponse.json(slics);
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Error fetching slics:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
   }
 }

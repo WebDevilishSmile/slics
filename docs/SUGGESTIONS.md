@@ -223,6 +223,15 @@ After clicking vote, the UI waits for a full refetch before updating the count. 
 
 ---
 
+### [x] 22. Three read routes had no auth check
+**Files:** `app/api/slics/route.js`, `app/api/slic/[id]/route.js` (GET), `app/api/comments/route.js`
+
+Middleware deliberately skips `/api/*` (each route checks `auth()` itself), and every mutating route did — but three GETs never had the check. `GET /api/slics` returned the entire `slics` collection (every address and phone number) to an unauthenticated request in production, with its own `Access-Control-Allow-Origin: *` and an `OPTIONS` handler left over from an Expo experiment (2025-12-26); nothing in the app called it. `GET /api/slic/[id]` and `GET /api/comments?slic=` were open the same way. Found while removing the `vercel.json` CORS block (`STRUCTURE.md` #6).
+
+**Fix (done 2026-09-20):** the standard `const session = await auth(); if (!session) → 401` on all three. `slics/route.js` also lost the `OPTIONS` handler, the inline CORS headers and the `error.message` leak, and now reads through `getAllSlics()`. In-app callers (`Comments.jsx` on `/home` and `/all`) sit behind the sign-in redirect, so nothing user-visible changes. Any new `/api/*` GET needs the same check — the middleware will not save it.
+
+---
+
 ## Summary
 
 | # | Category | Effort |
@@ -231,3 +240,4 @@ After clicking vote, the UI waits for a full refetch before updating the count. 
 | 7–10 | Performance/Data | Small–Medium |
 | 11–15 | Code Quality | Small–Medium |
 | 16–21 | UX / Accessibility | Small each |
+| 22 | Security | Small |

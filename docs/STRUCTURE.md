@@ -131,13 +131,17 @@ the three `AUTH_AZURE_AD_*` and `NEXT_PUBLIC_APP_URL`, plus `BLOB_READ_WRITE_TOK
 
 ### 6. Drop the CORS block in `vercel.json`
 
-- [ ] **File:** `vercel.json`
+- [x] **File:** `vercel.json`
 
 Every `/api/*` response carries `Access-Control-Allow-Origin: *` together with
 `Access-Control-Allow-Credentials: true`. Browsers reject that combination for
 credentialed requests, so it does nothing useful — and nothing calls this API
 cross-origin. It only signals that the API is meant to be open. Delete the `headers`
 array; if nothing else remains, delete the file.
+
+*Resolved 2026-09-20:* file deleted. While verifying, found that `app/api/slics/route.js` set
+its own `Allow-Origin: *` and — with two other GETs — had no `auth()` check at all;
+that is `SUGGESTIONS.md` #22.
 
 *Blast radius:* none. Verify by confirming no `fetch` in the codebase targets an absolute
 URL to your own API from another origin (there is none today).

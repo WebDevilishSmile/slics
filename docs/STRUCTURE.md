@@ -37,7 +37,7 @@ carrying employee phone numbers.
 
 ### 1. Delete the hardcoded driver roster
 
-- [ ] **Files:** `utils/random.js` (1,520 lines), `utils/random2.js` (1,109 lines),
+- [x] **Files:** `utils/random.js` (1,520 lines), `utils/random2.js` (1,109 lines),
   `app/components/drivers/EditDriversData.jsx`
 
 `random.js` exports `allDrivers`: ~270 real drivers with full name, employee ID, seniority

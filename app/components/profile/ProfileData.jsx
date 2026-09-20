@@ -20,7 +20,7 @@ import Image from 'next/image';
 
 import EditProfileDialog from './EditProfileDialog';
 
-function ProfileData({ userData }) {
+function ProfileData({ userData, commentCount }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
   const [snackSeverity, setSnackSeverity] = useState('error');
@@ -116,6 +116,7 @@ function ProfileData({ userData }) {
         open={editProfileOpen}
         onClose={() => setEditProfileOpen(false)}
         userData={userData}
+        commentCount={commentCount}
         showSnackbar={showSnackbar}
       />
 

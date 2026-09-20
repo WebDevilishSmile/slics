@@ -12,6 +12,8 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
+import InstallMenuItem from '../install/InstallMenuItem';
+
 function UserMenu({ children, user }) {
   const [open, setOpen] = useState(false);
 
@@ -118,6 +120,7 @@ function UserMenu({ children, user }) {
             <ListItem>
               <Button href='/about'>About</Button>
             </ListItem>
+            <InstallMenuItem />
             {children}
           </List>
         </Box>

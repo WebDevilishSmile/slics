@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:indexes": "node --env-file=.env scripts/createIndexes.js",
+    "icons:generate": "node scripts/generateIcons.mjs",
     "pdfs:migrate": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/migratePdfsToBlob.mjs",
     "pdfs:rollback": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/rollbackPdfUrls.mjs"
   },

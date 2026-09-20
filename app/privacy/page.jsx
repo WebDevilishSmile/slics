@@ -97,9 +97,10 @@ export default function PrivacyPage() {
           The app uses a small number of cookies, all of which are needed for it
           to work. A session cookie keeps you signed in for up to 30 days, and a
           couple of short-lived security cookies protect the sign-in process.
-          Your light or dark theme choice is saved in your browser&apos;s local
-          storage. We don&apos;t use advertising cookies or any third-party
-          tracking cookies.
+          Your light or dark theme choice, and whether you&apos;ve dismissed the
+          &quot;add to home screen&quot; reminder, are saved in your
+          browser&apos;s local storage. We don&apos;t use advertising cookies or
+          any third-party tracking cookies.
         </LegalText>
       </LegalSection>
 

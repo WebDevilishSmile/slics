@@ -1,7 +1,12 @@
+import { auth } from '@/auth';
 import { getCommentsBySlic } from '@/utils/commentsApi';
 import { getSlicByNumSlic } from '@/utils/slicsApi';
 
 export async function GET(request) {
+  const session = await auth();
+  if (!session)
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const url = new URL(request.url);
     const numSlic = url.searchParams.get('slic');

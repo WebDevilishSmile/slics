@@ -7,6 +7,10 @@ import { deleteSlic, getSlicById, updateSlic } from '@/utils/slicsApi';
 
 // GET a single slic
 export async function GET(request, { params }) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   const { id } = await params;
 
   if (!id || !ObjectId.isValid(id)) {

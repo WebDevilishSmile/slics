@@ -35,7 +35,7 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
   }
 
-  const { phone, name } = requestBody;
+  const { phone, firstName, lastName } = requestBody;
 
   if (phone !== undefined && typeof phone !== 'string') {
     console.warn(
@@ -47,12 +47,21 @@ export async function PATCH(req, { params }) {
     );
   }
 
-  if (name !== undefined && (typeof name !== 'string' || !name.trim())) {
+  // Names travel as a pair, same rule as registration: if either is sent,
+  // both must be non-empty strings.
+  const isUpdatingName = firstName !== undefined || lastName !== undefined;
+  const isNonEmptyString = (value) =>
+    typeof value === 'string' && value.trim().length > 0;
+
+  if (
+    isUpdatingName &&
+    (!isNonEmptyString(firstName) || !isNonEmptyString(lastName))
+  ) {
     console.warn(
       `API PATCH /users/[userId]/add-phone: Invalid name for userId: ${userId}`,
     );
     return NextResponse.json(
-      { error: 'Invalid name (must be a non-empty string)' },
+      { error: 'First and last name are both required' },
       { status: 400 }
     );
   }
@@ -68,8 +77,14 @@ export async function PATCH(req, { params }) {
       updateDoc.$set.phone = phone;
     }
 
-    if (name !== undefined) {
-      updateDoc.$set.name = name.trim();
+    if (isUpdatingName) {
+      const first = firstName.trim();
+      const last = lastName.trim();
+      updateDoc.$set.firstName = first;
+      updateDoc.$set.lastName = last;
+      // `name` is what the profile card, comment attribution and session
+      // display, so keep it derived from the pair.
+      updateDoc.$set.name = `${first} ${last}`;
     }
 
     if (Object.keys(updateDoc.$set).length === 0) {

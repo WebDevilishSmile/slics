@@ -5,7 +5,6 @@ import { serializeUser } from '@/utils/functions';
 
 import HomeButton from '@/app/components/layout/HomeButton';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
-import DeleteAccount from '@/app/components/profile/DeleteAccount';
 import ProfileComments from '@/app/components/profile/ProfileComments';
 import ProfileData from '@/app/components/profile/ProfileData';
 import ProfileImage from '@/app/components/profile/ProfileImage';
@@ -61,11 +60,11 @@ async function ProfilePage({ params }) {
 
         <HydrationGuard>
           <ProfileImage userData={userData} />
-          <ProfileData userData={serializeUser(userData)} />
+          <ProfileData
+            userData={serializeUser(userData)}
+            commentCount={comments.length}
+          />
           <ProfileComments comments={comments} />
-          {userData.role !== 'admin' && (
-            <DeleteAccount userId={id} commentCount={comments.length} />
-          )}
         </HydrationGuard>
       </PageContainer>
     </Suspense>

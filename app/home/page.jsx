@@ -7,6 +7,7 @@ import { getAllSlics } from '@/utils/slicsApi';
 
 import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';
+import InstallNudge from '../components/install/InstallNudge';
 import PageContainer from '../components/layout/PageContainer';
 import RedirectMessage from '../components/layout/RedirectMessage';
 import HydrationGuard from '../components/utility/HydrationGuard';
@@ -39,6 +40,7 @@ export default async function Home({ searchParams }) {
   return (
     <PageContainer>
       <Typography variant='h1'>SLICs</Typography>
+      <InstallNudge />
 
       <HydrationGuard>
         <Main

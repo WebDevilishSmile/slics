@@ -181,11 +181,26 @@ export default function TermsPage() {
 
       <LegalSection title='Ending your account'>
         <LegalText>
-          You can stop using the app at any time, and you can ask us to delete
-          your account by emailing{' '}
-          <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>. We
-          may suspend or delete an account that breaks these terms or that has
-          been used to harm the app or other drivers. If that happens,
+          You can stop using the app at any time. To delete your account, open
+          your profile page, tap the settings icon next to your name and choose
+          &quot;Delete account&quot;. You&apos;ll be asked to confirm, because
+          deletion is immediate and can&apos;t be undone. It removes your
+          profile, including your name, email address, phone number and
+          password; all of your comments; your votes on other drivers&apos;
+          comments; your lookup history; and, if you signed in with Google, the
+          link between your Google account and the app. You&apos;ll be signed
+          out on every device.
+        </LegalText>
+        <LegalText>
+          You&apos;re welcome to create a new account later, but your old
+          comments and history won&apos;t come back. If you have trouble
+          deleting your account, email{' '}
+          <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link> and
+          we&apos;ll take care of it.
+        </LegalText>
+        <LegalText>
+          We may suspend or delete an account that breaks these terms or that
+          has been used to harm the app or other drivers. If that happens,
           you&apos;ll lose access to anything tied to the account, including
           your comments and lookup history.
         </LegalText>

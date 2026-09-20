@@ -74,6 +74,10 @@ Rate limiting (`utils/rateLimit.js`) is a MongoDB-backed fixed-window limiter, d
 - **Buy Me a Coffee webhook** (`app/api/webhooks/buymeacoffee`, `BMC_WEBHOOK_SECRET`) — toggles `bmcMember` on the user record.
 - **Vercel Analytics** — pageview/usage data referenced in `README.md`.
 
+### PWA / home-screen install
+
+The app is installable (manifest + HTTPS) but deliberately has **no service worker** — installability no longer requires one, and a stale cache is the one PWA failure that outlives a deploy. If one is ever added: register it in production only and keep page navigations network-first. The manifest is `app/manifest.js` (served at `/manifest.webmanifest`, `start_url: '/home'`); the home-screen icons (`app/apple-icon.png`, `public/maskable-icon-*.png`) come from `npm run icons:generate` (`scripts/generateIcons.mjs`, opaque white tile + inset because the source mark is transparent) — regenerate, never hand-edit. Install detection is `useInstallPrompt` in `utils/clientFunctions.js`: Chrome's `beforeinstallprompt` is stashed on `window.__slicsInstallPrompt` by an inline script in `app/layout.jsx` (it can fire before hydration); iOS has no prompt, so `app/components/install/IosInstallDialog.jsx` shows the Share → "Add to Home Screen" steps instead. The nudge on `/home` snoozes itself via `localStorage` for 30 days; the header-menu entry is the permanent path.
+
 ## Known issues / conventions to be aware of
 
 `docs/SUGGESTIONS.md` is a checked-off punch list of security/perf/quality issues found in this codebase — every item is now done, but the entries still document the reasoning behind a lot of current conventions (auth checks per route, `_id`-keyed slic routes, `{ error }` bodies), so read the relevant item before changing one of those areas. `docs/STRUCTURE.md` is the still-open list for file/folder organization and API path naming. The SLIC create/edit form and its field components live in `app/components/slicForm/` (one `SlicForm` with a `mode` prop); generic fields shared across features (currently `PhoneField`) live in `app/components/form/`.

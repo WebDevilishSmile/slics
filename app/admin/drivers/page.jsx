@@ -13,7 +13,6 @@ async function Drivers() {
       <BackButton />
       <Typography variant='sectionHeading'>Drivers Page</Typography>
 
-      {/* <EditDriversData /> */}
       <DriversTable allDrivers={serializeDrivers(allDrivers)} />
     </>
   );

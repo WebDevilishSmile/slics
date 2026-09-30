@@ -17,7 +17,7 @@ function RedirectMessage({
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push(redirect);
-    }, 2500); // Redirect after 2.5 seconds
+    }, 500); // Redirect after 0.5 second
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
   }, [router, redirect]);
 
@@ -31,7 +31,12 @@ function RedirectMessage({
       </Typography>
       <Typography
         variant='h6'
-        sx={{ maxWidth: theme.layout.width.wide, textAlign: 'center', mt: 2, px: 2 }}
+        sx={{
+          maxWidth: theme.layout.width.wide,
+          textAlign: 'center',
+          mt: 2,
+          px: 2,
+        }}
       >
         {subheading}
       </Typography>

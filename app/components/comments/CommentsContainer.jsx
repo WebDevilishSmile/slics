@@ -12,7 +12,8 @@ import {
   Typography,
 } from '@mui/material';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import CommentEditor from './CommentEditor';
 import { useIsMobile } from '@/utils/clientFunctions';
 import { COMMENTS_SECTION_ID } from '@/utils/variables';
@@ -22,6 +23,20 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
   const [showImage, setShowImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const libraryInputRef = useRef(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // ?comment=1 comes from the comment prompt (CommentPrompt.jsx): open the
+  // editor, bring it into view, then drop the flag so a refresh doesn't
+  // reopen it.
+  useEffect(() => {
+    if (searchParams.get('comment') !== '1' || !numSlic) return;
+    setShowEditor(true);
+    document
+      .getElementById(COMMENTS_SECTION_ID)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    router.replace(`/home?slic=${numSlic}`, { scroll: false });
+  }, [searchParams, numSlic, router]);
 
   const toggleEditor = () => {
     setShowEditor((prev) => !prev);
@@ -94,6 +109,7 @@ function CommentsContainer({ children, user, numSlic, refetchComments }) {
           numSlic={numSlic}
           refetchComments={refetchComments}
           setShowEditor={setShowEditor}
+          open={showEditor}
         />
       </Collapse>
 

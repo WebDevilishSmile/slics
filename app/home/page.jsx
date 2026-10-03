@@ -5,6 +5,7 @@ import { getCommentsBySlic } from '@/utils/commentsApi';
 import { serializeSlics } from '@/utils/functions';
 import { getAllSlics } from '@/utils/slicsApi';
 
+import CommentPrompt from '../components/comments/CommentPrompt';
 import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';
 import InstallNudge from '../components/install/InstallNudge';
@@ -41,6 +42,7 @@ export default async function Home({ searchParams }) {
     <PageContainer>
       <Typography variant='h1'>SLICs</Typography>
       <InstallNudge />
+      <CommentPrompt user={user} />
 
       <HydrationGuard>
         <Main

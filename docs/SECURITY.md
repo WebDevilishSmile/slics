@@ -2,7 +2,7 @@
 
 A security punch list and a set of standing rules for this repo. Companion to
 `SUGGESTIONS.md` (general quality — its #1–#6 and #22 were the first security pass),
-`STRUCTURE.md` (layout; its Tier 0 covers sensitive data *in the repo*) and `THEME.md`.
+`STRUCTURE.md` (layout; its Tier 0 covers sensitive data *in the repo*) and `UI-SUGGESTIONS.md`.
 Where an item overlaps one of those it says so and defers, so nothing is tracked twice.
 
 **How to use this:** Part 1 is a threat model in one screen — read it once. Part 2 is the

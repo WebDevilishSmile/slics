@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { recordLookup } from '@/utils/commentPrompt';
 import { serializeSlics } from '@/utils/functions';
 
 import SlicDisplay from './SlicDisplay';
@@ -47,6 +48,7 @@ function Main({ slics, commentsCount, user }) {
   useEffect(() => {
     if (slic && slic.numSlic !== prevSlicNumRef.current) {
       prevSlicNumRef.current = slic.numSlic;
+      recordLookup(slic);
       fetch('/api/user/track-view', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

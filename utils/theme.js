@@ -37,7 +37,7 @@ let theme = createTheme({
   // this module has no 'use client' directive). MUI also emits each one as
   // `--mui-layout-<key>` (nested: `--mui-layout-width-panel`) for plain CSS.
   layout: {
-    // The width scale (THEME.md #19). Every page-level `maxWidth` is one of
+    // The width scale (UI-SUGGESTIONS.md #19). Every page-level `maxWidth` is one of
     // these five steps — pick by role, don't add a sixth for a one-off. They
     // only bite above phone width; on phones everything is `width: 100%`.
     width: {
@@ -145,7 +145,7 @@ let theme = createTheme({
       },
     },
 
-    // Component defaults (THEME.md tier 2). An explicit prop at a call site
+    // Component defaults (UI-SUGGESTIONS.md tier 2). An explicit prop at a call site
     // still wins, so pin the exception rather than repeating the rule.
     MuiChip: {
       defaultProps: {
@@ -165,7 +165,7 @@ let theme = createTheme({
     },
 
     // `<Paper variant="panel">` — the content panel the home and comments
-    // pages are built on (THEME.md #17). Only the structural block lives here;
+    // pages are built on (UI-SUGGESTIONS.md #17). Only the structural block lives here;
     // content alignment (`justifyContent`) and tighter side padding are set by
     // the call sites that need them. Paper applies its shadow and elevation
     // overlay only for variant="elevation" (see Paper.js), so a custom variant
@@ -193,7 +193,7 @@ let theme = createTheme({
     },
 
     // `<Typography variant="sectionHeading">` — every page/section title
-    // (THEME.md #18; replaced the StyledHeading wrapper). It is h2 plus the
+    // (UI-SUGGESTIONS.md #18; replaced the StyledHeading wrapper). It is h2 plus the
     // house treatment. Spreading `theme.typography.h2` inside the callback,
     // rather than copying its metrics, keeps it in lockstep with h2 —
     // including the breakpoint font sizes responsiveFontSizes() adds, since

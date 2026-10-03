@@ -1,7 +1,7 @@
 # STRUCTURE.md
 
 A punch list for the repo's file and folder layout. Companion to `SUGGESTIONS.md`
-(security/perf/quality) and `THEME.md` (styling) — this one tracks *where things live*,
+(security/perf/quality) and `UI-SUGGESTIONS.md` (styling and UI) — this one tracks *where things live*,
 what's dead, and what's named inconsistently. Where an item overlaps one of those lists it
 says so and defers to it, so nothing is tracked twice.
 
@@ -180,7 +180,7 @@ Pure deletion. Every item here has been verified to have zero importers.
   `SlicForm.jsx` still imports ten of them, and `profile/EditProfileDialog.jsx` imports
   `PhoneField`. See item 23 for where they should live.
 
-`layout/StyledPage.jsx` and `layout/Wrapper.jsx` are also dead but are `THEME.md` #22.
+`layout/StyledPage.jsx` and `layout/Wrapper.jsx` are also dead but are `UI-SUGGESTIONS.md` #22.
 Not double-tracked.
 
 *Blast radius:* none.
@@ -263,7 +263,7 @@ isn't served at all (item 11).
 - [ ] `tailwind.config.mjs:3-7` — `content` globs include `./pages/**` and
   `./components/**`, neither of which exists. Trim to `./app/**/*.{js,jsx}` (and add
   `./components/**` back once item 21 is done). The `theme.extend.colors` block in the
-  same file is `THEME.md` #10.
+  same file is `UI-SUGGESTIONS.md` #10.
 - [ ] `app/page.jsx:9` — imports `RedirectMessage`, never uses it.
 - [ ] `.gitignore` — add `.claude/settings.local.json`. It's untracked today, but only by
   luck; `settings.json` is the shared one and should stay tracked.
@@ -357,7 +357,7 @@ serializer file is the obvious place to look when a new collection appears.
   `hooks/useAppleDevice.js`
 
 It's a `'use client'` module living next to server-only Mongo code. Also the home for
-`app/components/admin/coverBidJobs/useCoverBidJobs.js` (item 27). `THEME.md` #29 wants
+`app/components/admin/coverBidJobs/useCoverBidJobs.js` (item 27). `UI-SUGGESTIONS.md` #29 wants
 `useIsMobile` rebased on theme breakpoints — do that in the same touch if convenient.
 
 *Blast radius:* import paths only.
@@ -367,7 +367,7 @@ It's a `'use client'` module living next to server-only Mongo code. Also the hom
 - [ ] `utils/theme.js` (5 importers) → `theme.js`
 - [ ] `utils/variables.js` (22 importers) → `constants.js`
 
-Neither is a "utility". `THEME.md` #11 folds the layout constants (`MAX_WIDTH`,
+Neither is a "utility". `UI-SUGGESTIONS.md` #11 folds the layout constants (`MAX_WIDTH`,
 `BORDER_RADIUS`, `ELEVATION`…) into the theme; after that `constants.js` holds only
 `SLICS_PER_PAGE`, `COVER_BID_MONTHS_BACK` and the three `*_EXAMPLE` document shapes. Those
 example shapes are documentation, not code — consider moving them to
@@ -454,7 +454,7 @@ components next to them. `AboutText` and `AboutTitle` are a `Typography` with a 
 prop. Fold them into the sections that use them, or into one `AboutSection.jsx` if the
 repetition is real. Ten files → five.
 
-*Blast radius:* the About page only. `THEME.md` #25 touches two of the sections.
+*Blast radius:* the About page only. `UI-SUGGESTIONS.md` #25 touches two of the sections.
 
 ### 26. Three comment renderers → one
 
@@ -588,7 +588,7 @@ Two honest options:
 
 ### 33. Move the punch lists into `docs/`
 
-- [ ] `SUGGESTIONS.md`, `THEME.md` → `docs/` (this file is already there)
+- [ ] `SUGGESTIONS.md`, `THEME.md` (now `UI-SUGGESTIONS.md`) → `docs/` (this file is already there)
 - [ ] Update the two references in `CLAUDE.md` ("Known issues / conventions")
 - [ ] Add a line to `CLAUDE.md` pointing at `docs/STRUCTURE.md`
 

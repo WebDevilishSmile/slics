@@ -9,7 +9,7 @@ import theme from '@/utils/theme';
 import Placeholder from '@tiptap/extension-placeholder';
 import StarterKit from '@tiptap/starter-kit';
 
-function CommentEditor({ user, refetchComments, setShowEditor }) {
+function CommentEditor({ user, refetchComments, setShowEditor, open }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const numSlic = searchParams.get('slic');
@@ -91,6 +91,13 @@ function CommentEditor({ user, refetchComments, setShowEditor }) {
       handleCommentChange(editor.getHTML());
     },
   });
+
+  // Put the cursor in the editor whenever it opens (plus button or the
+  // comment prompt). No scroll: the editor sits right under the Comments
+  // heading, and the prompt path is already smooth-scrolling there.
+  useEffect(() => {
+    if (open && editor) editor.commands.focus('end', { scrollIntoView: false });
+  }, [open, editor]);
 
   return (
     <Paper

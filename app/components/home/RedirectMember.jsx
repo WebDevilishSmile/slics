@@ -11,7 +11,7 @@ function RedirectMember({ userName }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push('/home');
-    }, 3000); // Redirect after 3 seconds
+    }, 500); // Redirect after 0.5 second
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
   }, [router]);
 

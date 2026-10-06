@@ -138,6 +138,9 @@ export async function deleteUserAccount(userId) {
     const objectId = new ObjectId(userId);
 
     const comments = await db.collection('comments').deleteMany({ userId });
+    const gymComments = await db
+      .collection('gymComments')
+      .deleteMany({ userId });
     const votes = await db
       .collection('comments')
       .updateMany({}, { $pull: { upVotes: userId, downVotes: userId } });
@@ -155,6 +158,7 @@ export async function deleteUserAccount(userId) {
 
     return {
       deletedComments: comments.deletedCount,
+      deletedGymComments: gymComments.deletedCount,
       votesPulled: votes.modifiedCount,
       deletedViews: views.deletedCount,
       deletedAccounts: accounts.deletedCount,

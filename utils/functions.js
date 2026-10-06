@@ -129,6 +129,25 @@ export function serializeDrivers(driversData) {
   }));
 }
 
+// Gyms come from getAllGyms() with their comments joined in; both carry
+// ObjectIds that can't cross the server/client boundary as-is. Timestamps are
+// already ISO strings.
+export function serializeGym(gymData) {
+  return {
+    ...gymData,
+    _id: gymData._id.toString(),
+    comments: (gymData.comments || []).map((comment) => ({
+      ...comment,
+      _id: comment._id.toString(),
+      gymId: comment.gymId.toString(),
+    })),
+  };
+}
+
+export function serializeGyms(gymsData) {
+  return gymsData.map(serializeGym);
+}
+
 // dayjs .day(n) sets the weekday within the current Sun-Sat week (0=Sun..6=Sat),
 // so .day(6) always lands on that week's Saturday — same day if already Saturday,
 // otherwise the upcoming one.

@@ -1,25 +1,36 @@
-import { Button, ButtonGroup, Typography } from '@mui/material';
+import { Button, ButtonGroup, Typography, Box } from '@mui/material';
+import Link from 'next/link';
 
 import HomeButton from '../components/layout/HomeButton';
 
 async function AdminPage() {
+  const adminLinks = [
+    { href: '/admin/slics', label: 'Slics' },
+    { href: '/admin/comments', label: 'Comments' },
+    { href: '/admin/users', label: 'Users' },
+    { href: '/admin/cover/drivers', label: 'Cover Drivers' },
+    { href: '/admin/cover/jobs', label: 'Cover Jobs' },
+    { href: '/admin/drivers', label: 'Drivers' },
+    { href: '/admin/planet-fitness', label: 'Planet Fitness' },
+  ];
+
   return (
     <>
       <Typography variant='sectionHeading'>Admin Page</Typography>
       <HomeButton />
 
-      <ButtonGroup variant='contained' sx={{ mt: 4 }}>
-        <Button href='/admin/slics'>Slics</Button>
-        <Button href='/admin/comments'>Comments</Button>
-        <Button href='/admin/users'>Users</Button>
-      </ButtonGroup>
-      <ButtonGroup variant='contained' sx={{ mt: 4 }}>
-        <Button href='/admin/cover/drivers'>Cover Drivers</Button>
-        <Button href='/admin/cover/jobs'>Cover Jobs</Button>
-      </ButtonGroup>
-      <ButtonGroup variant='contained' sx={{ mt: 4 }}>
-        <Button href='/admin/drivers'>Drivers</Button>
-      </ButtonGroup>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 4 }}>
+        {adminLinks.map(({ href, label }) => (
+          <Button
+            variant='contained'
+            key={href}
+            LinkComponent={Link}
+            href={href}
+          >
+            {label}
+          </Button>
+        ))}
+      </Box>
     </>
   );
 }

@@ -21,6 +21,8 @@ async function main() {
       // Backs the six-month range scan on the cover bid jobs page and, as a
       // prefix, the single-week equality match used by the admin manager.
       { collection: 'cover-bid-jobs', spec: { weekEnding: -1, sortOrder: 1 } },
+      // The $lookup in gymsApi.getAllGyms joins comments by gymId.
+      { collection: 'gymComments', spec: { gymId: 1, created_at: -1 } },
     ];
 
     for (const { collection, spec } of indexes) {

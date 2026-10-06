@@ -1,0 +1,200 @@
+'use client';
+
+import { useState } from 'react';
+import dayjs from 'dayjs';
+import {
+  ChatBubbleOutline,
+  Edit,
+  ExpandLess,
+  ExpandMore,
+} from '@mui/icons-material';
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Collapse,
+  Divider,
+  IconButton,
+  Paper,
+  Snackbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import theme from '@/utils/theme';
+import { GYM_STATUSES } from '@/utils/variables';
+import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
+import { gymRequest } from './gymRequest';
+import GymComments from './GymComments';
+import GymLinks from './GymLinks';
+
+function lastVisitedLabel(iso) {
+  if (!iso) return 'Not visited yet';
+  const visited = dayjs(iso);
+  const days = dayjs().startOf('day').diff(visited.startOf('day'), 'day');
+  const ago =
+    days <= 0 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`;
+  return `Last visited ${visited.format('MMM D, YYYY')} (${ago})`;
+}
+
+function formatMiles(miles) {
+  return `~${miles < 10 ? miles.toFixed(1) : Math.round(miles)} mi`;
+}
+
+// `miles` is the straight-line distance from the driver, or null when there's
+// no location yet or the gym has no parking pin.
+function GymCard({ gym, miles, slicLabels, onEdit }) {
+  const { isRefreshing, refresh } = useCommentRefresh();
+  const [showComments, setShowComments] = useState(false);
+  const [marking, setMarking] = useState(false);
+  const [toast, setToast] = useState({
+    open: false,
+    severity: 'success',
+    message: '',
+  });
+
+  const status = GYM_STATUSES.find(({ value }) => value === gym.status);
+
+  const handleMarkVisited = async () => {
+    setMarking(true);
+    const { error } = await gymRequest(`/api/gyms/${gym._id}/visit`);
+    setMarking(false);
+    if (error) {
+      setToast({ open: true, severity: 'error', message: error });
+      return;
+    }
+    setToast({
+      open: true,
+      severity: 'success',
+      message: `Marked ${gym.name} visited today.`,
+    });
+    refresh();
+  };
+
+  const closeToast = () => setToast((current) => ({ ...current, open: false }));
+
+  return (
+    <Paper
+      elevation={2}
+      sx={{
+        width: '100%',
+        maxWidth: theme.layout.width.panel,
+        p: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1.5,
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          gap: 1,
+        }}
+      >
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant='h6' component='h3' sx={{ overflowWrap: 'anywhere' }}>
+            {gym.name}
+          </Typography>
+          <Typography color='text.secondary'>{gym.address.street}</Typography>
+          <Typography color='text.secondary'>
+            {gym.address.city}, {gym.address.state} {gym.address.zip}
+          </Typography>
+        </Box>
+        <Tooltip title='Edit gym'>
+          <IconButton
+            aria-label={`Edit ${gym.name}`}
+            onClick={() => onEdit(gym)}
+            disabled={isRefreshing}
+          >
+            <Edit />
+          </IconButton>
+        </Tooltip>
+      </Box>
+
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        {status && <Chip label={status.label} color={status.color} />}
+        <Chip
+          variant='outlined'
+          label={gym.open24h ? 'Open 24 hours' : gym.hours || 'Hours not set'}
+          sx={{ maxWidth: '100%' }}
+        />
+        {miles != null && (
+          <Chip
+            variant='outlined'
+            color='primary'
+            label={`${formatMiles(miles)} away`}
+          />
+        )}
+      </Box>
+
+      <GymLinks gym={gym} />
+
+      {gym.slics.length > 0 && (
+        <Box>
+          <Typography variant='body2' color='text.secondary' sx={{ mb: 0.5 }}>
+            On the way to/from
+          </Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            {gym.slics.map((numSlic) => (
+              <Chip
+                key={numSlic}
+                label={slicLabels[numSlic] ?? numSlic}
+                sx={{ maxWidth: '100%' }}
+              />
+            ))}
+          </Box>
+        </Box>
+      )}
+
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 1,
+        }}
+      >
+        <Typography variant='body2'>{lastVisitedLabel(gym.lastVisited)}</Typography>
+        <Button
+          size='small'
+          variant='outlined'
+          onClick={handleMarkVisited}
+          disabled={marking || isRefreshing}
+        >
+          {marking ? 'Saving…' : 'Mark visited'}
+        </Button>
+      </Box>
+
+      <Divider />
+
+      <Button
+        onClick={() => setShowComments((open) => !open)}
+        startIcon={<ChatBubbleOutline />}
+        endIcon={showComments ? <ExpandLess /> : <ExpandMore />}
+        aria-expanded={showComments}
+        sx={{ alignSelf: 'flex-start' }}
+      >
+        Comments ({gym.comments.length})
+      </Button>
+      <Collapse in={showComments} unmountOnExit>
+        <GymComments gym={gym} />
+      </Collapse>
+
+      <Snackbar open={toast.open} onClose={closeToast}>
+        <Alert
+          severity={toast.severity}
+          variant='filled'
+          onClose={closeToast}
+          sx={{ width: '100%' }}
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
+    </Paper>
+  );
+}
+
+export default GymCard;

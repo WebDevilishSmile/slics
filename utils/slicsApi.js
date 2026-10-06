@@ -2,7 +2,7 @@ import client from '@/lib/db';
 import { ObjectId } from 'mongodb';
 import { addSlicHistoryEntry, diffSlicFields } from '@/utils/slicHistoryApi';
 
-function toUserStamp(user) {
+export function toUserStamp(user) {
   if (!user) return null;
   return {
     id: user.id || null,

@@ -68,3 +68,47 @@ export const SLIC_COMMENT_EXAMPLE = {
   upVotes: ['user_id1', 'user_id2'], // Array of user IDs who upvoted the comment
   downVotes: [], // Array of user IDs who downvoted the comment
 };
+
+// Statuses for a gym on the Planet Fitness page (/admin/planet-fitness). The
+// form, the card's chip and the server-side check in utils/gymsApi.js all read
+// this list, so a new status only needs adding here. `color` is a Chip color.
+export const GYM_STATUSES = [
+  { value: 'confirmed', label: 'Confirmed', color: 'success' },
+  { value: 'to-check', label: 'To check', color: 'warning' },
+  { value: 'no-go', label: 'No-go', color: 'error' },
+];
+
+// Gym comments are plain text; enforced in the form and in utils/gymsApi.js.
+export const GYM_COMMENT_MAX_LENGTH = 2000;
+
+export const GYM_EXAMPLE = {
+  _id: 'gym_id',
+  name: 'Carlisle – Noble Blvd',
+  address: {
+    street: '1 Noble Blvd',
+    city: 'Carlisle',
+    state: 'PA',
+    zip: '17013',
+  },
+  phone: '(717) 555-0100', // '' when unknown
+  status: 'confirmed', // one of GYM_STATUSES
+  open24h: false,
+  hours: 'Mon–Thu 5am–11pm', // '' when open24h
+  parking: { lat: 40.2012, lng: -77.1601 }, // truck-parking pin, or null
+  slics: ['1809'], // numSlics this gym is on the way to/from
+  lastVisited: '2026-10-02T15:30:00.000Z', // ISO string, or null
+  created_at: '2026-10-01T12:00:00.000Z',
+  createdBy: { id: 'user_id', name: 'Name', email: 'email' },
+  updated_at: null,
+  updatedBy: null,
+};
+
+export const GYM_COMMENT_EXAMPLE = {
+  _id: 'comment_id',
+  gymId: 'gym_id', // ObjectId of the gym
+  userId: 'user_id', // string, like SLIC comments
+  userName: 'Name',
+  content: 'Exit 52, second light. Park along the back fence.', // plain text
+  created_at: '2026-10-01T12:00:00.000Z',
+  updated_at: null,
+};

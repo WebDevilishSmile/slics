@@ -4,7 +4,9 @@ import { useRouter } from 'next/navigation';
 import { createContext, useCallback, useContext, useTransition } from 'react';
 
 // Shared "the list is being refreshed" lock for the server-rendered comment
-// lists (profile/ProfileComments.jsx, admin/user-page/UserComments.jsx).
+// lists (profile/ProfileComments.jsx, admin/user-page/UserComments.jsx), and
+// for every gym and gym-comment mutation on the Planet Fitness page
+// (gyms/GymFinder.jsx).
 // After one CommentDelete succeeds, every delete button in the list disables
 // until router.refresh() has actually re-rendered the list, so nobody can
 // act on a stale list. useTransition ties `isRefreshing` to the real refresh

@@ -1354,7 +1354,23 @@ Dead code to delete while you're there:
 
 ### 46. History rows should go somewhere
 
-- [ ] **File:** `app/history/page.jsx`
+- [x] **File:** `app/history/page.jsx`
+
+_Done 2026-10-07,_ as part of the History page rework (TODOS.md):
+
+- **Rows:** each one is a `next/link` to `/home?slic=<numSlic>`.
+- **Day groups:** "Today", "Yesterday", "Fri, Oct 2", with the year added for past years.
+  They're computed in the phone's time zone, behind `HydrationGuard`.
+- **Log:** the `console.log(session)` is gone.
+- **The rework itself:**
+  - The page now lives in `app/components/history/`.
+  - Search covers code, name, address and note. There are date presets plus a custom
+    range, Centers/Customers and With-notes filters, and Newest/Oldest sort.
+  - Paging is cursor-based through `GET /api/user/history`, with "Load more".
+  - Each row has a private note and a "Remove from history" with Undo
+    (`PATCH /api/user/history/[id]`).
+  - Removing only hides the row (`hidden: true`), so the /home lookup counter still counts
+    it.
 
 The member-only history is a read-only list. Make each row link to `/home?slic=<numSlic>`
 ("look it up again"), and group by day within each month ("Today", "Yesterday",

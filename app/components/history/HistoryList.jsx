@@ -1,0 +1,127 @@
+'use client';
+
+import Link from 'next/link';
+import dayjs from 'dayjs';
+import { MoreVert } from '@mui/icons-material';
+import {
+  Box,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
+} from '@mui/material';
+
+// "Today", "Yesterday", "Mon, Sep 29" (UI-SUGGESTIONS.md #46), in the phone's
+// own time zone, which is why the page renders this behind a HydrationGuard.
+function dayLabel(date) {
+  const day = dayjs(date).startOf('day');
+  const today = dayjs().startOf('day');
+  if (day.isSame(today)) return 'Today';
+  if (day.isSame(today.subtract(1, 'day'))) return 'Yesterday';
+  return day.format(day.year() === today.year() ? 'ddd, MMM D' : 'ddd, MMM D, YYYY');
+}
+
+// The row's headline matches the lookup card (#40): centers by their alpha
+// code, customers by their name. A SLIC that no longer exists shows its number.
+function headline(view) {
+  if (!view.slic) return `SLIC ${view.numSlic}`;
+  if (view.slic.type === 'customer') return view.slic.name || view.slic.alphaSlic;
+  return view.slic.alphaSlic;
+}
+
+function groupByDay(views) {
+  const groups = [];
+  for (const view of views) {
+    const label = dayLabel(view.viewedAt);
+    const last = groups.at(-1);
+    if (last?.label === label) last.views.push(view);
+    else groups.push({ label, views: [view] });
+  }
+  return groups;
+}
+
+// Each row opens that SLIC again on /home; the ⋮ button opens the row menu
+// (note, remove), which HistoryView owns.
+export default function HistoryList({ views, onOpenMenu }) {
+  return (
+    <List sx={{ width: '100%' }} disablePadding>
+      {groupByDay(views).map(({ label, views: dayViews }) => (
+        <li key={label}>
+          <Box component='ul' sx={{ p: 0 }}>
+            <ListSubheader
+              disableSticky
+              sx={{
+                bgcolor: 'transparent',
+                typography: 'subtitle2',
+                lineHeight: 2.5,
+              }}
+            >
+              {label}
+            </ListSubheader>
+            {dayViews.map((view) => {
+              const title = headline(view);
+              const subline = [
+                view.slic ? `SLIC ${view.numSlic}` : null,
+                dayjs(view.viewedAt).format('h:mm A'),
+              ]
+                .filter(Boolean)
+                .join(' · ');
+              return (
+                <ListItem
+                  key={view.id}
+                  disablePadding
+                  secondaryAction={
+                    <IconButton
+                      edge='end'
+                      aria-label={`Options for ${title}`}
+                      aria-haspopup='menu'
+                      onClick={(event) => onOpenMenu(event.currentTarget, view)}
+                      sx={{ width: '3rem', height: '3rem' }}
+                    >
+                      <MoreVert />
+                    </IconButton>
+                  }
+                >
+                  <ListItemButton
+                    component={Link}
+                    href={`/home?slic=${encodeURIComponent(view.numSlic)}`}
+                    sx={{ minHeight: '3.5rem', pr: 7 }}
+                  >
+                    <ListItemText
+                      primary={title}
+                      slotProps={{
+                        primary: { sx: { fontWeight: 700 } },
+                        secondary: { component: 'div' },
+                      }}
+                      secondary={
+                        <>
+                          {subline}
+                          {view.note && (
+                            <Box
+                              component='span'
+                              sx={{
+                                display: 'block',
+                                fontStyle: 'italic',
+                                color: 'text.primary',
+                                overflowWrap: 'anywhere',
+                                mt: 0.5,
+                              }}
+                            >
+                              {view.note}
+                            </Box>
+                          )}
+                        </>
+                      }
+                    />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+          </Box>
+        </li>
+      ))}
+    </List>
+  );
+}

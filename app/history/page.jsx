@@ -1,55 +1,17 @@
 import { auth } from '@/auth';
-import { ObjectId } from 'mongodb';
-import client from '@/lib/db';
-import { getAllSlics } from '@/utils/slicsApi';
+import { getHistoryPage, parseHistoryQuery } from '@/utils/slicViewsApi';
 
+import HistoryView from '@/app/components/history/HistoryView';
 import HomeButton from '@/app/components/layout/HomeButton';
-import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import PageContainer from '@/app/components/layout/PageContainer';
-import LocalDate from '@/app/components/layout/LocalDate';
-import { Box, Divider, Paper, Typography } from '@mui/material';
-import theme from '@/utils/theme';
+import RedirectMessage from '@/app/components/layout/RedirectMessage';
+import HydrationGuard from '@/app/components/utility/HydrationGuard';
+import { Typography } from '@mui/material';
 
-async function getViewHistory(userId) {
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+const FILTER_KEYS = ['q', 'range', 'from', 'to', 'type', 'notes', 'sort'];
 
-  const db = client.db();
-
-  const views = await db
-    .collection('slicViews')
-    .find({
-      userId: new ObjectId(userId),
-      viewedAt: { $gte: sixMonthsAgo },
-    })
-    .sort({ viewedAt: -1 })
-    .toArray();
-
-  return views;
-}
-
-function groupByMonth(views) {
-  const groups = {};
-  for (const view of views) {
-    const d = new Date(view.viewedAt);
-    const label = d.toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-    if (!groups[label]) groups[label] = [];
-    groups[label].push(view);
-  }
-  return groups;
-}
-
-function getSlicLabel(numSlic, slics) {
-  const slic = slics.find((s) => s.numSlic === numSlic);
-  if (!slic) return numSlic;
-  if (slic.type === 'customer') return `${slic.numSlic} - ${slic.name}`;
-  return `${slic.numSlic} - ${slic.alphaSlic}`;
-}
-
-export default async function HistoryPage() {
+export default async function HistoryPage({ searchParams }) {
   const session = await auth();
-
-  console.log(session);
 
   if (!session) {
     return (
@@ -71,67 +33,29 @@ export default async function HistoryPage() {
     );
   }
 
-  const [views, slics] = await Promise.all([
-    getViewHistory(session.user.id),
-    getAllSlics(),
-  ]);
-
-  const grouped = groupByMonth(views);
-  const months = Object.keys(grouped);
+  // The filters live in the URL, so a reload or Back lands on the same view.
+  // A malformed param just falls back to the unfiltered first page.
+  const query = await searchParams;
+  const parsed = parseHistoryQuery(query);
+  const params = {};
+  if (!parsed.error) {
+    for (const key of FILTER_KEYS) {
+      const value = Array.isArray(query[key]) ? query[key][0] : query[key];
+      if (value) params[key] = value;
+    }
+  }
+  const filters = parsed.error ? parseHistoryQuery({}).filters : parsed.filters;
+  const initialPage = await getHistoryPage(session.user.id, { ...filters, cursor: null });
 
   return (
     <PageContainer>
       <HomeButton />
       <Typography variant='sectionHeading'>SLIC History</Typography>
 
-      <Paper
-        elevation={theme.layout.elevation}
-        sx={{
-          width: '100%',
-          maxWidth: theme.layout.width.panel,
-          mt: 4,
-          px: { xs: 2, sm: 4 },
-          py: 4,
-        }}
-      >
-        {months.length === 0 ? (
-          <Typography
-            variant='body1'
-            sx={{ textAlign: 'center', color: 'text.secondary' }}
-          >
-            No slic lookups in the past 6 months. Start searching!
-          </Typography>
-        ) : (
-          months.map((month, i) => (
-            <Box key={month} sx={{ mb: 4 }}>
-              <Typography variant='h6' sx={{ fontWeight: 700, mb: 1 }}>
-                {month}
-              </Typography>
-              <Divider sx={{ mb: 1.5 }} />
-              {grouped[month].map((view, j) => (
-                <Box
-                  key={j}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    py: 0.8,
-                    borderBottom:
-                      j < grouped[month].length - 1 ? '1px solid' : 'none',
-                    borderColor: 'divider',
-                  }}
-                >
-                  <Typography variant='body2'>
-                    {getSlicLabel(view.numSlic, slics)}
-                  </Typography>
-                  <Typography variant='body2' sx={{ color: 'text.secondary' }}>
-                    <LocalDate date={view.viewedAt} />
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          ))
-        )}
-      </Paper>
+      {/* Days are grouped in the phone's time zone, so render on the client. */}
+      <HydrationGuard>
+        <HistoryView initialPage={initialPage} initialParams={params} />
+      </HydrationGuard>
     </PageContainer>
   );
 }

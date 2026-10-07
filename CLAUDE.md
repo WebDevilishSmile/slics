@@ -38,6 +38,7 @@ Environment variables: `.env.example` lists every key the code reads, with a one
   - Account deletion calls `deleteUserPlaceData`. Places stay, unattributed.
   - The header-menu link is admin-only until launch (`header/UserMenu.jsx`).
   - Shared with gyms: `form/SlicTagsField.jsx`, `utility/PlaceLinks.jsx`, `utils/apiRequest.js`.
+- `slicViews` (one row per lookup, `{ userId: ObjectId, numSlic, viewedAt: Date }`) backs both the /home lookup counter and the member `/history` page (`utils/slicViewsApi.js`, `app/components/history/`, `/api/user/history*`). Rows can carry a private `note` and `hidden: true`. "Remove from history" only hides a row, so history reads filter `hidden: { $ne: true }` while the counter (`/api/user/views`, `track-view`) deliberately counts every row. Account deletion deletes them all.
 - Timestamps are `new Date().toISOString()` on write in most newer code (`created_at`, `updated_at`); some older code stored `MM/DD/YY` strings instead, so don't assume the field is always a parseable ISO string without checking the source.
 
 ### Auth

@@ -75,7 +75,8 @@ export default function PrivacyPage() {
               <strong>Lookup history.</strong> Each time you look up a SLIC while
               signed in, we record which SLIC you viewed and when. This powers
               the lookup counter on the home page and the History page for
-              supporters.
+              supporters. Notes you add to entries on the History page are
+              stored with that entry, and only you can see them.
             </>,
             <>
               <strong>IP address.</strong> When you create an account, your IP
@@ -192,7 +193,7 @@ export default function PrivacyPage() {
             'Account and profile details are kept for as long as your account exists.',
             'Comments are kept until you delete them, or until your account is deleted. Delete SLIC comments from your profile page and comments on a place from the place itself.',
             'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
-            'Lookup history is kept while your account exists. The History page shows the most recent six months.',
+            'Lookup history is kept while your account exists, and the History page shows all of it. Removing an entry hides it from that page; it is still counted in your lookup total, and it is deleted with your account.',
             'Sign-up rate-limit records expire automatically within about an hour.',
             'Session cookies expire after 30 days, or as soon as you sign out.',
           ]}

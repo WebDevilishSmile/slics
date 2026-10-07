@@ -1,46 +1,23 @@
-import { auth, signIn, signOut } from '@/auth';
+import { auth, signOut } from '@/auth';
 import Image from 'next/image';
 
-import { AppBar, Box, Button, ListItem, Toolbar } from '@mui/material';
+import { AppBar, Box, Toolbar } from '@mui/material';
 
 import UserMenu from './UserMenu';
 
 export default async function Header() {
   const session = await auth();
 
+  // Passed down to the client-side menu, which posts its Sign out form here.
+  async function signOutAction() {
+    'use server';
+    await signOut({ redirectTo: '/' });
+  }
+
   return (
     <AppBar>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <UserMenu user={session?.user}>
-          {session?.user?.role === 'admin' && (
-            <>
-              <ListItem>
-                <Button href='/admin'>Admin</Button>
-              </ListItem>
-              <ListItem>
-                <Button href='/whip-it-in-and-out'>Whip It In And Out</Button>
-              </ListItem>
-              {/* <ListItem>
-                <Button href='/covers'>Covers</Button>
-              </ListItem> */}
-            </>
-          )}
-          {session?.user ? (
-            <ListItem
-              component='form'
-              action={async () => {
-                'use server';
-                await signOut({ redirectTo: '/' });
-              }}
-            >
-              <Button type='submit'>Sign Out</Button>
-            </ListItem>
-          ) : (
-            <ListItem>
-              <Button href='/'>Sign In</Button>
-            </ListItem>
-          )}
-        </UserMenu>
+        <UserMenu user={session?.user} signOutAction={signOutAction} />
 
         <Box sx={{ position: 'relative', height: '2.4rem', width: '2.4rem' }}>
           <Image

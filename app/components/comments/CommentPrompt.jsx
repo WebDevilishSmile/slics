@@ -4,17 +4,19 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Button,
-  Dialog,
-  DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
 } from '@mui/material';
 
 import { markPrompted, readDue, snooze } from '@/utils/commentPrompt';
+import BottomSheetDialog, {
+  BottomSheetActions,
+} from '../utility/BottomSheetDialog';
 
 // Asks a driver to leave a tip about the last SLIC they looked up, once they
-// come back to the app 15 min – 2 h later (see utils/commentPrompt.js). Checks
+// come back to the app 15 min – 4 h later (see utils/commentPrompt.js). Checks
 // on mount (fresh launch) and whenever the tab/PWA returns to the foreground —
 // the usual path is lookup → Maps → drive → back to SLICs.
 function CommentPrompt({ user }) {
@@ -82,12 +84,10 @@ function CommentPrompt({ user }) {
   };
 
   return (
-    <Dialog
+    <BottomSheetDialog
       open={!!due}
       onClose={close}
       aria-labelledby='comment-prompt-title'
-      fullWidth
-      maxWidth='xs'
     >
       <DialogTitle id='comment-prompt-title'>How was {label}?</DialogTitle>
       <DialogContent>
@@ -108,16 +108,21 @@ function CommentPrompt({ user }) {
           </DialogContentText>
         )}
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2, flexWrap: 'wrap', gap: 1 }}>
-        <Button onClick={handleSnooze} color='inherit' size='small'>
-          Don&apos;t ask for 2 weeks
-        </Button>
-        <Button onClick={close}>Not now</Button>
-        <Button variant='contained' onClick={handleComment}>
+      {/* "Don't ask" silences the prompt for two weeks, so it sits apart
+          below a divider rather than next to "Not now". */}
+      <BottomSheetActions>
+        <Button variant='contained' size='large' onClick={handleComment}>
           Leave a comment
         </Button>
-      </DialogActions>
-    </Dialog>
+        <Button variant='outlined' size='large' onClick={close}>
+          Not now
+        </Button>
+        <Divider sx={{ my: 0.5 }} />
+        <Button color='inherit' onClick={handleSnooze}>
+          Don&apos;t ask again for 2 weeks
+        </Button>
+      </BottomSheetActions>
+    </BottomSheetDialog>
   );
 }
 

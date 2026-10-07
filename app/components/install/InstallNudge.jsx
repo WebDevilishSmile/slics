@@ -32,8 +32,7 @@ const writeDismissed = () => {
 };
 
 // One-time, phone-only prompt at the top of /home. Inline rather than a
-// Snackbar: the theme anchors Snackbars top-center (over the search field)
-// and ModeSwitch owns the bottom-right corner.
+// Snackbar: the theme anchors Snackbars top-center, over the search field.
 function InstallNudge() {
   const { canInstall, platform, promptInstall } = useInstallPrompt();
   const isMobile = useIsMobile();

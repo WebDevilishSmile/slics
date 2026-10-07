@@ -1,9 +1,19 @@
 'use client';
 
-import { IconButton, useColorScheme } from '@mui/material';
+import { DarkModeOutlined } from '@mui/icons-material';
+import {
+  Box,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Switch,
+  useColorScheme,
+} from '@mui/material';
 
-import { DarkModeOutlined, LightModeOutlined } from '@mui/icons-material';
-
+// The "Dark mode" row in the header menu (header/UserMenu.jsx). It replaced a
+// floating bottom-right toggle that sat on top of page text and dialogs
+// (UI-SUGGESTIONS.md #34). The whole row is a <label>, so a tap anywhere on it
+// flips the switch — no small target to hunt for.
 function ModeSwitch() {
   const { setMode, mode, colorScheme } = useColorScheme();
   if (!mode) {
@@ -11,31 +21,32 @@ function ModeSwitch() {
   }
 
   // colorScheme is the *resolved* scheme ('light' | 'dark'), so this also
-  // covers mode === 'system': the toggle always flips whatever is on screen
+  // covers mode === 'system': the switch always flips whatever is on screen
   // and pins the result as an explicit mode.
-  const toggleMode = () => setMode(colorScheme === 'dark' ? 'light' : 'dark');
+  const isDark = colorScheme === 'dark';
+  const toggleMode = () => setMode(isDark ? 'light' : 'dark');
 
   return (
-    <IconButton
-      size='large'
-      onClick={toggleMode}
-      aria-label={
-        colorScheme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
-      }
-      sx={{
-        zIndex: 2000,
-        position: 'fixed',
-        bottom: '2rem',
-        right: '1.5rem',
-        justifySelf: 'flex-end',
-        color: 'text.opposite',
-        bgcolor: 'background.opposite',
-        opacity: '40%',
-        '&:hover': { bgcolor: 'background.opposite', opacity: '50%' },
-      }}
-    >
-      {colorScheme === 'light' ? <DarkModeOutlined /> : <LightModeOutlined />}
-    </IconButton>
+    <ListItem disablePadding>
+      <Box
+        component='label'
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          width: '100%',
+          minHeight: '3rem',
+          px: 2,
+          cursor: 'pointer',
+          '&:hover': { bgcolor: 'action.hover' },
+        }}
+      >
+        <ListItemIcon>
+          <DarkModeOutlined />
+        </ListItemIcon>
+        <ListItemText primary='Dark mode' />
+        <Switch edge='end' checked={isDark} onChange={toggleMode} />
+      </Box>
+    </ListItem>
   );
 }
 

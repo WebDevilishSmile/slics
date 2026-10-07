@@ -7,7 +7,6 @@ import './globals.css';
 import Footer from './components/footer/Footer';
 import Header from './components/header/Header';
 import Container from './components/layout/Container';
-import ModeSwitch from './components/layout/ModeSwitch';
 import Providers from './components/layout/Providers';
 
 const font = Montserrat({
@@ -51,7 +50,6 @@ export default function RootLayout({ children }) {
             {children}
             <Footer />
           </Container>
-          <ModeSwitch />
         </body>
         <Analytics />
         <SpeedInsights />

@@ -900,7 +900,11 @@ matches what the Apple Maps and dispatch buttons almost do already.
 
 ### 34. The floating theme toggle covers content
 
-- [ ] **File:** `layout/ModeSwitch.jsx`. This takes over the `ModeSwitch` half of #21.
+- [x] **File:** `layout/ModeSwitch.jsx`. This takes over the `ModeSwitch` half of #21.
+
+*Done 2026-10-07:* `ModeSwitch` is now the "Dark mode" switch row in the menu (#50). The row
+is a `<label>`, so tapping anywhere on it flips the switch. The fixed toggle and its
+`zIndex: 2000` layer are gone from `app/layout.jsx`.
 
 The toggle is `position: fixed`, bottom-right, at 40% opacity with `zIndex: 2000`. At
 390px it sits on top of paragraph text on long pages (seen on `/privacy`). 2000 is above
@@ -1241,7 +1245,7 @@ floor turns it into an instant appear.
 
 ### 50. The menu and prompts as sheets
 
-- [ ] **Files:** `header/UserMenu.jsx`, `comments/CommentPrompt.jsx`,
+- [x] **Files:** `header/UserMenu.jsx`, `comments/CommentPrompt.jsx`,
   `install/IosInstallDialog.jsx`
 
 The menu is a full-screen `Dialog` with a "Menu" h2 and a centered column of text buttons:
@@ -1260,6 +1264,22 @@ On phones, the comment prompt and the iOS install steps should be **bottom sheet
 `Dialog` with `TransitionComponent={Slide}` (`direction='up'`), and `sx` pinning the paper to
 the bottom edge with rounded top corners. The buttons land in thumb reach, and the motion
 says "this came up from below".
+
+*Done 2026-10-07:* the menu, the comment prompt and the iOS install steps. The two sheets
+share `utility/BottomSheetDialog.jsx`, which wraps `Dialog` with the phone slide-up and
+bottom pinning, and `BottomSheetActions` (stacked, full-width, 48px buttons).
+- **Menu.** `header/UserMenu.jsx` is now a `SwipeableDrawer`, `min(20rem, 80vw)` wide.
+  - It has a blue header strip (logo plus "Hi, <first name>") and four groups: daily pages;
+    Profile, Admin, About and Install; outside links; Dark mode and Sign out.
+  - Every row is at least 48px. The current page gets `selected` and `aria-current`.
+  - Internal rows use `next/link`, which is #53 for the menu only.
+  - Swipe-to-open is off, because it fights the iOS back gesture. Under
+    `prefers-reduced-motion` it opens instantly.
+  - `Header.jsx` now passes a `signOutAction` server action instead of `ListItem` children.
+- **Comment prompt and iOS install steps.** On phones both are bottom sheets
+  (`slots.transition`, which replaces the deprecated `TransitionComponent`).
+  - Their actions are full-width, stacked 48px buttons.
+  - In the prompt, "Don't ask again for 2 weeks" sits below a divider, away from "Not now".
 
 ### 51. Feedback on tap
 

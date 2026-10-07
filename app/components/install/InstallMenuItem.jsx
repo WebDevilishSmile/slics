@@ -1,7 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, ListItem } from '@mui/material';
+import { InstallMobileOutlined } from '@mui/icons-material';
+import {
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
 
 import { useInstallPrompt } from '@/utils/clientFunctions';
 
@@ -25,8 +31,13 @@ function InstallMenuItem() {
 
   return (
     <>
-      <ListItem>
-        <Button onClick={handleClick}>Install app</Button>
+      <ListItem disablePadding>
+        <ListItemButton onClick={handleClick} sx={{ minHeight: '3rem' }}>
+          <ListItemIcon>
+            <InstallMobileOutlined />
+          </ListItemIcon>
+          <ListItemText primary='Install app' />
+        </ListItemButton>
       </ListItem>
 
       <IosInstallDialog open={iosOpen} onClose={() => setIosOpen(false)} />

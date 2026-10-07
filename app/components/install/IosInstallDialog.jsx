@@ -7,8 +7,6 @@ import {
 } from '@mui/icons-material';
 import {
   Button,
-  Dialog,
-  DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
@@ -18,8 +16,13 @@ import {
   ListItemText,
 } from '@mui/material';
 
+import BottomSheetDialog, {
+  BottomSheetActions,
+} from '../utility/BottomSheetDialog';
+
 // iOS has no install prompt an app can trigger; the only path is the share
-// sheet, so this walks the user through it.
+// sheet, so this walks the user through it. A bottom sheet on phones — the
+// steps point at Safari's own bottom bar, right under it.
 const steps = [
   {
     icon: <IosShare />,
@@ -41,12 +44,10 @@ const steps = [
 
 function IosInstallDialog({ open, onClose }) {
   return (
-    <Dialog
+    <BottomSheetDialog
       open={open}
       onClose={onClose}
       aria-labelledby='ios-install-title'
-      fullWidth
-      maxWidth='xs'
     >
       <DialogTitle id='ios-install-title'>
         Add SLICs to your home screen
@@ -68,10 +69,12 @@ function IosInstallDialog({ open, onClose }) {
           to sign in again — that&apos;s expected.
         </DialogContentText>
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose}>Got it</Button>
-      </DialogActions>
-    </Dialog>
+      <BottomSheetActions>
+        <Button variant='contained' size='large' onClick={onClose}>
+          Got it
+        </Button>
+      </BottomSheetActions>
+    </BottomSheetDialog>
   );
 }
 

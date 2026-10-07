@@ -3,46 +3,20 @@
 import { useEffect, useState } from 'react';
 import {
   Box,
-  Chip,
   Stack,
   TablePagination,
-  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import {
+  DayTimeChip,
+  descriptionColumn,
+  JOB_GRID_SX,
+} from '../coverBidJobs/jobGrid';
 import BidsFilters from './BidsFilters';
 import BidsJobCard from './BidsJobCard';
-
-const DAY_COLORS = {
-  sun: 'warning',
-  mon: 'primary',
-  tue: 'secondary',
-  wed: 'success',
-  thu: 'info',
-  fri: 'error',
-  sat: 'warning',
-};
-
-const DAY_LABELS = {
-  sun: 'Sun',
-  mon: 'Mon',
-  tue: 'Tue',
-  wed: 'Wed',
-  thu: 'Thu',
-  fri: 'Fri',
-  sat: 'Sat',
-};
-
-function formatTime(timeStr) {
-  if (!timeStr) return null;
-  const [h, m] = timeStr.split(':');
-  const hour = parseInt(h, 10);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  const displayHour = hour % 12 || 12;
-  return `${displayHour}:${m} ${ampm}`;
-}
 
 const DESKTOP_COLUMNS = [
   {
@@ -67,39 +41,13 @@ const DESKTOP_COLUMNS = [
       return (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, py: 0.5 }}>
           {activeDays.map(([day, time]) => (
-            <Tooltip key={day} title={formatTime(time)} arrow>
-              <Chip
-                label={`${DAY_LABELS[day]} ${formatTime(time)}`}
-                color={DAY_COLORS[day] || 'default'}
-                sx={{ fontWeight: 600, fontSize: '0.7rem' }}
-              />
-            </Tooltip>
+            <DayTimeChip key={day} day={day} value={time} showDay />
           ))}
         </Box>
       );
     },
   },
-  {
-    field: 'description',
-    headerName: 'Description',
-    flex: 1,
-    sortable: false,
-    renderCell: ({ value }) => (
-      <Tooltip title={value} arrow placement='top'>
-        <Typography
-          variant='body2'
-          sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            fontSize: '0.8rem',
-          }}
-        >
-          {value}
-        </Typography>
-      </Tooltip>
-    ),
-  },
+  descriptionColumn,
 ];
 
 const CARDS_PER_PAGE = 20;
@@ -194,10 +142,7 @@ function BidsTable({ jobs }) {
             }}
             autoHeight
             getRowHeight={() => 'auto'}
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': { alignItems: 'center', py: 0.5 },
-            }}
+            sx={JOB_GRID_SX}
           />
         </Box>
       ) : (

@@ -5,12 +5,10 @@ import dayjs from 'dayjs';
 import {
   Alert,
   Box,
-  Chip,
   MenuItem,
   Stack,
   TablePagination,
   TextField,
-  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -18,12 +16,8 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import CoverBidJobCard from './CoverBidJobCard';
 import CoverBidJobDetailDialog from './CoverBidJobDetailDialog';
-import {
-  DAY_FIELDS,
-  DAY_LABELS,
-  DAY_COLORS,
-  formatDayValue,
-} from './dayFormat';
+import { DAY_FIELDS, DAY_LABELS } from './dayFormat';
+import { DayTimeChip, descriptionColumn, JOB_GRID_SX } from './jobGrid';
 import CoverCalendar from '../covers/Calendar';
 import { getUpcomingSaturday } from '@/utils/functions';
 
@@ -33,41 +27,13 @@ const DAY_COLUMNS = DAY_FIELDS.map((day) => ({
   width: 90,
   sortable: false,
   renderCell: ({ value }) =>
-    value ? (
-      <Tooltip title={formatDayValue(value)} arrow>
-        <Chip
-          label={formatDayValue(value)}
-          color={DAY_COLORS[day] || 'default'}
-          sx={{ fontWeight: 600, fontSize: '0.7rem' }}
-        />
-      </Tooltip>
-    ) : null,
+    value ? <DayTimeChip day={day} value={value} /> : null,
 }));
 
 const DESKTOP_COLUMNS = [
   { field: 'jobNumber', headerName: 'Job #', width: 100, sortable: true },
   ...DAY_COLUMNS,
-  {
-    field: 'description',
-    headerName: 'Description',
-    flex: 1,
-    sortable: false,
-    renderCell: ({ value }) => (
-      <Tooltip title={value} arrow placement='top'>
-        <Typography
-          variant='body2'
-          sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            fontSize: '0.8rem',
-          }}
-        >
-          {value}
-        </Typography>
-      </Tooltip>
-    ),
-  },
+  descriptionColumn,
 ];
 
 const CARDS_PER_PAGE = 50;
@@ -230,8 +196,7 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
               ),
             }}
             sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell': { alignItems: 'center', py: 0.5 },
+              ...JOB_GRID_SX,
               '& .MuiDataGrid-row': { cursor: 'pointer' },
             }}
           />

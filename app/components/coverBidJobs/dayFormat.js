@@ -20,9 +20,11 @@ export const DAY_LABELS = {
   sat: 'Sat',
 };
 
+// "HH:MM" (optionally ":SS", as /bids schedules may store it) → "h:MM AM/PM".
+// Anything else is passed through as-is: bid sheets put free text in cells too.
 export function formatDayValue(value) {
   if (!value) return null;
-  const match = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
+  const match = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(value.trim());
   if (!match) return value;
   const hour = parseInt(match[1], 10);
   const ampm = hour >= 12 ? 'PM' : 'AM';

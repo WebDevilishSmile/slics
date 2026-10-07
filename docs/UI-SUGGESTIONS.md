@@ -17,7 +17,7 @@ It has two parts:
   [the suggested order](#suggested-order).
 
 **How to use this:** every item is independent unless it says `Depends on:`. Pick one,
-do it, check the box. Each item states its *blast radius* so you can judge risk before
+do it, check the box. Each item states its _blast radius_ so you can judge risk before
 starting.
 
 **Before shipping any item:** there is no test suite in this repo. Run `npm run build`,
@@ -47,8 +47,8 @@ Defects, not preferences. Items 1–3 are the reason theme edits don't take.
 - [x] **DONE.** **File:** `app/layout.jsx:29`
 
 `Montserrat({ variable: '--font-font', ... })` is declared at line 13, but line 29 applies
-only `` className={`${font.className}`} ``. In `next/font`, `font.variable` is the class
-that *defines* the custom property; `font.className` merely sets `font-family` directly.
+only ``className={`${font.className}`}``. In `next/font`, `font.variable` is the class
+that _defines_ the custom property; `font.className` merely sets `font-family` directly.
 So `--font-font` never enters the cascade, and every `fontFamily: 'var(--font-font)'` in
 `utils/theme.js` (lines 63, 103, 114, 126, 138, 153) resolves to an invalid value. Text
 looks right only because `<body>` inherits Montserrat from `font.className`.
@@ -56,9 +56,9 @@ looks right only because `<body>` inherits Montserrat from `font.className`.
 **Fix applied:** `className={font.variable}` — MUI's documented next/font pattern.
 
 `font.variable` **alone**, not alongside `font.className`. Keeping both would define the
-variable but not finish the job: `font.className` is a *class*
+variable but not finish the job: `font.className` is a _class_
 (`.__className_x { font-family: Montserrat }`) while CssBaseline sets the body font via an
-*element* selector (`body { font-family: ... }`). The class outranks it, so the theme
+_element_ selector (`body { font-family: ... }`). The class outranks it, so the theme
 still wouldn't control inherited text. With `variable` alone, nothing overrides
 CssBaseline and the chain completes:
 
@@ -67,6 +67,7 @@ theme.typography.fontFamily  →  body { font-family: var(--font-font) }  →  M
 ```
 
 **Verified in the running app**, not just by build:
+
 - `.montserrat_…__variable { --font-font: "Montserrat", "Montserrat Fallback" }` is now on
   `<body>`, and 32 `var(--font-font)` references in the emitted CSS resolve.
 - Temporarily setting `typography.fontFamily` to `'Comic Sans MS'` changed the served
@@ -76,7 +77,7 @@ theme.typography.fontFamily  →  body { font-family: var(--font-font) }  →  M
 **To change the app's font now:** swap the `Montserrat(...)` loader in `app/layout.jsx:13`
 (both the family and the `weight` array). `utils/theme.js` just points at the variable.
 
-*Blast radius:* one line, but font rendering is global — worth a look at a real page.
+_Blast radius:_ one line, but font rendering is global — worth a look at a real page.
 
 ### 2. `MuiButton` is declared twice; the first block is dead
 
@@ -86,16 +87,16 @@ Two `MuiButton` keys in the same `components` object. The second (`variants`) si
 overwrote the first (`styleOverrides`), so the `styleOverrides.root` block never applied.
 
 **What actually happened:** the three `variants` each repeated the same `fontFamily` /
-`borderRadius` / `textTransform`, and those *are* valid CSS, so buttons did get the
+`borderRadius` / `textTransform`, and those _are_ valid CSS, so buttons did get the
 intended radius and casing — just via three copies in the wrong place. Merging them back
 into a single `styleOverrides.root` is therefore **visually identical**, confirmed below.
 
-*Blast radius:* none in practice. Done together with #3.
+_Blast radius:_ none in practice. Done together with #3.
 
 ### 3. Palette paths in `MuiButton.variants` never resolve
 
 - [x] **DONE — but not the way this item originally proposed.** **File:**
-  `utils/theme.js:117, 129, 141` (and the `&:hover` blocks below each)
+      `utils/theme.js:117, 129, 141` (and the `&:hover` blocks below each)
 
 `color: 'text.light'` and `backgroundColor: 'primary.dark'` were `sx` shorthand written
 into a **plain CSS** context. MUI does not resolve palette paths in `variants[].style`, so
@@ -108,13 +109,13 @@ a regression** — three reasons:
 
 1. `color: text.light` (`#f7f7f7`) on the `text` and `outlined` variants is near-white
    text on a light background. Invisible buttons.
-2. `backgroundColor: primary.dark` on hover applied to *all* contained buttons would turn
+2. `backgroundColor: primary.dark` on hover applied to _all_ contained buttons would turn
    the 10 `color="error"` delete buttons **blue** on hover.
 3. For `contained`, the intent is already MUI's default. The emitted CSS proves it:
    ```
    :hover{--variant-containedBg:var(--mui-palette-primary-dark); …}
    ```
-   MUI already darkens to `primary.dark` on hover — and does it *per color prop*, so an
+   MUI already darkens to `primary.dark` on hover — and does it _per color prop_, so an
    error button darkens to error-dark. The hardcoded override would have destroyed that.
 
 **Fix applied:** deleted the color/hover rules rather than reviving them, and merged the
@@ -123,16 +124,16 @@ surviving `fontFamily` / `borderRadius` / `textTransform` into one `styleOverrid
 
 **Verified by diffing served CSS before/after:**
 
-| | before | after |
-|---|---|---|
-| `color:text.light` (invalid) | 4 | **0** |
-| `background-color:primary.dark` (invalid) | 4 | **0** |
-| `border-radius:1.5rem` | 4 | 4 |
-| `text-transform:none` | 4 | 4 |
-| rendered button elements | 4 | 4 |
-| `MuiButton` `:hover` rules | 20 | 16 (the 4 empty ones) |
+|                                           | before | after                 |
+| ----------------------------------------- | ------ | --------------------- |
+| `color:text.light` (invalid)              | 4      | **0**                 |
+| `background-color:primary.dark` (invalid) | 4      | **0**                 |
+| `border-radius:1.5rem`                    | 4      | 4                     |
+| `text-transform:none`                     | 4      | 4                     |
+| rendered button elements                  | 4      | 4                     |
+| `MuiButton` `:hover` rules                | 20     | 16 (the 4 empty ones) |
 
-*Blast radius:* none — appearance is unchanged; 8 invalid declarations and 4 dead rules
+_Blast radius:_ none — appearance is unchanged; 8 invalid declarations and 4 dead rules
 are simply no longer shipped. `npm run build` passes.
 
 **If you did want themed button colors**, that's a new decision rather than a bug fix —
@@ -142,7 +143,7 @@ scope it per variant and per color prop, or set it at the call site as
 ### 4. Dark-mode branch mishandles `'system'`
 
 - [x] **DONE.** **Files:** `app/components/comments/Comment.jsx:37`,
-  `app/components/comments/CommentEditor.jsx:89, 101`, `app/globals.css`
+      `app/components/comments/CommentEditor.jsx:89, 101`, `app/globals.css`
 
 These branched on `mode === 'light'`, but MUI's `mode` has three states — `'light'`,
 `'dark'`, and `'system'` — plus `undefined` on the server and first client render.
@@ -185,42 +186,43 @@ branches are gone from both components.
    element MUI doesn't style.
 
 **Verified against the served output, not by reading code:**
+
 - The variable is defined at `:root,.light{…}` and redefined at `.dark{…}` in the
   emitted CSS — document-global, so it resolves where tiptap renders (the caveat below).
-- Headless Chrome, using the *served* variable rules and the *served* init script,
+- Headless Chrome, using the _served_ variable rules and the _served_ init script,
   computed the background of a `.comment-surface` element in all four states:
 
-  | stored `mui-mode` | `prefers-color-scheme` | `<html>` class | computed background |
-  |---|---|---|---|
-  | (none → `system`) | light | `light` | `rgb(234, 248, 254)` = `#eaf8fe` ✔ (was `#050505`) |
-  | (none → `system`) | dark | `dark` | `rgb(5, 5, 5)` = `#050505` ✔ |
-  | `light` | — | `light` | `#eaf8fe` ✔ |
-  | `dark` | — | `dark` | `#050505` ✔ |
+  | stored `mui-mode` | `prefers-color-scheme` | `<html>` class | computed background                                |
+  | ----------------- | ---------------------- | -------------- | -------------------------------------------------- |
+  | (none → `system`) | light                  | `light`        | `rgb(234, 248, 254)` = `#eaf8fe` ✔ (was `#050505`) |
+  | (none → `system`) | dark                   | `dark`         | `rgb(5, 5, 5)` = `#050505` ✔                       |
+  | `light`           | —                      | `light`        | `#eaf8fe` ✔                                        |
+  | `dark`            | —                      | `dark`         | `#050505` ✔                                        |
 
 - The comment editor is only rendered behind auth, so the two components were syntax-
   checked by transpiling them rather than via the dev bundle. `npm run lint` currently
   fails at config level on every directory (`eslint.config.mjs` serialization) —
   pre-existing and unrelated.
 
-*Caveat (retained from the original item, now satisfied):* the variable is defined
+_Caveat (retained from the original item, now satisfied):_ the variable is defined
 where tiptap renders — see above.
 
-*Blast radius:* comment editor and comment cards, both schemes. Explicit light/dark
+_Blast radius:_ comment editor and comment cards, both schemes. Explicit light/dark
 users see no change; `system`+light-OS users get a readable editor for the first time.
 
 ### 5. Code blocks in comments are invisible in light mode
 
 - [x] **DONE — the premise was off, and the fix is broader than the file list.**
-  **Files:** `app/globals.css:47-85`, `app/components/comments/Comment.jsx:52`,
-  `app/components/comments/CommentEditor.jsx:88`
+      **Files:** `app/globals.css:47-85`, `app/components/comments/Comment.jsx:52`,
+      `app/components/comments/CommentEditor.jsx:88`
 
 The tiptap styles referenced four CSS variables that were **never defined anywhere**:
 `--black`, `--white`, `--gray-2`, `--gray-3` — copy-pasted from the tiptap starter
 template, which defines them; this app never did.
 
 **What was actually happening**, measured with the served CSS in headless Chrome rather
-than assumed. An undefined `var()` makes the declaration *invalid at computed-value
-time*, which does not mean "invisible": the property falls back to its initial value
+than assumed. An undefined `var()` makes the declaration _invalid at computed-value
+time_, which does not mean "invisible": the property falls back to its initial value
 (`background` → transparent) or its inherited value (`color`). So:
 
 - Nothing was ever unreadable. Text kept the scheme's normal color in both modes.
@@ -230,7 +232,7 @@ time*, which does not mean "invisible": the property falls back to its initial v
 - **And all of it applied only inside the editor.** `@tiptap/core` prepends the
   `tiptap` class to its own contenteditable element (`dist/index.js:4669`); nothing
   in `app/` puts it on a rendered comment. `Comment.jsx` renders the stored HTML via
-  `html-react-parser` into a plain `Box`, so posted comments never had *any* of these
+  `html-react-parser` into a plain `Box`, so posted comments never had _any_ of these
   rules — a `<blockquote>` was bare text, and `<hr>` was Tailwind preflight's hardcoded
   `1px solid #e5e7eb`, which ignores the color scheme.
 
@@ -240,11 +242,11 @@ from item 4) and the rendered `Box` in `Comment.jsx` — so a code block looks t
 while typing and after posting. The four undefined variables became two translucent
 MUI tokens, which sit correctly on any surface in either scheme:
 
-| was | now | light | dark |
-|---|---|---|---|
-| `--black` (code / pre background) | `--mui-palette-action-selected` | `rgba(0,0,0,.08)` | `rgba(255,255,255,.16)` |
-| `--gray-2`, `--gray-3` (hr / blockquote border) | `--mui-palette-divider` | `rgba(0,0,0,.12)` | `rgba(255,255,255,.12)` |
-| `--black`, `--white` (code / pre `color`) | *dropped — inherits* | | |
+| was                                             | now                             | light             | dark                    |
+| ----------------------------------------------- | ------------------------------- | ----------------- | ----------------------- |
+| `--black` (code / pre background)               | `--mui-palette-action-selected` | `rgba(0,0,0,.08)` | `rgba(255,255,255,.16)` |
+| `--gray-2`, `--gray-3` (hr / blockquote border) | `--mui-palette-divider`         | `rgba(0,0,0,.12)` | `rgba(255,255,255,.12)` |
+| `--black`, `--white` (code / pre `color`)       | _dropped — inherits_            |                   |                         |
 
 Two smaller things went with it: `pre`'s `font-family: 'JetBrainsMono', monospace`
 was deleted (that font is loaded nowhere, so it always fell through to the generic
@@ -255,16 +257,16 @@ placeholder rule `.tiptap p.is-editor-empty…` stays as-is — it is editor-onl
 `<code>`, `<pre><code>`, `<blockquote>` and `<hr>` — once under `.tiptap` (editor) and
 once as a bare rendered comment:
 
-| | before (editor) | before (rendered) | after (both) |
-|---|---|---|---|
-| `code` / `pre` background | transparent | transparent | `action.selected` ✔ |
-| `blockquote` border-left | `0px none` | `0px` | `3px solid divider` ✔ |
-| `hr` border-top | `0px none` (invisible) | `1px solid #e5e7eb` (fixed grey) | `1px solid divider` ✔ |
-| undefined `var()`s in served CSS | 5 | | **0** |
+|                                  | before (editor)        | before (rendered)                | after (both)          |
+| -------------------------------- | ---------------------- | -------------------------------- | --------------------- |
+| `code` / `pre` background        | transparent            | transparent                      | `action.selected` ✔   |
+| `blockquote` border-left         | `0px none`             | `0px`                            | `3px solid divider` ✔ |
+| `hr` border-top                  | `0px none` (invisible) | `1px solid #e5e7eb` (fixed grey) | `1px solid divider` ✔ |
+| undefined `var()`s in served CSS | 5                      |                                  | **0**                 |
 
 Rendered and editor now compute identically in each scheme.
 
-*Blast radius:* larger than the original line said — it now includes **posted**
+_Blast radius:_ larger than the original line said — it now includes **posted**
 comments that contain code, quotes or rules, which pick up a background/border for the
 first time. Those elements only arise from StarterKit's markdown-style shortcuts
 (backtick-wrapped text, a triple-backtick fence, a leading `>`, a `---` line) since the
@@ -274,11 +276,11 @@ display half, remove `className='comment-content'` from `Comment.jsx`.
 ### 6. Theme toggle is asymmetric
 
 - [x] **DONE — cleanup, not a behavior change.** **File:**
-  `app/components/layout/ModeSwitch.jsx:13-24`
+      `app/components/layout/ModeSwitch.jsx:13-24`
 
 The second `if` was missing `else`, so after the `system`+dark branch fired, the
 `light`/`dark` chain below was evaluated again. **It was harmless in practice:** that
-chain compared the function *parameter* `mode`, still `'system'`, so nothing matched
+chain compared the function _parameter_ `mode`, still `'system'`, so nothing matched
 and nothing double-fired. The four branches were correct, just written as if
 `setMode` were synchronous.
 
@@ -296,15 +298,15 @@ can be clicked. It is the same source of truth the icon already used.
 **Verified by clicking the real button** on the running app over the DevTools Protocol,
 starting from a cleared `mui-mode` (i.e. `system`) under each OS preference:
 
-| start | initial | 1st click | 2nd click |
-|---|---|---|---|
-| system + OS light | `html.light`, moon icon | `html.dark`, stored `dark` | `html.light`, stored `light` |
-| system + OS dark | `html.dark`, sun icon | `html.light`, stored `light` | `html.dark`, stored `dark` |
+| start             | initial                 | 1st click                    | 2nd click                    |
+| ----------------- | ----------------------- | ---------------------------- | ---------------------------- |
+| system + OS light | `html.light`, moon icon | `html.dark`, stored `dark`   | `html.light`, stored `light` |
+| system + OS dark  | `html.dark`, sun icon   | `html.light`, stored `light` | `html.dark`, stored `dark`   |
 
 The same test against the **original** four-branch code produced identical output,
 confirming this is a pure simplification.
 
-*Blast radius:* none — the toggle button only, and its behavior is unchanged.
+_Blast radius:_ none — the toggle button only, and its behavior is unchanged.
 
 ---
 
@@ -325,11 +327,11 @@ shared `primary`:
 
 ```js
 const tokens = {
-  brand: lightBlue,   // primary shades + the light scheme's paper
-  ink: '#222222',     // dark text
-  chalk: '#f7f7f7',   // light text
-  canvas: '#edf3fc',  // light page background; the dark scheme's "opposite"
-  void: '#050505',    // dark page background; the light scheme's "opposite"
+  brand: lightBlue, // primary shades + the light scheme's paper
+  ink: '#222222', // dark text
+  chalk: '#f7f7f7', // light text
+  canvas: '#edf3fc', // light page background; the dark scheme's "opposite"
+  void: '#050505', // dark page background; the light scheme's "opposite"
   comment: '#eaf8fe', // comment surface in the light scheme
 };
 ```
@@ -341,7 +343,7 @@ are untouched, so no call sites change.
 **Two deliberate departures from the sketch above:**
 
 1. `paper` was renamed `canvas`. MUI already has `background.paper`, and in the light
-   scheme that key is `lightBlue[50]` (`#e1f5fe`), *not* `#edf3fc` — a token literally
+   scheme that key is `lightBlue[50]` (`#e1f5fe`), _not_ `#edf3fc` — a token literally
    named `paper` that isn't what `background.paper` resolves to would be a trap.
    `canvas` is the light **page** background, which is what `#edf3fc` is.
 2. `chalk: '#f7f7f7'` was added. It appears once here (light `text.light`) so it wasn't
@@ -356,17 +358,17 @@ deleted them all.
 
 **Verified as a pure refactor by diffing the served output before and after:**
 
-| | before | after |
-|---|---|---|
-| `--mui-palette-*` variables (`:root,.light` + `.dark`) | 430 | 430, **byte-identical** |
-| emitted CSS rules (all `<style>` tags, boundary-independent) | 197 | 197, **0 added / 0 removed** |
-| hex literals in emitted CSS | 182 | 182, identical multiset |
-| hex literals in `theme.js` outside `tokens` | 18 | **0** |
+|                                                              | before | after                        |
+| ------------------------------------------------------------ | ------ | ---------------------------- |
+| `--mui-palette-*` variables (`:root,.light` + `.dark`)       | 430    | 430, **byte-identical**      |
+| emitted CSS rules (all `<style>` tags, boundary-independent) | 197    | 197, **0 added / 0 removed** |
+| hex literals in emitted CSS                                  | 182    | 182, identical multiset      |
+| hex literals in `theme.js` outside `tokens`                  | 18     | **0**                        |
 
 The served bundle was confirmed to contain the new `tokens` module at the time of the
 diff, so the comparison was against the refactored code, not a cached compile.
 
-*Blast radius:* none — nothing the browser receives changed.
+_Blast radius:_ none — nothing the browser receives changed.
 
 ### 8. Prune or wire up the dead palette keys
 
@@ -374,16 +376,16 @@ diff, so the comparison was against the refactored code, not a cached compile.
 
 Verified zero references across `app/` and `utils/`, and **deleted** from both schemes:
 
-| Key | Was defined at | Uses |
-|---|---|---|
-| `palette.containedButton` | `:54-57` | 0 |
-| `background.solid` | `:62`, `:38` (dark) | 0 |
-| `background.grey` | `:63`, `:39` (dark) | 0 |
-| `text.solid` | `:70`, `:44` (dark) | 0 |
-| `text.dark` | `:67`, `:43` (dark) | 0 |
+| Key                       | Was defined at      | Uses |
+| ------------------------- | ------------------- | ---- |
+| `palette.containedButton` | `:54-57`            | 0    |
+| `background.solid`        | `:62`, `:38` (dark) | 0    |
+| `background.grey`         | `:63`, `:39` (dark) | 0    |
+| `text.solid`              | `:70`, `:44` (dark) | 0    |
+| `text.dark`               | `:67`, `:43` (dark) | 0    |
 
 The `ink` token (`#222222`) and the `blue`/`grey` color imports only fed those keys, so
-they went too. `containedButton` was *not* adopted for item 26: its values (`blue[300]`
+they went too. `containedButton` was _not_ adopted for item 26: its values (`blue[300]`
 on `#222222`) didn't match the Buy-Me-a-Coffee style anyway, so item 26 should add a
 purpose-named key if it wants one rather than resurrect this.
 
@@ -418,7 +420,7 @@ was replaced with the single-source-of-truth note from item 10.
 
 `globals.css` defined a full second palette — `--foreground`, `--background`, `--primary`,
 `--secondary`, `--accent`, `--error`, `--warning`, `--info`, `--success` — that was
-**referenced nowhere** and whose values *conflicted* with the real theme (`--primary:
+**referenced nowhere** and whose values _conflicted_ with the real theme (`--primary:
 #0070f3` vs the actual `lightBlue[600]` = `#039be5`). The Tailwind
 `colors: { background, foreground }` extension that mapped to them was equally unused:
 `bg-background`, `text-foreground`, `bg-foreground` and `text-background` appeared nowhere,
@@ -431,7 +433,7 @@ only the color mapping went, and a comment in the config says where colors do li
 Also removed the `./pages` and `./components` content globs — neither directory exists at
 the repo root, so they were dead. `./app/**` is the only one that matched anything.
 
-*Blast radius:* none — `npm run build` passes and the served CSS lost only the unused
+_Blast radius:_ none — `npm run build` passes and the served CSS lost only the unused
 custom properties.
 
 ### 11. Fold layout constants into the theme
@@ -444,18 +446,18 @@ custom properties.
 
 **Where they went:**
 
-| Was | Now | Notes |
-|---|---|---|
-| `MAX_WIDTH = '32rem'` | `theme.layout.maxWidth` → since item 19, `theme.layout.width.panel` | |
-| `MIN_HEIGHT = '24rem'` | `theme.layout.minHeight` | |
-| `ELEVATION = 6` | `theme.layout.elevation` | |
-| `BORDER_RADIUS = '6px'` (dead) | `theme.shape.borderRadius = 8` | see below |
+| Was                            | Now                                                                 | Notes     |
+| ------------------------------ | ------------------------------------------------------------------- | --------- |
+| `MAX_WIDTH = '32rem'`          | `theme.layout.maxWidth` → since item 19, `theme.layout.width.panel` |           |
+| `MIN_HEIGHT = '24rem'`         | `theme.layout.minHeight`                                            |           |
+| `ELEVATION = 6`                | `theme.layout.elevation`                                            |           |
+| `BORDER_RADIUS = '6px'` (dead) | `theme.shape.borderRadius = 8`                                      | see below |
 
 **How consumers read them:** `import theme from '@/utils/theme'` and
 `theme.layout.maxWidth` — the idiom `Comment.jsx` / `TablePaginationActions.jsx` already
 used. This required dropping the `'use client'` directive from `utils/theme.js`: with it,
 the nine consumers that are server components (`history/page.jsx`, `home/EmptySlic.jsx`,
-`signIn/Membership.jsx`, …) would receive a client *reference* whose `.layout` is
+`signIn/Membership.jsx`, …) would receive a client _reference_ whose `.layout` is
 unreadable on the server. The directive was never load-bearing — `Providers.jsx` is
 already the client boundary, and `createTheme` is pure — so nothing else changes. Both
 server and client components now import the same plain object.
@@ -481,7 +483,7 @@ is gone rather than rewritten. The pre-existing dead `theme` imports in `Comment
 `--mui-layout-*` vars, `--mui-shape-borderRadius:8px`, and `max-width:32rem` on the
 content column.
 
-*Blast radius:* the radius change above. Everything else is value-preserving.
+_Blast radius:_ the radius change above. Everything else is value-preserving.
 
 ---
 
@@ -490,7 +492,7 @@ content column.
 Each is a few lines in `theme.components`.
 
 > **Applies to all of Tier 2:** an explicit prop at a call site still beats a theme
-> default. These reduce *future* repetition, but produce no immediate visual change until
+> default. These reduce _future_ repetition, but produce no immediate visual change until
 > the call sites are also cleaned up. Do each alongside its call-site pass, or expect
 > nothing to look different.
 
@@ -533,15 +535,15 @@ the home page's `home/SlicsSearch.jsx`, every `slicForm/*Field.jsx`, `profile/Ed
 `admin/coverBidJobs/CoverBidJobRowCells.jsx`, which would stretch. Keeping the current
 look would mean pinning ~38 props to delete 24. Net negative, so the default stays MUI's.
 
-If the app *should* move to all-small, all-full-width inputs, that's a design decision to
+If the app _should_ move to all-small, all-full-width inputs, that's a design decision to
 make on purpose — set the default and walk the 18 + 20 sites above — not a cleanup.
 
 ### 14. `MuiChip.defaultProps.size = 'small'`
 
 - [x] **DONE.** Default set in `utils/theme.js`; `size='small'` removed from the 7 sites
-  that had it (the 5 day-of-week chips plus `bids/BidsJobCard.jsx:65` and
-  `admin/users/UserCard.jsx:124`). The one chip that had no size — the comment count on
-  `home/TitleAddress.jsx` — is pinned `size='medium'` so the home page doesn't change.
+      that had it (the 5 day-of-week chips plus `bids/BidsJobCard.jsx:65` and
+      `admin/users/UserCard.jsx:124`). The one chip that had no size — the comment count on
+      `home/TitleAddress.jsx` — is pinned `size='medium'` so the home page doesn't change.
 
   The shared `DayChip` idea was **not** done: the five day chips don't actually share
   their `sx` (`fontWeight: 700, minWidth: 48` ×2, `fontWeight: 600, fontSize: '0.7rem'`
@@ -552,18 +554,18 @@ make on purpose — set the default and walk the 18 + 20 sites above — not a c
 ### 15. `MuiCard.defaultProps.variant = 'outlined'`
 
 - [x] **DONE.** Default set; `variant='outlined'` removed from
-  `admin/coverBidJobs/CoverBidJobEditCard.jsx`, `bids/BidsJobCard.jsx`,
-  `coverBidJobs/CoverBidJobCard.jsx`. **Visible change:** the fourth `Card`,
-  `admin/comments/Comment.jsx`, was implicitly elevated and is now outlined like the rest.
+      `admin/coverBidJobs/CoverBidJobEditCard.jsx`, `bids/BidsJobCard.jsx`,
+      `coverBidJobs/CoverBidJobCard.jsx`. **Visible change:** the fourth `Card`,
+      `admin/comments/Comment.jsx`, was implicitly elevated and is now outlined like the rest.
 
 ### 16. `MuiSnackbar.defaultProps` for `autoHideDuration` + `anchorOrigin`
 
 - [x] **DONE.** Default `autoHideDuration: 6000`, `anchorOrigin: top/center`. Both props
-  removed from the four identical sites (`admin/slics/SlicOptions.jsx`,
-  `home/TitleAddress.jsx`, `slicForm/FormActions.jsx`, `profile/ProfileData.jsx`); the
-  redundant `anchorOrigin` also removed from `drivers/editDriver/EditDriverField.jsx` and
-  `profile/CommentDelete.jsx`, which keep their explicit 3000/4000 ms — no reason to
-  believe those aren't deliberate, and changing a toast's timing isn't a cleanup.
+      removed from the four identical sites (`admin/slics/SlicOptions.jsx`,
+      `home/TitleAddress.jsx`, `slicForm/FormActions.jsx`, `profile/ProfileData.jsx`); the
+      redundant `anchorOrigin` also removed from `drivers/editDriver/EditDriverField.jsx` and
+      `profile/CommentDelete.jsx`, which keep their explicit 3000/4000 ms — no reason to
+      believe those aren't deliberate, and changing a toast's timing isn't a cleanup.
 
   One site needed pinning: `slicForm/Warning.jsx` had **no** `autoHideDuration`, i.e. it
   stayed up until dismissed (it even suppresses click-away). It now passes
@@ -585,7 +587,7 @@ mt: '2rem', py: '2rem', px: '1rem'
 
 `comments/CommentsContainer.jsx`, `comments/NoSlicComments.jsx`, `home/EmptySlic.jsx`,
 `home/MemberDisplay.jsx`, `home/SlicDetailsContainer.jsx`. (`profile/ProfileComments.jsx`
-was originally listed too, but it had drifted into a comment *card* — `mt: 2, p: 2`, no
+was originally listed too, but it had drifted into a comment _card_ — `mt: 2, p: 2`, no
 min-height/flex — and is the twin of `admin/user-page/UserComments.jsx`; that pair is
 item 28, not this one.)
 
@@ -599,16 +601,16 @@ comments panels override `px: 2` so comment cards get the width; `justifyContent
 `backgroundImage` itself — the variant reads `theme.vars.shadows[6]` / `theme.vars.overlays[6]`,
 the same vars MUI's own path uses, so it renders identically in both schemes.
 
-*Blast radius:* five of the app's most visible surfaces. Check each in both schemes.
+_Blast radius:_ five of the app's most visible surfaces. Check each in both schemes.
 
 ### 18. A `sectionHeading` typography variant
 
 - [x] Replaced `app/components/layout/StyledHeading.jsx` (18 sites). Heading style is now
-  a theme edit: `MuiTypography.variants` in `utils/theme.js` defines `sectionHeading` as
-  `{ ...theme.typography.h2, fontWeight: 800, uppercase, centered, maxWidth, px }` inside
-  a `({ theme })` callback, so it stays in lockstep with h2 — including the breakpoint
-  sizes `responsiveFontSizes()` adds, which a static custom `typography.*` entry would
-  have missed. `variantMapping` keeps the `<h2>` element. (`fontWeight` is a number now.)
+      a theme edit: `MuiTypography.variants` in `utils/theme.js` defines `sectionHeading` as
+      `{ ...theme.typography.h2, fontWeight: 800, uppercase, centered, maxWidth, px }` inside
+      a `({ theme })` callback, so it stays in lockstep with h2 — including the breakpoint
+      sizes `responsiveFontSizes()` adds, which a static custom `typography.*` entry would
+      have missed. `variantMapping` keeps the `<h2>` element. (`fontWeight` is a number now.)
 
   Reconciled while doing it: the two admin sub-page titles that used `heading='h3'`
   (`/admin/new`, `/admin/edit`) now use `sectionHeading` like every other admin title;
@@ -618,8 +620,8 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 ### 19. Name the width scale
 
 - [x] `MAX_WIDTH` (`'32rem'`, 16 importers) was one of about ten unnamed widths:
-  `'30rem'` ×10 (form fields), `'40rem'` ×5 (prose), `'55rem'` ×4 (wide pages), plus
-  `'52rem'`, `'50rem'`, `'45rem'`, `'22rem'`, `'12rem'`, `'600px'` ×2, `'1436px'`.
+      `'30rem'` ×10 (form fields), `'40rem'` ×5 (prose), `'55rem'` ×4 (wide pages), plus
+      `'52rem'`, `'50rem'`, `'45rem'`, `'22rem'`, `'12rem'`, `'600px'` ×2, `'1436px'`.
 
   **Done:** `theme.layout.width` is a five-step scale — `field` 30rem · `panel` 32rem (the
   old `layout.maxWidth`, renamed) · `prose` 40rem · `wide` 55rem · `page` 1436px — and
@@ -638,22 +640,22 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 ### 20. Pick one spacing dialect
 
 - [x] **Spacing half done.** `theme.spacing` is MUI's default 8px and the root font size
-  is the browser default 16px, so `mt: '1rem'` and `mt: 2` were the same pixel value
-  written two ways. Every spacing prop in an `sx` object (`m*`, `p*`, `gap*`, the
-  longhands, and responsive objects like `px: { xs: '1rem', sm: '2rem' }`) now uses the
-  number dialect — 188 values across 69 files, `'1rem'` → `2`, `'2rem'` → `4`, etc. A
-  scripted, zero-visual-change transform; the only non-grid values kept their exact
-  fraction (`py: 0.8`, `mt: 0.6`). `app/global-error.jsx` keeps its rem strings on
-  purpose — it uses plain `style`, where a number would mean px.
+      is the browser default 16px, so `mt: '1rem'` and `mt: 2` were the same pixel value
+      written two ways. Every spacing prop in an `sx` object (`m*`, `p*`, `gap*`, the
+      longhands, and responsive objects like `px: { xs: '1rem', sm: '2rem' }`) now uses the
+      number dialect — 188 values across 69 files, `'1rem'` → `2`, `'2rem'` → `4`, etc. A
+      scripted, zero-visual-change transform; the only non-grid values kept their exact
+      fraction (`py: 0.8`, `mt: 0.6`). `app/global-error.jsx` keeps its rem strings on
+      purpose — it uses plain `style`, where a number would mean px.
 
   **Rule going forward:** spacing props in `sx` take numbers, never rem strings. Widths,
   heights, offsets (`top`/`left`…) and `fontSize` still use rem strings — a bare number
-  there is *pixels*, not spacing, so they're not part of this dialect (see 19 for widths).
+  there is _pixels_, not spacing, so they're not part of this dialect (see 19 for widths).
 
 - [x] Still open from this item: ~20 `fontSize` overrides in `sx` that bypass the
-  typography scale entirely.
+      typography scale entirely.
 
-  *Done 2026-10-07:* #28 removed the duplicate copies. The remaining text overrides now use
+  _Done 2026-10-07:_ #28 removed the duplicate copies. The remaining text overrides now use
   the scale:
   - The 0.65–0.8rem one-offs in the bid filters, job cards and grids now use `caption`
     (0.75rem): `variant='caption'`, or `typography: 'caption'` on chips and toggles.
@@ -669,13 +671,13 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 ### 21. Move `zIndex` literals into the theme
 
 - [x] Unmanaged and uncoordinated: `10` (`bids/BidsFilters.jsx:51`,
-  `coverBidJobs/CoverBidJobsTable.jsx:140`), `1000` (`footer/FooterContainer.jsx:10`),
-  `2000` (`layout/ModeSwitch.jsx:31`). MUI's own `theme.zIndex` scale tops out at 1500 for
-  tooltips, so `ModeSwitch` currently floats above MUI modals — probably unintended.
-  #34 moves `ModeSwitch` into the header, which removes that layer entirely and leaves
-  only the `10` and `1000` values for this item.
+      `coverBidJobs/CoverBidJobsTable.jsx:140`), `1000` (`footer/FooterContainer.jsx:10`),
+      `2000` (`layout/ModeSwitch.jsx:31`). MUI's own `theme.zIndex` scale tops out at 1500 for
+      tooltips, so `ModeSwitch` currently floats above MUI modals — probably unintended.
+      #34 moves `ModeSwitch` into the header, which removes that layer entirely and leaves
+      only the `10` and `1000` values for this item.
 
-  *Done 2026-10-07:*
+  _Done 2026-10-07:_
   - The two sticky filter bars use `zIndex: 'stickyBar'`, a new key in `theme.zIndex`
     (10, below every MUI layer). `sx` resolves it by name.
   - The footer's `1000` (and its `bottom: 0`) did nothing on a `position: 'static'`
@@ -689,15 +691,15 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 ### 22. Delete two dead layout files
 
 - [x] `app/components/layout/StyledPage.jsx` and `app/components/layout/Wrapper.jsx` —
-  verified: **never imported anywhere**. `Wrapper.jsx` additionally computes a `margin`
-  state it never applies to its `sx`, inside a `useEffect` with no dependency array.
+      verified: **never imported anywhere**. `Wrapper.jsx` additionally computes a `margin`
+      state it never applies to its `sx`, inside a `useEffect` with no dependency array.
 
-*Blast radius:* none.
+_Blast radius:_ none.
 
 ### 23. Remove three dead theme imports
 
 - [x] `drivers/TablePaginationActions.jsx:1`, `comments/CommentEditor.jsx:8`,
-  `comments/Comment.jsx:6` import `theme from '@/utils/theme'` and never reference it.
+      `comments/Comment.jsx:6` import `theme from '@/utils/theme'` and never reference it.
 
   Worth removing so the pattern isn't copied: with `cssVariables` enabled, a **static**
   theme import bypasses color-scheme resolution and would lock a component to light-mode
@@ -707,11 +709,11 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 ### 24. Consolidate the page shells
 
 - [x] `layout/Container.jsx` and `layout/PageContainer.jsx` (plus the two dead files in
-  item 22) each redeclare the same `minHeight: '100dvh'` + centered flex column +
-  `bgcolor: 'background.default'` recipe with different hardcoded padding.
-  `Depends on:` item 22.
+      item 22) each redeclare the same `minHeight: '100dvh'` + centered flex column +
+      `bgcolor: 'background.default'` recipe with different hardcoded padding.
+      `Depends on:` item 22.
 
-  *Done 2026-10-07, together with #37's doubled-`minHeight` bullet:*
+  _Done 2026-10-07, together with #37's doubled-`minHeight` bullet:_
   - `Container` is the shell: a column at least one screen tall, on the page background.
     The footer pins itself to its bottom with `mt: 'auto'`.
   - `PageContainer` is the content column only, with no `minHeight`.
@@ -723,17 +725,17 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 ### 25. Off-brand icon color
 
 - [x] `fill: '#1976d2'` in `about/Community.jsx:18`, `about/Contributions.jsx:20`,
-  `about/Future.jsx:19`. That hex is MUI's **default** primary — the app's actual primary
-  is `lightBlue[600]` (`#039be5`), so these icons are visibly off-brand today. Replace
-  with the palette token.
+      `about/Future.jsx:19`. That hex is MUI's **default** primary — the app's actual primary
+      is `lightBlue[600]` (`#039be5`), so these icons are visibly off-brand today. Replace
+      with the palette token.
 
-  *Done 2026-10-07:* `color: 'primary.main'`. An `SvgIcon` paints with `currentColor`.
+  _Done 2026-10-07:_ `color: 'primary.main'`. An `SvgIcon` paints with `currentColor`.
 
 ### 26. Five copies of the Buy-Me-a-Coffee button style
 
 - [x] `backgroundColor: '#f7f7f7', color: 'black'` repeated verbatim at
-  `about/Contributions.jsx:35`, `signIn/Membership.jsx:76`, `profile/ProfileData.jsx:95`,
-  `coverBidJobs/NotMember.jsx:25`, `layout/BuyMeACoffeeButton.jsx:30`.
+      `about/Contributions.jsx:35`, `signIn/Membership.jsx:76`, `profile/ProfileData.jsx:95`,
+      `coverBidJobs/NotMember.jsx:25`, `layout/BuyMeACoffeeButton.jsx:30`.
 
   `#f7f7f7` is exactly `palette.text.light`. `about/AboutLink.jsx:30` already accepts the
   color as a prop, so this is half-done already. If this wants a palette home, add a
@@ -743,7 +745,7 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
   Note these use literal `'black'`; the theme's former `#222222` dark-text keys
   (`text.dark`/`text.solid`) were deleted as unused in item 8, so pick one value here.
 
-  *Done 2026-10-07:*
+  _Done 2026-10-07:_
   - New `palette.bmc` in both schemes: `main` is `tokens.chalk`, `contrastText` is
     `tokens.void`, and `light`/`dark` are derived for hover.
   - One `layout/BmcButton.jsx` (`color='bmc'`, logo, new tab) replaces all five copies.
@@ -756,19 +758,19 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 ### 27. Duplicated `bounce` keyframe
 
 - [x] Byte-identical in `layout/BuyMeACoffeeButton.jsx:15-20` and
-  `about/AboutLink.jsx:15-20`.
+      `about/AboutLink.jsx:15-20`.
 
-  *Done 2026-10-07:* the keyframe now lives once, in `utility/BouncingArrow.jsx`, with the
+  _Done 2026-10-07:_ the keyframe now lives once, in `utility/BouncingArrow.jsx`, with the
   reduced-motion opt-out. Both buttons render it.
 
 ### 28. Near-duplicate card components
 
 - [x] `bids/BidsJobCard.jsx` and `coverBidJobs/CoverBidJobCard.jsx` are near-identical,
-  including a byte-identical "Show route" Accordion block and the same
-  `pb: '8px !important'` hack. Their DataGrid `sx` is likewise duplicated between
-  `bids/BidsTable.jsx:200` and `coverBidJobs/CoverBidJobsTable.jsx:235`.
+      including a byte-identical "Show route" Accordion block and the same
+      `pb: '8px !important'` hack. Their DataGrid `sx` is likewise duplicated between
+      `bids/BidsTable.jsx:200` and `coverBidJobs/CoverBidJobsTable.jsx:235`.
 
-  *Done 2026-10-07:*
+  _Done 2026-10-07:_
   - `coverBidJobs/JobCard.jsx` is the one card. The two old cards are thin wrappers that
     map each job shape into it.
   - `coverBidJobs/jobGrid.jsx` holds the shared grid `sx`, the Description column and the
@@ -780,14 +782,14 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 ### 29. `useIsMobile` disagrees with the theme's breakpoints
 
 - [x] `utils/clientFunctions.js:23` hardcodes 768px. The theme defines `sm: 600` and
-  `md: 960`. So `useIsMobile()` and `useMediaQuery(theme.breakpoints.down('md'))` disagree
-  about what "mobile" means depending on which component you're in.
+      `md: 960`. So `useIsMobile()` and `useMediaQuery(theme.breakpoints.down('md'))` disagree
+      about what "mobile" means depending on which component you're in.
 
   Rebase the hook on `theme.breakpoints`, or delete it in favor of `useMediaQuery`.
   `coverBidJobs/CoverBidJobsTable.jsx` and `admin/coverBidJobs/CoverBidJobsManager.jsx`
   already use the `useMediaQuery` form.
 
-  *Done 2026-10-07:* the hook is deleted.
+  _Done 2026-10-07:_ the hook is deleted.
   - Its only real caller, the phone-only install nudge, uses
     `useMediaQuery(theme.breakpoints.down('sm'))`.
   - `CommentsContainer` imported it without using it.
@@ -795,10 +797,10 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 ### 30. Unused / contradicted constant imports
 
 - [x] `admin/users/[id]/page.jsx:15` imports `MAX_WIDTH` and never uses it.
-  `comments/CommentEditor.jsx:7` and `comments/Comment.jsx:10` import `ELEVATION`, then
-  hardcode `elevation={0}` and `elevation={1}` instead.
+      `comments/CommentEditor.jsx:7` and `comments/Comment.jsx:10` import `ELEVATION`, then
+      hardcode `elevation={0}` and `elevation={1}` instead.
 
-  *Done, found 2026-10-07:* no `MAX_WIDTH` or `ELEVATION` imports remain anywhere. Item 11
+  _Done, found 2026-10-07:_ no `MAX_WIDTH` or `ELEVATION` imports remain anywhere. Item 11
   folded those constants into the theme and took their imports with it.
 
 ---
@@ -846,7 +848,7 @@ catch.
   Protocol at a real **390×844** phone viewport (iPhone 14 class), in light and dark.
   Font sizes, offsets and page heights below come from `getComputedStyle` and
   `getBoundingClientRect`.
-  *Gotcha:* plain `chrome --headless --window-size=390,…` lays the page out at a 500px
+  _Gotcha:_ plain `chrome --headless --window-size=390,…` lays the page out at a 500px
   minimum and then crops the screenshot. That shows fake right-edge clipping. Use
   `Emulation.setDeviceMetricsOverride` instead.
 - **Signed-in screens** (`/home`, comments, history) are behind auth, so findings there come
@@ -873,15 +875,15 @@ the feature keep today's instant behavior. Every animation also needs a
 
 ## Suggested order
 
-| Order | Items | Why |
-|---|---|---|
-| 1 | #32, #33 | Accessibility defects, mostly one-line fixes |
-| 2 | #31, #35 | Color decisions with app-wide reach; each is its own reviewed change |
-| 3 | #34, #36–#39 | Phone layout: gutters, dead space, heading sizes, the floating toggle |
-| 4 | #53 | Internal links reload the whole page. One theme line, and every later nav change benefits |
-| 5 | #40–#46 | The lookup screen and its neighbors, which drivers use daily |
-| 6 | #47–#52 | Motion and navigation polish |
-| 7 | #54–#57 | Optional features |
+| Order | Items        | Why                                                                                       |
+| ----- | ------------ | ----------------------------------------------------------------------------------------- |
+| 1     | #32, #33     | Accessibility defects, mostly one-line fixes                                              |
+| 2     | #31, #35     | Color decisions with app-wide reach; each is its own reviewed change                      |
+| 3     | #34, #36–#39 | Phone layout: gutters, dead space, heading sizes, the floating toggle                     |
+| 4     | #53          | Internal links reload the whole page. One theme line, and every later nav change benefits |
+| 5     | #40–#46      | The lookup screen and its neighbors, which drivers use daily                              |
+| 6     | #47–#52      | Motion and navigation polish                                                              |
+| 7     | #54–#57      | Optional features                                                                         |
 
 ---
 
@@ -890,23 +892,23 @@ the feature keep today's instant behavior. Every animation also needs a
 ### 31. The brand blue fails text contrast
 
 - [x] **Files:** `utils/theme.js` (`primary`), `app/layout.jsx` (`themeColor`),
-  `app/manifest.js` (`theme_color`)
+      `app/manifest.js` (`theme_color`)
 
-*Done 2026-10-07:* `primary` is split per scheme, with one change from the recommendation
+_Done 2026-10-07:_ `primary` is split per scheme, with one change from the recommendation
 below. Stock `lightBlue[800]` still left four small-text pairs just under 4.5: footer
 `text.light` on it 4.47, and it as text on the canvas 4.30, the paper 4.27 and the comment
 surface 4.42. So the light `main` is a new `tokens.ink` `#0172b5`, which is [800] darkened 4%.
 That is the least darkening that clears all four.
 
-| Pair | Ratio |
-|---|---|
-| white label on light `main` `#0172b5` | 5.15 |
-| footer `text.light` on it | 4.80 |
-| it as text on canvas / paper / comment | 4.61 / 4.58 / 4.75 |
-| white on light `dark` `brand[900]` (hover, menu header band) | 7.39 |
-| dark `contrastText` `rgba(0, 0, 0, 0.87)` on dark `main` `brand[600]` | 6.09 |
-| dark `main` as text on the dark canvas | 6.56 |
-| white on dark `dark` `brand[800]` (menu header band) | 4.79 |
+| Pair                                                                  | Ratio              |
+| --------------------------------------------------------------------- | ------------------ |
+| white label on light `main` `#0172b5`                                 | 5.15               |
+| footer `text.light` on it                                             | 4.80               |
+| it as text on canvas / paper / comment                                | 4.61 / 4.58 / 4.75 |
+| white on light `dark` `brand[900]` (hover, menu header band)          | 7.39               |
+| dark `contrastText` `rgba(0, 0, 0, 0.87)` on dark `main` `brand[600]` | 6.09               |
+| dark `main` as text on the dark canvas                                | 6.56               |
+| white on dark `dark` `brand[800]` (menu header band)                  | 4.79               |
 
 Also changed:
 
@@ -922,13 +924,13 @@ Left over: in dark mode, a contained button under a mouse hover is 4.06 (black l
 
 Measured:
 
-| Pair | Ratio | AA needs |
-|---|---|---|
-| white button label on `primary.main` `#039be5` | **3.08** | 4.5 |
-| footer `text.light` `#f7f7f7` on `#039be5` | **2.87** | 4.5 |
+| Pair                                                            | Ratio    | AA needs            |
+| --------------------------------------------------------------- | -------- | ------------------- |
+| white button label on `primary.main` `#039be5`                  | **3.08** | 4.5                 |
+| footer `text.light` `#f7f7f7` on `#039be5`                      | **2.87** | 4.5                 |
 | `#039be5` text / outlined buttons on the light canvas `#edf3fc` | **2.76** | 4.5 (3 for borders) |
-| `#039be5` on the light paper `#e1f5fe` (menu buttons) | **2.74** | 4.5 |
-| `#039be5` on the dark canvas `#050505` | 6.62 | ✔ |
+| `#039be5` on the light paper `#e1f5fe` (menu buttons)           | **2.74** | 4.5                 |
+| `#039be5` on the dark canvas `#050505`                          | 6.62     | ✔                   |
 
 MUI picks white for the button label because its default `contrastThreshold` is 3, and
 white scores 3.08. So in light mode all 44 contained buttons, the footer text and every
@@ -938,11 +940,11 @@ below AA.
 **Recommended fix:** `primary` is shared by both schemes today. Split it, giving the light
 scheme a darker shade:
 
-| Shade | white text on it | it on the canvas |
-|---|---|---|
-| `lightBlue[700]` `#0288d1` | 3.86 | 3.46 |
-| `lightBlue[800]` `#0277bd` | **4.80** | 4.30 |
-| `lightBlue[900]` `#01579b` | 7.40 | 6.63 |
+| Shade                      | white text on it | it on the canvas |
+| -------------------------- | ---------------- | ---------------- |
+| `lightBlue[700]` `#0288d1` | 3.86             | 3.46             |
+| `lightBlue[800]` `#0277bd` | **4.80**         | 4.30             |
+| `lightBlue[900]` `#01579b` | 7.40             | 6.63             |
 
 Light scheme: `main: brand[800], dark: brand[900]`. Button labels pass. Primary-colored
 text sits at 4.30, just under 4.5. For strict AA on small text links, use `primary.dark`
@@ -954,20 +956,20 @@ white labels at 3.08, so set the dark scheme's `primary.contrastText` to
 
 **Alternative (one line, different look):** `palette.contrastThreshold: 4.5`. MUI then picks
 black labels on `#039be5` (6.82:1) in both schemes. This keeps today's bright blue and
-fixes the labels, but buttons become dark text on blue, and blue *text* on the light canvas
+fixes the labels, but buttons become dark text on blue, and blue _text_ on the light canvas
 still fails.
 
 After either fix, update `themeColor`, `manifest.theme_color` and the comment in
 `manifest.js` that says they match `primary.main`.
 
-*Blast radius:* an app-wide color shift, the most visible change in this list. Ship it on
+_Blast radius:_ an app-wide color shift, the most visible change in this list. Ship it on
 its own and look at both schemes.
 
 ### 32. "oogle": the Google icon is used as a letter
 
 - [x] **Files:** `home/MapPhoneLinks.jsx:23-24`, `signIn/SignIn.jsx:31-32`
 
-*Done 2026-10-07:* the buttons now read "Google Maps" and "Continue with Google", with
+_Done 2026-10-07:_ the buttons now read "Google Maps" and "Continue with Google", with
 `startIcon`. The Apple Maps and dispatch buttons moved to `startIcon` too, which replaced
 their `display: flex` + `gap` workaround.
 
@@ -982,11 +984,11 @@ matches what the Apple Maps and dispatch buttons almost do already.
 
 - [x] One-line fixes:
 
-*Done 2026-10-07:* every row below, with these notes:
+_Done 2026-10-07:_ every row below, with these notes:
 
 - **EmailAuth:** the mode links are `Link component='button'`, which makes them blue
   `primary.main` text (4.61:1 on the light canvas). They also set `verticalAlign:
-  'baseline'`, because MUI's button-link style uses `'middle'` and that drops them below the
+'baseline'`, because MUI's button-link style uses `'middle'` and that drops them below the
   sentence. Tab reaches them, and Enter and Space both switch the form (checked in headless
   Chrome).
 - **Map links:** these now use `mapsHref` from `utils/geo.js`, the builder the gym and
@@ -996,23 +998,23 @@ matches what the Apple Maps and dispatch buttons almost do already.
   buttons. `aria-labelledby` points at a `useId()` id. Delete is disabled while the request
   is in flight. The error feedback is still #45.
 
-| Where | Problem | Fix |
-|---|---|---|
-| `signIn/EmailAuth.jsx:164, 255` | "Create one" / "Sign in" are `<span onClick>`: not focusable, no role, so keyboard and switch users can't change modes | `<Link component='button' type='button' onClick={…}>` |
-| `layout/HomeButton.jsx` | icon-only button with no accessible name | `aria-label='Home'` (placement: #37) |
-| `footer/Footer.jsx:99` | the `WebDevilishSmile@gmail.com` button has no `href`, so tapping it does nothing | `href='mailto:…'` |
-| `footer/Footer.jsx:72` | logo `alt='Description'` | `alt=''`: decorative, since the header already carries the brand |
-| `home/MapPhoneLinks.jsx:41` | the `tel:` link has `target='_blank'`, which opens an empty tab in desktop browsers | drop `target` |
-| `home/MapPhoneLinks.jsx:29` | Apple Maps link is `http://` | `https://maps.apple.com/…` |
-| `home/MapPhoneLinks.jsx:20` vs `TitleAddress.jsx:28` | the map query leaves out the state; the copied address includes it | add `slic.address.state` and `encodeURIComponent` the query |
-| `app/globals.css:76` | editor placeholder `#adb5bd` on the light comment surface is **1.91:1** | `color: var(--mui-palette-text-secondary)` |
-| `comments/CommentFooter.jsx:77-108` | the delete confirm is a bare `Dialog` + `Box` with no `DialogTitle`, so the dialog has no accessible name | rebuild it on `DialogTitle`/`DialogContent`/`DialogActions` like `profile/DeleteAccountDialog.jsx`, or see #45 |
+| Where                                                | Problem                                                                                                                | Fix                                                                                                            |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `signIn/EmailAuth.jsx:164, 255`                      | "Create one" / "Sign in" are `<span onClick>`: not focusable, no role, so keyboard and switch users can't change modes | `<Link component='button' type='button' onClick={…}>`                                                          |
+| `layout/HomeButton.jsx`                              | icon-only button with no accessible name                                                                               | `aria-label='Home'` (placement: #37)                                                                           |
+| `footer/Footer.jsx:99`                               | the `WebDevilishSmile@gmail.com` button has no `href`, so tapping it does nothing                                      | `href='mailto:…'`                                                                                              |
+| `footer/Footer.jsx:72`                               | logo `alt='Description'`                                                                                               | `alt=''`: decorative, since the header already carries the brand                                               |
+| `home/MapPhoneLinks.jsx:41`                          | the `tel:` link has `target='_blank'`, which opens an empty tab in desktop browsers                                    | drop `target`                                                                                                  |
+| `home/MapPhoneLinks.jsx:29`                          | Apple Maps link is `http://`                                                                                           | `https://maps.apple.com/…`                                                                                     |
+| `home/MapPhoneLinks.jsx:20` vs `TitleAddress.jsx:28` | the map query leaves out the state; the copied address includes it                                                     | add `slic.address.state` and `encodeURIComponent` the query                                                    |
+| `app/globals.css:76`                                 | editor placeholder `#adb5bd` on the light comment surface is **1.91:1**                                                | `color: var(--mui-palette-text-secondary)`                                                                     |
+| `comments/CommentFooter.jsx:77-108`                  | the delete confirm is a bare `Dialog` + `Box` with no `DialogTitle`, so the dialog has no accessible name              | rebuild it on `DialogTitle`/`DialogContent`/`DialogActions` like `profile/DeleteAccountDialog.jsx`, or see #45 |
 
 ### 34. The floating theme toggle covers content
 
 - [x] **File:** `layout/ModeSwitch.jsx`. This takes over the `ModeSwitch` half of #21.
 
-*Done 2026-10-07:* `ModeSwitch` is now the "Dark mode" switch row in the menu (#50). The row
+_Done 2026-10-07:_ `ModeSwitch` is now the "Dark mode" switch row in the menu (#50). The row
 is a `<label>`, so tapping anywhere on it flips the switch. The fixed toggle and its
 `zIndex: 2000` layer are gone from `app/layout.jsx`.
 
@@ -1030,7 +1032,7 @@ fixed layer disappears.
 
 - [x] **Files:** `app/layout.jsx:29-33`, `utils/theme.js`
 
-*Done 2026-10-07:* went with **dark header in dark mode**. Blue in both schemes would have
+_Done 2026-10-07:_ went with **dark header in dark mode**. Blue in both schemes would have
 needed more retheming. The header and footer draw `text.light` (`#edf3fc` in dark), which
 is 2.76:1 on dark mode's `#039be5`. That fails 3:1 for the menu icon and 4.5:1 for the
 footer text. It would also put a bright blue slab in a dark cab at night.
@@ -1050,7 +1052,7 @@ footer text. It would also put a bright blue slab in a dark cab at night.
 - Checked: OS light, OS dark, light OS pinned dark, and dark OS pinned light. The metas
   matched the header each time.
 
-`layout.jsx` says *"The header AppBar is primary.main in both color schemes"*. That isn't
+`layout.jsx` says _"The header AppBar is primary.main in both color schemes"_. That isn't
 what renders. MUI's `AppBar` defaults to `enableColorOnDark: false`, so in dark mode the
 header (and the footer, also an `AppBar`) draw as dark paper. The installed app still paints
 the status bar the light scheme's blue (`#0172b5` since #31), so dark-mode drivers get a
@@ -1082,8 +1084,8 @@ and the Sign In button run edge to edge. Use `xs: 2` (16px), the standard phone 
 ### 37. Dead space: 128px margins, a doubled `minHeight`, a 544px footer
 
 - [x] **Files:** `layout/PageContainer.jsx:10-14`, `layout/Container.jsx`,
-  `footer/FooterContainer.jsx:11`, `footer/Footer.jsx`, `layout/HomeButton.jsx`,
-  `layout/BackButton.jsx`
+      `footer/FooterContainer.jsx:11`, `footer/Footer.jsx`, `layout/HomeButton.jsx`,
+      `layout/BackButton.jsx`
 
 *Done 2026-10-07:* measured at 390×844.
 
@@ -1115,7 +1117,7 @@ screen)**. The page is 1644px tall for one form. Three causes:
 - `my: 16` is 128px top **and** bottom, there to clear the fixed `AppBar`, which is 56px on
   phones.
 - `PageContainer` has `minHeight: '100dvh'` and sits inside `Container`, which already has
-  it. Every page is at least one screen tall *before* the margins and footer are added.
+  it. Every page is at least one screen tall _before_ the margins and footer are added.
 - The footer has `height: { xs: '34rem' }`, 3rem social icons, a 100px second logo and a
   stacked email button.
 
@@ -1152,21 +1154,21 @@ At 390px, `h1` is 48px and `sectionHeading` is 41.6px, uppercase, weight 800.
 All-caps at that size also reads as shouting (the accessibility guide: don't rely on
 all-caps).
 
-`responsiveFontSizes` (factor 2) shrinks a size *s* rem to `1 + (s − 1) / 2` rem at the
+`responsiveFontSizes` (factor 2) shrinks a size _s_ rem to `1 + (s − 1) / 2` rem at the
 smallest breakpoint, which matches both measurements above. Suggested desktop sizes and
 what phones get:
 
-| | now: desktop → phone | suggested: desktop → phone |
-|---|---|---|
-| `h1` | 5rem → 48px | 3.5rem → 36px |
-| `h2` / `sectionHeading` | 4.2rem → 41.6px, uppercase 800 | 2.5rem → 28px, title case, 700 |
-| `h3` / `h4` / `h5` / `h6` | 3.2 / 2.8 / 2.2 / 1.8rem | 2 / 1.6 / 1.35 / 1.15rem |
+|                           | now: desktop → phone           | suggested: desktop → phone     |
+| ------------------------- | ------------------------------ | ------------------------------ |
+| `h1`                      | 5rem → 48px                    | 3.5rem → 36px                  |
+| `h2` / `sectionHeading`   | 4.2rem → 41.6px, uppercase 800 | 2.5rem → 28px, title case, 700 |
+| `h3` / `h4` / `h5` / `h6` | 3.2 / 2.8 / 2.2 / 1.8rem       | 2 / 1.6 / 1.35 / 1.15rem       |
 
 Also, `layout/Container.jsx:17` sets `fontSize: '1.6rem'` (25.6px) on the app root. It only
 reaches bare text outside `Typography`, so it is either dead or a surprise; remove it. This
 pairs with the still-open half of #20 (`fontSize` overrides).
 
-*Blast radius:* every heading. Do it in one pass, with screenshots before and after.
+_Blast radius:_ every heading. Do it in one pass, with screenshots before and after.
 
 ### 39. Load fewer font weights
 
@@ -1214,7 +1216,7 @@ still works.
 
 There are up to four full-weight contained buttons stacked vertically: Google Maps, Apple
 Maps, Dispatch and View PDF. All have the same color and size, and "View PDF" shows
-*disabled* when there is no PDF. A driver's next step is almost always "navigate", so make
+_disabled_ when there is no PDF. A driver's next step is almost always "navigate", so make
 that the one big button and the rest secondary:
 
 ```
@@ -1249,15 +1251,15 @@ The search is an `Autocomplete` over plain strings. Upgrades, in order of value:
    - the matched characters in bold, via a 10-line highlighter or `autosuggest-highlight`
      (what MUI's own docs use).
 3. **`autoHighlight`,** so Enter picks the top match.
-4. **Move the donation `Alert`.** It renders *above* the search for every non-member with at
+4. **Move the donation `Alert`.** It renders _above_ the search for every non-member with at
    least one lookup, pushing the input down on every visit. Move it below the details card,
    or give it the same 30-day snooze as `InstallNudge`.
 
 ### 43. Skeletons instead of "Loading..."
 
 - [ ] **Files:** `app/loading.jsx`, `layout/LoadingFallback.jsx`, `home/SlicDisplay.jsx`,
-  `comments/Comment.jsx`, plus the `covers/` and admin loaders (8 files contain a
-  "Loading..." string)
+      `comments/Comment.jsx`, plus the `covers/` and admin loaders (8 files contain a
+      "Loading..." string)
 
 The waiting states today:
 
@@ -1271,13 +1273,13 @@ address lines, one button) and two or three comment-card skeletons.
 
 While you're there: the SLIC details come from the in-memory `slics` array, so the
 "loading" between SLICs is only the `router.push` transition, not a fetch. `SlicDisplay` can
-render the new SLIC immediately and show skeletons only for the comments list, which *is*
+render the new SLIC immediately and show skeletons only for the comments list, which _is_
 fetched.
 
 ### 44. A useful empty state on `/home` (and delete the dead carousel)
 
 - [ ] **Files:** `home/EmptySlic.jsx`, `home/EmblaCarousel.jsx`, `app/globals.css:83-217`,
-  `package.json`
+      `package.json`
 
 With no SLIC selected, non-members see "Welcome to SLICs 5.0", the logo and a Buy Me a
 Coffee button. Better, in this order:
@@ -1299,9 +1301,9 @@ Dead code to delete while you're there:
 ### 45. Comments: show state, not just disabled buttons
 
 - [ ] **Files:** `comments/CommentHeader.jsx`, `comments/CommentFooter.jsx`,
-  `comments/Comment.jsx`
+      `comments/Comment.jsx`
 
-- **Vote state.** After you upvote, the up button becomes *disabled*, and grey is the only
+- **Vote state.** After you upvote, the up button becomes _disabled_, and grey is the only
   signal. Make it a toggle: a filled `ThumbUp` in `primary` when the vote is yours, outlined
   otherwise, with `aria-pressed`. `disabled` also takes the button out of the tab order
   (accessibility guide §2).
@@ -1312,6 +1314,7 @@ Dead code to delete while you're there:
   a gate code is still good.
 - **Delete.** Either fix the confirm dialog (#33), or drop the confirm and offer "Undo" in a
   snackbar, deleting once it closes. That is faster for the common case and just as safe.
+- **Allow replies** — show a reply button on each comment, and nest replies under their parent. Consider a collapsible thread for long discussions.
 
 ### 46. History rows should go somewhere
 
@@ -1340,7 +1343,9 @@ behavior.
 2. Add one global reduced-motion floor, so later animations can't forget it:
    ```css
    @media (prefers-reduced-motion: reduce) {
-     *, ::before, ::after {
+     *,
+     ::before,
+     ::after {
        animation-duration: 0.01ms !important;
        transition-duration: 0.01ms !important;
      }
@@ -1386,7 +1391,7 @@ Firefox 144). Older browsers just swap.
 
 **Not recommended yet:** React's `<ViewTransition>` component. In Next 15.3 it needs
 `experimental.viewTransition`, and that flag switches the whole app to React's
-*experimental* release channel (`next/dist/lib/needs-experimental-react.js`). That's not for
+_experimental_ release channel (`next/dist/lib/needs-experimental-react.js`). That's not for
 a production app. Revisit when it ships in stable React.
 
 ### 49. Entry animations for cards and new comments
@@ -1403,7 +1408,9 @@ a production app. Revisit when it ships in stable React.
 
 ```css
 .enter {
-  transition: opacity 0.25s var(--ease-out), translate 0.25s var(--ease-out);
+  transition:
+    opacity 0.25s var(--ease-out),
+    translate 0.25s var(--ease-out);
   @starting-style {
     opacity: 0;
     translate: 0 8px;
@@ -1417,16 +1424,16 @@ floor turns it into an instant appear.
 ### 50. The menu and prompts as sheets
 
 - [x] **Files:** `header/UserMenu.jsx`, `comments/CommentPrompt.jsx`,
-  `install/IosInstallDialog.jsx`
+      `install/IosInstallDialog.jsx`
 
 The menu is a full-screen `Dialog` with a "Menu" h2 and a centered column of text buttons:
 no icons, no grouping, no sign of the current page. Replace it with a `Drawer` from the left,
 about 80% wide, of `ListItemButton`s with icons, grouped:
 
-1. *Lookup · All Hubs · History · Cover Bids*
-2. *Profile · About · Install*
-3. *UPSers · Socks · Buy me a Coffee* (external, each with an "opens in new tab" icon)
-4. *Dark mode* switch (#34) and *Sign out*
+1. _Lookup · All Hubs · History · Cover Bids_
+2. _Profile · About · Install_
+3. _UPSers · Socks · Buy me a Coffee_ (external, each with an "opens in new tab" icon)
+4. _Dark mode_ switch (#34) and _Sign out_
 
 Mark the current route with `selected` (from `usePathname`). A `SwipeableDrawer` adds
 swipe-to-close.
@@ -1436,9 +1443,10 @@ On phones, the comment prompt and the iOS install steps should be **bottom sheet
 the bottom edge with rounded top corners. The buttons land in thumb reach, and the motion
 says "this came up from below".
 
-*Done 2026-10-07:* the menu, the comment prompt and the iOS install steps. The two sheets
+_Done 2026-10-07:_ the menu, the comment prompt and the iOS install steps. The two sheets
 share `utility/BottomSheetDialog.jsx`, which wraps `Dialog` with the phone slide-up and
 bottom pinning, and `BottomSheetActions` (stacked, full-width, 48px buttons).
+
 - **Menu.** `header/UserMenu.jsx` is now a `SwipeableDrawer`, `min(20rem, 80vw)` wide.
   - It has a blue header strip (logo plus "Hi, <first name>") and four groups: daily pages;
     Profile, Admin, About and Install; outside links; Dark mode and Sign out.
@@ -1484,8 +1492,8 @@ bottom pinning, and `BottomSheetActions` (stacked, full-width, 48px buttons).
 ### 53. Internal links reload the whole page
 
 - [ ] **Files:** `utils/theme.js`, plus roughly two dozen internal `href`s on MUI components
-  (e.g. `header/UserMenu.jsx` ×5, `admin/page.jsx` ×6, `signIn/Membership.jsx`,
-  `layout/RedirectMessage.jsx`, `not-found.jsx`)
+      (e.g. `header/UserMenu.jsx` ×5, `admin/page.jsx` ×6, `signIn/Membership.jsx`,
+      `layout/RedirectMessage.jsx`, `not-found.jsx`)
 
 A MUI `Button`, `IconButton` or `ListItemButton` with an `href` renders a plain `<a>`. Every
 menu tap therefore reloads the whole document: the header, theme and session re-initialize
@@ -1495,14 +1503,20 @@ and the screen flashes. Only a handful of call sites pass `LinkComponent={Link}`
 ```js
 import NextLink from 'next/link';
 // …
-components: { MuiButtonBase: { defaultProps: { LinkComponent: NextLink } } }
+components: {
+  MuiButtonBase: {
+    defaultProps: {
+      LinkComponent: NextLink;
+    }
+  }
+}
 ```
 
 External `https://…` links still work through `next/link`. With client-side navigation in
 place, add feedback for the wait: Next 15.3's `useLinkStatus` can drive a thin progress bar
 under the toolbar while a route loads.
 
-*Blast radius:* every internal link becomes a client-side navigation. That's faster, but
+_Blast radius:_ every internal link becomes a client-side navigation. That's faster, but
 re-test anything that relied on a full reload to pick up fresh server data, such as the
 membership page after a Buy Me a Coffee purchase.
 
@@ -1513,26 +1527,26 @@ membership page after a Buy Me a Coffee purchase.
 ### 54. Pinned SLICs
 
 - [ ] A star on the details card pins a SLIC. Pinned SLICs lead the search list (#42) and the
-  empty state (#44). Start in localStorage, and move to the user record if drivers want pins
-  on every device.
+      empty state (#44). Start in localStorage, and move to the user record if drivers want pins
+      on every device.
 
 ### 55. Manifest shortcuts
 
 - [ ] **File:** `app/manifest.js`. Add `shortcuts`, which appear when you long-press the
-  home-screen icon on Android: "Look up a SLIC" (`/home`) and "My history" (`/history`).
-  #31 set `theme_color` to `#0172b5`. Revisit it once #35 is decided.
+      home-screen icon on Android: "Look up a SLIC" (`/home`) and "My history" (`/history`).
+      #31 set `theme_color` to `#0172b5`. Revisit it once #35 is decided.
 
 ### 56. Dark surfaces with depth
 
 - [ ] **File:** `utils/theme.js` (`tokens`). Dark mode uses `#050505` for both the page and
-  the paper, so panels separate only through MUI's elevation overlay. A slightly lifted
-  ladder would read better in a cab at night and reduce OLED black smear while scrolling,
-  e.g. page `#0b0d10`, panel `#14181d`, comment `#1b2027`. This is a token-only change.
+      the paper, so panels separate only through MUI's elevation overlay. A slightly lifted
+      ladder would read better in a cab at night and reduce OLED black smear while scrolling,
+      e.g. page `#0b0d10`, panel `#14181d`, comment `#1b2027`. This is a token-only change.
 
 ### 57. Admin and Cover Bids screens
 
 - [ ] Not reviewed in depth here. #28 (the near-duplicate card and table components) comes
-  first, so a restyle doesn't have to be done twice.
+      first, so a restyle doesn't have to be done twice.
 
 ---
 

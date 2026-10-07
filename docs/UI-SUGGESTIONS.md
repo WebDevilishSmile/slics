@@ -650,17 +650,37 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
   heights, offsets (`top`/`left`…) and `fontSize` still use rem strings — a bare number
   there is *pixels*, not spacing, so they're not part of this dialect (see 19 for widths).
 
-- [ ] Still open from this item: ~20 `fontSize` overrides in `sx` that bypass the
+- [x] Still open from this item: ~20 `fontSize` overrides in `sx` that bypass the
   typography scale entirely.
+
+  *Done 2026-10-07:* #28 removed the duplicate copies. The remaining text overrides now use
+  the scale:
+  - The 0.65–0.8rem one-offs in the bid filters, job cards and grids now use `caption`
+    (0.75rem): `variant='caption'`, or `typography: 'caption'` on chips and toggles.
+  - The menu title uses `h6`.
+  - The app shell's `fontSize: '1.6rem'` is gone (see #38). It only reached bare text, and
+    it inflated the line boxes around inline buttons, so the landing page is 21px shorter.
+    No text changed size.
+
+  **Rule going forward:** text sizes come from a `Typography` variant (`variant=` or
+  `typography:` in `sx`). Icon `fontSize` values are icon sizes, not text, and stay as rem
+  strings. `app/global-error.jsx` is plain `style` and exempt.
 
 ### 21. Move `zIndex` literals into the theme
 
-- [ ] Unmanaged and uncoordinated: `10` (`bids/BidsFilters.jsx:51`,
+- [x] Unmanaged and uncoordinated: `10` (`bids/BidsFilters.jsx:51`,
   `coverBidJobs/CoverBidJobsTable.jsx:140`), `1000` (`footer/FooterContainer.jsx:10`),
   `2000` (`layout/ModeSwitch.jsx:31`). MUI's own `theme.zIndex` scale tops out at 1500 for
   tooltips, so `ModeSwitch` currently floats above MUI modals — probably unintended.
   #34 moves `ModeSwitch` into the header, which removes that layer entirely and leaves
   only the `10` and `1000` values for this item.
+
+  *Done 2026-10-07:*
+  - The two sticky filter bars use `zIndex: 'stickyBar'`, a new key in `theme.zIndex`
+    (10, below every MUI layer). `sx` resolves it by name.
+  - The footer's `1000` (and its `bottom: 0`) did nothing on a `position: 'static'`
+    `AppBar`, so they're removed.
+  - The `2000` went with #34.
 
 ---
 
@@ -668,7 +688,7 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 
 ### 22. Delete two dead layout files
 
-- [ ] `app/components/layout/StyledPage.jsx` and `app/components/layout/Wrapper.jsx` —
+- [x] `app/components/layout/StyledPage.jsx` and `app/components/layout/Wrapper.jsx` —
   verified: **never imported anywhere**. `Wrapper.jsx` additionally computes a `margin`
   state it never applies to its `sx`, inside a `useEffect` with no dependency array.
 
@@ -676,7 +696,7 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 
 ### 23. Remove three dead theme imports
 
-- [ ] `drivers/TablePaginationActions.jsx:1`, `comments/CommentEditor.jsx:8`,
+- [x] `drivers/TablePaginationActions.jsx:1`, `comments/CommentEditor.jsx:8`,
   `comments/Comment.jsx:6` import `theme from '@/utils/theme'` and never reference it.
 
   Worth removing so the pattern isn't copied: with `cssVariables` enabled, a **static**
@@ -686,21 +706,32 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
 
 ### 24. Consolidate the page shells
 
-- [ ] `layout/Container.jsx` and `layout/PageContainer.jsx` (plus the two dead files in
+- [x] `layout/Container.jsx` and `layout/PageContainer.jsx` (plus the two dead files in
   item 22) each redeclare the same `minHeight: '100dvh'` + centered flex column +
   `bgcolor: 'background.default'` recipe with different hardcoded padding.
   `Depends on:` item 22.
 
+  *Done 2026-10-07, together with #37's doubled-`minHeight` bullet:*
+  - `Container` is the shell: a column at least one screen tall, on the page background.
+    The footer pins itself to its bottom with `mt: 'auto'`.
+  - `PageContainer` is the content column only, with no `minHeight`.
+  - At 390×844 the landing page went from 1644px to 1298px, and its footer now starts on
+    the first screen. Privacy and Terms are unchanged.
+  - Still open in #37: the 128px `my`, the footer's height and the floating Home/Back
+    buttons.
+
 ### 25. Off-brand icon color
 
-- [ ] `fill: '#1976d2'` in `about/Community.jsx:18`, `about/Contributions.jsx:20`,
+- [x] `fill: '#1976d2'` in `about/Community.jsx:18`, `about/Contributions.jsx:20`,
   `about/Future.jsx:19`. That hex is MUI's **default** primary — the app's actual primary
   is `lightBlue[600]` (`#039be5`), so these icons are visibly off-brand today. Replace
   with the palette token.
 
+  *Done 2026-10-07:* `color: 'primary.main'`. An `SvgIcon` paints with `currentColor`.
+
 ### 26. Five copies of the Buy-Me-a-Coffee button style
 
-- [ ] `backgroundColor: '#f7f7f7', color: 'black'` repeated verbatim at
+- [x] `backgroundColor: '#f7f7f7', color: 'black'` repeated verbatim at
   `about/Contributions.jsx:35`, `signIn/Membership.jsx:76`, `profile/ProfileData.jsx:95`,
   `coverBidJobs/NotMember.jsx:25`, `layout/BuyMeACoffeeButton.jsx:30`.
 
@@ -712,21 +743,43 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
   Note these use literal `'black'`; the theme's former `#222222` dark-text keys
   (`text.dark`/`text.solid`) were deleted as unused in item 8, so pick one value here.
 
+  *Done 2026-10-07:*
+  - New `palette.bmc` in both schemes: `main` is `tokens.chalk`, `contrastText` is
+    `tokens.void`, and `light`/`dark` are derived for hover.
+  - One `layout/BmcButton.jsx` (`color='bmc'`, logo, new tab) replaces all five copies.
+    Contributions now uses `BuyMeACoffeeButton`, which is the same arrow-plus-button pair.
+  - The URL is `BMC_URL` in `utils/variables.js`, also used by the menu and the lookup
+    screen.
+  - `background.opposite`/`text.opposite` were pruned at the same time. They had been dead
+    since #34.
+
 ### 27. Duplicated `bounce` keyframe
 
-- [ ] Byte-identical in `layout/BuyMeACoffeeButton.jsx:15-20` and
+- [x] Byte-identical in `layout/BuyMeACoffeeButton.jsx:15-20` and
   `about/AboutLink.jsx:15-20`.
+
+  *Done 2026-10-07:* the keyframe now lives once, in `utility/BouncingArrow.jsx`, with the
+  reduced-motion opt-out. Both buttons render it.
 
 ### 28. Near-duplicate card components
 
-- [ ] `bids/BidsJobCard.jsx` and `coverBidJobs/CoverBidJobCard.jsx` are near-identical,
+- [x] `bids/BidsJobCard.jsx` and `coverBidJobs/CoverBidJobCard.jsx` are near-identical,
   including a byte-identical "Show route" Accordion block and the same
   `pb: '8px !important'` hack. Their DataGrid `sx` is likewise duplicated between
   `bids/BidsTable.jsx:200` and `coverBidJobs/CoverBidJobsTable.jsx:235`.
 
+  *Done 2026-10-07:*
+  - `coverBidJobs/JobCard.jsx` is the one card. The two old cards are thin wrappers that
+    map each job shape into it.
+  - `coverBidJobs/jobGrid.jsx` holds the shared grid `sx`, the Description column and the
+    day/time chip.
+  - `/bids` uses `dayFormat.js` instead of its own copies. `formatDayValue` now also
+    accepts `HH:MM:SS`.
+  - The `!important` hack is a `:last-child` override.
+
 ### 29. `useIsMobile` disagrees with the theme's breakpoints
 
-- [ ] `utils/clientFunctions.js:23` hardcodes 768px. The theme defines `sm: 600` and
+- [x] `utils/clientFunctions.js:23` hardcodes 768px. The theme defines `sm: 600` and
   `md: 960`. So `useIsMobile()` and `useMediaQuery(theme.breakpoints.down('md'))` disagree
   about what "mobile" means depending on which component you're in.
 
@@ -734,11 +787,19 @@ the same vars MUI's own path uses, so it renders identically in both schemes.
   `coverBidJobs/CoverBidJobsTable.jsx` and `admin/coverBidJobs/CoverBidJobsManager.jsx`
   already use the `useMediaQuery` form.
 
+  *Done 2026-10-07:* the hook is deleted.
+  - Its only real caller, the phone-only install nudge, uses
+    `useMediaQuery(theme.breakpoints.down('sm'))`.
+  - `CommentsContainer` imported it without using it.
+
 ### 30. Unused / contradicted constant imports
 
-- [ ] `admin/users/[id]/page.jsx:15` imports `MAX_WIDTH` and never uses it.
+- [x] `admin/users/[id]/page.jsx:15` imports `MAX_WIDTH` and never uses it.
   `comments/CommentEditor.jsx:7` and `comments/Comment.jsx:10` import `ELEVATION`, then
   hardcode `elevation={0}` and `elevation={1}` instead.
+
+  *Done, found 2026-10-07:* no `MAX_WIDTH` or `ELEVATION` imports remain anywhere. Item 11
+  folded those constants into the theme and took their imports with it.
 
 ---
 
@@ -766,8 +827,11 @@ grep -rn "layout\.minHeight" app/
 3. Revert, apply the fix, repeat step 2 → the font now changes.
 
 **For every item:** `npm run build`, then walk the affected screens in **both** light and
-dark mode using the toggle at bottom-right. Items 3, 12–16 and 17 are the ones most likely
-to shift appearance in ways a build won't catch.
+dark mode using the menu's Dark mode switch (#34 moved it there from the bottom-right).
+Items 3, 12–16 and 17 are the ones most likely to shift appearance in ways a build won't
+catch.
+
+**Part 1 is complete as of 2026-10-07.** Every item from #1 to #30 is checked off.
 
 ---
 

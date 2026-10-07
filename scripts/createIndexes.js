@@ -23,6 +23,10 @@ async function main() {
       { collection: 'cover-bid-jobs', spec: { weekEnding: -1, sortOrder: 1 } },
       // The $lookup in gymsApi.getAllGyms joins comments by gymId.
       { collection: 'gymComments', spec: { gymId: 1, created_at: -1 } },
+      // A place's thread (placesApi.getPlaceThread) and the reply counts behind
+      // the soft-delete rule; userId backs account deletion's cleanup.
+      { collection: 'placeComments', spec: { placeId: 1, parentId: 1 } },
+      { collection: 'placeComments', spec: { userId: 1 } },
     ];
 
     for (const { collection, spec } of indexes) {

@@ -112,3 +112,63 @@ export const GYM_COMMENT_EXAMPLE = {
   created_at: '2026-10-01T12:00:00.000Z',
   updated_at: null,
 };
+
+// Categories a place on Whip It In & Out (/whip-it-in-and-out) can have; a
+// place picks one or more. Adding a category is a one-line change here; give
+// it an icon in places/PlaceCategoryIcon.jsx (it falls back to a map pin).
+export const PLACE_CATEGORIES = [
+  { value: 'fuel', label: 'Fuel' },
+  { value: 'food', label: 'Food' },
+  { value: 'restroom', label: 'Restroom' },
+  { value: 'rest-area', label: 'Rest area' },
+  { value: 'truck-parking', label: 'Truck parking' },
+  { value: 'showers', label: 'Showers' },
+  { value: 'other', label: 'Other' },
+];
+
+// Whether a tractor-trailer gets in and out — set by whoever added the place;
+// other drivers weigh in through comments. `color` is a Chip color.
+export const TRAILER_ACCESS = [
+  { value: 'yes', label: 'Trailer fits', color: 'success' },
+  { value: 'tight', label: 'Tight for a trailer', color: 'warning' },
+  { value: 'no', label: 'No trailers', color: 'error' },
+  { value: 'unknown', label: 'Trailer access unknown', color: 'default' },
+];
+
+// Place comments are plain text; enforced in the form and in utils/placesApi.js.
+export const PLACE_COMMENT_MAX_LENGTH = 2000;
+
+export const PLACE_EXAMPLE = {
+  _id: 'place_id',
+  name: 'Pilot #312',
+  categories: ['fuel', 'food', 'restroom'], // values from PLACE_CATEGORIES
+  trailerAccess: 'yes', // one of TRAILER_ACCESS
+  address: {
+    street: '1501 Harrisburg Pike', // '' allowed when there's a pin (rest areas)
+    city: 'Carlisle',
+    state: 'PA',
+    zip: '17015',
+  },
+  phone: '(717) 555-0100', // '' when unknown
+  open24h: true,
+  hours: '', // free text when !open24h
+  parking: { lat: 40.1912, lng: -77.2401 }, // where to pull in, or null
+  slics: ['1809'], // numSlics it's on the way to/from
+  createdBy: 'user_id', // string; null once that driver deletes their account
+  created_at: '2026-10-07T12:00:00.000Z',
+  updated_at: null,
+  updatedBy: null, // user id string of the last editor
+};
+
+export const PLACE_COMMENT_EXAMPLE = {
+  _id: 'comment_id',
+  placeId: 'place_id', // ObjectId of the place
+  parentId: null, // ObjectId of the top-level comment for a reply; null = top-level
+  userId: 'user_id', // string; null on a soft-deleted comment
+  content: 'Diesel lanes are around back. Lot fills up after 6pm.', // plain text
+  upVotes: ['user_id1'], // string user ids, like SLIC comments
+  downVotes: [],
+  deleted: false, // true = "Comment deleted" placeholder kept for its replies
+  created_at: '2026-10-07T12:00:00.000Z',
+  updated_at: null,
+};

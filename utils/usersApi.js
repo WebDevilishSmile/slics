@@ -1,5 +1,6 @@
 import client from '@/lib/db';
 import { ObjectId } from 'mongodb';
+import { deleteUserPlaceData } from '@/utils/placesApi';
 
 export async function getUsers() {
   try {
@@ -144,6 +145,7 @@ export async function deleteUserAccount(userId) {
     const votes = await db
       .collection('comments')
       .updateMany({}, { $pull: { upVotes: userId, downVotes: userId } });
+    const placeData = await deleteUserPlaceData(userId);
     const views = await db
       .collection('slicViews')
       .deleteMany({ userId: objectId });
@@ -162,6 +164,7 @@ export async function deleteUserAccount(userId) {
       votesPulled: votes.modifiedCount,
       deletedViews: views.deletedCount,
       deletedAccounts: accounts.deletedCount,
+      ...placeData,
     };
   } catch (error) {
     console.error('Error deleting user account:', error);

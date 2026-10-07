@@ -1,0 +1,40 @@
+import { auth } from '@/auth';
+import { ObjectId } from 'mongodb';
+import { NextResponse } from 'next/server';
+import { votePlaceComment } from '@/utils/placesApi';
+
+// POST `{ voteType: 'up' | 'down' }` — any signed-in driver, one vote per
+// comment; voting the other way moves it.
+export async function POST(request, { params }) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const { id } = await params;
+  if (!id || !ObjectId.isValid(id)) {
+    return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+  }
+  if (!['up', 'down'].includes(body?.voteType)) {
+    return NextResponse.json({ error: 'Invalid vote type' }, { status: 400 });
+  }
+
+  try {
+    const found = await votePlaceComment(id, body.voteType, session.user.id);
+    if (!found)
+      return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error voting on place comment:', error);
+    return NextResponse.json(
+      { error: 'Could not save your vote. Please try again.' },
+      { status: 500 },
+    );
+  }
+}

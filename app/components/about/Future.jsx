@@ -16,7 +16,7 @@ export default function Future() {
               fontSize: '5rem',
               display: 'block',
               margin: '0 auto',
-              fill: '#1976d2',
+              color: 'primary.main',
             }}
           />
         }

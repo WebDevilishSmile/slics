@@ -15,7 +15,7 @@ export default function Community() {
               fontSize: '5.5rem',
               display: 'block',
               margin: '0 auto',
-              fill: '#1976d2',
+              color: 'primary.main',
             }}
           />
         }

@@ -82,7 +82,7 @@ export default async function HistoryPage() {
   return (
     <PageContainer>
       <HomeButton />
-      <Typography variant='sectionHeading'>Slic History</Typography>
+      <Typography variant='sectionHeading'>SLIC History</Typography>
 
       <Paper
         elevation={theme.layout.elevation}

@@ -118,30 +118,32 @@ let theme = createTheme({
     },
   },
 
+  // Desktop sizes. responsiveFontSizes() below shrinks each to
+  // 1 + (size − 1) / 2 rem on phones: h1 36px, h2 28px (UI-SUGGESTIONS.md #38).
   typography: {
     fontFamily: 'var(--font-font)',
     h1: {
-      fontSize: '5rem',
+      fontSize: '3.5rem',
       fontWeight: 700,
     },
     h2: {
-      fontSize: '4.2rem',
+      fontSize: '2.5rem',
       fontWeight: 700,
     },
     h3: {
-      fontSize: '3.2rem',
+      fontSize: '2rem',
       fontWeight: 500,
     },
     h4: {
-      fontSize: '2.8rem',
+      fontSize: '1.6rem',
       fontWeight: 500,
     },
     h5: {
-      fontSize: '2.2rem',
+      fontSize: '1.35rem',
       fontWeight: 500,
     },
     h6: {
-      fontSize: '1.8rem',
+      fontSize: '1.15rem',
       fontWeight: 500,
     },
   },
@@ -230,10 +232,12 @@ let theme = createTheme({
     },
 
     // `<Typography variant="sectionHeading">` — every page/section title
-    // (UI-SUGGESTIONS.md #18; replaced the StyledHeading wrapper). It is h2 plus the
-    // house treatment. Spreading `theme.typography.h2` inside the callback,
-    // rather than copying its metrics, keeps it in lockstep with h2 —
-    // including the breakpoint font sizes responsiveFontSizes() adds, since
+    // (UI-SUGGESTIONS.md #18; replaced the StyledHeading wrapper). It is h2,
+    // centered and capped at prose width. It used to be uppercase at weight
+    // 800 too, which read as shouting and wrapped titles on phones (#38), so
+    // titles now show their source casing. Spreading `theme.typography.h2` inside
+    // the callback, rather than copying its metrics, keeps it in lockstep with
+    // h2, including the breakpoint font sizes responsiveFontSizes() adds, since
     // the callback sees the final theme. `variantMapping` keeps the <h2> tag.
     MuiTypography: {
       defaultProps: {
@@ -244,8 +248,6 @@ let theme = createTheme({
           props: { variant: 'sectionHeading' },
           style: ({ theme }) => ({
             ...theme.typography.h2,
-            fontWeight: 800,
-            textTransform: 'uppercase',
             textAlign: 'center',
             maxWidth: theme.layout.width.prose,
             paddingLeft: theme.spacing(1),

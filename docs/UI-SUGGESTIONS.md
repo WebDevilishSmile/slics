@@ -1133,7 +1133,19 @@ row above the title), or replace both with a back arrow in the header (#52).
 
 ### 38. Headings are oversized on phones
 
-- [ ] **File:** `utils/theme.js:84-110`, `layout/Container.jsx:17`
+- [x] **File:** `utils/theme.js:84-110`, `layout/Container.jsx:17`
+
+*Done 2026-10-07:* the suggested scale, as written. At 390px: h1 36px, h2 and
+`sectionHeading` 28px, h3 24px, h4 20.8px, h5 18.8px, h6 17.2px. "Privacy Policy" and "Terms
+of Service" each fit on one line now.
+
+- `sectionHeading` dropped the uppercase and the 800 weight, so titles show their source
+  casing. Three titles were fixed for that: "Slics" → "SLICs" (admin), "New Slic" → "New
+  SLIC", and "Slic History" → "SLIC History".
+- The `Container` `fontSize: '1.6rem'` was already gone (#20).
+- **Watch:** `h6` is also the SLIC code line on the lookup card (`home/TitleAddress.jsx`).
+  That line goes from 22.4px to 17.2px, and the card's "Slic Details" h4 goes from 30.4px to
+  20.8px. #40 rebuilds that card around the SLIC. Until then, check it on a phone.
 
 At 390px, `h1` is 48px and `sectionHeading` is 41.6px, uppercase, weight 800.
 "PRIVACY POLICY" wraps onto two lines, and the first panel starts ~200px down the screen.

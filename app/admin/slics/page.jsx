@@ -36,7 +36,7 @@ async function SlicsTablePage() {
   return (
     <>
       <BackButton />
-      <Typography variant='sectionHeading'>Slics</Typography>
+      <Typography variant='sectionHeading'>SLICs</Typography>
 
       <SlicsTable slics={serializeSlics(slics)} />
     </>

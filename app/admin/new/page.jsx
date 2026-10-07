@@ -6,7 +6,7 @@ async function NewSlicPage() {
   return (
     <>
       <BackButton />
-      <Typography variant='sectionHeading'>New Slic</Typography>
+      <Typography variant='sectionHeading'>New SLIC</Typography>
 
       <SlicForm />
     </>

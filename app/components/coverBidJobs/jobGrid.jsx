@@ -21,7 +21,7 @@ export function DayTimeChip({ day, value, showDay = false }) {
       <Chip
         label={showDay ? `${DAY_LABELS[day]} ${time}` : time}
         color={DAY_COLORS[day] || 'default'}
-        sx={{ fontWeight: 600, fontSize: '0.7rem' }}
+        sx={{ typography: 'caption', fontWeight: 600 }}
       />
     </Tooltip>
   );
@@ -34,15 +34,7 @@ export const descriptionColumn = {
   sortable: false,
   renderCell: ({ value }) => (
     <Tooltip title={value} arrow placement='top'>
-      <Typography
-        variant='body2'
-        sx={{
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          fontSize: '0.8rem',
-        }}
-      >
+      <Typography variant='caption' component='p' noWrap>
         {value}
       </Typography>
     </Tooltip>

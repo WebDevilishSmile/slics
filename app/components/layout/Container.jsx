@@ -17,7 +17,6 @@ export default function Container({ children }) {
         alignItems: 'center',
         bgcolor: 'background.default',
         color: 'text.primary',
-        fontSize: '1.6rem',
       }}
     >
       {children}

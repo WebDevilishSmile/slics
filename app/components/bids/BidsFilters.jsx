@@ -105,7 +105,7 @@ function BidsFilters({
                 minWidth: { xs: 36, md: 40 },
                 px: 1,
                 py: 0.5,
-                fontSize: '0.75rem',
+                typography: 'caption',
                 fontWeight: 600,
               }}
             >
@@ -135,7 +135,7 @@ function BidsFilters({
             <ToggleButton
               key={value}
               value={value}
-              sx={{ px: { xs: 1.5, md: 2 }, fontSize: '0.75rem' }}
+              sx={{ px: { xs: 1.5, md: 2 }, typography: 'caption' }}
             >
               {label}
             </ToggleButton>

@@ -182,8 +182,9 @@ function UserMenu({ user, signOutAction }) {
           </Box>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
+              variant='h6'
               component='p'
-              sx={{ fontSize: '1.25rem', fontWeight: 800, lineHeight: 1.2 }}
+              sx={{ fontWeight: 800, lineHeight: 1.2 }}
             >
               SLICs
             </Typography>

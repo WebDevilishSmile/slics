@@ -53,11 +53,7 @@ function JobCard({ title, action, days, description }) {
                 color={DAY_COLORS[day] || 'default'}
                 sx={{ fontWeight: 700, minWidth: 48 }}
               />
-              <Typography
-                variant='caption'
-                color='text.secondary'
-                sx={{ fontSize: '0.65rem' }}
-              >
+              <Typography variant='caption' color='text.secondary'>
                 {formatDayValue(value)}
               </Typography>
             </Box>
@@ -88,13 +84,10 @@ function JobCard({ title, action, days, description }) {
             </AccordionSummary>
             <AccordionDetails sx={{ px: 0, pt: 0 }}>
               <Typography
-                variant='body2'
+                variant='caption'
+                component='p'
                 color='text.secondary'
-                sx={{
-                  fontSize: '0.78rem',
-                  lineHeight: 1.6,
-                  whiteSpace: 'pre-line',
-                }}
+                sx={{ lineHeight: 1.6, whiteSpace: 'pre-line' }}
               >
                 {description}
               </Typography>

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Box, Button, Paper } from '@mui/material';
 import { EditorContent, useEditor } from '@tiptap/react';
-import theme from '@/utils/theme';
 
 import Placeholder from '@tiptap/extension-placeholder';
 import StarterKit from '@tiptap/starter-kit';

@@ -1,4 +1,3 @@
-import theme from '@/utils/theme';
 import {
   FirstPage,
   KeyboardArrowLeft,

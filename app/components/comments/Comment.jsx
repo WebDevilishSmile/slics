@@ -3,7 +3,6 @@
 import { Box, Divider, Paper, Typography } from '@mui/material';
 import parse, { domToReact } from 'html-react-parser';
 import { useSession } from 'next-auth/react';
-import theme from '@/utils/theme';
 
 import CommentFooter from './CommentFooter';
 import CommentHeader from './CommentHeader';

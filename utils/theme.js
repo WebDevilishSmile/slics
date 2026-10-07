@@ -2,8 +2,10 @@ import { lightBlue } from '@mui/material/colors';
 import {
   createTheme,
   darken,
+  getOverlayAlpha,
   lighten,
   responsiveFontSizes,
+  rgbToHex,
 } from '@mui/material/styles';
 
 // The raw colors both schemes are built from — the one place to change a color.
@@ -18,7 +20,7 @@ const tokens = {
   // comment surfaces (4.27–4.47). 4% is the least darkening that clears them.
   ink: '#0172b5',
   chalk: '#f7f7f7', // light text; the Buy Me a Coffee tile
-  canvas: '#edf3fc', // light page background; dark-scheme text on the primary color
+  canvas: '#edf3fc', // light page background; dark-scheme header/footer text
   void: '#050505', // dark page background; text on the Buy Me a Coffee tile
   comment: '#eaf8fe', // comment surface in the light scheme
 };
@@ -256,5 +258,16 @@ let theme = createTheme({
 });
 
 theme = responsiveFontSizes(theme);
+
+// The browser/status bar color in each scheme, matching the header
+// (UI-SUGGESTIONS.md #35). Light: the header is primary.main. Dark: MUI doesn't
+// color an AppBar in dark mode (enableColorOnDark is false), so it draws as the
+// dark paper under Paper's white elevation overlay. AppBar's default elevation
+// is 4, and lighten() is the same blend as that overlay. Read by app/layout.jsx,
+// app/manifest.js and layout/ThemeColorSync.jsx.
+export const statusBarColors = {
+  light: primary.main,
+  dark: rgbToHex(lighten(tokens.void, getOverlayAlpha(4))),
+};
 
 export default theme;

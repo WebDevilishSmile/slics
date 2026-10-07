@@ -1028,7 +1028,27 @@ fixed layer disappears.
 
 ### 35. Dark mode: the header isn't blue, so the status bar doesn't match
 
-- [ ] **Files:** `app/layout.jsx:29-33`, `utils/theme.js`
+- [x] **Files:** `app/layout.jsx:29-33`, `utils/theme.js`
+
+*Done 2026-10-07:* went with **dark header in dark mode**. Blue in both schemes would have
+needed more retheming. The header and footer draw `text.light` (`#edf3fc` in dark), which
+is 2.76:1 on dark mode's `#039be5`. That fails 3:1 for the menu icon and 4.5:1 for the
+footer text. It would also put a bright blue slab in a dark cab at night.
+
+- `utils/theme.js` exports `statusBarColors`. Light is `primary.main`. Dark is computed
+  the way MUI draws the dark AppBar: the paper with the elevation-4 white overlay, so
+  `#1c1c1c` today. A sampled header pixel matches. Because it's computed, #56 can change
+  the dark surfaces without the status bar drifting.
+- `app/layout.jsx`'s `themeColor` is a light/dark media-query pair. `app/manifest.js` reads
+  `statusBarColors.light`. A manifest can't vary by scheme, and the page's meta wins once
+  it loads.
+- The pinned case is handled by `layout/ThemeColorSync.jsx`, not `ModeSwitch`. `ModeSwitch`
+  only mounts while the menu is open. `ThemeColorSync` is always mounted in the root layout.
+  After hydration it sets every `theme-color` meta to the color of the scheme on screen.
+  Until hydration, a pinned mode that differs from the OS shows the OS scheme's bar for a
+  moment.
+- Checked: OS light, OS dark, light OS pinned dark, and dark OS pinned light. The metas
+  matched the header each time.
 
 `layout.jsx` says *"The header AppBar is primary.main in both color schemes"*. That isn't
 what renders. MUI's `AppBar` defaults to `enableColorOnDark: false`, so in dark mode the

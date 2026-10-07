@@ -67,9 +67,10 @@ function Footer() {
         </Box>
       </Box>
       <Box>
+        {/* Decorative: the header already carries the brand. */}
         <Image
           src='/slics-logo-dark.png'
-          alt='Description'
+          alt=''
           width={100}
           height={100}
         />
@@ -96,7 +97,9 @@ function Footer() {
         >
           Email me with questions, comments, concerns...
         </Typography>
-        <Button variant='contained'>WebDevilishSmile@gmail.com</Button>
+        <Button variant='contained' href='mailto:WebDevilishSmile@gmail.com'>
+          WebDevilishSmile@gmail.com
+        </Button>
       </Box>
       <Typography
         variant='caption'

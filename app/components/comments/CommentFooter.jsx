@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   Box,
   Button,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Tooltip,
   Typography,
@@ -15,6 +19,7 @@ function CommentFooter({ comment, author, user, slicName, refetchComments }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const titleId = useId();
 
   const handleDelete = async () => {
     console.log(`Deleting comment with ID ${comment._id.toString()}`);
@@ -74,37 +79,28 @@ function CommentFooter({ comment, author, user, slicName, refetchComments }) {
             )}
         </Box>
 
+        {/* The title names the dialog for screen readers (UI-SUGGESTIONS.md #33). */}
         <Dialog
           open={openConfirm}
           onClose={() => setOpenConfirm(false)}
+          aria-labelledby={titleId}
           disableScrollLock
         >
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              p: 2,
-            }}
-          >
-            <Typography variant='h6'>Confirm Deletion</Typography>
-            <Typography sx={{ mt: 1 }}>
-              Are you sure you want to delete this comment?
-            </Typography>
-            <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
-              <Button variant='contained' onClick={handleDelete} color='error'>
-                Confirm
-              </Button>
-              <Button
-                variant='contained'
-                onClick={() => setOpenConfirm(false)}
-                color='primary'
-              >
-                Cancel
-              </Button>
-            </Box>
-          </Box>
+          <DialogTitle id={titleId}>Delete this comment?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>This can&apos;t be undone.</DialogContentText>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 2 }}>
+            <Button onClick={() => setOpenConfirm(false)}>Cancel</Button>
+            <Button
+              variant='contained'
+              color='error'
+              onClick={handleDelete}
+              disabled={loading}
+            >
+              Delete
+            </Button>
+          </DialogActions>
         </Dialog>
       </Box>
     </>

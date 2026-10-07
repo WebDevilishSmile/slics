@@ -17,6 +17,7 @@ function HomeButton() {
       onClick={handleHome}
       variant='outlined'
       size='small'
+      aria-label='Home'
     >
       <Home />
     </Button>

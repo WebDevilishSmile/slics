@@ -965,7 +965,11 @@ its own and look at both schemes.
 
 ### 32. "oogle": the Google icon is used as a letter
 
-- [ ] **Files:** `home/MapPhoneLinks.jsx:23-24`, `signIn/SignIn.jsx:31-32`
+- [x] **Files:** `home/MapPhoneLinks.jsx:23-24`, `signIn/SignIn.jsx:31-32`
+
+*Done 2026-10-07:* the buttons now read "Google Maps" and "Continue with Google", with
+`startIcon`. The Apple Maps and dispatch buttons moved to `startIcon` too, which replaced
+their `display: flex` + `gap` workaround.
 
 The buttons are written `<Google />oogle Maps` and `&nbsp;<Google />oogle`. The SVG has no
 text alternative. Screen readers announce **"oogle Maps"** and **"oogle"**, and voice
@@ -976,7 +980,21 @@ matches what the Apple Maps and dispatch buttons almost do already.
 
 ### 33. Controls that aren't real controls, or do nothing
 
-- [ ] One-line fixes:
+- [x] One-line fixes:
+
+*Done 2026-10-07:* every row below, with these notes:
+
+- **EmailAuth:** the mode links are `Link component='button'`, which makes them blue
+  `primary.main` text (4.61:1 on the light canvas). They also set `verticalAlign:
+  'baseline'`, because MUI's button-link style uses `'middle'` and that drops them below the
+  sentence. Tab reaches them, and Enter and Space both switch the form (checked in headless
+  Chrome).
+- **Map links:** these now use `mapsHref` from `utils/geo.js`, the builder the gym and
+  place cards already used. That one function fixes the state, the encoding and the `https`
+  rows.
+- **CommentFooter:** the dialog is titled "Delete this comment?", with Cancel and Delete
+  buttons. `aria-labelledby` points at a `useId()` id. Delete is disabled while the request
+  is in flight. The error feedback is still #45.
 
 | Where | Problem | Fix |
 |---|---|---|

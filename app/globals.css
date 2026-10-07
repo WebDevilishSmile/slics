@@ -72,8 +72,10 @@ a {
   }
 }
 
+/* text.secondary, not a fixed grey: #adb5bd was 1.91:1 on the light comment
+   surface (UI-SUGGESTIONS.md #33). */
 .tiptap p.is-editor-empty:first-child::before {
-  color: #adb5bd;
+  color: var(--mui-palette-text-secondary);
   content: attr(data-placeholder);
   float: left;
   height: 0;

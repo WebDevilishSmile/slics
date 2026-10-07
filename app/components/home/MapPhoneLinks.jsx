@@ -1,4 +1,5 @@
 import { useAppleDevice } from '@/utils/clientFunctions';
+import { mapsHref } from '@/utils/geo';
 import { Apple, Google, PhoneOutlined } from '@mui/icons-material';
 import { Box, Button } from '@mui/material';
 
@@ -17,31 +18,30 @@ function MapPhoneLinks({ slic }) {
     >
       <Button
         variant='contained'
-        href={`https://www.google.com/maps/search/?api=1&query=${slic.address.street},${slic.address.city},${slic.address.zip}`}
+        href={mapsHref({ address: slic.address }, 'google')}
         target='_blank'
+        startIcon={<Google />}
       >
-        <Google />
-        oogle Maps
+        Google Maps
       </Button>
       {isAppleDevice && (
         <Button
           variant='contained'
-          href={`http://maps.apple.com/?q=${slic.address.street},${slic.address.city},${slic.address.zip}`}
+          href={mapsHref({ address: slic.address }, 'apple')}
           target='_blank'
-          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          startIcon={<Apple />}
         >
-          <Apple />
           Apple Maps
         </Button>
       )}
+      {/* No target: a tel: link in a new tab opens an empty one on desktop. */}
       {slic.type === 'center' && slic.phone && (
         <Button
           variant='contained'
           href={`tel:${slic.phone}`}
-          target='_blank'
-          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          startIcon={<PhoneOutlined />}
         >
-          <PhoneOutlined /> {slic.alphaSlic} Dispatch
+          {slic.alphaSlic} Dispatch
         </Button>
       )}
     </Box>

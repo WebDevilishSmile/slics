@@ -27,9 +27,8 @@ function SignIn() {
           });
         }}
       >
-        <Button type='submit' variant='contained'>
-          &nbsp; <Google />
-          oogle
+        <Button type='submit' variant='contained' startIcon={<Google />}>
+          Continue with Google
         </Button>
       </Box>
       <EmailAuth />

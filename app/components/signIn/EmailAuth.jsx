@@ -10,9 +10,16 @@ import {
   Button,
   CircularProgress,
   Divider,
+  Link,
   TextField,
   Typography,
 } from '@mui/material';
+
+// The "Create one" / "Sign in" mode switches (UI-SUGGESTIONS.md #33). They're
+// real buttons, so Tab and Enter reach them, styled as links. MUI's button-link
+// style sets verticalAlign: 'middle', which drops them off the sentence's
+// baseline.
+const modeLinkSx = { verticalAlign: 'baseline' };
 
 function EmailAuth() {
   const router = useRouter();
@@ -161,13 +168,14 @@ function EmailAuth() {
           </Button>
           <Typography variant='body2' sx={{ mt: 1.5, textAlign: 'center' }}>
             Don&apos;t have an account?{' '}
-            <Box
-              component='span'
+            <Link
+              component='button'
+              type='button'
               onClick={() => switchMode('signup')}
-              sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+              sx={modeLinkSx}
             >
               Create one
-            </Box>
+            </Link>
           </Typography>
         </Box>
       ) : (
@@ -252,13 +260,14 @@ function EmailAuth() {
           </Button>
           <Typography variant='body2' sx={{ mt: 1.5, textAlign: 'center' }}>
             Already have an account?{' '}
-            <Box
-              component='span'
+            <Link
+              component='button'
+              type='button'
               onClick={() => switchMode('signin')}
-              sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+              sx={modeLinkSx}
             >
               Sign in
-            </Box>
+            </Link>
           </Typography>
         </Box>
       )}

@@ -15,7 +15,6 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import CommentEditor from './CommentEditor';
-import { useIsMobile } from '@/utils/clientFunctions';
 import { COMMENTS_SECTION_ID } from '@/utils/variables';
 
 function CommentsContainer({ children, user, numSlic, refetchComments }) {

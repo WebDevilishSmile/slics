@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { Close } from '@mui/icons-material';
-import { Alert, Button, IconButton } from '@mui/material';
+import { Alert, Button, IconButton, useMediaQuery } from '@mui/material';
 
 import theme from '@/utils/theme';
-import { useInstallPrompt, useIsMobile } from '@/utils/clientFunctions';
+import { useInstallPrompt } from '@/utils/clientFunctions';
 
 import IosInstallDialog from './IosInstallDialog';
 
@@ -35,7 +35,8 @@ const writeDismissed = () => {
 // Snackbar: the theme anchors Snackbars top-center, over the search field.
 function InstallNudge() {
   const { canInstall, platform, promptInstall } = useInstallPrompt();
-  const isMobile = useIsMobile();
+  // Phones in portrait — the theme's own breakpoint, not a private one (#29).
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   // Start hidden so a dismissed nudge never flashes before storage is read.
   const [dismissed, setDismissed] = useState(true);
   const [iosOpen, setIosOpen] = useState(false);

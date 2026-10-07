@@ -5,6 +5,9 @@ function FooterContainer({ children }) {
     <AppBar
       sx={{
         position: 'static',
+        // Container is a min-100dvh flex column; auto top margin pins the
+        // footer to the bottom of the screen on short pages (#24).
+        mt: 'auto',
         width: '100%',
         height: { xs: '34rem', md: '30rem' },
         color: 'text.light',

@@ -1,13 +1,17 @@
 import theme from '@/utils/theme';
 import { Box } from '@mui/material';
 
+// The content column of a page: width, side margins and padding. The
+// full-screen height and the page background belong to layout/Container.jsx
+// (the app shell around header, page and footer); repeating minHeight here
+// made every page at least a screen tall before the footer (UI-SUGGESTIONS.md
+// #24, #37).
 export default function PageContainer({ children }) {
   return (
     <Box
       sx={{
         maxWidth: theme.layout.width.page,
         width: '100%',
-        minHeight: '100dvh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

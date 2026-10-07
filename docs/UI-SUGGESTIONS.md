@@ -1188,7 +1188,24 @@ fewer bytes before the first text paints on a weak phone signal.
 
 ### 40. Put the SLIC first in the details card
 
-- [ ] **Files:** `home/SlicDetailsContainer.jsx`, `home/TitleAddress.jsx`
+- [x] **Files:** `home/SlicDetailsContainer.jsx`, `home/TitleAddress.jsx`
+
+_Done 2026-10-07:_ built as sketched below.
+
+- **Headline:** the alphaSlic for a center, the name for a customer (falling back to the
+  alphaSlic if a customer has no name). It's an `h4` at weight 700, rendered as the card's
+  `<h2>`, so heading navigation still lands on it.
+- **Second line:** `SLIC 1809 · Bethlehem Center` for a center, `SLIC 1813 · ULNPA` for a
+  customer. It's `body2` in `text.secondary`.
+- **Type chip:** an outlined "Center" or "Customer" chip sits top right. A missing `type`
+  counts as a center, as in the search.
+- **Address:** left-aligned. The copy button sits in the row instead of being absolutely
+  positioned, and it has `aria-label='Copy address'`. The comment chip follows the address.
+- **Container:** `SlicDetailsContainer` lost its title prop. The loading state is a spinner
+  labelled "Loading SLIC" until #43's skeletons.
+- **Checked:** both card types, in light and dark at 390px, through a temporary local
+  preview page. Signed-out headless Chrome can't reach `/home`. The map and PDF buttons
+  under the card are still centered; #41 replaces them.
 
 The largest text in the card today is the generic title "Slic Details" (h4). What the driver
 actually searched for, `1809 - BETPA`, is a smaller h6 underneath it, and the address is

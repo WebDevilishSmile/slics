@@ -1,11 +1,10 @@
-import { Paper, Typography } from '@mui/material';
+import { Paper } from '@mui/material';
 
-function SlicDetailsContainer({ children, title = 'Slic Details' }) {
+// The lookup card. It has no generic "Slic Details" title any more: the SLIC
+// itself is the card's heading (home/TitleAddress.jsx, UI-SUGGESTIONS.md #40).
+function SlicDetailsContainer({ children }) {
   return (
     <Paper variant='panel' sx={{ justifyContent: 'center' }}>
-      <Typography variant='h4' sx={{ textAlign: 'center' }}>
-        {title}
-      </Typography>
       {children}
     </Paper>
   );

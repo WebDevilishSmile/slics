@@ -53,16 +53,62 @@ function TitleAddress({ slic, commentsCount }) {
       ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  // The SLIC leads the card (UI-SUGGESTIONS.md #40): what the driver searched
+  // for is the headline, rendered as the card's <h2> so heading navigation
+  // still finds it, with the number and the other name on a quiet line below.
+  // Centers are known by their alpha code, customers by their name.
+  const isCustomer = slic.type === 'customer';
+  const headline = isCustomer ? slic.name || slic.alphaSlic : slic.alphaSlic;
+  const subline = [`SLIC ${slic.numSlic}`, isCustomer ? slic.alphaSlic : slic.name]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
-    <>
-      {slic?.type === 'customer' && (
-        <Typography variant='h6' sx={{ textAlign: 'center' }}>
-          {slic.name}
-        </Typography>
-      )}
-      <Typography variant='h6' sx={{ textAlign: 'center' }}>
-        {slic?.numSlic} - {slic?.alphaSlic}
-      </Typography>
+    <Box sx={{ width: '100%' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 1,
+        }}
+      >
+        <Box sx={{ minWidth: 0 }}>
+          <Typography
+            variant='h4'
+            component='h2'
+            sx={{ fontWeight: 700, overflowWrap: 'anywhere' }}
+          >
+            {headline}
+          </Typography>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+            {subline}
+          </Typography>
+        </Box>
+        <Chip label={isCustomer ? 'Customer' : 'Center'} variant='outlined' />
+      </Box>
+
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 1,
+          mt: 2,
+        }}
+      >
+        <Box>
+          <Typography>{slic.address.street}</Typography>
+          <Typography>
+            {slic.address.city}, {slic.address.state} {slic.address.zip}
+          </Typography>
+        </Box>
+        <Tooltip title='Copy address' placement='top'>
+          <IconButton onClick={handleCopyAddress} aria-label='Copy address'>
+            <ContentCopy />
+          </IconButton>
+        </Tooltip>
+      </Box>
 
       <Tooltip title='Scroll to comments' placement='top'>
         <Chip
@@ -76,38 +122,16 @@ function TitleAddress({ slic, commentsCount }) {
           clickable
           onClick={handleScrollToComments}
           aria-label='Scroll to comments'
+          sx={{ mt: 2 }}
         />
       </Tooltip>
-
-      <Box
-        sx={{
-          position: 'relative',
-          width: '100%',
-          textAlign: 'center',
-          mt: 2,
-        }}
-      >
-        <Typography>{slic.address.street}</Typography>
-        <Typography>
-          {slic.address.city}, {slic.address.state} {slic.address.zip}
-        </Typography>
-
-        <Tooltip title='Copy address' placement='top'>
-          <IconButton
-            sx={{ position: 'absolute', top: '0', right: '0' }}
-            onClick={handleCopyAddress}
-          >
-            <ContentCopy />
-          </IconButton>
-        </Tooltip>
-      </Box>
 
       <Snackbar open={openSnackbar} onClose={handleCloseSnack}>
         <Alert severity={snackSeverity} onClose={handleCloseSnack}>
           {snackMessage}
         </Alert>
       </Snackbar>
-    </>
+    </Box>
   );
 }
 

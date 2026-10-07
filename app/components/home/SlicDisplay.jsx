@@ -14,8 +14,8 @@ import MemberDisplay from './MemberDisplay';
 function SlicDisplay({ commentsCount, loading, slic, user }) {
   if (loading) {
     return (
-      <SlicDetailsContainer title='Loading...'>
-        <CircularProgress sx={{ mt: 2 }} />
+      <SlicDetailsContainer>
+        <CircularProgress aria-label='Loading SLIC' />
       </SlicDetailsContainer>
     );
   }

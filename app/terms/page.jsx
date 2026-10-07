@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 const CONTACT_EMAIL = 'WebDevilishSmile@gmail.com';
-const EFFECTIVE_DATE = 'September 20, 2026';
+const EFFECTIVE_DATE = 'October 7, 2026';
 
 export default function TermsPage() {
   return (
@@ -93,7 +93,9 @@ export default function TermsPage() {
       <LegalSection title='Comments and things you post'>
         <LegalText>
           Comments are what turn the app from an address list into shared
-          knowledge, and we want you to use them. A few ground rules:
+          knowledge, and we want you to use them. The same goes for the places
+          you add on Whip It In &amp; Out and the comments and replies you leave
+          there. A few ground rules for all of it:
         </LegalText>
         <LegalList
           items={[
@@ -108,11 +110,13 @@ export default function TermsPage() {
           You own what you write. By posting it, you give us permission to
           store it, show it to other signed-in drivers alongside your name and
           profile picture, and keep showing it until you delete it or your
-          account is removed. You can delete your own comments at any time from
-          your profile page.
+          account is removed. You can delete your own comments at any time: SLIC
+          comments from your profile page, and comments on a place from the
+          place itself. You can edit or delete a place you added; once other
+          drivers have commented on it, only we can remove it, so ask us.
         </LegalText>
         <LegalText>
-          We can edit or remove any comment, and suspend or close any account,
+          We can edit or remove any comment or place, and suspend or close any account,
           that we believe breaks these rules or makes the app worse for other
           drivers. We aren&apos;t obliged to review every comment before it
           appears, so don&apos;t assume that a comment is accurate just because
@@ -124,7 +128,7 @@ export default function TermsPage() {
         <LegalText>When using the app, you agree not to:</LegalText>
         <LegalList
           items={[
-            'Copy, scrape, export or redistribute the address database, PDFs or comments, in bulk or otherwise, outside the app.',
+            'Copy, scrape, export or redistribute the address database, PDFs, places or comments, in bulk or otherwise, outside the app.',
             'Use bots, scripts or automated tools to access the app, or try to get around rate limits, sign-in or other protections.',
             'Try to access accounts, admin pages or data that aren’t yours.',
             'Upload anything that contains viruses or malicious code, or do anything that disrupts the app for other people.',
@@ -189,7 +193,10 @@ export default function TermsPage() {
           password; all of your comments; your votes on other drivers&apos;
           comments; your lookup history; and, if you signed in with Google, the
           link between your Google account and the app. You&apos;ll be signed
-          out on every device.
+          out on every device. If other drivers replied to one of your comments
+          on a place, it is replaced with a &quot;Comment deleted&quot; note so
+          their replies still make sense. Places you added stay in the app,
+          without your name, because other drivers rely on them.
         </LegalText>
         <LegalText>
           You&apos;re welcome to create a new account later, but your old

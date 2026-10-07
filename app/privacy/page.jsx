@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 const CONTACT_EMAIL = 'WebDevilishSmile@gmail.com';
-const EFFECTIVE_DATE = 'September 20, 2026';
+const EFFECTIVE_DATE = 'October 7, 2026';
 
 export default function PrivacyPage() {
   return (
@@ -53,9 +53,12 @@ export default function PrivacyPage() {
               number and change your display name on your profile page.
             </>,
             <>
-              <strong>Comments.</strong> Anything you post on a SLIC is stored
-              with your account and the SLIC it belongs to, along with any votes
-              you cast on other drivers&apos; comments.
+              <strong>Comments and places.</strong> Anything you post on a SLIC
+              is stored with your account and the SLIC it belongs to. Places you
+              add on Whip It In &amp; Out, including any parking pin you give
+              them, and your comments and replies there are stored with your
+              account too. So are any votes you cast on other drivers&apos;
+              comments.
             </>,
             <>
               <strong>Messages you send us.</strong> If you email us, we keep
@@ -87,6 +90,15 @@ export default function PrivacyPage() {
               fast they load. These tools are cookie-free and report aggregated
               numbers; they don&apos;t identify you by name and don&apos;t track
               you across other websites.
+            </>,
+            <>
+              <strong>Your location, only when you ask.</strong> &quot;Near
+              me&quot; and &quot;Use my current location&quot; ask your browser
+              for your location only when you tap them. Near me uses it inside
+              your browser to sort places by distance; it is never sent to or
+              stored by the app. &quot;Use my current location&quot; fills in a
+              place&apos;s parking pin, which is saved with that place only if
+              you save the place.
             </>,
           ]}
         />
@@ -126,7 +138,8 @@ export default function PrivacyPage() {
           items={[
             <>
               <strong>Other drivers.</strong> Any signed-in user can see your
-              display name, profile picture, comments and votes. Your email,
+              display name, profile picture, comments, the places you add and
+              votes. Your email,
               phone number and lookup history are never shown to other drivers.
             </>,
             <>
@@ -177,7 +190,8 @@ export default function PrivacyPage() {
         <LegalList
           items={[
             'Account and profile details are kept for as long as your account exists.',
-            'Comments are kept until you delete them from your profile page, or until your account is deleted.',
+            'Comments are kept until you delete them, or until your account is deleted. Delete SLIC comments from your profile page and comments on a place from the place itself.',
+            'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
             'Lookup history is kept while your account exists. The History page shows the most recent six months.',
             'Sign-up rate-limit records expire automatically within about an hour.',
             'Session cookies expire after 30 days, or as soon as you sign out.',
@@ -188,7 +202,8 @@ export default function PrivacyPage() {
       <LegalSection title='Your choices'>
         <LegalList
           items={[
-            'Edit your display name and phone number, or delete any of your comments, from your profile page.',
+            'Edit your display name and phone number, or delete any of your SLIC comments, from your profile page.',
+            'Edit or delete your comments on places, and the places you added, on Whip It In & Out.',
             'Sign out from any device to end that session.',
             'If you signed in with Google, you can also remove SLICs from the apps connected to your Google account.',
             <>

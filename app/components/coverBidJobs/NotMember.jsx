@@ -1,6 +1,7 @@
 import theme from '@/utils/theme';
-import Image from 'next/image';
-import { Typography, Button, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
+
+import BmcButton from '../layout/BmcButton';
 
 export default function NotMember() {
   return (
@@ -16,21 +17,7 @@ export default function NotMember() {
           To become a member please click the button below to support the site
           and gain access to this page.
         </Typography>
-        <Button
-          type='submit'
-          variant='contained'
-          href='https://buymeacoffee.com/tiagodavila'
-          target='_blank'
-          rel='noopener noreferrer'
-          sx={{ backgroundColor: '#f7f7f7', color: 'black', mt: 2 }}
-        >
-          <Image
-            src='/bmc-brand-logo.svg'
-            width={148}
-            height={24}
-            alt='Buy Me a Coffee'
-          />
-        </Button>
+        <BmcButton sx={{ mt: 2 }} />
       </Box>
     </>
   );

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import RequestAccess from './RequestAccess';
 import { isMobileDevice, serializeUser } from '@/utils/functions';
 import { headers } from 'next/headers';
-import Image from 'next/image';
+import BmcButton from '../layout/BmcButton';
 
 async function Membership() {
   // Ensure the auth function is called to get the session
@@ -67,21 +67,7 @@ async function Membership() {
         a member on Buy Me a Coffee.
       </Typography>
 
-      <Button
-        type='submit'
-        variant='contained'
-        href='https://buymeacoffee.com/tiagodavila'
-        target='_blank'
-        rel='noopener noreferrer'
-        sx={{ backgroundColor: '#f7f7f7', color: 'black' }}
-      >
-        <Image
-          src='/bmc-brand-logo.svg'
-          width={148}
-          height={24}
-          alt='Buy Me a Coffee'
-        />
-      </Button>
+      <BmcButton />
 
       <Typography
         variant='body2'

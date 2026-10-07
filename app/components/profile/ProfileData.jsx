@@ -10,14 +10,13 @@ import { Settings as SettingsIcon } from '@mui/icons-material';
 import {
   Alert,
   Box,
-  Button,
   IconButton,
   Snackbar,
   Typography,
   Paper,
 } from '@mui/material';
-import Image from 'next/image';
 
+import BmcButton from '../layout/BmcButton';
 import EditProfileDialog from './EditProfileDialog';
 
 function ProfileData({ userData, commentCount }) {
@@ -88,20 +87,7 @@ function ProfileData({ userData, commentCount }) {
 
       {!userData.bmcMember && (
         <>
-          <Button
-            variant='contained'
-            href='https://buymeacoffee.com/tiagodavila'
-            target='_blank'
-            rel='noopener noreferrer'
-            sx={{ backgroundColor: '#f7f7f7', color: 'black', mt: 1 }}
-          >
-            <Image
-              src='/bmc-brand-logo.svg'
-              width={148}
-              height={24}
-              alt='Buy Me a Coffee'
-            />
-          </Button>
+          <BmcButton sx={{ mt: 1 }} />
           <Typography variant='caption' sx={{ mb: 1 }}>
             Become a member
           </Typography>

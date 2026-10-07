@@ -1,15 +1,20 @@
 import { lightBlue } from '@mui/material/colors';
-import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+import {
+  createTheme,
+  darken,
+  lighten,
+  responsiveFontSizes,
+} from '@mui/material/styles';
 
 // The raw colors both schemes are built from — the one place to change a color.
 // Components never see these names; they use the palette keys below
-// (background.opposite, text.light, …), which stay the same in both schemes and
+// (background.comment, text.light, …), which stay the same in both schemes and
 // just point at a different token in each.
 const tokens = {
   brand: lightBlue, // primary shades + the light scheme's paper
-  chalk: '#f7f7f7', // light text
-  canvas: '#edf3fc', // light page background; the dark scheme's "opposite"
-  void: '#050505', // dark page background; the light scheme's "opposite"
+  chalk: '#f7f7f7', // light text; the Buy Me a Coffee tile
+  canvas: '#edf3fc', // light page background; dark-scheme text on the primary color
+  void: '#050505', // dark page background; text on the Buy Me a Coffee tile
   comment: '#eaf8fe', // comment surface in the light scheme
 };
 
@@ -21,6 +26,16 @@ const primary = {
   light: tokens.brand[300],
   main: tokens.brand[600],
   dark: tokens.brand[800],
+};
+
+// Buy Me a Coffee's button: their logo is dark on a light tile, so it stays
+// light in both schemes. Read as `color='bmc'` (layout/BmcButton.jsx);
+// light/dark exist for MUI's hover and active states.
+const bmc = {
+  main: tokens.chalk,
+  light: lighten(tokens.chalk, 0.5),
+  dark: darken(tokens.chalk, 0.1),
+  contrastText: tokens.void,
 };
 
 let theme = createTheme({
@@ -54,14 +69,13 @@ let theme = createTheme({
     dark: {
       palette: {
         primary,
+        bmc,
         background: {
           default: tokens.void,
-          opposite: tokens.canvas,
           paper: tokens.void,
           comment: tokens.void,
         },
         text: {
-          opposite: tokens.void,
           light: tokens.canvas,
         },
       },
@@ -69,15 +83,14 @@ let theme = createTheme({
   },
   palette: {
     primary,
+    bmc,
     background: {
       default: tokens.canvas,
-      opposite: tokens.void,
       paper: tokens.brand[50],
       comment: tokens.comment,
     },
     text: {
       light: tokens.chalk,
-      opposite: tokens.canvas,
     },
   },
 

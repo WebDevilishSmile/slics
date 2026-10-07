@@ -1,10 +1,9 @@
 import { VolunteerActivism } from '@mui/icons-material';
+import BuyMeACoffeeButton from '../layout/BuyMeACoffeeButton';
 import AboutContainer from './AboutContainer';
 import AboutImage from './AboutImage';
-import AboutLink from './AboutLink';
 import AboutText from './AboutText';
 import AboutTitle from './AboutTitle';
-import Image from 'next/image';
 
 export default function Contributions() {
   return (
@@ -30,17 +29,7 @@ export default function Contributions() {
         coffee!
       </AboutText>
 
-      <AboutLink
-        link='https://buymeacoffee.com/tiagodavila'
-        color={{ backgroundColor: '#f7f7f7', color: 'black' }}
-      >
-        <Image
-          src='/bmc-brand-logo.svg'
-          width={148}
-          height={24}
-          alt='Buy Me a Coffee'
-        />
-      </AboutLink>
+      <BuyMeACoffeeButton />
     </AboutContainer>
   );
 }

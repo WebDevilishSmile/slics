@@ -1,5 +1,8 @@
 export const SLICS_PER_PAGE = 5;
 
+// The supporter page (layout/BmcButton.jsx, the menu, the lookup screen).
+export const BMC_URL = 'https://buymeacoffee.com/tiagodavila';
+
 // How far back the cover bid jobs page loads weeks. A display window only —
 // older weeks stay in the database and remain reachable from /admin/cover/jobs.
 export const COVER_BID_MONTHS_BACK = 12;

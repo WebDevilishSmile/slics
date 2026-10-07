@@ -4,6 +4,7 @@ import { Alert, Autocomplete, Box, Link, TextField } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 import theme from '@/utils/theme';
+import { BMC_URL } from '@/utils/variables';
 
 function getDonationMessage(count) {
   if (count <= 0) return null;
@@ -86,7 +87,7 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
         >
           {donationMessage}{' '}
           <Link
-            href='https://buymeacoffee.com/tiagodavila'
+            href={BMC_URL}
             target='_blank'
             rel='noopener noreferrer'
           >
@@ -94,7 +95,7 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
           </Link>
           or{' '}
           <Link
-            href='https://buymeacoffee.com/tiagodavila/membership'
+            href={`${BMC_URL}/membership`}
             target='_blank'
             rel='noopener noreferrer'
           >

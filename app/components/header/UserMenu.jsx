@@ -37,6 +37,8 @@ import {
   useMediaQuery,
 } from '@mui/material';
 
+import { BMC_URL } from '@/utils/variables';
+
 import InstallMenuItem from '../install/InstallMenuItem';
 import ModeSwitch from '../layout/ModeSwitch';
 
@@ -292,7 +294,7 @@ function UserMenu({ user, signOutAction }) {
                 icon={<CheckroomOutlined />}
               />
               <ExternalItem
-                href='https://buymeacoffee.com/tiagodavila'
+                href={BMC_URL}
                 label='Buy me a Coffee'
                 icon={<LocalCafeOutlined />}
               />

@@ -9,7 +9,7 @@ import { CommentRefreshProvider } from '@/app/context/CommentRefreshContext';
 import GymCard from './GymCard';
 import GymFormDialog from './GymFormDialog';
 import GymSearchBar from './GymSearchBar';
-import { slicLabel } from './SlicTagsField';
+import { slicLabel } from '../form/SlicTagsField';
 
 // Nearest first; a gym without a parking pin can't be measured, so it sorts
 // last. `|| 0` turns Infinity - Infinity (NaN) into "equal".

@@ -1,7 +1,8 @@
-// One fetch wrapper for every gym / gym-comment mutation on the Planet Fitness
-// page. Resolves `{ data }` on success or `{ error }` with a message to show —
-// the API's own `{ error }` string when there is one (SUGGESTIONS.md #14).
-export async function gymRequest(url, { method = 'POST', body } = {}) {
+// Fetch wrapper for the client components that call this app's own API
+// (gyms, places). Resolves `{ data }` on success or `{ error }` with a message
+// to show — the API's own `{ error }` string when there is one
+// (SUGGESTIONS.md #14). Defaults to POST; pass `method: 'GET'` to read.
+export async function apiRequest(url, { method = 'POST', body } = {}) {
   let response;
   try {
     response = await fetch(url, {

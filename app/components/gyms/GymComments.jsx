@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Alert, Box, Button, TextField, Typography } from '@mui/material';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { GYM_COMMENT_MAX_LENGTH } from '@/utils/variables';
-import { gymRequest } from './gymRequest';
+import { apiRequest } from '@/utils/apiRequest';
 import GymComment from './GymComment';
 
 // Plain-text comments on one gym — how to get in, where to park. The list
@@ -19,7 +19,7 @@ function GymComments({ gym }) {
     event.preventDefault();
     setSaving(true);
     setError('');
-    const { error } = await gymRequest('/api/gym-comments', {
+    const { error } = await apiRequest('/api/gym-comments', {
       body: { gymId: gym._id, content: draft },
     });
     setSaving(false);

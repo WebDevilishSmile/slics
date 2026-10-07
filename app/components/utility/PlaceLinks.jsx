@@ -5,19 +5,21 @@ import { Box, Button, Typography } from '@mui/material';
 import { useAppleDevice } from '@/utils/clientFunctions';
 import { mapsHref } from '@/utils/geo';
 
-// Maps open the truck-parking pin when the gym has one, the address otherwise.
-// The call link dials digits only and stays in the same tab (tel: needs no
-// new window — UI-SUGGESTIONS.md flags both in home/MapPhoneLinks.jsx).
-function GymLinks({ gym }) {
+// Map and call buttons for any `{ name, address, parking, phone }` — gyms on
+// the Planet Fitness page and places on Whip It In & Out. Maps open the
+// truck-parking pin when there is one, the address otherwise. The call link
+// dials digits only and stays in the same tab (tel: needs no new window —
+// UI-SUGGESTIONS.md flags both in home/MapPhoneLinks.jsx).
+function PlaceLinks({ place }) {
   const isAppleDevice = useAppleDevice();
-  const phoneDigits = gym.phone?.replace(/\D/g, '');
+  const phoneDigits = place.phone?.replace(/\D/g, '');
 
   return (
     <Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
         <Button
           variant='contained'
-          href={mapsHref(gym, 'google')}
+          href={mapsHref(place, 'google')}
           target='_blank'
           rel='noopener noreferrer'
           startIcon={<Google />}
@@ -27,7 +29,7 @@ function GymLinks({ gym }) {
         {isAppleDevice && (
           <Button
             variant='contained'
-            href={mapsHref(gym, 'apple')}
+            href={mapsHref(place, 'apple')}
             target='_blank'
             rel='noopener noreferrer'
             startIcon={<Apple />}
@@ -41,12 +43,12 @@ function GymLinks({ gym }) {
             href={`tel:${phoneDigits}`}
             startIcon={<PhoneOutlined />}
           >
-            {gym.phone}
+            {place.phone}
           </Button>
         )}
       </Box>
       <Typography variant='caption' color='text.secondary'>
-        {gym.parking
+        {place.parking
           ? 'Maps open the truck-parking pin.'
           : 'No parking pin yet. Maps open the address.'}
       </Typography>
@@ -54,4 +56,4 @@ function GymLinks({ gym }) {
   );
 }
 
-export default GymLinks;
+export default PlaceLinks;

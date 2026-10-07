@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { GYM_COMMENT_MAX_LENGTH } from '@/utils/variables';
-import { gymRequest } from './gymRequest';
+import { apiRequest } from '@/utils/apiRequest';
 
 function GymComment({ comment }) {
   const { isRefreshing, refresh } = useCommentRefresh();
@@ -38,7 +38,7 @@ function GymComment({ comment }) {
   const handleSave = async () => {
     setSaving(true);
     setError('');
-    const { error } = await gymRequest(`/api/gym-comments/${comment._id}`, {
+    const { error } = await apiRequest(`/api/gym-comments/${comment._id}`, {
       method: 'PATCH',
       body: { content: draft },
     });
@@ -51,7 +51,7 @@ function GymComment({ comment }) {
   const handleDelete = async () => {
     setSaving(true);
     setError('');
-    const { error } = await gymRequest(`/api/gym-comments/${comment._id}`, {
+    const { error } = await apiRequest(`/api/gym-comments/${comment._id}`, {
       method: 'DELETE',
     });
     setSaving(false);

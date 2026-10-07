@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import theme from '@/utils/theme';
 import { GYM_STATUSES } from '@/utils/variables';
-import SlicTagsField from './SlicTagsField';
+import SlicTagsField from '../form/SlicTagsField';
 
 // `location` is the useGeolocation() result owned by GymFinder.
 function GymSearchBar({

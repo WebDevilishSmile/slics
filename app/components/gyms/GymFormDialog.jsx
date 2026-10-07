@@ -29,8 +29,8 @@ import { formatLatLng, mapsHref, parseLatLng } from '@/utils/geo';
 import { GYM_STATUSES } from '@/utils/variables';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import PhoneField from '../form/PhoneField';
-import { gymRequest } from './gymRequest';
-import SlicTagsField from './SlicTagsField';
+import { apiRequest } from '@/utils/apiRequest';
+import SlicTagsField from '../form/SlicTagsField';
 
 function toFields(gym) {
   return {
@@ -99,7 +99,7 @@ function GymFormDialog({ gym, slics, onClose }) {
 
     setSaving(true);
     setError('');
-    const { error } = await gymRequest(
+    const { error } = await apiRequest(
       isEdit ? `/api/gyms/${gym._id}` : '/api/gyms',
       {
         method: isEdit ? 'PATCH' : 'POST',
@@ -130,7 +130,7 @@ function GymFormDialog({ gym, slics, onClose }) {
   const handleDelete = async () => {
     setSaving(true);
     setError('');
-    const { error } = await gymRequest(`/api/gyms/${gym._id}`, {
+    const { error } = await apiRequest(`/api/gyms/${gym._id}`, {
       method: 'DELETE',
     });
     setSaving(false);

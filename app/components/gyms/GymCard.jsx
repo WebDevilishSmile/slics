@@ -24,9 +24,9 @@ import {
 import theme from '@/utils/theme';
 import { GYM_STATUSES } from '@/utils/variables';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
-import { gymRequest } from './gymRequest';
+import { apiRequest } from '@/utils/apiRequest';
 import GymComments from './GymComments';
-import GymLinks from './GymLinks';
+import PlaceLinks from '../utility/PlaceLinks';
 
 function lastVisitedLabel(iso) {
   if (!iso) return 'Not visited yet';
@@ -57,7 +57,7 @@ function GymCard({ gym, miles, slicLabels, onEdit }) {
 
   const handleMarkVisited = async () => {
     setMarking(true);
-    const { error } = await gymRequest(`/api/gyms/${gym._id}/visit`);
+    const { error } = await apiRequest(`/api/gyms/${gym._id}/visit`);
     setMarking(false);
     if (error) {
       setToast({ open: true, severity: 'error', message: error });
@@ -129,7 +129,7 @@ function GymCard({ gym, miles, slicLabels, onEdit }) {
         )}
       </Box>
 
-      <GymLinks gym={gym} />
+      <PlaceLinks place={gym} />
 
       {gym.slics.length > 0 && (
         <Box>

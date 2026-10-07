@@ -154,9 +154,9 @@ Pure deletion. Every item here has been verified to have zero importers.
 
 ### 7. Delete three dead modules
 
-- [ ] `lib/stripe.js` — imports the `stripe` package, which is **not in `package.json`**.
+- [x] `lib/stripe.js` — imports the `stripe` package, which is **not in `package.json`**.
   Zero importers. Would crash on import.
-- [ ] `utils/pdfs.js` — an array of PDF filenames. Zero importers.
+- [x] `utils/pdfs.js` — an array of PDF filenames. Zero importers.
 - [x] `app/context/CommentRefreshContext.js` — this is `SUGGESTIONS.md` #13. Resolved
   there by keeping it: it's now the `useTransition`-backed refresh lock for the
   profile/admin comment lists, not dead code.
@@ -165,15 +165,15 @@ Pure deletion. Every item here has been verified to have zero importers.
 
 ### 8. Delete five dead components (and what only they used)
 
-- [ ] `app/components/home/EmblaCarousel.jsx` — zero importers. Taking it out also frees:
+- [x] `app/components/home/EmblaCarousel.jsx` — zero importers. Taking it out also frees:
   - the `embla-carousel-react` dependency (its only import is inside this file)
   - all eleven `public/carousel_*.png` / `.jpeg` files (the component built the path
     dynamically as `/carousel_N.png`; the `.jpeg` copies were never reachable)
   - the `.embla*` rules in `app/globals.css:95-229` (~135 lines, 60% of the file)
-- [ ] `app/components/home/AllHubsButton.jsx` — zero importers.
-- [ ] `app/components/home/MoreDetailsLink.jsx` — only reference is a commented-out tag at
+- [x] `app/components/home/AllHubsButton.jsx` — zero importers.
+- [x] `app/components/home/MoreDetailsLink.jsx` — only reference is a commented-out tag at
   `home/SlicDisplay.jsx:39`. Delete both.
-- [ ] `app/components/admin/users/UserCardActions.jsx` — zero importers.
+- [x] `app/components/admin/users/UserCardActions.jsx` — zero importers.
 - [x] `app/components/newSlic/NewSlicForm.jsx` — zero importers. `admin/new/page.jsx`
   already uses `createEditSlic/SlicForm`, so `SUGGESTIONS.md` #11 is done **except this
   deletion**. Note that #11 says to delete NewSlicForm "and its sub-components" — don't.
@@ -187,11 +187,11 @@ Not double-tracked.
 
 ### 9. Remove two dead dependencies
 
-- [ ] `crypto` — this is a deprecated 2016 placeholder package on npm, not Node's
+- [x] `crypto` — this is a deprecated 2016 placeholder package on npm, not Node's
   built-in. `import crypto from 'crypto'` in `app/api/webhooks/buymeacoffee/route.js`
   resolves to the builtin regardless of whether the package is installed. Remove it from
   `package.json`; the import stays.
-- [ ] `embla-carousel-react` — `Depends on:` item 8.
+- [x] `embla-carousel-react` — `Depends on:` item 8.
 
 Then `npm install` to update the lockfile.
 
@@ -199,7 +199,7 @@ Then `npm install` to update the lockfile.
 
 ### 10. Clean out `public/`
 
-- [ ] **Files:** 34 files in `public/`; 6 are referenced.
+- [x] **Files:** 34 files in `public/`; 6 are referenced.
 
 Delete:
 
@@ -221,12 +221,20 @@ Keep: `android-chrome-192x192.png`, `android-chrome-512x512.png`,
 `bmc-brand-logo.svg`, `slics-logo.png` (source for the generated icons),
 `slics_logo_dark.png`.
 
-While here: `slics-logo.png` vs `slics_logo_dark.png` — pick one separator.
+*Done 2026-10-07 (items 7–10):* removed 32 files with `git rm`. The `.embla*` rules had
+drifted to `globals.css:83-217`, the end of the file, and are gone. `public/` now holds
+exactly the keep list above, plus `default-avatar.png`.
 
-- [ ] **Add two files that are referenced but missing.** `admin/users/UserCard.jsx:203`
+While here: `slics-logo.png` vs `slics_logo_dark.png` — pick one separator.
+*Done 2026-10-07:* renamed to `slics-logo-dark.png` (hyphen, matching `slics-logo.png` and
+the generated icons); `header/Header.jsx` and `footer/Footer.jsx` updated.
+
+- [x] **Add two files that are referenced but missing.** `admin/users/UserCard.jsx:203`
   falls back to `/default-avatar.png` and `profile/ProfileImage.jsx:19` to
   `/default-profile.png`. Neither exists in `public/`, so a user with no OAuth image gets
   a 404 and a broken `<img>`. Add one placeholder and point both at it.
+  *Done 2026-10-07:* `public/default-avatar.png` (200×200, MUI's grey Avatar tile with
+  its Person glyph, rendered with sharp); both components now fall back to it.
 
 *Blast radius:* none for the deletions. The missing-file fix changes what credentials
 users without a Google avatar see on two screens — for the better.
@@ -260,23 +268,38 @@ isn't served at all (item 11).
 
 ### 13. Config nits
 
-- [ ] `tailwind.config.mjs:3-7` — `content` globs include `./pages/**` and
+- [x] `tailwind.config.mjs:3-7` — `content` globs include `./pages/**` and
   `./components/**`, neither of which exists. Trim to `./app/**/*.{js,jsx}` (and add
   `./components/**` back once item 21 is done). The `theme.extend.colors` block in the
-  same file is `UI-SUGGESTIONS.md` #10.
-- [ ] `app/page.jsx:9` — imports `RedirectMessage`, never uses it.
-- [ ] `.gitignore` — add `.claude/settings.local.json`. It's untracked today, but only by
+  same file is `UI-SUGGESTIONS.md` #10. *(Already trimmed to `./app/**` when found.)*
+- [x] `app/page.jsx:9` — imports `RedirectMessage`, never uses it.
+- [x] `.gitignore` — add `.claude/settings.local.json`. It's untracked today, but only by
   luck; `settings.json` is the shared one and should stay tracked.
 
 *Blast radius:* none.
 
 ### 14. Run `knip` once, then keep it
 
-- [ ] `npx knip` after items 7–13.
+- [x] `npx knip` after items 7–13.
 
 It reports unused files, exports and dependencies across the whole project and will catch
 whatever this list missed. Consider adding it as `"lint:dead": "knip"` in `package.json`
 so the next audit is one command.
+
+*Done 2026-10-07:* `knip` is a devDependency, `npm run lint:dead` runs it, and
+`knip.jsonc` carries the `@/` alias. knip reads aliases from `tsconfig.json` only, and
+without the alias it reports 88 "unused" files. First real run: no dead files beyond
+items 7–8 and `UI-SUGGESTIONS.md` #22 (`StyledPage`, `Wrapper`). It did find seven
+unused functions, which are Tier 2 material:
+- `commentsApi.deleteComment`, which is also buggy: no `new ObjectId`.
+- `coverBidJobsApi.getAllCoverBidJobs`.
+- `driversApi.createDriver`, `deleteDriver` and `getAllDrivers`. The routes query
+  inline, and the page reads `utils/drivers.js`; see #16.
+- `slicsApi.setNumSlicsToString`, a spent one-off migration.
+- `usersApi.toggleMembershipApi`.
+
+The `*_EXAMPLE` shapes in `variables.js` are reference docs and also show up; that's
+expected.
 
 ---
 

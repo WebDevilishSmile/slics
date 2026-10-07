@@ -34,9 +34,6 @@ function SlicDisplay({ commentsCount, loading, slic, user }) {
         <TitleAddress slic={slic} commentsCount={commentsCount} />
         <MapPhoneLinks slic={slic} />
         <PdfLink slic={slic} />
-
-        {/* Currently working on implementation of truck routing */}
-        {/* {user.role === 'admin' && <MoreDetailsLink slic={slic} />} */}
       </Suspense>
     </SlicDetailsContainer>
   );

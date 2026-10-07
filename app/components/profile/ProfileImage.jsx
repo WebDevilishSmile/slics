@@ -16,7 +16,7 @@ function ProfileImage({ userData }) {
       }}
     >
       <Image
-        src={userData.image || '/default-profile.png'}
+        src={userData.image || '/default-avatar.png'}
         alt={userData.name}
         width={100}
         height={100}

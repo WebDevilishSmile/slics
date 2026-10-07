@@ -1,0 +1,20 @@
+// Dead-code check: `npm run lint:dead` (docs/STRUCTURE.md #14).
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // knip reads aliases from tsconfig.json only; this repo has jsconfig.json.
+  // Without this every `@/…` import is unresolved and half the app reads as unused.
+  "paths": { "@/*": ["./*"] },
+  // One-off Node scripts run by hand / npm scripts, not imported by the app.
+  "entry": ["scripts/*.{js,mjs}"],
+  // serializeX helpers exported next to the serializeXs that use them.
+  "ignoreExportsUsedInFile": true,
+  "ignoreDependencies": [
+    // Loaded through eslint.config.mjs's FlatCompat, which knip can't trace.
+    "eslint",
+    "eslint-config-next",
+    // Ships with next; scripts/generateIcons.mjs uses it on purpose (no extra dep).
+    "sharp",
+    // Only a JSDoc type import in postcss.config.mjs.
+    "postcss-load-config"
+  ]
+}

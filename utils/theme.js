@@ -210,7 +210,7 @@ let theme = createTheme({
             fontWeight: 800,
             textTransform: 'uppercase',
             textAlign: 'center',
-            maxWidth: theme.layout.width.panel,
+            maxWidth: theme.layout.width.prose,
             paddingLeft: theme.spacing(1),
             paddingRight: theme.spacing(1),
           }),

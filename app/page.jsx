@@ -6,7 +6,6 @@ import { Typography } from '@mui/material';
 import Membership from './components/signIn/Membership';
 import SignIn from './components/signIn/SignIn';
 import RedirectMember from './components/home/RedirectMember';
-import RedirectMessage from './components/layout/RedirectMessage';
 
 export default async function Main() {
   // Check if the user is logged in

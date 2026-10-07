@@ -17,6 +17,9 @@ export default async function Header() {
               <ListItem>
                 <Button href='/admin'>Admin</Button>
               </ListItem>
+              <ListItem>
+                <Button href='/whip-it-in-and-out'>Whip It In And Out</Button>
+              </ListItem>
               {/* <ListItem>
                 <Button href='/covers'>Covers</Button>
               </ListItem> */}
@@ -41,7 +44,7 @@ export default async function Header() {
 
         <Box sx={{ position: 'relative', height: '2.4rem', width: '2.4rem' }}>
           <Image
-            src='/slics_logo_dark.png'
+            src='/slics-logo-dark.png'
             fill
             style={{ objectFit: 'contain' }}
             alt='SLICs Logo'

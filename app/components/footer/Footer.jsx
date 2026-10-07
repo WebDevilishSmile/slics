@@ -68,7 +68,7 @@ function Footer() {
       </Box>
       <Box>
         <Image
-          src='/slics_logo_dark.png'
+          src='/slics-logo-dark.png'
           alt='Description'
           width={100}
           height={100}

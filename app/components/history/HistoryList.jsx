@@ -31,6 +31,29 @@ function headline(view) {
   return view.slic.alphaSlic;
 }
 
+// Swap every `minHeight` in a toolbar mixin for `top`, keeping its media
+// queries, so the offset tracks the toolbar's real height (56/48/64px).
+const belowToolbar = (mixin) =>
+  Object.fromEntries(
+    Object.entries(mixin).map(([key, value]) =>
+      key === 'minHeight'
+        ? ['top', value]
+        : [key, typeof value === 'object' ? belowToolbar(value) : value],
+    ),
+  );
+
+// Each day's header sticks under the fixed app header while that day's rows
+// scroll past, then the next day pushes it out (it's sticky within its own
+// <ul>). It needs the panel's opaque surface, including the dark-mode
+// elevation tint the HistoryView Paper gets, so rows don't show through.
+const stickyDaySx = (theme) => ({
+  ...belowToolbar(theme.mixins.toolbar),
+  bgcolor: 'background.paper',
+  backgroundImage: theme.vars.overlays[theme.layout.elevation],
+  typography: 'subtitle2',
+  lineHeight: 2.5,
+});
+
 function groupByDay(views) {
   const groups = [];
   for (const view of views) {
@@ -50,14 +73,7 @@ export default function HistoryList({ views, onOpenMenu }) {
       {groupByDay(views).map(({ label, views: dayViews }) => (
         <li key={label}>
           <Box component='ul' sx={{ p: 0 }}>
-            <ListSubheader
-              disableSticky
-              sx={{
-                bgcolor: 'transparent',
-                typography: 'subtitle2',
-                lineHeight: 2.5,
-              }}
-            >
+            <ListSubheader sx={stickyDaySx}>
               {label}
             </ListSubheader>
             {dayViews.map((view) => {

@@ -1071,16 +1071,42 @@ Pick one:
 
 ### 36. A 4px side gutter on phones
 
-- [ ] **File:** `layout/PageContainer.jsx:16`
+- [x] **File:** `layout/PageContainer.jsx:16`
+
+*Done 2026-10-07:* `px: { xs: 2, md: 4, lg: 6 }`. On the sign-in page at 390px the fields and
+the Sign In button now sit 16px from each edge (they were 4px).
 
 `px: { xs: 0.5, … }` is 4px. On the sign-in page at 390px, the email and password fields
 and the Sign In button run edge to edge. Use `xs: 2` (16px), the standard phone gutter.
 
 ### 37. Dead space: 128px margins, a doubled `minHeight`, a 544px footer
 
-- [ ] **Files:** `layout/PageContainer.jsx:10-14`, `layout/Container.jsx`,
+- [x] **Files:** `layout/PageContainer.jsx:10-14`, `layout/Container.jsx`,
   `footer/FooterContainer.jsx:11`, `footer/Footer.jsx`, `layout/HomeButton.jsx`,
   `layout/BackButton.jsx`
+
+*Done 2026-10-07:* measured at 390×844.
+
+| | before | after |
+|---|---|---|
+| landing: heading top | 128px | 80px |
+| landing: footer height | 544px | 249px |
+| landing: page height | 1277px | 844px (one screen) |
+| privacy: page height | 7481px | 7188px |
+
+The 1644px "before" below predates #24, which had already dropped the doubled `minHeight`.
+
+- **Header offset:** an empty `<Toolbar />` spacer in `header/Header.jsx` clears the fixed
+  header. It follows the toolbar's own responsive height (56px on phones, 64px on desktop)
+  instead of a guess. `PageContainer` is `pt: 3, pb: 6`.
+- **Footer:** `FooterContainer` is `AppBar component='footer' position='static'` with auto
+  height. Before, it rendered as a second `<header>`, so pages had two banner landmarks.
+  `Footer.jsx` is one column: 2rem social icons (48px targets), Privacy and Terms, the email
+  line (a text button with a mail icon), and the copyright. The second logo is gone.
+- **Home/Back:** both are in the page flow (`alignSelf: 'flex-start'`), as the first child
+  of `PageContainer`. Admin, history and profile rendered them after the title, so they
+  moved above it. `BackButton` uses `startIcon`. Pages with the button put their title at
+  y=120 instead of 80. #52's header back arrow would win that row back.
 
 Measured on the landing page at 390×844: the heading starts at y=128 and the sign-in form
 ends near y=600. Then come ~500px of empty canvas and a **544px footer (34rem, 64% of the
@@ -1132,7 +1158,10 @@ pairs with the still-open half of #20 (`fontSize` overrides).
 
 ### 39. Load fewer font weights
 
-- [ ] **File:** `app/layout.jsx:13-18`
+- [x] **File:** `app/layout.jsx:13-18`
+
+*Done 2026-10-07:* `weight` is omitted. The page now declares one `100 900` face per subset,
+and it downloads a single Latin woff2 that covers every weight.
 
 Montserrat loads in 8 weights (200–900). The app renders 400, 500, 600, 700 and 800, so 200,
 300 and 900 are never used. Drop those three. Better: omit `weight` entirely. Montserrat is

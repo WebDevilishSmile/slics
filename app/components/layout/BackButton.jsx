@@ -12,14 +12,17 @@ function BackButton() {
     router.back();
   }
 
+  // In the page flow like HomeButton (UI-SUGGESTIONS.md #37): render it first
+  // inside PageContainer.
   return (
     <Button
-      sx={{ position: 'absolute', top: '4.8rem', right: '1rem' }}
+      sx={{ alignSelf: 'flex-start', mb: 1 }}
       onClick={handleBack}
       size='small'
       variant='outlined'
+      startIcon={<ChevronLeftOutlined />}
     >
-      <ChevronLeftOutlined /> Back
+      Back
     </Button>
   );
 }

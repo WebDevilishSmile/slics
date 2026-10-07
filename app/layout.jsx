@@ -12,10 +12,11 @@ import Container from './components/layout/Container';
 import Providers from './components/layout/Providers';
 import ThemeColorSync from './components/layout/ThemeColorSync';
 
+// No `weight`: Montserrat is a variable font, so next/font ships one file
+// that covers every weight instead of one per listed weight (UI-SUGGESTIONS.md #39).
 const font = Montserrat({
   variable: '--font-font',
   subsets: ['latin'],
-  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
   display: 'swap',
 });
 

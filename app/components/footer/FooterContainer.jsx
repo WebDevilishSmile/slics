@@ -1,32 +1,25 @@
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { AppBar } from '@mui/material';
 
+// An AppBar so the footer matches the header (primary in light, dark paper in
+// dark), rendered as a <footer> in the page flow. Its height is its content
+// (UI-SUGGESTIONS.md #37; it was a fixed 34rem). Container is a min-100dvh
+// flex column, so the auto top margin pins the footer to the bottom of the
+// screen on short pages (#24).
 function FooterContainer({ children }) {
   return (
     <AppBar
+      component='footer'
+      position='static'
       sx={{
-        position: 'static',
-        // Container is a min-100dvh flex column; auto top margin pins the
-        // footer to the bottom of the screen on short pages (#24).
         mt: 'auto',
-        width: '100%',
-        height: { xs: '34rem', md: '30rem' },
+        alignItems: 'center',
+        gap: 1,
+        px: 2,
+        py: 4,
         color: 'text.light',
       }}
     >
-      <Toolbar
-        sx={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          justifyContent: 'center',
-          alignItems: 'center',
-          px: 4,
-          py: 2,
-        }}
-      >
-        {children}
-      </Toolbar>
+      {children}
     </AppBar>
   );
 }

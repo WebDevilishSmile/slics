@@ -16,8 +16,8 @@ async function AdminPage() {
 
   return (
     <>
-      <Typography variant='sectionHeading'>Admin Page</Typography>
       <HomeButton />
+      <Typography variant='sectionHeading'>Admin Page</Typography>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 4 }}>
         {adminLinks.map(({ href, label }) => (

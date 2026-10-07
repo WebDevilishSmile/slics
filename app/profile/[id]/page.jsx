@@ -55,8 +55,8 @@ async function ProfilePage({ params }) {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <PageContainer>
-        <Typography variant='sectionHeading'>Profile</Typography>
         <HomeButton />
+        <Typography variant='sectionHeading'>Profile</Typography>
 
         <HydrationGuard>
           <ProfileImage userData={userData} />

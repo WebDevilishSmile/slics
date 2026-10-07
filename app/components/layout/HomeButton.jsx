@@ -11,9 +11,12 @@ function HomeButton() {
     router.push('/');
   }
 
+  // In the page flow, on its own row above the title (UI-SUGGESTIONS.md #37).
+  // It used to be absolutely positioned at a guess of the header's height.
+  // Render it first inside PageContainer.
   return (
     <Button
-      sx={{ position: 'absolute', top: '4.8rem', left: '1rem' }}
+      sx={{ alignSelf: 'flex-start', mb: 1 }}
       onClick={handleHome}
       variant='outlined'
       size='small'

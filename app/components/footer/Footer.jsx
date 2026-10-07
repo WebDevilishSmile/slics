@@ -1,110 +1,79 @@
-import { Facebook, GitHub, Instagram, X } from '@mui/icons-material';
+import {
+  EmailOutlined,
+  Facebook,
+  GitHub,
+  Instagram,
+  X,
+} from '@mui/icons-material';
 import { Box, Button, IconButton, Typography } from '@mui/material';
-import Image from 'next/image';
 import FooterContainer from './FooterContainer';
 
-function Footer() {
-  const socialLinks = [
-    {
-      name: 'Instagram',
-      icon: <Instagram sx={{ fontSize: '3rem' }} />,
-      url: 'https://www.instagram.com/webdevilishsmile/',
-    },
-    {
-      name: 'Facebook',
-      icon: <Facebook sx={{ fontSize: '3rem' }} />,
-      url: 'https://www.facebook.com/webdevilishsmile/',
-    },
-    {
-      name: 'X',
-      icon: <X sx={{ fontSize: '3rem' }} />,
-      url: 'https://www.x.com/webdavila',
-    },
-    {
-      name: 'GitHub',
-      icon: <GitHub sx={{ fontSize: '3rem' }} />,
-      url: 'https://www.github.com/webdevilishsmile',
-    },
-  ];
+const CONTACT_EMAIL = 'WebDevilishSmile@gmail.com';
 
+const socialLinks = [
+  {
+    name: 'Instagram',
+    icon: Instagram,
+    url: 'https://www.instagram.com/webdevilishsmile/',
+  },
+  {
+    name: 'Facebook',
+    icon: Facebook,
+    url: 'https://www.facebook.com/webdevilishsmile/',
+  },
+  { name: 'X', icon: X, url: 'https://www.x.com/webdavila' },
+  {
+    name: 'GitHub',
+    icon: GitHub,
+    url: 'https://www.github.com/webdevilishsmile',
+  },
+];
+
+// One compact column (UI-SUGGESTIONS.md #37): social icons, the legal links,
+// the contact email and the copyright. Everything inherits text.light from
+// FooterContainer. The second logo is gone; the header carries the brand.
+function Footer() {
   return (
     <FooterContainer>
-      <Box
-        sx={{
-          width: { xs: '100%', md: '50%' },
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: 'text.light',
-        }}
-      >
-        <Box>
-          {/* Social Links */}
-          {socialLinks.map((link, index) => (
-            <IconButton
-              key={index}
-              sx={{ color: 'text.light' }}
-              href={link.url}
-              target='_blank'
-              rel='noopener'
-              aria-label={link.name}
-            >
-              {link.icon}
-            </IconButton>
-          ))}
-        </Box>
-
-        <Box>
-          {/* Links */}
-          <Button variant='text' href='/privacy' sx={{ color: 'text.light' }}>
-            Privacy Policy
-          </Button>
-          <Button variant='text' href='/terms' sx={{ color: 'text.light' }}>
-            Terms of Service
-          </Button>
-        </Box>
-      </Box>
       <Box>
-        {/* Decorative: the header already carries the brand. */}
-        <Image
-          src='/slics-logo-dark.png'
-          alt=''
-          width={100}
-          height={100}
-        />
+        {socialLinks.map(({ name, icon: Icon, url }) => (
+          <IconButton
+            key={name}
+            color='inherit'
+            href={url}
+            target='_blank'
+            rel='noopener'
+            aria-label={name}
+          >
+            <Icon sx={{ fontSize: '2rem' }} />
+          </IconButton>
+        ))}
       </Box>
-      <Box
-        sx={{
-          width: { xs: '100%', md: '50%' },
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 2,
-        }}
-      >
-        <Typography
-          variant='caption'
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-          }}
-        >
-          Email me with questions, comments, concerns...
-        </Typography>
-        <Button variant='contained' href='mailto:WebDevilishSmile@gmail.com'>
-          WebDevilishSmile@gmail.com
+
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <Button variant='text' color='inherit' href='/privacy'>
+          Privacy Policy
+        </Button>
+        <Button variant='text' color='inherit' href='/terms'>
+          Terms of Service
         </Button>
       </Box>
-      <Typography
-        variant='caption'
-        sx={{ position: 'absolute', bottom: '2rem' }}
-      >
+
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography variant='caption' component='p'>
+          Email me with questions, comments, concerns...
+        </Typography>
+        <Button
+          variant='text'
+          color='inherit'
+          href={`mailto:${CONTACT_EMAIL}`}
+          startIcon={<EmailOutlined />}
+        >
+          {CONTACT_EMAIL}
+        </Button>
+      </Box>
+
+      <Typography variant='caption'>
         Copyright © {new Date().getFullYear()} Tiago Davila
       </Typography>
     </FooterContainer>

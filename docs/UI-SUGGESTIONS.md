@@ -1229,7 +1229,26 @@ still works.
 
 ### 41. One primary action, the rest in a row
 
-- [ ] **Files:** `home/MapPhoneLinks.jsx`, `home/PdfLink.jsx`, `home/SlicDisplay.jsx`
+- [x] **Files:** `home/MapPhoneLinks.jsx`, `home/PdfLink.jsx`, `home/SlicDisplay.jsx`
+
+_Done 2026-10-07:_ `home/SlicActions.jsx` replaces `MapPhoneLinks.jsx` and `PdfLink.jsx`.
+`SlicDisplay` and `slicPage/Title.jsx` both render it.
+
+- **Navigate:** a contained, full-width button, 52px tall. It's built with `mapsHref`. On
+  non-Apple devices it reads "Navigate … Google Maps". On Apple devices a ▾ segment opens
+  a menu with Google Maps and Apple Maps. The choice is stored as `slics-maps-app` in
+  localStorage, wrapped in try/catch like the install nudge, and read after mount. An
+  `apple` value is only honored on an Apple device.
+- **Call, PDF, Tips:** outlined buttons with the icon over the label, sharing the row, 65px
+  tall.
+  - Call shows for a center with a phone, and its name is "Call BETPA dispatch".
+  - PDF is hidden when there's none. The link comes from the new `slicPdfHref` in
+    `utils/variables.js`, which keeps the legacy Supabase fallback.
+  - Tips scrolls to the comments and carries the count as a badge. It replaces the comment
+    chip from #40. The `/home/[slic]` page has no comments section, so it leaves Tips off.
+- **Checked:** at 390px through a temporary local preview page, with Android and iPhone
+  user agents, in light and dark. The menu, the stored choice surviving a reload, and the
+  Tips scroll all work.
 
 There are up to four full-weight contained buttons stacked vertically: Google Maps, Apple
 Maps, Dispatch and View PDF. All have the same color and size, and "View PDF" shows

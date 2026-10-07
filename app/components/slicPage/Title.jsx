@@ -1,22 +1,26 @@
 'use client';
 
-import { Box, Paper, Typography } from '@mui/material';
-import MapPhoneLinks from '../home/MapPhoneLinks';
-import TitleAddress from '../home/TitleAddress';
-import Comments from '../comments/Comments';
-import PdfLink from '../home/PdfLink';
+import theme from '@/utils/theme';
+import { Box, Typography } from '@mui/material';
+import SlicActions from '../home/SlicActions';
 
-export default function Title({ slic, commentsCount }) {
+// /home/[slic] has no comments section, so SlicActions leaves Tips off.
+export default function Title({ slic }) {
   return (
     <Box
-      sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      sx={{
+        width: '100%',
+        maxWidth: theme.layout.width.panel,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
     >
       <Typography variant='h4'>
         {slic.alphaSlic} / {slic.numSlic}
       </Typography>
 
-      <MapPhoneLinks slic={slic} />
-      <PdfLink slic={slic} />
+      <SlicActions slic={slic} />
     </Box>
   );
 }

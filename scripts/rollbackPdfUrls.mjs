@@ -1,6 +1,6 @@
 // Reverse of scripts/migratePdfsToBlob.mjs. For every slic with a `pdfUrl`:
 // if its `<alphaSlic>.pdf` still exists in the legacy Supabase bucket, set the
-// legacy `pdf: true` flag and unset `pdfUrl`, so home/PdfLink.jsx serves the
+// legacy `pdf: true` flag and unset `pdfUrl`, so slicPdfHref (utils/variables.js) serves the
 // Supabase copy again. If it doesn't exist there, the PDF was uploaded through
 // the new admin flow only — it's left untouched and reported so it can be
 // re-uploaded to Supabase by hand before Blob is abandoned.

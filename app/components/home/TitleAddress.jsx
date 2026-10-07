@@ -1,4 +1,4 @@
-import { ChatBubbleOutline, ContentCopy } from '@mui/icons-material';
+import { ContentCopy } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -9,9 +9,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { COMMENTS_SECTION_ID } from '@/utils/variables';
 
-function TitleAddress({ slic, commentsCount }) {
+function TitleAddress({ slic }) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackMessage, setSnackMessage] = useState(
     'Address copied to clipboard',
@@ -43,14 +42,6 @@ function TitleAddress({ slic, commentsCount }) {
         setOpenSnackbar(false);
       }, 3000); // Hide snackbar after 3 seconds
     }
-  };
-
-  const handleScrollToComments = () => {
-    // The comments section renders whenever a slic is selected, which is the
-    // only time this chip is shown — the guard is just belt-and-braces.
-    document
-      .getElementById(COMMENTS_SECTION_ID)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   // The SLIC leads the card (UI-SUGGESTIONS.md #40): what the driver searched
@@ -109,22 +100,6 @@ function TitleAddress({ slic, commentsCount }) {
           </IconButton>
         </Tooltip>
       </Box>
-
-      <Tooltip title='Scroll to comments' placement='top'>
-        <Chip
-          size='medium' // the theme default is small; this one is a page-level stat
-          icon={<ChatBubbleOutline />}
-          label={
-            commentsCount < 1
-              ? 'No comments yet'
-              : `${commentsCount} comment${commentsCount > 1 ? 's' : ''}`
-          }
-          clickable
-          onClick={handleScrollToComments}
-          aria-label='Scroll to comments'
-          sx={{ mt: 2 }}
-        />
-      </Tooltip>
 
       <Snackbar open={openSnackbar} onClose={handleCloseSnack}>
         <Alert severity={snackSeverity} onClose={handleCloseSnack}>

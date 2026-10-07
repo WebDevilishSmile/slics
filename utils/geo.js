@@ -70,7 +70,7 @@ export function distanceMiles(a, b) {
 
 // Maps link for a place with a `parking` pin and/or an `address`. The pin wins
 // so navigation ends at the truck parking, not the front door. Also builds the
-// SLIC map buttons (home/MapPhoneLinks.jsx), which pass just `{ address }`.
+// SLIC Navigate button (home/SlicActions.jsx), which passes just `{ address }`.
 export function mapsHref({ name, address, parking }, provider = 'google') {
   if (parking) {
     const ll = `${parking.lat},${parking.lng}`;

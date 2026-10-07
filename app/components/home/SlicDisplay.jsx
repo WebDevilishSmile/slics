@@ -5,8 +5,7 @@ import { Suspense } from 'react';
 import { CircularProgress } from '@mui/material';
 
 import EmptySlic from './EmptySlic';
-import MapPhoneLinks from './MapPhoneLinks';
-import PdfLink from './PdfLink';
+import SlicActions from './SlicActions';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
 import MemberDisplay from './MemberDisplay';
@@ -31,9 +30,8 @@ function SlicDisplay({ commentsCount, loading, slic, user }) {
   return (
     <SlicDetailsContainer>
       <Suspense fallback={<CircularProgress sx={{ mt: 2 }} />}>
-        <TitleAddress slic={slic} commentsCount={commentsCount} />
-        <MapPhoneLinks slic={slic} />
-        <PdfLink slic={slic} />
+        <TitleAddress slic={slic} />
+        <SlicActions slic={slic} commentsCount={commentsCount} showTips />
       </Suspense>
     </SlicDetailsContainer>
   );

@@ -14,7 +14,7 @@ export const COMMENTS_SECTION_ID = 'comments';
 
 // Where slic PDFs lived before Vercel Blob: a public Supabase Storage bucket
 // with one `<alphaSlic>.pdf` per slic, flagged by the legacy `slic.pdf` boolean.
-// Still read by home/PdfLink.jsx as a fallback for any slic without a
+// Still read by slicPdfHref below as a fallback for any slic without a
 // `pdfUrl`, and by the migration/rollback scripts. Remove once every slic has
 // been migrated and the bucket is retired.
 export const LEGACY_PDF_BASE_URL =
@@ -23,6 +23,15 @@ export const LEGACY_PDF_BASE_URL =
 export function legacyPdfUrl(alphaSlic) {
   if (!alphaSlic) return null;
   return `${LEGACY_PDF_BASE_URL}/${String(alphaSlic).toLowerCase()}.pdf`;
+}
+
+// The directions PDF link for a slic, or null when it has none (the PDF button
+// in home/SlicActions.jsx is hidden then). `pdfUrl` (Vercel Blob) wins. Any
+// slic not yet migrated still carries the legacy `pdf` boolean, which meant "a
+// <alphaSlic>.pdf exists in the old Supabase bucket", so keep honoring it and
+// no link breaks mid-migration.
+export function slicPdfHref(slic) {
+  return slic.pdfUrl || (slic.pdf ? legacyPdfUrl(slic.alphaSlic) : null);
 }
 
 // Upload cap for slic PDFs, checked in both slicForm/PdfUpload.jsx and the

@@ -5,9 +5,7 @@ function FooterContainer({ children }) {
     <AppBar
       sx={{
         position: 'static',
-        bottom: 0,
         width: '100%',
-        zIndex: 1000,
         height: { xs: '34rem', md: '30rem' },
         color: 'text.light',
       }}

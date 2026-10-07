@@ -47,6 +47,13 @@ let theme = createTheme({
   shape: {
     borderRadius: 8,
   },
+  // App layers on top of MUI's own scale (mobileStepper 1000 … tooltip 1500),
+  // which createTheme keeps. Use them by name in sx: `zIndex: 'stickyBar'`.
+  zIndex: {
+    // A sticky filter bar over its own scrolling table (bids, cover bid jobs);
+    // below every MUI layer so menus, dialogs and the app bar still cover it.
+    stickyBar: 10,
+  },
   // App-level layout tokens. Not MUI keys — read them as `theme.layout.*`
   // (import the theme directly; that works in server components too because
   // this module has no 'use client' directive). MUI also emits each one as

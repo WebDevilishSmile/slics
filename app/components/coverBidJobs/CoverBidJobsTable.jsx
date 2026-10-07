@@ -136,7 +136,7 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
         sx={{
           position: 'sticky',
           top: 0,
-          zIndex: 10,
+          zIndex: 'stickyBar',
           bgcolor: 'background.paper',
           borderBottom: '1px solid',
           borderColor: 'divider',

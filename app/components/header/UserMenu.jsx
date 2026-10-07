@@ -46,17 +46,13 @@ const MENU_ID = 'app-menu';
 
 // Every row is at least 48px tall — a driver's thumb, maybe gloved, in a cab
 // (UI-SUGGESTIONS.md "Design target").
-const rowSx = (theme) => ({
+const rowSx = {
   minHeight: '3rem',
-  // The current page: bold label and a brand-colored icon. primary.dark on
-  // the light paper (primary.main fails contrast there, #31); primary.main on
-  // the dark paper, where primary.dark is too dim.
+  // The current page: bold label and a brand-colored icon. primary.main is
+  // picked per scheme to read on that scheme's paper (#31).
   '&.Mui-selected .MuiListItemText-primary': { fontWeight: 700 },
-  '&.Mui-selected .MuiListItemIcon-root': {
-    color: theme.vars.palette.primary.dark,
-    ...theme.applyStyles('dark', { color: theme.vars.palette.primary.main }),
-  },
-});
+  '&.Mui-selected .MuiListItemIcon-root': { color: 'primary.main' },
+};
 
 // An internal page. next/link makes it a client-side navigation instead of a
 // full reload (#53); the drawer closes itself when the route changes.

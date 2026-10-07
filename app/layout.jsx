@@ -25,10 +25,10 @@ export const metadata = {
   appleWebApp: { capable: true, title: 'SLICs', statusBarStyle: 'default' },
 };
 
-// The header AppBar is primary.main in both color schemes, so one value
-// matches the browser/status bar everywhere.
+// The light scheme's primary.main (tokens.ink in utils/theme.js), the color
+// of the header AppBar. Dark mode is UI-SUGGESTIONS.md #35.
 export const viewport = {
-  themeColor: '#039be5',
+  themeColor: '#0172b5',
 };
 
 // Chrome fires `beforeinstallprompt` as soon as the page is installable, which

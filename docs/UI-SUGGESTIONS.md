@@ -889,8 +889,36 @@ the feature keep today's instant behavior. Every animation also needs a
 
 ### 31. The brand blue fails text contrast
 
-- [ ] **Files:** `utils/theme.js` (`primary`), `app/layout.jsx` (`themeColor`),
+- [x] **Files:** `utils/theme.js` (`primary`), `app/layout.jsx` (`themeColor`),
   `app/manifest.js` (`theme_color`)
+
+*Done 2026-10-07:* `primary` is split per scheme, with one change from the recommendation
+below. Stock `lightBlue[800]` still left four small-text pairs just under 4.5: footer
+`text.light` on it 4.47, and it as text on the canvas 4.30, the paper 4.27 and the comment
+surface 4.42. So the light `main` is a new `tokens.ink` `#0172b5`, which is [800] darkened 4%.
+That is the least darkening that clears all four.
+
+| Pair | Ratio |
+|---|---|
+| white label on light `main` `#0172b5` | 5.15 |
+| footer `text.light` on it | 4.80 |
+| it as text on canvas / paper / comment | 4.61 / 4.58 / 4.75 |
+| white on light `dark` `brand[900]` (hover, menu header band) | 7.39 |
+| dark `contrastText` `rgba(0, 0, 0, 0.87)` on dark `main` `brand[600]` | 6.09 |
+| dark `main` as text on the dark canvas | 6.56 |
+| white on dark `dark` `brand[800]` (menu header band) | 4.79 |
+
+Also changed:
+
+- `themeColor` and `manifest.theme_color` are now `#0172b5`.
+- `covers/Calendar.jsx` read `theme.palette.*`, which only holds the light scheme. It now
+  reads `theme.vars.palette.*`.
+- The menu's current-page icon is now `primary.main` in both schemes. The light
+  `primary.dark` workaround for this item is gone.
+
+Left over: in dark mode, a contained button under a mouse hover is 4.06 (black label on
+`brand[800]`). Touch screens never show that state, because MUI drops the hover color under
+`hover: none`. Lightening the dark `dark` would fail the menu header band instead.
 
 Measured:
 
@@ -987,8 +1015,8 @@ fixed layer disappears.
 `layout.jsx` says *"The header AppBar is primary.main in both color schemes"*. That isn't
 what renders. MUI's `AppBar` defaults to `enableColorOnDark: false`, so in dark mode the
 header (and the footer, also an `AppBar`) draw as dark paper. The installed app still paints
-the status bar `#039be5`, so dark-mode drivers get a bright blue strip above a dark grey
-header.
+the status bar the light scheme's blue (`#0172b5` since #31), so dark-mode drivers get a
+blue strip above a dark grey header.
 
 Pick one:
 
@@ -1413,7 +1441,7 @@ membership page after a Buy Me a Coffee purchase.
 
 - [ ] **File:** `app/manifest.js`. Add `shortcuts`, which appear when you long-press the
   home-screen icon on Android: "Look up a SLIC" (`/home`) and "My history" (`/history`).
-  Update `theme_color` once #31 and #35 are decided.
+  #31 set `theme_color` to `#0172b5`. Revisit it once #35 is decided.
 
 ### 56. Dark surfaces with depth
 

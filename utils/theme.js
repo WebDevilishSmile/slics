@@ -12,20 +12,35 @@ import {
 // just point at a different token in each.
 const tokens = {
   brand: lightBlue, // primary shades + the light scheme's paper
+  // The light scheme's primary.main (UI-SUGGESTIONS.md #31): lightBlue[800]
+  // darkened 4%. Stock [800] takes white labels (4.79:1) but misses 4.5 by a
+  // hair for chalk text on it and for it as text on the canvas, paper and
+  // comment surfaces (4.27–4.47). 4% is the least darkening that clears them.
+  ink: '#0172b5',
   chalk: '#f7f7f7', // light text; the Buy Me a Coffee tile
   canvas: '#edf3fc', // light page background; dark-scheme text on the primary color
   void: '#050505', // dark page background; text on the Buy Me a Coffee tile
   comment: '#eaf8fe', // comment surface in the light scheme
 };
 
-// Identical in both schemes. `secondary` is deliberately left at MUI's default
-// (purple) in both schemes too: its only consumer is the Tuesday chip in
-// DAY_COLORS, which has to stay distinguishable from warning (Sun/Sat) and
-// success (Wed) — the two colors it used to collide with.
+// One brand blue can't serve both schemes (UI-SUGGESTIONS.md #31): white text
+// needs a dark blue, and blue text on the black canvas needs a bright one. So
+// the light scheme gets the darker `ink` with white labels, and the dark scheme
+// keeps the bright [600] with dark labels (white on it is only 3.08:1).
+// `secondary` is deliberately left at MUI's default (purple) in both schemes:
+// its only consumer is the Tuesday chip in DAY_COLORS, which has to stay
+// distinguishable from warning (Sun/Sat) and success (Wed) — the two colors it
+// used to collide with.
 const primary = {
   light: tokens.brand[300],
+  main: tokens.ink,
+  dark: tokens.brand[900],
+};
+const darkPrimary = {
+  light: tokens.brand[300],
   main: tokens.brand[600],
-  dark: tokens.brand[800],
+  dark: tokens.brand[800], // white on it is 4.79:1 (the menu's header band)
+  contrastText: 'rgba(0, 0, 0, 0.87)',
 };
 
 // Buy Me a Coffee's button: their logo is dark on a light tile, so it stays
@@ -75,7 +90,7 @@ let theme = createTheme({
   colorSchemes: {
     dark: {
       palette: {
-        primary,
+        primary: darkPrimary,
         bmc,
         background: {
           default: tokens.void,

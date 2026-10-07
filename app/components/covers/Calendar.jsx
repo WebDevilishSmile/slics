@@ -24,20 +24,22 @@ const WeekPickersDay = styled(PickersDay, {
     prop !== 'isToday' &&
     prop !== 'isPosted',
 })(({ theme, isSelected, isHovered, isToday, isPosted, day }) => ({
+  // theme.vars, not theme.palette: the palette object holds only the light
+  // scheme's values, and primary differs per scheme (UI-SUGGESTIONS.md #31).
   borderRadius: 0,
   // The week bar squares off mid-week days, so the today ring and the posted dot
   // are drawn as overlays to keep their own shape.
   position: 'relative',
   ...(isSelected && {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.vars.palette.primary.main,
+    color: theme.vars.palette.primary.contrastText,
     '&:hover, &:focus': {
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: theme.vars.palette.primary.dark,
     },
   }),
   ...(isHovered &&
     !isSelected && {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: theme.vars.palette.action.hover,
     }),
   ...(day.day() === 0 && {
     borderTopLeftRadius: '50%',
@@ -59,7 +61,7 @@ const WeekPickersDay = styled(PickersDay, {
       position: 'absolute',
       inset: 0,
       borderRadius: '50%',
-      border: `2px solid ${theme.palette.warning.main}`,
+      border: `2px solid ${theme.vars.palette.warning.main}`,
       pointerEvents: 'none',
     },
   }),
@@ -74,8 +76,8 @@ const WeekPickersDay = styled(PickersDay, {
       height: 4,
       borderRadius: '50%',
       backgroundColor: isSelected
-        ? theme.palette.primary.contrastText
-        : theme.palette.success.main,
+        ? theme.vars.palette.primary.contrastText
+        : theme.vars.palette.success.main,
       pointerEvents: 'none',
     },
   }),

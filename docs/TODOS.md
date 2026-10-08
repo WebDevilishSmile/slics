@@ -46,7 +46,7 @@
 - [ ] improve the UI/UX for better user experience
 - [ ] add ability for driver to add gps coordinates or pin to comment
 - [ ] add ability for driver to add photos or attachments to comments (must reduce file size, use vercel blob storage)
-- [ ] add ability to cycle through tips on empty state display...
+- [x] add ability to cycle through tips on empty state display (a "next tip" arrow; each visit starts at the tip after the last one seen)
 - [x] add ability for driver to edit their own comments
 
 ### SLIC Comments

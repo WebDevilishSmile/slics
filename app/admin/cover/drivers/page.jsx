@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import DriversTable from '@/app/components/covers/DriversTable';
 import LoadingFallback from '@/app/components/layout/LoadingFallback';
 import { Typography } from '@mui/material';
-import { getCovers } from '@/utils/covers';
+import { getCovers } from '@/lib/db/covers';
 import { serializeCovers } from '@/utils/functions';
 
 async function CoverDrivers() {

@@ -356,13 +356,17 @@ item 32 apart from removing `@types/node`.
 
 ### 16. Merge the single-function collection modules
 
-- [ ] `utils/drivers.js` (`getAllDrivers`, 1 importer) → into `lib/db/drivers.js`. Two
+- [x] `utils/drivers.js` (`getAllDrivers`, 1 importer) → into `lib/db/drivers.js`. Two
   files for one collection.
-- [ ] `utils/covers.js` (`getCovers`, 1 importer) → `lib/db/covers.js`.
-- [ ] `utils/bidFunctions.js` (`getAllBidJobs` + two serializers, 1 importer) →
+- [x] `utils/covers.js` (`getCovers`, 1 importer) → `lib/db/covers.js`.
+- [x] `utils/bidFunctions.js` (`getAllBidJobs` + two serializers, 1 importer) →
   `lib/db/bidJobs.js`; move `serializeBidJob(s)` to `lib/serializers.js` (item 17).
 
 *Blast radius:* import paths only.
+
+**Done 2026-10-08.** `utils/drivers.js` was a verbatim copy of `getAllDrivers` in
+`lib/db/drivers.js` (only the log message differed), so it was deleted and the admin page
+now uses the one in `lib/db/drivers.js`. `serializeBidJob(s)` move with item 17.
 
 ### 17. Split `utils/functions.js`
 

@@ -1,6 +1,6 @@
 import DriversTable from '@/app/components/drivers/DriversTable';
 import { Typography } from '@mui/material';
-import { getAllDrivers } from '@/utils/drivers';
+import { getAllDrivers } from '@/lib/db/drivers';
 import { serializeDrivers } from '@/utils/functions';
 
 async function Drivers() {

@@ -10,7 +10,6 @@ import {
   Box,
   Button,
   Chip,
-  Divider,
   IconButton,
   Tooltip,
   Typography,
@@ -20,6 +19,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+import { softPressSx, softRaised, softRaisedSmall } from '../../utility/soft';
 import UserEmail from './UserEmail';
 import UserMembership from './UserMembership';
 import UserPhone from './UserPhone';
@@ -78,7 +78,21 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
   }
 
   return (
-    <Accordion sx={{ width: '100%' }}>
+    <Accordion
+      disableGutters
+      elevation={0}
+      square={false}
+      sx={[
+        softRaised,
+        {
+          width: '100%',
+          borderRadius: 3,
+          '&::before': { display: 'none' },
+          '&.Mui-expanded': { margin: 0 },
+          '&:first-of-type, &:last-of-type': { borderRadius: 3 },
+        },
+      ]}
+    >
       <AccordionSummary expandIcon={<ExpandMore />}>
         <Box
           sx={{
@@ -124,17 +138,20 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           <Chip
             component='div'
             label={user.role}
-            color={user.role === 'admin' ? 'primary' : 'default'}
-            variant='outlined'
             onClick={(e) => {
               e.stopPropagation();
               if (!isProtected) handleRoleToggle();
             }}
-            sx={{
-              flexShrink: 0,
-              cursor: isProtected ? 'default' : 'pointer',
-              display: { xs: 'none', sm: 'flex' },
-            }}
+            sx={[
+              softRaisedSmall,
+              {
+                flexShrink: 0,
+                cursor: isProtected ? 'default' : 'pointer',
+                display: { xs: 'none', sm: 'flex' },
+                color: user.role === 'admin' ? 'primary.main' : 'text.primary',
+                fontWeight: user.role === 'admin' ? 600 : 400,
+              },
+            ]}
           />
 
           {/* Membership toggle — always visible, rendered as div to avoid nested <button> */}
@@ -150,7 +167,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
                 handleMemberToggle();
               }}
               disabled={isProtected}
-              sx={{ flexShrink: 0 }}
+              sx={[softPressSx, { flexShrink: 0 }]}
             >
               {user.bmcMember ? (
                 <Person fontSize='small' />
@@ -219,9 +236,9 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
           <Button
-            variant='outlined'
             LinkComponent={Link}
             href={`/admin/users/${user._id}`}
+            sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
           >
             More...
           </Button>

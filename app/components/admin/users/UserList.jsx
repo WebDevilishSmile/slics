@@ -1,45 +1,84 @@
 'use client';
 
-import theme from '@/utils/theme';
+import { SearchOutlined } from '@mui/icons-material';
 import {
   Box,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
+  Chip,
+  InputAdornment,
   MenuItem,
   Pagination,
-  Select,
+  Paper,
   TextField,
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { serializeUser } from '@/utils/functions';
+import { softInputSx, softToggleSx } from '../../utility/soft';
 import UserCard from './UserCard';
 
 const USERS_PER_PAGE = 10;
 
-function UserList({ users, viewCounts = {} }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [members, setMembers] = useState(false);
-  const [admins, setAdmins] = useState(false);
-  const [sortBy, setSortBy] = useState('most-lookups');
-  const [page, setPage] = useState(0);
+const SORT_OPTIONS = [
+  { value: 'name-asc', label: 'Name A → Z' },
+  { value: 'name-desc', label: 'Name Z → A' },
+  { value: 'joined-newest', label: 'Newest joined' },
+  { value: 'joined-oldest', label: 'Oldest joined' },
+  { value: 'members-first', label: 'Members first' },
+  { value: 'non-members-first', label: 'Non-members first' },
+  { value: 'most-lookups', label: 'Most lookups' },
+];
+const DEFAULT_SORT = 'most-lookups';
 
-  // Reset to page 0 whenever filters or sort change
+// The search, filters, sort and page live in the URL (?q=&members=1&admins=1
+// &sort=&page=), so Back from a user's page lands on the same list. This only
+// renders on the client (HydrationGuard), so it reads the address bar itself:
+// that's right even when Back restores a cached server render.
+function readView() {
+  const search = new URLSearchParams(window.location.search);
+  const sort = search.get('sort');
+  const page = Number(search.get('page'));
+  return {
+    q: search.get('q') ?? '',
+    members: search.get('members') === '1',
+    admins: search.get('admins') === '1',
+    sort: SORT_OPTIONS.some(({ value }) => value === sort) ? sort : DEFAULT_SORT,
+    page: Number.isInteger(page) && page > 1 ? page - 1 : 0,
+  };
+}
+
+function writeView({ q, members, admins, sort, page }) {
+  const search = new URLSearchParams();
+  if (q) search.set('q', q);
+  if (members) search.set('members', '1');
+  if (admins) search.set('admins', '1');
+  if (sort !== DEFAULT_SORT) search.set('sort', sort);
+  if (page > 0) search.set('page', String(page + 1));
+  const query = search.toString();
+  const { pathname } = window.location;
+  // replaceState, not push: a keystroke shouldn't be a Back step.
+  window.history.replaceState(null, '', query ? `${pathname}?${query}` : pathname);
+}
+
+function UserList({ users, viewCounts = {} }) {
+  const [view, setView] = useState(readView);
+
   useEffect(() => {
-    setPage(0);
-  }, [searchTerm, members, admins, sortBy]);
+    writeView(view);
+  }, [view]);
+
+  // Any change but paging starts over from the first page.
+  const update = (changes) =>
+    setView((current) => ({ ...current, page: 0, ...changes }));
 
   const filteredUsers = users.filter(
     (user) =>
-      (members ? user.bmcMember : true) &&
-      (admins ? user.role === 'admin' : true) &&
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      (view.members ? user.bmcMember : true) &&
+      (view.admins ? user.role === 'admin' : true) &&
+      user.name.toLowerCase().includes(view.q.toLowerCase()),
   );
 
   const sortedUsers = [...filteredUsers].sort((a, b) => {
-    switch (sortBy) {
+    switch (view.sort) {
       case 'name-asc':
         return a.name.localeCompare(b.name);
       case 'name-desc':
@@ -60,89 +99,99 @@ function UserList({ users, viewCounts = {} }) {
   });
 
   const pageCount = Math.ceil(sortedUsers.length / USERS_PER_PAGE);
+  // A page from the URL can outlast the users on it.
+  const page = Math.min(view.page, Math.max(0, pageCount - 1));
   const pagedUsers = sortedUsers.slice(
     page * USERS_PER_PAGE,
     (page + 1) * USERS_PER_PAGE,
   );
 
   return (
-    <Box sx={{ maxWidth: theme.layout.width.panel, width: '100%', p: 2 }}>
+    <Paper
+      variant='panel'
+      sx={{ alignItems: 'stretch', minHeight: 0, px: { xs: 2, sm: 3 } }}
+    >
       {/* Search */}
       <TextField
-        placeholder='Search users...'
+        placeholder='Search users'
+        aria-label='Search users'
         fullWidth
-        sx={{ mb: 2 }}
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        sx={[softInputSx, { mb: 2 }]}
+        value={view.q}
+        onChange={(e) => update({ q: e.target.value })}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position='start'>
+                <SearchOutlined />
+              </InputAdornment>
+            ),
+          },
+        }}
       />
 
       {/* Filters + Sort */}
       <Box
         sx={{
           display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
-          alignItems: { sm: 'center' },
-          flexWrap: 'wrap',
-          gap: 1,
+          flexDirection: 'column',
+          gap: 2,
           mb: 2,
         }}
       >
-        <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={members}
-                onChange={() => setMembers((p) => !p)}
-              />
-            }
-            label='Members Only'
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+          <Chip
+            size='medium'
+            label='Members only'
+            clickable
+            aria-pressed={view.members}
+            sx={softToggleSx}
+            onClick={() => update({ members: !view.members })}
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={admins}
-                onChange={() => setAdmins((p) => !p)}
-              />
-            }
-            label='Admins Only'
+          <Chip
+            size='medium'
+            label='Admins only'
+            clickable
+            aria-pressed={view.admins}
+            sx={softToggleSx}
+            onClick={() => update({ admins: !view.admins })}
           />
         </Box>
-        <FormControl
-          size='small'
-          sx={{
-            width: { xs: '100%', sm: 'auto' },
-            minWidth: 160,
-            ml: { sm: 'auto' },
-          }}
+        <TextField
+          select
+          fullWidth
+          label='Sort by'
+          value={view.sort}
+          onChange={(e) => update({ sort: e.target.value })}
+          sx={softInputSx}
         >
-          <InputLabel>Sort by</InputLabel>
-          <Select
-            value={sortBy}
-            label='Sort by'
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <MenuItem value='name-asc'>Name A → Z</MenuItem>
-            <MenuItem value='name-desc'>Name Z → A</MenuItem>
-            <MenuItem value='joined-newest'>Newest joined</MenuItem>
-            <MenuItem value='joined-oldest'>Oldest joined</MenuItem>
-            <MenuItem value='members-first'>Members first</MenuItem>
-            <MenuItem value='non-members-first'>Non-members first</MenuItem>
-            <MenuItem value='most-lookups'>Most lookups</MenuItem>
-          </Select>
-        </FormControl>
+          {SORT_OPTIONS.map(({ value, label }) => (
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          ))}
+        </TextField>
       </Box>
 
       {/* Result count */}
       <Typography
         variant='caption'
         color='text.secondary'
-        sx={{ mb: 1, display: 'block' }}
+        sx={{ mb: 1.5, display: 'block' }}
       >
         {sortedUsers.length} user{sortedUsers.length !== 1 ? 's' : ''}
       </Typography>
 
       {/* User cards */}
-      <Box sx={{ width: '100%', minWidth: 0 }}>
+      <Box
+        sx={{
+          width: '100%',
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
         {pagedUsers.map((user) => (
           <UserCard
             key={user._id}
@@ -158,12 +207,12 @@ function UserList({ users, viewCounts = {} }) {
           <Pagination
             count={pageCount}
             page={page + 1}
-            onChange={(_, val) => setPage(val - 1)}
+            onChange={(_, val) => update({ page: val - 1 })}
             color='primary'
           />
         </Box>
       )}
-    </Box>
+    </Paper>
   );
 }
 

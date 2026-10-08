@@ -2,9 +2,8 @@ import { getCommentsByUserId } from '@/utils/commentsApi';
 import { getUserById } from '@/utils/usersApi';
 import { getSlicViewsByUserId } from '@/utils/slicViewsApi';
 import { getAllSlics } from '@/utils/slicsApi';
-import { Box, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
-import Comment from '@/app/components/comments/Comment';
 import {
   serializeSlicViews,
   serializeSlics,
@@ -27,34 +26,38 @@ async function UserPage({ params }) {
   if (!user) {
     return (
       <>
-        <Typography variant='h2'>User Not Found</Typography>
+        <Typography variant='sectionHeading'>User Not Found</Typography>
       </>
     );
   }
 
   return (
     <>
-      <Typography variant='h2'>User Details</Typography>
+      <Typography variant='sectionHeading'>User Details</Typography>
 
-      <Box sx={{ position: 'relative', width: '6rem', height: '6rem', my: 2 }}>
-        <Image
-          src={user.image}
-          alt={`${user.name}'s avatar`}
-          fill
-          style={{ objectFit: 'cover', borderRadius: '50%' }}
-        />
-      </Box>
+      <Paper variant='panel' sx={{ minHeight: 0, gap: 0.5 }}>
+        <Box
+          sx={{ position: 'relative', width: '6rem', height: '6rem', mb: 1.5 }}
+        >
+          <Image
+            src={user.image || '/default-avatar.png'}
+            alt={`${user.name}'s avatar`}
+            fill
+            style={{ objectFit: 'cover', borderRadius: '50%' }}
+          />
+        </Box>
 
-      <Typography variant='h5'>{user.name}</Typography>
-      <Typography variant='subtitle1'>Email: {user.email}</Typography>
-      <Typography variant='subtitle1'>Role: {user.role}</Typography>
-      <Typography variant='subtitle1'>
-        Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
-      </Typography>
-      <Typography variant='subtitle1'>
-        BuyMeACoffee:{' '}
-        <strong>{user.bmcMember ? 'Member' : 'Not a member'}</strong>
-      </Typography>
+        <Typography variant='h5'>{user.name}</Typography>
+        <Typography variant='subtitle1'>Email: {user.email}</Typography>
+        <Typography variant='subtitle1'>Role: {user.role}</Typography>
+        <Typography variant='subtitle1'>
+          Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
+        </Typography>
+        <Typography variant='subtitle1'>
+          BuyMeACoffee:{' '}
+          <strong>{user.bmcMember ? 'Member' : 'Not a member'}</strong>
+        </Typography>
+      </Paper>
 
       <UserSlics
         userSlicViews={serializeSlicViews(userSlicViews)}

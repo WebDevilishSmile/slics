@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Button, Divider, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 import LocalDate from '@/app/components/layout/LocalDate';
-import theme from '@/utils/theme';
+import { softInset, softPressSx, softRaisedSmall } from '../../utility/soft';
 
 const PAGE_SIZE = 5;
 
@@ -35,75 +35,76 @@ export default function UserSlics({ userSlicViews, slics }) {
   const months = Object.keys(grouped);
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        maxWidth: theme.layout.width.panel,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        mt: 2,
-      }}
+    <Paper
+      variant='panel'
+      sx={{ minHeight: 0, alignItems: 'stretch', px: { xs: 2, sm: 3 } }}
     >
-      <Typography variant='h6' sx={{ mt: 2, mb: 1 }}>
-        SLICs pulled up ({userSlicViews.length}) SLICs:
+      <Typography variant='h6' sx={{ mb: 1, textAlign: 'center' }}>
+        SLICs pulled up ({userSlicViews.length})
       </Typography>
 
       {months.length > 0 ? (
         <>
-          <Box sx={{ width: '100%', px: 2 }}>
+          <Box sx={{ width: '100%' }}>
             {months.map((month) => (
               <Box key={month} sx={{ mb: 3 }}>
                 <Typography
                   variant='subtitle1'
-                  sx={{ fontWeight: 700, mb: 1 }}
+                  sx={{ fontWeight: 700, mb: 1.5, color: 'primary.main' }}
                 >
                   {month}
                 </Typography>
-                <Divider sx={{ mb: 1 }} />
-                {grouped[month].map((view, i) => (
-                  <Box
-                    key={view._id}
-                    sx={{
+                <Box
+                  sx={[
+                    softInset,
+                    {
+                      borderRadius: 2,
+                      px: 2,
+                      py: 1,
                       display: 'flex',
-                      justifyContent: 'space-between',
-                      py: 0.8,
-                      borderBottom:
-                        i < grouped[month].length - 1 ? '1px solid' : 'none',
-                      borderColor: 'divider',
-                    }}
-                  >
-                    <Typography variant='body2'>
-                      {getSlicLabel(view.numSlic, slics)}
-                    </Typography>
-                    <Typography
-                      variant='body2'
-                      sx={{ color: 'text.secondary' }}
+                      flexDirection: 'column',
+                    },
+                  ]}
+                >
+                  {grouped[month].map((view) => (
+                    <Box
+                      key={view._id}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        gap: 2,
+                        py: 0.8,
+                      }}
                     >
-                      <LocalDate date={view.viewedAt} />
-                    </Typography>
-                  </Box>
-                ))}
+                      <Typography variant='body2'>
+                        {getSlicLabel(view.numSlic, slics)}
+                      </Typography>
+                      <Typography
+                        variant='body2'
+                        sx={{ color: 'text.secondary' }}
+                      >
+                        <LocalDate date={view.viewedAt} />
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
               </Box>
             ))}
           </Box>
 
-          <Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
             {visibleCount < userSlicViews.length && (
               <Button
-                variant='outlined'
                 onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
-                sx={{ mb: 2 }}
+                sx={[softRaisedSmall, softPressSx, { px: 2 }]}
               >
                 See more
               </Button>
             )}
             {visibleCount > PAGE_SIZE && (
               <Button
-                variant='outlined'
                 onClick={() => setVisibleCount((count) => count - PAGE_SIZE)}
-                sx={{ mb: 2, ml: 2 }}
+                sx={[softRaisedSmall, softPressSx, { px: 2 }]}
               >
                 See less
               </Button>
@@ -111,10 +112,10 @@ export default function UserSlics({ userSlicViews, slics }) {
           </Box>
         </>
       ) : (
-        <Typography variant='body2'>
+        <Typography variant='body2' sx={{ textAlign: 'center' }}>
           No SLIC lookups found for this user.
         </Typography>
       )}
-    </Box>
+    </Paper>
   );
 }

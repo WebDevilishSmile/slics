@@ -1,11 +1,14 @@
 import Image from 'next/image';
 import { Button } from '@mui/material';
 
+import theme from '@/utils/theme';
 import { BMC_URL } from '@/utils/variables';
+import { softContainedSx } from '../utility/soft';
 
 // The Buy Me a Coffee button: their logo on the palette's `bmc` tile (light in
 // both schemes, see utils/theme.js), opening the supporter page in a new tab.
-// Call sites pass only spacing through `sx`.
+// It sits on the soft shadow like every contained button. Call sites pass
+// only spacing through `sx`.
 function BmcButton({ sx }) {
   return (
     <Button
@@ -14,7 +17,7 @@ function BmcButton({ sx }) {
       href={BMC_URL}
       target='_blank'
       rel='noopener noreferrer'
-      sx={sx}
+      sx={[softContainedSx(theme), sx]}
     >
       <Image
         src='/bmc-brand-logo.svg'

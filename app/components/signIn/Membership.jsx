@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { Box, Button, SvgIcon, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 import theme from '@/utils/theme';
 import Link from 'next/link';
 import RequestAccess from './RequestAccess';
@@ -7,6 +7,7 @@ import { isMobileDevice, serializeUser } from '@/utils/functions';
 import { headers } from 'next/headers';
 import BmcButton from '../layout/BmcButton';
 import RefreshOnReturn from './RefreshOnReturn';
+import { softContainedSx } from '../utility/soft';
 
 async function Membership() {
   // Ensure the auth function is called to get the session
@@ -42,25 +43,12 @@ async function Membership() {
 
   // If the user is logged in, but not a member, we display the membership prompt
   return (
-    <Box
-      sx={{
-        maxWidth: theme.layout.width.panel,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-        my: 4,
-        gap: 2,
-      }}
+    <Paper
+      variant='panel'
+      className='enter'
+      sx={{ minHeight: 0, textAlign: 'center', gap: 3, px: { xs: 3, sm: 4 } }}
     >
-      <Typography
-        variant='body2'
-        sx={{
-          textAlign: 'center',
-          my: 2,
-          px: 2,
-        }}
-      >
+      <Typography variant='body2'>
         Welcome {user.name.split(' ')[0]}! Now that you have an account, you can
         access all the SLIC locations. I strive to maintain a database of
         reliable resources. I have put many hours of work into creating this
@@ -71,24 +59,21 @@ async function Membership() {
       <BmcButton />
       <RefreshOnReturn />
 
-      <Typography
-        variant='body2'
-        sx={{
-          textAlign: 'center',
-          my: 2,
-          px: 2,
-        }}
-      >
+      <Typography variant='body2'>
         If you would like immediate access, click the link below but don&apos;t
         forget to support me in the future!
       </Typography>
-      <Button variant='contained' href='/home'>
+      <Button
+        variant='contained'
+        href='/home'
+        sx={[softContainedSx(theme), { px: 3, minHeight: '3rem' }]}
+      >
         Use SLICs now
       </Button>
 
       {/* Request Access Component
       <RequestAccess user={user} isMobile={isMobile} /> */}
-    </Box>
+    </Paper>
   );
 }
 

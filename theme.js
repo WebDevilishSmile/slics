@@ -117,7 +117,7 @@ let theme = createTheme({
     },
   },
   // Soft, embossed surfaces: the lookup card, the Driver tips cards, their
-  // reply wells and controls (app/components/utility/soft.js). Not MUI keys.
+  // reply wells and controls (components/utility/soft.js). Not MUI keys.
   // An element in
   // the same color as the surface under it, lit from the top left: a pale
   // highlight up there and a shadow down-right make it look pressed out of

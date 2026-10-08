@@ -4,11 +4,11 @@ import { serializeDriver, serializeUser } from '@/lib/serializers';
 import { getUserById } from '@/lib/db/users';
 import { Typography } from '@mui/material';
 import { Suspense } from 'react';
-import LoadingFallback from '@/app/components/layout/LoadingFallback';
-import CoversDate from '../components/covers/CoversDate';
-import PageContainer from '../components/layout/PageContainer';
-import RedirectMessage from '../components/layout/RedirectMessage';
-import HydrationGuard from '../components/utility/HydrationGuard';
+import LoadingFallback from '@/components/layout/LoadingFallback';
+import CoversDate from '@/components/covers/CoversDate';
+import PageContainer from '@/components/layout/PageContainer';
+import RedirectMessage from '@/components/layout/RedirectMessage';
+import HydrationGuard from '@/components/utility/HydrationGuard';
 
 async function CoversPage() {
   const session = await auth();

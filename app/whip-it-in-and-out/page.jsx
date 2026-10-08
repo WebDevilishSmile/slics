@@ -3,13 +3,13 @@ import { auth } from '@/auth';
 import theme from '@/theme';
 import { getPlaces } from '@/lib/db/places';
 import { getAllSlics } from '@/lib/db/slics';
-import PageContainer from '../components/layout/PageContainer';
-import PlaceFinder from '../components/places/PlaceFinder';
-import HydrationGuard from '../components/utility/HydrationGuard';
+import PageContainer from '@/components/layout/PageContainer';
+import PlaceFinder from '@/components/places/PlaceFinder';
+import HydrationGuard from '@/components/utility/HydrationGuard';
 
 // Driver-shared places along routes — fuel, food, restrooms, rest areas — with
 // a comment thread on each. Sign-in is enforced by middleware.js; the data
-// lives in lib/db/places.js and the UI in app/components/places/.
+// lives in lib/db/places.js and the UI in components/places/.
 export default async function WhipItInAndOutPage() {
   const session = await auth();
   const user = session?.user

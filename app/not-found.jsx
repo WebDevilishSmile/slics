@@ -3,8 +3,8 @@
 import { Button, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import PageContainer from './components/layout/PageContainer';
-import { softContainedSx } from './components/utility/soft';
+import PageContainer from '@/components/layout/PageContainer';
+import { softContainedSx } from '@/components/utility/soft';
 
 function NotFound() {
   const router = useRouter();

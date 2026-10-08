@@ -1,10 +1,10 @@
 import { auth } from '@/auth';
 import { getHistoryPage, parseHistoryQuery } from '@/lib/db/slicViews';
 
-import HistoryView from '@/app/components/history/HistoryView';
-import PageContainer from '@/app/components/layout/PageContainer';
-import RedirectMessage from '@/app/components/layout/RedirectMessage';
-import HydrationGuard from '@/app/components/utility/HydrationGuard';
+import HistoryView from '@/components/history/HistoryView';
+import PageContainer from '@/components/layout/PageContainer';
+import RedirectMessage from '@/components/layout/RedirectMessage';
+import HydrationGuard from '@/components/utility/HydrationGuard';
 import { Typography } from '@mui/material';
 
 const FILTER_KEYS = ['q', 'range', 'from', 'to', 'type', 'notes', 'sort'];

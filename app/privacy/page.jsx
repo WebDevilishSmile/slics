@@ -1,8 +1,8 @@
 import { Link, Typography } from '@mui/material';
-import PageContainer from '../components/layout/PageContainer';
-import LegalList from '../components/legal/LegalList';
-import LegalSection from '../components/legal/LegalSection';
-import LegalText from '../components/legal/LegalText';
+import PageContainer from '@/components/layout/PageContainer';
+import LegalList from '@/components/legal/LegalList';
+import LegalSection from '@/components/legal/LegalSection';
+import LegalText from '@/components/legal/LegalText';
 
 export const metadata = {
   title: 'Privacy Policy · SLICs',

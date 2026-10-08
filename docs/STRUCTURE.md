@@ -393,7 +393,7 @@ serializers (item 16).
   `hooks/useAppleDevice.js`
 
 It's a `'use client'` module living next to server-only Mongo code. Also the home for
-`app/components/admin/coverBidJobs/useCoverBidJobs.js` (item 27). `UI-SUGGESTIONS.md` #29 wants
+`components/admin/coverBidJobs/useCoverBidJobs.js` (item 27). `UI-SUGGESTIONS.md` #29 wants
 `useIsMobile` rebased on theme breakpoints — do that in the same touch if convenient.
 
 *Blast radius:* import paths only.
@@ -437,7 +437,7 @@ went to `lib/`: `apiRequest.js`, `commentPrompt.js`, `geo.js`, `recentLookups.js
 
 ### 21. Move `app/components/` to `components/` and use one import style
 
-- [ ] **Files:** `app/components/**` → `components/**`; every importer
+- [x] **Files:** `app/components/**` → `components/**`; every importer
 
 Today: 52 imports use relative paths (`'../components/...'`, `'./components/...'`), 60 use
 `'@/app/components/...'`. Two styles for the same thing, chosen per file. Moving the folder
@@ -452,6 +452,11 @@ hand or with a second pattern per depth. Update the `tailwind.config.mjs` conten
 `Depends on:` nothing, but do it **before** items 22–27 so the renames happen once.
 
 *Blast radius:* every import of a component. Build will catch every miss.
+
+**Done 2026-10-08.** 228 import specifiers in 133 files. The one style: `@/components/…` for
+anything outside the importer's own folder, `./X` only for a sibling in the same folder; no
+`../` imports remain in `app/` or `components/`. `tailwind.config.mjs` scans
+`./components/**` too (16 components use `className`). `app/context/` stayed in `app/`.
 
 ### 22. Rename feature folders to mirror their routes
 

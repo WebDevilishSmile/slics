@@ -2,12 +2,12 @@
 
 import { Box, Button, Paper, Typography } from '@mui/material';
 import { useEffect } from 'react';
-import PageContainer from './components/layout/PageContainer';
+import PageContainer from '@/components/layout/PageContainer';
 import {
   softContainedSx,
   softPressSx,
   softRaisedSmall,
-} from './components/utility/soft';
+} from '@/components/utility/soft';
 
 // Route-segment error boundary (Next.js App Router). Catches render errors
 // anywhere below the root layout, so the header/footer stay up and the

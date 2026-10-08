@@ -11,8 +11,8 @@ import {
   serializeUser,
 } from '@/lib/serializers';
 import dayjs from 'dayjs';
-import UserComments from '@/app/components/admin/user-page/UserComments';
-import UserSlics from '@/app/components/admin/user-page/UserSlics';
+import UserComments from '@/components/admin/user-page/UserComments';
+import UserSlics from '@/components/admin/user-page/UserSlics';
 
 async function UserPage({ params }) {
   const { id } = await params;

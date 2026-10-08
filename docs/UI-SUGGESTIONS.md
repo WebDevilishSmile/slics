@@ -23,7 +23,7 @@ starting.
 **Design direction (since 2026-10-07):** the app is moving to a soft, embossed
 (neumorphic) style in its existing colors. The lookup card, the search bar and the Driver
 tips already have it. Whatever an item changes should match that style, using the helpers in
-`app/components/utility/soft.js` and the rules in `CLAUDE.md` → "Visual style: soft /
+`components/utility/soft.js` and the rules in `CLAUDE.md` → "Visual style: soft /
 embossed". That holds even where an item's own text predates this and suggests outlined
 or elevated MUI defaults.
 
@@ -149,7 +149,7 @@ scope it per variant and per color prop, or set it at the call site as
 
 ### 4. Dark-mode branch mishandles `'system'`
 
-- [x] **DONE.** **Files:** `app/components/comments/Comment.jsx:37`,
+- [x] **DONE.** **Files:** `components/comments/Comment.jsx:37`,
       `app/components/comments/CommentEditor.jsx:89, 101`, `app/globals.css`
 
 These branched on `mode === 'light'`, but MUI's `mode` has three states — `'light'`,
@@ -220,7 +220,7 @@ users see no change; `system`+light-OS users get a readable editor for the first
 ### 5. Code blocks in comments are invisible in light mode
 
 - [x] **DONE — the premise was off, and the fix is broader than the file list.**
-      **Files:** `app/globals.css:47-85`, `app/components/comments/Comment.jsx:52`,
+      **Files:** `app/globals.css:47-85`, `components/comments/Comment.jsx:52`,
       `app/components/comments/CommentEditor.jsx:88`
 
 The tiptap styles referenced four CSS variables that were **never defined anywhere**:
@@ -283,7 +283,7 @@ display half, remove `className='comment-content'` from `Comment.jsx`.
 ### 6. Theme toggle is asymmetric
 
 - [x] **DONE — cleanup, not a behavior change.** **File:**
-      `app/components/layout/ModeSwitch.jsx:13-24`
+      `components/layout/ModeSwitch.jsx:13-24`
 
 The second `if` was missing `else`, so after the `system`+dark branch fired, the
 `light`/`dark` chain below was evaluated again. **It was harmless in practice:** that
@@ -1447,7 +1447,7 @@ _Done 2026-10-07,_ as part of the History page rework (TODOS.md):
   They're computed in the phone's time zone, behind `HydrationGuard`.
 - **Log:** the `console.log(session)` is gone.
 - **The rework itself:**
-  - The page now lives in `app/components/history/`.
+  - The page now lives in `components/history/`.
   - Search covers code, name, address and note. There are date presets plus a custom
     range, Centers/Customers and With-notes filters, and Newest/Oldest sort.
   - Paging is cursor-based through `GET /api/user/history`, with "Load more".

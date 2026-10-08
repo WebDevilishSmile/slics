@@ -122,7 +122,7 @@ ID, seniority date and personal mobile number in a public repository.
 **Files:** `app/components/comments/CommentEditor.jsx:118` (`editor.getHTML()`),
 `app/api/comment/route.js` (POST — stores `content` as-is), `lib/db/comments.js`
 (`createComment`), and the four render sites:
-`app/components/comments/Comment.jsx:50`, `app/components/admin/comments/Comment.jsx:36`,
+`components/comments/Comment.jsx:50`, `components/admin/comments/Comment.jsx:36`,
 `app/components/profile/CommentBody.jsx:9`, `app/components/slicPage/CommentsPage.jsx:42`.
 
 A comment is the raw HTML string TipTap produces, sent to the server, stored without
@@ -467,7 +467,7 @@ but it is the auth flow, so fix it while here: point the redirect at `/`.)
 ### [ ] 8. Open registration, no email verification, and the account-squatting it enables
 
 **Files:** `app/api/auth/register/route.js`, `auth.js` (Google provider, default
-`allowDangerousEmailAccountLinking: false`), `app/components/signIn/Membership.jsx`
+`allowDangerousEmailAccountLinking: false`), `components/signIn/Membership.jsx`
 ("Use SLICs now"), `app/api/webhooks/buymeacoffee/route.js` (matches on email)
 
 Three things combine here:
@@ -1025,7 +1025,7 @@ named policy instead of inventing numbers:
 **Files:** `app/api/comments/route.js` + `lib/db/comments.js` `getCommentsBySlic`
 (returns full `upVotes`/`downVotes` id arrays to every signed-in user; the *voters*
 endpoint is members-only, but the ids are already in the comment payload — resolving
-them is one `GET /api/users/<id>` each), `app/components/signIn/RequestAccess.jsx` (a
+them is one `GET /api/users/<id>` each), `components/signIn/RequestAccess.jsx` (a
 personal mobile number, in a public repo, in a component that is commented out),
 `app/privacy/page.jsx` ("Your … lookup history [is] never shown to other drivers" — true;
 "anyone can create an account" — not stated, see #8).

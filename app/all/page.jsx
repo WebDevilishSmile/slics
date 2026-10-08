@@ -7,9 +7,9 @@ import { getCommentsBySlic } from '@/lib/db/comments';
 import { serializeSlics } from '@/lib/serializers';
 import { getAllHubs } from '@/lib/db/slics';
 
-import Comments from '../components/comments/Comments';
-import Main from '../components/home/Main';
-import PageContainer from '../components/layout/PageContainer';
+import Comments from '@/components/comments/Comments';
+import Main from '@/components/home/Main';
+import PageContainer from '@/components/layout/PageContainer';
 
 async function AllHubs({ searchParams }) {
   const session = await auth();

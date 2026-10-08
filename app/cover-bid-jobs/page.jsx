@@ -1,14 +1,14 @@
 import dayjs from 'dayjs';
 
-import PageContainer from '../components/layout/PageContainer';
+import PageContainer from '@/components/layout/PageContainer';
 import {
   getCoverBidJobsSince,
   serializeCoverBidJobs,
 } from '@/lib/db/coverBidJobs';
-import CoverBidJobsTable from '../components/coverBidJobs/CoverBidJobsTable';
+import CoverBidJobsTable from '@/components/coverBidJobs/CoverBidJobsTable';
 import { Typography } from '@mui/material';
 import { auth } from '@/auth';
-import NotMember from '../components/coverBidJobs/NotMember';
+import NotMember from '@/components/coverBidJobs/NotMember';
 import { getUpcomingSaturday } from '@/lib/format';
 import { COVER_BID_MONTHS_BACK } from '@/constants';
 

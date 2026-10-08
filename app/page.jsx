@@ -2,11 +2,11 @@ import { auth } from '@/auth';
 import { getUserByEmail } from '@/lib/db/users';
 import { safeCallbackUrl } from '@/lib/callbackUrl';
 
-import PageContainer from './components/layout/PageContainer';
+import PageContainer from '@/components/layout/PageContainer';
 import { Typography } from '@mui/material';
-import Membership from './components/signIn/Membership';
-import SignIn from './components/signIn/SignIn';
-import RedirectMember from './components/home/RedirectMember';
+import Membership from '@/components/signIn/Membership';
+import SignIn from '@/components/signIn/SignIn';
+import RedirectMember from '@/components/home/RedirectMember';
 
 // `callbackUrl` is where a signed-out driver was headed (middleware.js). Sign-in
 // comes back here with it, so a non-member still sees the membership prompt;

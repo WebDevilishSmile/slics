@@ -2,9 +2,9 @@ import { serializeSlic, serializeSlicHistory } from '@/lib/serializers';
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getSlicHistory } from '@/lib/db/slicHistory';
 
-import SlicForm from '@/app/components/slicForm/SlicForm';
-import SlicAuditInfo from '@/app/components/slicForm/SlicAuditInfo';
-import SlicHistoryList from '@/app/components/slicForm/SlicHistoryList';
+import SlicForm from '@/components/slicForm/SlicForm';
+import SlicAuditInfo from '@/components/slicForm/SlicAuditInfo';
+import SlicHistoryList from '@/components/slicForm/SlicHistoryList';
 import { Typography } from '@mui/material';
 
 async function EditPage({ params }) {

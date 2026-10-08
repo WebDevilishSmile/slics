@@ -2,9 +2,9 @@ import { auth } from '@/auth';
 import { serializeSlics } from '@/lib/serializers';
 import { getAllSlics } from '@/lib/db/slics';
 
-import RedirectMessage from '@/app/components/layout/RedirectMessage';
+import RedirectMessage from '@/components/layout/RedirectMessage';
 import { Typography } from '@mui/material';
-import SlicsTable from '../../components/admin/slics/SlicsTable';
+import SlicsTable from '@/components/admin/slics/SlicsTable';
 
 async function SlicsTablePage() {
   const session = await auth();

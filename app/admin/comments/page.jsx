@@ -1,15 +1,15 @@
 import { auth } from '@/auth';
 import { getAllSlics } from '@/lib/db/slics';
 
-import CommentsSection from '@/app/components/admin/comments/CommentsSection';
-import RedirectMessage from '@/app/components/layout/RedirectMessage';
-import LoadingFallback from '@/app/components/layout/LoadingFallback';
+import CommentsSection from '@/components/admin/comments/CommentsSection';
+import RedirectMessage from '@/components/layout/RedirectMessage';
+import LoadingFallback from '@/components/layout/LoadingFallback';
 import { getAllComments } from '@/lib/db/comments';
 import { serializeComments, serializeSlics, serializeUsers } from '@/lib/serializers';
 import { getUsers } from '@/lib/db/users';
 import { Typography } from '@mui/material';
 import { Suspense } from 'react';
-import HydrationGuard from '@/app/components/utility/HydrationGuard';
+import HydrationGuard from '@/components/utility/HydrationGuard';
 
 async function CommentsPage() {
   const session = await auth();

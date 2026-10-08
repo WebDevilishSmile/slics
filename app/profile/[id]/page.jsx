@@ -3,14 +3,14 @@ import { getCommentsByUserId } from '@/lib/db/comments';
 import { getUserById } from '@/lib/db/users';
 import { serializeComments, serializeUser } from '@/lib/serializers';
 
-import RedirectMessage from '@/app/components/layout/RedirectMessage';
-import ProfileComments from '@/app/components/profile/ProfileComments';
-import ProfileData from '@/app/components/profile/ProfileData';
-import HydrationGuard from '@/app/components/utility/HydrationGuard';
-import PageContainer from '../../components/layout/PageContainer';
+import RedirectMessage from '@/components/layout/RedirectMessage';
+import ProfileComments from '@/components/profile/ProfileComments';
+import ProfileData from '@/components/profile/ProfileData';
+import HydrationGuard from '@/components/utility/HydrationGuard';
+import PageContainer from '@/components/layout/PageContainer';
 import { Typography } from '@mui/material';
 import { Suspense } from 'react';
-import LoadingFallback from '@/app/components/layout/LoadingFallback';
+import LoadingFallback from '@/components/layout/LoadingFallback';
 
 async function ProfilePage({ params }) {
   const { id } = await params;

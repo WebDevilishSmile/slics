@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
-import GymFinder from '../../components/gyms/GymFinder';
-import HydrationGuard from '../../components/utility/HydrationGuard';
+import GymFinder from '@/components/gyms/GymFinder';
+import HydrationGuard from '@/components/utility/HydrationGuard';
 import { getAllGyms } from '@/lib/db/gyms';
 import { getAllSlics } from '@/lib/db/slics';
 import { serializeGyms } from '@/lib/serializers';

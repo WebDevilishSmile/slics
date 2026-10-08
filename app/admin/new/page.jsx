@@ -1,4 +1,4 @@
-import SlicForm from '@/app/components/slicForm/SlicForm';
+import SlicForm from '@/components/slicForm/SlicForm';
 import { Typography } from '@mui/material';
 
 async function NewSlicPage() {

@@ -1,5 +1,5 @@
 import { Typography, Paper } from '@mui/material';
-import AdminLinks from '../components/admin/AdminLinks';
+import AdminLinks from '@/components/admin/AdminLinks';
 
 async function AdminPage() {
   const adminLinks = [

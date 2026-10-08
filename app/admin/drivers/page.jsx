@@ -1,4 +1,4 @@
-import DriversTable from '@/app/components/drivers/DriversTable';
+import DriversTable from '@/components/drivers/DriversTable';
 import { Typography } from '@mui/material';
 import { getAllDrivers } from '@/lib/db/drivers';
 import { serializeDrivers } from '@/lib/serializers';

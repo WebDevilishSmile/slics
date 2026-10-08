@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 
-import CoverCalendar from '@/app/components/covers/Calendar';
-import BidSheetUploader from '@/app/components/admin/coverBidJobs/BidSheetUploader';
-import CoverBidJobsManager from '@/app/components/admin/coverBidJobs/CoverBidJobsManager';
+import CoverCalendar from '@/components/covers/Calendar';
+import BidSheetUploader from '@/components/admin/coverBidJobs/BidSheetUploader';
+import CoverBidJobsManager from '@/components/admin/coverBidJobs/CoverBidJobsManager';
 import { getUpcomingSaturday } from '@/lib/format';
 import { Paper, Typography } from '@mui/material';
 import theme from '@/theme';

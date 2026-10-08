@@ -370,7 +370,7 @@ now uses the one in `lib/db/drivers.js`. `serializeBidJob(s)` move with item 17.
 
 ### 17. Split `utils/functions.js`
 
-- [ ] **File:** `utils/functions.js` (27 importers) → `lib/serializers.js` +
+- [x] **File:** `utils/functions.js` (27 importers) → `lib/serializers.js` +
   `lib/format.js`
 
 Lines 30–125 are `serialize{Slic,SlicHistory,User,Comment,SlicView,Cover,Driver}(s)` —
@@ -382,6 +382,10 @@ Splitting means a page that only serializes doesn't import phone formatting, and
 serializer file is the obvious place to look when a new collection appears.
 
 *Blast radius:* import paths only. Most importers use one or the other group, not both.
+
+**Done 2026-10-08.** `safeCallbackUrl` (added since, and imported by `middleware.js`) is
+neither, so it went to its own `lib/callbackUrl.js`. `serializeBidJob(s)` joined the other
+serializers (item 16).
 
 ### 18. Move the hooks to `hooks/`
 

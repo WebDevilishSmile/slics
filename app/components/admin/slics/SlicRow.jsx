@@ -1,4 +1,4 @@
-import { serializeSlic } from '@/utils/functions';
+import { serializeSlic } from '@/lib/serializers';
 import { TableCell, TableRow, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import SlicOptions from './SlicOptions';

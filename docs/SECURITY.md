@@ -11,8 +11,8 @@ fix) and independent unless it says `Depends on:`. Part 3 is the standing practi
 rules that keep the list from growing back. Part 4 is a summary table.
 
 **Audit scope (2026-09-20):** every file under `app/api/`, `auth.js`, `auth.config.js`,
-`middleware.js`, every `lib/db/*.js`, every page under `app/`, the serializers in
-`utils/functions.js`, `lib/*`, `next.config.mjs`, `scripts/*`, `package.json` +
+`middleware.js`, every `lib/db/*.js`, every page under `app/`, the serializers
+(`lib/serializers.js`), `lib/*`, `next.config.mjs`, `scripts/*`, `package.json` +
 `npm audit`, the git history, and the production build's server-action manifest
 (`.next/server/server-reference-manifest.json`). Installed at audit time: `next 15.3.6`,
 `next-auth 5.0.0-beta.28`, `@auth/core 0.39.1`, `react 19.1.0`, `mongodb 6.16.0`,
@@ -384,7 +384,7 @@ access module.**
 - `app/api/users/[userId]/toggle-role/route.js:57,83` and
   `toggle-member/route.js:57,83` — return the *target* user's full document (hash,
   email, phone) to the admin's browser.
-- `utils/functions.js` `serializeUser` / `serializeUsers` — `{ ...userData }` spreads
+- `lib/serializers.js` `serializeUser` / `serializeUsers` — `{ ...userData }` spreads
   the whole document, then it is passed to `'use client'` components:
   `app/admin/users/page.jsx:18` → `UserList` (every user's hash, in the RSC payload of
   the admin page), `app/admin/users/[id]/page.jsx:69` → `UserComments`,
@@ -1123,7 +1123,7 @@ by someone other than you, rotate everything after they are done.
 - `next.config.mjs`: `poweredByHeader: false`.
 - `app/components/home/MapPhoneLinks.jsx`: `rel="noopener"` on the `target="_blank"`
   links (modern browsers imply it; older WebViews don't).
-- `utils/functions.js` `isMobileDevice`: fine, but it is a UA sniff used for nothing
+- `lib/format.js` `isMobileDevice`: fine, but it is a UA sniff used for nothing
   security-relevant — keep it that way.
 
 ---

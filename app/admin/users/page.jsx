@@ -1,4 +1,4 @@
-import { serializeUsers } from '@/utils/functions';
+import { serializeUsers } from '@/lib/serializers';
 import { getSlicViewCounts, getUsers } from '@/lib/db/users';
 
 import UserList from '@/app/components/admin/users/UserList';

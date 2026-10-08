@@ -2,7 +2,7 @@
 import { authConfig } from './auth.config';
 import NextAuth from 'next-auth';
 import { NextResponse } from 'next/server';
-import { safeCallbackUrl } from './utils/functions';
+import { safeCallbackUrl } from './lib/callbackUrl';
 
 // Create the 'auth' helper specifically for the middleware using authConfig
 const { auth } = NextAuth(authConfig);

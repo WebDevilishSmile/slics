@@ -1,5 +1,5 @@
 import theme from '@/utils/theme';
-import { capitalizeWords } from '@/utils/functions';
+import { capitalizeWords } from '@/lib/format';
 import { FormControl, TextField } from '@mui/material';
 import { softInputSx } from '../utility/soft';
 

@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { serializeUser } from '@/utils/functions';
+import { serializeUser } from '@/lib/serializers';
 import { softInputSx, softToggleSx } from '../../utility/soft';
 import UserCard from './UserCard';
 

@@ -3,7 +3,7 @@ import GymFinder from '../../components/gyms/GymFinder';
 import HydrationGuard from '../../components/utility/HydrationGuard';
 import { getAllGyms } from '@/lib/db/gyms';
 import { getAllSlics } from '@/lib/db/slics';
-import { serializeGyms } from '@/utils/functions';
+import { serializeGyms } from '@/lib/serializers';
 
 // Admin-only (app/admin/layout.jsx gates every /admin page): truck-accessible
 // Planet Fitness gyms, found by the SLIC you're coming from / going to or by

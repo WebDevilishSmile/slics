@@ -5,11 +5,7 @@ import CommentsSection from '@/app/components/admin/comments/CommentsSection';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import LoadingFallback from '@/app/components/layout/LoadingFallback';
 import { getAllComments } from '@/lib/db/comments';
-import {
-  serializeComments,
-  serializeSlics,
-  serializeUsers,
-} from '@/utils/functions';
+import { serializeComments, serializeSlics, serializeUsers } from '@/lib/serializers';
 import { getUsers } from '@/lib/db/users';
 import { Typography } from '@mui/material';
 import { Suspense } from 'react';

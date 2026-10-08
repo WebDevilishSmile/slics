@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { Typography } from '@mui/material';
 
 import { getCommentsBySlic } from '@/lib/db/comments';
-import { serializeSlics } from '@/utils/functions';
+import { serializeSlics } from '@/lib/serializers';
 import { getAllHubs } from '@/lib/db/slics';
 
 import Comments from '../components/comments/Comments';

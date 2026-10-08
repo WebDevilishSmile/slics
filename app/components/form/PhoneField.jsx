@@ -1,5 +1,5 @@
 import theme from '@/utils/theme';
-import { formatPhoneNumber } from '@/utils/functions';
+import { formatPhoneNumber } from '@/lib/format';
 import { FormControl, TextField } from '@mui/material';
 
 // `sx` merges over the slic form's column defaults (e.g. `{ mt: 0 }` inside a

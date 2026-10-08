@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 import { Paper, Typography } from '@mui/material';
 import Calendar from './Calendar';
-import { getUpcomingSaturday } from '@/utils/functions';
+import { getUpcomingSaturday } from '@/lib/format';
 
 function CoversDate({ user, driver }) {
   const [selectedWeek, setSelectedWeek] = useState(null);

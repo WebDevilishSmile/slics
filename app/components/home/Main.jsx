@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { recordLookup } from '@/utils/commentPrompt';
 import { recordRecentLookup } from '@/utils/recentLookups';
-import { serializeSlics } from '@/utils/functions';
+import { serializeSlics } from '@/lib/serializers';
 import { withViewTransition } from '@/utils/viewTransition';
 
 import SlicDisplay from './SlicDisplay';

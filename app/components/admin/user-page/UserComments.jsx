@@ -5,7 +5,7 @@ import { Box, Button, Typography } from '@mui/material';
 import CommentCard from '@/app/components/profile/CommentCard';
 import { softPressSx, softRaisedSmall } from '@/app/components/utility/soft';
 import { CommentRefreshProvider } from '@/app/context/CommentRefreshContext';
-import { serializeComment } from '@/utils/functions';
+import { serializeComment } from '@/lib/serializers';
 import theme from '@/utils/theme';
 
 const pillSx = [softRaisedSmall, softPressSx, { px: 2 }];

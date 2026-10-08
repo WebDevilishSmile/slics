@@ -1,4 +1,4 @@
-import { serializeSlic, serializeSlicHistory } from '@/utils/functions';
+import { serializeSlic, serializeSlicHistory } from '@/lib/serializers';
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getSlicHistory } from '@/lib/db/slicHistory';
 

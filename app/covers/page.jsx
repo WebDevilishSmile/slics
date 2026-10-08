@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { getDriverById } from '@/lib/db/drivers';
-import { serializeDriver, serializeUser } from '@/utils/functions';
+import { serializeDriver, serializeUser } from '@/lib/serializers';
 import { getUserById } from '@/lib/db/users';
 import { Typography } from '@mui/material';
 import { Suspense } from 'react';

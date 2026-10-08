@@ -25,7 +25,7 @@ import {
 import CoverCalendar from '../covers/Calendar';
 import SoftNotice from '../utility/SoftNotice';
 import { softInputSx } from '../utility/soft';
-import { getUpcomingSaturday } from '@/utils/functions';
+import { getUpcomingSaturday } from '@/lib/format';
 
 const DAY_COLUMNS = DAY_FIELDS.map((day) => ({
   field: day,

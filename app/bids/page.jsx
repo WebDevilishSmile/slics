@@ -1,5 +1,6 @@
 import PageContainer from '../components/layout/PageContainer';
-import { getAllBidJobs, serializeBidJobs } from '@/lib/db/bidJobs';
+import { getAllBidJobs } from '@/lib/db/bidJobs';
+import { serializeBidJobs } from '@/lib/serializers';
 import BidsTable from '../components/bids/BidsTable';
 
 export default async function BidsPage() {

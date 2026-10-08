@@ -4,7 +4,7 @@ import DriversTable from '@/app/components/covers/DriversTable';
 import LoadingFallback from '@/app/components/layout/LoadingFallback';
 import { Typography } from '@mui/material';
 import { getCovers } from '@/lib/db/covers';
-import { serializeCovers } from '@/utils/functions';
+import { serializeCovers } from '@/lib/serializers';
 
 async function CoverDrivers() {
   const covers = await getCovers();

@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { getUserByEmail } from '@/lib/db/users';
-import { safeCallbackUrl } from '@/utils/functions';
+import { safeCallbackUrl } from '@/lib/callbackUrl';
 
 import PageContainer from './components/layout/PageContainer';
 import { Typography } from '@mui/material';

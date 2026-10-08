@@ -3,7 +3,7 @@
 import dayjs from 'dayjs';
 import { useState } from 'react';
 
-import { capitalizeFirstLetter } from '@/utils/functions';
+import { capitalizeFirstLetter } from '@/lib/format';
 
 import {
   BadgeOutlined,

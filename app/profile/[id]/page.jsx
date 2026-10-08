@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { getCommentsByUserId } from '@/lib/db/comments';
 import { getUserById } from '@/lib/db/users';
-import { serializeComments, serializeUser } from '@/utils/functions';
+import { serializeComments, serializeUser } from '@/lib/serializers';
 
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import ProfileComments from '@/app/components/profile/ProfileComments';

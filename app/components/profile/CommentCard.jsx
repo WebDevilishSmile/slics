@@ -18,7 +18,7 @@ import CommentDelete from './CommentDelete';
 // a soft raised card (utility/soft.js) like a tip on /home, with the SLIC it
 // belongs to, a link back to it, the tip and its pin, its date and votes,
 // and delete.
-// `comment` is serialized (utils/functions.js serializeComment). `index`
+// `comment` is serialized (lib/serializers.js serializeComment). `index`
 // staggers the entry fade.
 function CommentCard({ comment, index = 0 }) {
   const posted = dayjs(comment.created_at);

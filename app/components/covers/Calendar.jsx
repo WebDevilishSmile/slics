@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { getUpcomingSaturday } from '@/utils/functions';
+import { getUpcomingSaturday } from '@/lib/format';
 import { softInset } from '../utility/soft';
 
 const isInSameWeek = (day, referenceDay) =>

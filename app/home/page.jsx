@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { Typography } from '@mui/material';
 
 import { getCommentsBySlic } from '@/lib/db/comments';
-import { serializeSlics } from '@/utils/functions';
+import { serializeSlics } from '@/lib/serializers';
 import { getAllSlics } from '@/lib/db/slics';
 
 import CommentPrompt from '../components/comments/CommentPrompt';

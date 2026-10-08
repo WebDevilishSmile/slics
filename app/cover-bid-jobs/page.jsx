@@ -9,7 +9,7 @@ import CoverBidJobsTable from '../components/coverBidJobs/CoverBidJobsTable';
 import { Typography } from '@mui/material';
 import { auth } from '@/auth';
 import NotMember from '../components/coverBidJobs/NotMember';
-import { getUpcomingSaturday } from '@/utils/functions';
+import { getUpcomingSaturday } from '@/lib/format';
 import { COVER_BID_MONTHS_BACK } from '@/utils/variables';
 
 export default async function CoverBidJobsPage() {

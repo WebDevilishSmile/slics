@@ -9,7 +9,7 @@ import {
   serializeSlics,
   serializeComments,
   serializeUser,
-} from '@/utils/functions';
+} from '@/lib/serializers';
 import dayjs from 'dayjs';
 import UserComments from '@/app/components/admin/user-page/UserComments';
 import UserSlics from '@/app/components/admin/user-page/UserSlics';

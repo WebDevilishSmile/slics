@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { serializeSlics } from '@/utils/functions';
+import { serializeSlics } from '@/lib/serializers';
 import { getAllSlics } from '@/lib/db/slics';
 
 import RedirectMessage from '@/app/components/layout/RedirectMessage';

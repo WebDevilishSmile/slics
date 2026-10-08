@@ -9,7 +9,7 @@ import CommentCard from './CommentCard';
 
 // The driver's own tips, newest first, in a soft panel like "Driver tips" on
 // /home (CLAUDE.md "Visual style"). `comments` are serialized
-// (utils/functions.js serializeComments). Deleting one refreshes this
+// (lib/serializers.js serializeComments). Deleting one refreshes this
 // server-rendered list (CommentRefreshContext).
 function ProfileComments({ comments }) {
   return (

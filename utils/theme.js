@@ -1,5 +1,6 @@
 import { lightBlue } from '@mui/material/colors';
 import {
+  alpha,
   createTheme,
   darken,
   getOverlayAlpha,
@@ -88,6 +89,26 @@ let theme = createTheme({
     },
     minHeight: '24rem', // keeps the home/comments panels from collapsing
     elevation: 6, // Paper elevation for those panels (read by the `panel` variant below)
+  },
+  // Soft, embossed surfaces: the Driver tips cards, their reply wells and
+  // controls (app/components/comments/soft.js). Not MUI keys. An element in
+  // the same color as the surface under it, lit from the top left: a pale
+  // highlight up there and a shadow down-right make it look pressed out of
+  // the surface (`raised`) or into it (`inset`). One value per color scheme;
+  // soft.js picks with applyStyles.
+  soft: {
+    raised: {
+      light: `6px 6px 14px ${alpha(tokens.brand[900], 0.16)}, -6px -6px 14px ${alpha(tokens.chalk, 0.95)}`,
+      dark: `6px 6px 14px ${alpha(tokens.void, 0.85)}, -5px -5px 12px ${alpha(tokens.chalk, 0.06)}`,
+    },
+    raisedSmall: {
+      light: `3px 3px 7px ${alpha(tokens.brand[900], 0.16)}, -3px -3px 7px ${alpha(tokens.chalk, 0.95)}`,
+      dark: `3px 3px 7px ${alpha(tokens.void, 0.85)}, -2px -2px 6px ${alpha(tokens.chalk, 0.06)}`,
+    },
+    inset: {
+      light: `inset 3px 3px 7px ${alpha(tokens.brand[900], 0.16)}, inset -3px -3px 7px ${alpha(tokens.chalk, 0.95)}`,
+      dark: `inset 3px 3px 7px ${alpha(tokens.void, 0.85)}, inset -2px -2px 6px ${alpha(tokens.chalk, 0.06)}`,
+    },
   },
   colorSchemes: {
     dark: {

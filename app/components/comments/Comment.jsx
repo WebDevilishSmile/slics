@@ -23,8 +23,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   IconButton,
-  Paper,
   TextField,
   Typography,
 } from '@mui/material';
@@ -35,17 +35,32 @@ import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 import CommentComposer from './CommentComposer';
 import CommentContent, { commentToText } from './CommentContent';
 import VotersDialog from './VotersDialog';
+import {
+  softInputSx,
+  softInset,
+  softPressSx,
+  softRaised,
+} from './soft';
 
 dayjs.extend(relativeTime);
 
 // 40px vote targets (UI-SUGGESTIONS.md #45): padding, not bigger icons.
 const voteSx = { width: '2.5rem', height: '2.5rem' };
 
-// One tip and, for a top-level tip, its replies indented underneath. Threads
+// One tip: a soft raised card (comments/soft.js) holding its replies in a
+// pressed-in well, or, for a reply, a flat row inside that well. Threads
 // are one level deep: "Reply" on a reply posts into the same thread. A
 // top-level tip deleted while it had replies renders as "Comment deleted" so
 // the replies keep their context.
-function Comment({ comment, numSlic, user, isNew, onVote, onChanged, isReply = false }) {
+function Comment({
+  comment,
+  numSlic,
+  user,
+  isNew,
+  onVote,
+  onChanged,
+  isReply = false,
+}) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
   const [replying, setReplying] = useState(false);
@@ -69,10 +84,13 @@ function Comment({ comment, numSlic, user, isNew, onVote, onChanged, isReply = f
   const handleSave = async () => {
     setSaving(true);
     setError('');
-    const { error: message } = await apiRequest(`/api/comments/${comment._id}`, {
-      method: 'PATCH',
-      body: { content: draft },
-    });
+    const { error: message } = await apiRequest(
+      `/api/comments/${comment._id}`,
+      {
+        method: 'PATCH',
+        body: { content: draft },
+      },
+    );
     setSaving(false);
     if (message) return setError(message);
     setEditing(false);
@@ -82,9 +100,12 @@ function Comment({ comment, numSlic, user, isNew, onVote, onChanged, isReply = f
   const handleDelete = async () => {
     setSaving(true);
     setError('');
-    const { error: message } = await apiRequest(`/api/comments/${comment._id}`, {
-      method: 'DELETE',
-    });
+    const { error: message } = await apiRequest(
+      `/api/comments/${comment._id}`,
+      {
+        method: 'DELETE',
+      },
+    );
     setSaving(false);
     setConfirmOpen(false);
     if (message) return setError(message);
@@ -95,35 +116,42 @@ function Comment({ comment, numSlic, user, isNew, onVote, onChanged, isReply = f
   const vote = (voteType) =>
     onVote(comment, comment.myVote === voteType ? null : voteType);
 
+
+  // Replies sit in a well pressed into the tip's card: one raised card per
+  // thread, with flat reply rows inside, rather than cards stacked on cards.
   const replies = hasReplies && (
     <Box
-      sx={{
-        ml: 2,
-        pl: 1.5,
-        borderLeft: 2,
-        borderColor: 'divider',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 1,
-      }}
+      sx={[
+        softInset,
+        {
+          borderRadius: 2,
+          mt: 1.5,
+          px: 1.5,
+          py: 0.5,
+          display: 'flex',
+          flexDirection: 'column',
+        },
+      ]}
     >
-      {comment.replies.map((reply) => (
-        <Comment
-          key={reply._id}
-          comment={reply}
-          numSlic={numSlic}
-          user={user}
-          isNew={isNew}
-          onVote={onVote}
-          onChanged={onChanged}
-          isReply
-        />
+      {comment.replies.map((reply, index) => (
+        <Box key={reply._id}>
+          {index > 0 && <Divider />}
+          <Comment
+            comment={reply}
+            numSlic={numSlic}
+            user={user}
+            isNew={isNew}
+            onVote={onVote}
+            onChanged={onChanged}
+            isReply
+          />
+        </Box>
       ))}
     </Box>
   );
 
   const replyBox = replying && (
-    <Box sx={{ ml: isReply ? 0 : 2 }}>
+    <Box sx={{ mt: 1 }}>
       <CommentComposer
         numSlic={numSlic}
         parentId={comment._id}
@@ -138,14 +166,20 @@ function Comment({ comment, numSlic, user, isNew, onVote, onChanged, isReply = f
     </Box>
   );
 
+  // A top-level card or, for a reply, a flat row inside the replies well.
+  const shellSx = isReply
+    ? { py: 1.5 }
+    : [softRaised, { borderRadius: 3, p: 2, pb: 1.5 }];
+
   if (comment.deleted) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Paper variant='outlined' sx={{ p: 2, bgcolor: 'transparent' }}>
-          <Typography color='text.secondary' sx={{ fontStyle: 'italic' }}>
-            Comment deleted
-          </Typography>
-        </Paper>
+      <Box sx={shellSx}>
+        <Typography
+          color='text.secondary'
+          sx={{ fontStyle: 'italic', py: 0.5 }}
+        >
+          Comment deleted
+        </Typography>
         {replies}
       </Box>
     );
@@ -169,138 +203,144 @@ function Comment({ comment, numSlic, user, isNew, onVote, onChanged, isReply = f
     );
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <Paper
-        elevation={isReply ? 0 : 1}
-        sx={{
-          bgcolor: 'background.comment',
-          p: 2,
-          pb: 1,
-          // A new tip gets a brand-colored edge as well as the "New" chip.
-          borderLeft: isNew(comment) ? 4 : 0,
-          borderColor: 'primary.main',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Avatar
-            src={comment.author?.image ?? undefined}
-            alt=''
-            sx={{ width: '2rem', height: '2rem' }}
-          />
-          <Box sx={{ minWidth: 0, flex: 1 }}>
-            <Typography variant='subtitle2'>{authorName}</Typography>
-            {/* Relative time says whether a gate code is still fresh; the
-                exact date is a hover/long-press away. */}
-            <Typography
-              variant='caption'
-              color='text.secondary'
-              component='time'
-              dateTime={posted.toISOString()}
-              title={posted.format('MMM D, YYYY h:mm A')}
-            >
-              {posted.fromNow()}
-              {comment.updated_at && ' · edited'}
-            </Typography>
-          </Box>
-          {isNew(comment) && <Chip label='New' color='primary' size='small' />}
-          {/* Edit/delete sit up here, not in the vote row, so that row fits a
-              phone without wrapping. */}
-          {canManage && !editing && (
-            <Box sx={{ display: 'flex', mr: -1 }}>
-              <IconButton aria-label='Edit tip' onClick={startEditing} sx={voteSx}>
-                <EditOutlined fontSize='small' />
-              </IconButton>
-              <IconButton
-                aria-label='Delete tip'
-                onClick={() => setConfirmOpen(true)}
-                sx={voteSx}
-              >
-                <DeleteOutline fontSize='small' color='error' />
-              </IconButton>
-            </Box>
-          )}
+    <Box sx={shellSx}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Avatar
+          src={comment.author?.image ?? undefined}
+          alt=''
+          sx={{ width: '2rem', height: '2rem' }}
+        />
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Typography variant='subtitle2'>{authorName}</Typography>
+          {/* Relative time says whether a gate code is still fresh; the
+              exact date is a hover/long-press away. */}
+          <Typography
+            variant='caption'
+            color='text.secondary'
+            component='time'
+            dateTime={posted.toISOString()}
+            title={posted.format('MMM D, YYYY h:mm A')}
+          >
+            {posted.fromNow()}
+            {comment.updated_at && ' · edited'}
+          </Typography>
         </Box>
-
-        {editing ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
-            <TextField
-              multiline
-              minRows={2}
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              disabled={saving}
-              autoFocus
-              fullWidth
-              label='Edit your tip'
-              slotProps={{ htmlInput: { maxLength: SLIC_COMMENT_MAX_LENGTH } }}
-            />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-              <Button onClick={() => setEditing(false)} disabled={saving}>
-                Cancel
-              </Button>
-              <Button
-                variant='contained'
-                onClick={handleSave}
-                disabled={saving || !draft.trim()}
-              >
-                {saving ? 'Saving…' : 'Save'}
-              </Button>
-            </Box>
-          </Box>
-        ) : (
-          <Box sx={{ mt: 1 }}>
-            <CommentContent comment={comment} />
+        {isNew(comment) && <Chip label='New' color='primary' size='small' />}
+        {/* Edit/delete sit up here, not in the vote row, so that row fits a
+            phone without wrapping. */}
+        {canManage && !editing && (
+          <Box sx={{ display: 'flex', mr: -1 }}>
+            <IconButton
+              aria-label='Edit tip'
+              onClick={startEditing}
+              sx={[voteSx, softPressSx]}
+            >
+              <EditOutlined fontSize='small' />
+            </IconButton>
+            <IconButton
+              aria-label='Delete tip'
+              onClick={() => setConfirmOpen(true)}
+              sx={[voteSx, softPressSx]}
+            >
+              <DeleteOutline fontSize='small' color='error' />
+            </IconButton>
           </Box>
         )}
+      </Box>
 
-        {!editing && (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', mt: 0.5, ml: -1 }}>
-            <IconButton
-              aria-label='Helpful'
-              aria-pressed={comment.myVote === 'up'}
-              color={comment.myVote === 'up' ? 'primary' : 'default'}
-              onClick={() => vote('up')}
-              sx={voteSx}
-            >
-              {comment.myVote === 'up' ? (
-                <ThumbUp sx={{ fontSize: '1.1rem' }} />
-              ) : (
-                <ThumbUpOutlined sx={{ fontSize: '1.1rem' }} />
-              )}
-            </IconButton>
-            {count(comment.upCount, 'found this helpful')}
-            <IconButton
-              aria-label='Not helpful'
-              aria-pressed={comment.myVote === 'down'}
-              color={comment.myVote === 'down' ? 'primary' : 'default'}
-              onClick={() => vote('down')}
-              sx={{ ...voteSx, ml: 0.5 }}
-            >
-              {comment.myVote === 'down' ? (
-                <ThumbDown sx={{ fontSize: '1.1rem' }} />
-              ) : (
-                <ThumbDownOutlined sx={{ fontSize: '1.1rem' }} />
-              )}
-            </IconButton>
-            {count(comment.downCount, 'found this not helpful')}
-
+      {editing ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
+          <TextField
+            multiline
+            minRows={2}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            disabled={saving}
+            autoFocus
+            fullWidth
+            placeholder='Edit your tip'
+            slotProps={{
+              htmlInput: {
+                maxLength: SLIC_COMMENT_MAX_LENGTH,
+                'aria-label': 'Edit your tip',
+              },
+            }}
+            sx={softInputSx}
+          />
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+            <Button onClick={() => setEditing(false)} disabled={saving}>
+              Cancel
+            </Button>
             <Button
-              size='small'
-              startIcon={<Reply />}
-              onClick={() => setReplying((open) => !open)}
-              sx={{ ml: 1, minHeight: '2.5rem' }}
+              variant='contained'
+              onClick={handleSave}
+              disabled={saving || !draft.trim()}
             >
-              Reply
+              {saving ? 'Saving…' : 'Save'}
             </Button>
           </Box>
-        )}
+        </Box>
+      ) : (
+        <Box sx={{ mt: 1 }}>
+          <CommentContent comment={comment} />
+        </Box>
+      )}
 
-        {error && (
-          <Alert severity='error' sx={{ my: 1 }}>
-            {error}
-          </Alert>
-        )}
-      </Paper>
+      {!editing && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            mt: 0.5,
+            ml: -1,
+          }}
+        >
+          <IconButton
+            aria-label='Helpful'
+            aria-pressed={comment.myVote === 'up'}
+            color={comment.myVote === 'up' ? 'primary' : 'default'}
+            onClick={() => vote('up')}
+            sx={[voteSx, softPressSx]}
+          >
+            {comment.myVote === 'up' ? (
+              <ThumbUp sx={{ fontSize: '1.1rem' }} />
+            ) : (
+              <ThumbUpOutlined sx={{ fontSize: '1.1rem' }} />
+            )}
+          </IconButton>
+          {count(comment.upCount, 'found this helpful')}
+          <IconButton
+            aria-label='Not helpful'
+            aria-pressed={comment.myVote === 'down'}
+            color={comment.myVote === 'down' ? 'primary' : 'default'}
+            onClick={() => vote('down')}
+            sx={[voteSx, softPressSx, { ml: 0.5 }]}
+          >
+            {comment.myVote === 'down' ? (
+              <ThumbDown sx={{ fontSize: '1.1rem' }} />
+            ) : (
+              <ThumbDownOutlined sx={{ fontSize: '1.1rem' }} />
+            )}
+          </IconButton>
+          {count(comment.downCount, 'found this not helpful')}
+
+          <Button
+            size='small'
+            startIcon={<Reply />}
+            onClick={() => setReplying((open) => !open)}
+            sx={[softPressSx, { ml: 1, minHeight: '2.5rem', px: 1.5 }]}
+          >
+            Reply
+          </Button>
+        </Box>
+      )}
+
+      {error && (
+        <Alert severity='error' sx={{ my: 1 }}>
+          {error}
+        </Alert>
+      )}
 
       {replyBox}
       {replies}
@@ -331,7 +371,12 @@ function Comment({ comment, numSlic, user, isNew, onVote, onChanged, isReply = f
           <Button onClick={() => setConfirmOpen(false)} disabled={saving}>
             Cancel
           </Button>
-          <Button variant='contained' color='error' onClick={handleDelete} disabled={saving}>
+          <Button
+            variant='contained'
+            color='error'
+            onClick={handleDelete}
+            disabled={saving}
+          >
             Delete
           </Button>
         </DialogActions>

@@ -6,17 +6,36 @@ import { Alert, Box, Button, Chip, TextField } from '@mui/material';
 import { apiRequest } from '@/utils/apiRequest';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 
+import { softInputSx, softPressSx, softRaisedSmall } from './soft';
+
 // What's worth sharing, as one-tap starters. Tapping one begins the tip with
 // "Parking: " (or adds a new line with it), so a driver who doesn't know what
 // to write gets a nudge and readers get scannable tips.
-const TOPICS = ['Gate / guard', 'Parking', 'Dock / door', 'Hours', 'Contact', 'Heads-up'];
+const TOPICS = [
+  'Gate / guard',
+  'Parking',
+  'Dock / door',
+  'Hours',
+  'Contact',
+  'Heads-up',
+  'Directions',
+];
 
 // The box for a new tip on a SLIC, or a reply when `parentId` is set (the API
 // files a reply to a reply under the thread's top-level comment). `topics`
 // shows the starter chips; replies leave them off. The parent can call
 // `focus()` through the ref (the comment prompt's ?comment=1 path).
 const CommentComposer = forwardRef(function CommentComposer(
-  { numSlic, parentId = null, label, placeholder, topics = false, autoFocus = false, onPosted, onCancel },
+  {
+    numSlic,
+    parentId = null,
+    label,
+    placeholder,
+    topics = false,
+    autoFocus = false,
+    onPosted,
+    onCancel,
+  },
   ref,
 ) {
   const [draft, setDraft] = useState('');
@@ -71,11 +90,11 @@ const CommentComposer = forwardRef(function CommentComposer(
             <Chip
               key={topic}
               size='medium'
-              variant='outlined'
               label={topic}
               clickable
               onClick={() => startTopic(topic)}
               disabled={saving}
+              sx={[softRaisedSmall, softPressSx]}
             />
           ))}
         </Box>
@@ -83,8 +102,10 @@ const CommentComposer = forwardRef(function CommentComposer(
 
       <TextField
         inputRef={inputRef}
-        label={label}
-        placeholder={placeholder}
+        // A placeholder, not a floating label: the soft well has no outline
+        // for a label to sit in. The label still names the box for screen
+        // readers.
+        placeholder={label ?? placeholder}
         multiline
         minRows={draft ? 3 : 1}
         value={draft}
@@ -97,7 +118,13 @@ const CommentComposer = forwardRef(function CommentComposer(
             ? `${draft.length}/${SLIC_COMMENT_MAX_LENGTH}`
             : undefined
         }
-        slotProps={{ htmlInput: { maxLength: SLIC_COMMENT_MAX_LENGTH } }}
+        slotProps={{
+          htmlInput: {
+            maxLength: SLIC_COMMENT_MAX_LENGTH,
+            'aria-label': label ?? placeholder,
+          },
+        }}
+        sx={softInputSx}
       />
 
       {error && <Alert severity='error'>{error}</Alert>}

@@ -20,6 +20,7 @@ import { COMMENTS_SECTION_ID } from '@/utils/variables';
 import Comment from './Comment';
 import CommentComposer from './CommentComposer';
 import NoSlicComments from './NoSlicComments';
+import { softInset, softRaisedSmall } from './soft';
 
 const time = (value) => new Date(value).getTime() || 0;
 
@@ -201,7 +202,26 @@ function Comments({ user }) {
             value={sort}
             onChange={(_event, value) => value && setSort(value)}
             aria-label='Sort tips'
-            sx={{ '& .MuiToggleButton-root': { textTransform: 'none', px: 1.5 } }}
+            // A soft segmented control: a pressed-in track with the chosen
+            // option raised out of it (comments/soft.js).
+            sx={[
+              softInset,
+              (theme) => ({
+                borderRadius: 999,
+                p: 0.5,
+                gap: 0.5,
+                '& .MuiToggleButtonGroup-grouped': {
+                  border: 0,
+                  borderRadius: '999px !important',
+                  textTransform: 'none',
+                  px: 1.5,
+                  '&.Mui-selected': {
+                    ...softRaisedSmall(theme),
+                    color: theme.vars.palette.primary.main,
+                  },
+                },
+              }),
+            ]}
           >
             <ToggleButton value='top'>Top</ToggleButton>
             <ToggleButton value='newest'>Newest</ToggleButton>
@@ -237,7 +257,7 @@ function Comments({ user }) {
           </Typography>
         </Box>
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           {sorted.map((comment) => (
             <Comment
               key={comment._id}

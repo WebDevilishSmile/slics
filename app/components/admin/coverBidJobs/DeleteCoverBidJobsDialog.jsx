@@ -10,6 +10,12 @@ import {
   DialogTitle,
 } from '@mui/material';
 
+import {
+  softContainedSx,
+  softPressSx,
+  softRaisedSmall,
+} from '../../utility/soft';
+
 /**
  * Confirms a destructive cover bid job delete.
  *
@@ -61,8 +67,12 @@ export default function DeleteCoverBidJobsDialog({
         </DialogContentText>
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onCancel} disabled={deleting}>
+      <DialogActions disableSpacing sx={{ px: 3, pb: 3, gap: 1.5 }}>
+        <Button
+          onClick={onCancel}
+          disabled={deleting}
+          sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+        >
           Cancel
         </Button>
         <Button
@@ -70,6 +80,7 @@ export default function DeleteCoverBidJobsDialog({
           color='error'
           onClick={onConfirm}
           disabled={deleting}
+          sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
           startIcon={
             deleting ? <CircularProgress size={16} color='inherit' /> : null
           }

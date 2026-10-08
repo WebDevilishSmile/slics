@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -9,6 +8,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import { softTableSx } from '../../utility/soft';
 import {
   CoverBidJobRowFields,
   CoverBidJobRowHeadCells,
@@ -24,8 +24,8 @@ export default function CoverBidJobsEditTable({
   deletingKey,
 }) {
   return (
-    <TableContainer component={Paper}>
-      <Table size='small'>
+    <TableContainer>
+      <Table size='small' sx={softTableSx}>
         <TableHead>
           <TableRow>
             <CoverBidJobRowHeadCells />

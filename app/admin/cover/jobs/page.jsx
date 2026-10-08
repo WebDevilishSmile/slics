@@ -7,7 +7,8 @@ import CoverCalendar from '@/app/components/covers/Calendar';
 import BidSheetUploader from '@/app/components/admin/coverBidJobs/BidSheetUploader';
 import CoverBidJobsManager from '@/app/components/admin/coverBidJobs/CoverBidJobsManager';
 import { getUpcomingSaturday } from '@/utils/functions';
-import { Box, Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
+import theme from '@/utils/theme';
 
 function CoverJobs() {
   // Default to next week — the week being posted — to match the driver-facing
@@ -56,7 +57,16 @@ function CoverJobs() {
         setValue={setSelectedDay}
         postedWeeks={postedWeeks}
       />
-      <Box sx={{ my: 2, px: { xs: 2, md: 1 } }}>
+      <Paper
+        variant='panel'
+        sx={{
+          maxWidth: theme.layout.width.page,
+          minHeight: 0,
+          alignItems: 'stretch',
+          my: 2,
+          px: { xs: 1, md: 3 },
+        }}
+      >
         <BidSheetUploader
           weekEndDate={weekEndDate}
           onSaved={() => setRefreshKey((key) => key + 1)}
@@ -65,7 +75,7 @@ function CoverJobs() {
           weekEndDate={weekEndDate}
           refreshKey={refreshKey}
         />
-      </Box>
+      </Paper>
     </>
   );
 }

@@ -4,6 +4,7 @@ import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import { isDirty } from './coverBidJobRow';
+import { softPressSx } from '../../utility/soft';
 
 export default function CoverBidJobRowActions({
   row,
@@ -22,6 +23,7 @@ export default function CoverBidJobRowActions({
         <span>
           <IconButton
             size='small'
+            sx={[softPressSx, { mr: 1 }]}
             onClick={() => onSave(row)}
             disabled={!dirty || saving || deleting}
             aria-label={`Save ${label}`}
@@ -40,6 +42,7 @@ export default function CoverBidJobRowActions({
           <IconButton
             size='small'
             color='error'
+            sx={softPressSx}
             onClick={() => onDelete(row)}
             disabled={saving || deleting}
             aria-label={`Delete ${label}`}

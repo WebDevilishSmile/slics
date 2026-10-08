@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   IconButton,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -25,6 +24,12 @@ import {
   CoverBidJobRowHeadCells,
 } from './CoverBidJobRowCells';
 import CoverBidJobEditCard from './CoverBidJobEditCard';
+import {
+  softContainedSx,
+  softPressSx,
+  softRaisedSmall,
+  softTableSx,
+} from '../../utility/soft';
 
 const MAX_DIMENSION = 3200;
 const JPEG_QUALITY = 0.92;
@@ -209,12 +214,12 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
       />
 
       <Button
-        variant='outlined'
         startIcon={<UploadFileIcon />}
         onClick={handlePickFile}
         disabled={uploading}
+        sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
       >
-        {uploading ? 'Reading files...' : 'Upload Bid Sheet Photo(s) or PDF(s)'}
+        {uploading ? 'Reading files…' : 'Upload Bid Sheet Photo(s) or PDF(s)'}
       </Button>
 
       {error && (
@@ -232,8 +237,8 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
       {rows.length > 0 && (
         <>
           {isDesktop ? (
-            <TableContainer component={Paper} sx={{ marginTop: 2 }}>
-              <Table size='small'>
+            <TableContainer sx={{ marginTop: 2 }}>
+              <Table size='small' sx={softTableSx}>
                 <TableHead>
                   <TableRow>
                     <CoverBidJobRowHeadCells />
@@ -252,6 +257,7 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
                       <TableCell>
                         <IconButton
                           size='small'
+                          sx={softPressSx}
                           onClick={() => handleDeleteRow(row.id)}
                           aria-label='Delete row'
                         >
@@ -275,6 +281,7 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
                   actions={
                     <IconButton
                       size='small'
+                      sx={softPressSx}
                       onClick={() => handleDeleteRow(row.id)}
                       aria-label='Delete row'
                     >
@@ -295,16 +302,20 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
               alignItems: { xs: 'stretch', sm: 'center' },
             }}
           >
-            <Button variant='text' onClick={handleAddBlankRow}>
+            <Button
+              onClick={handleAddBlankRow}
+              sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+            >
               Add Row
             </Button>
             <Button
               variant='contained'
+              sx={softContainedSx}
               onClick={handleSave}
               disabled={saving || !weekEndDate}
             >
               {saving
-                ? 'Saving...'
+                ? 'Saving…'
                 : `Save ${rows.length} Job${rows.length === 1 ? '' : 's'} for Week Ending ${weekEndDate ? weekEndDate.format('MM/DD/YYYY') : ''}`}
             </Button>
           </Box>

@@ -17,6 +17,7 @@ import CoverBidJobsEditTable from './CoverBidJobsEditTable';
 import DeleteCoverBidJobsDialog from './DeleteCoverBidJobsDialog';
 import useCoverBidJobs from './useCoverBidJobs';
 import { isUnsaved } from './coverBidJobRow';
+import { softContainedSx, softPressSx, softRaisedSmall } from '../../utility/soft';
 
 export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
   const theme = useTheme();
@@ -139,16 +140,20 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
           gap: 2,
         }}
       >
-        <Button variant='text' onClick={addRow}>
+        <Button
+          onClick={addRow}
+          sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+        >
           Add Row
         </Button>
         <Button
-          variant='outlined'
+          variant='contained'
           color='error'
           onClick={requestDeleteAll}
           disabled={rows.length === 0 || deletingAll}
+          sx={softContainedSx}
         >
-          {deletingAll ? 'Deleting...' : 'Delete All'}
+          {deletingAll ? 'Deleting…' : 'Delete All'}
         </Button>
       </Box>
 

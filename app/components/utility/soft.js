@@ -27,17 +27,26 @@ export const softRaisedSmall = (theme) => ({
 // A well pressed into the surface (replies, text boxes, a pressed button).
 export const softInset = (theme) => ({ ...surface(theme), ...shadow(theme, 'inset') });
 
+// A pressed-in well with a faint primary glow, for a focused field.
+export const softFocus = (theme) => {
+  const glow = (pct) =>
+    `0 0 0 3px color-mix(in srgb, ${theme.vars.palette.primary.main} ${pct}%, transparent)`;
+  return {
+    boxShadow: `${theme.soft.inset.light}, ${glow(28)}`,
+    ...theme.applyStyles('dark', {
+      boxShadow: `${theme.soft.inset.dark}, ${glow(40)}`,
+    }),
+  };
+};
+
 // A TextField that reads as a pressed-in well. The outline is gone, so focus
-// gets its own ring; use a placeholder rather than a floating label, which
-// would have no notch to sit in.
+// gets a glow; use a placeholder rather than a floating label, which would
+// have no notch to sit in.
 export const softInputSx = (theme) => ({
   '& .MuiOutlinedInput-root': {
     ...softInset(theme),
     borderRadius: theme.spacing(2),
-    '&.Mui-focused': {
-      outline: `2px solid ${theme.vars.palette.primary.main}`,
-      outlineOffset: 2,
-    },
+    '&.Mui-focused': softFocus(theme),
   },
   '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
 });

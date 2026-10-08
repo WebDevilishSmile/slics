@@ -4,6 +4,7 @@ import { serializeDriver, serializeUser } from '@/utils/functions';
 import { getUserById } from '@/utils/usersApi';
 import { Typography } from '@mui/material';
 import { Suspense } from 'react';
+import LoadingFallback from '@/app/components/layout/LoadingFallback';
 import CoversDate from '../components/covers/CoversDate';
 import BackButton from '../components/layout/BackButton';
 import PageContainer from '../components/layout/PageContainer';
@@ -46,7 +47,7 @@ async function CoversPage() {
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingFallback />}>
       <PageContainer>
         <BackButton />
         <Typography variant='sectionHeading'>Covers</Typography>

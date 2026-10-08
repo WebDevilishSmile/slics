@@ -1,10 +1,26 @@
 'use client';
 
-import { Alert, Autocomplete, Box, Link, TextField } from '@mui/material';
+import {
+  HubOutlined,
+  SearchOutlined,
+  StorefrontOutlined,
+} from '@mui/icons-material';
+import {
+  Alert,
+  Autocomplete,
+  Box,
+  createFilterOptions,
+  InputAdornment,
+  Link,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import theme from '@/utils/theme';
+import { readRecentLookups } from '@/utils/recentLookups';
 import { BMC_URL } from '@/utils/variables';
+import { softFocus } from '../utility/soft';
 
 function getDonationMessage(count) {
   if (count <= 0) return null;
@@ -16,56 +32,161 @@ function getDonationMessage(count) {
   return `${count} lookups! SLICs runs on community support — thank you for being here.`;
 }
 
-function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
-  const donationMessage = isMember ? null : getDonationMessage(viewCount);
-  const [selectedSlic, setSelectedSlic] = useState('');
+const labelFor = (slic) =>
+  slic.type === 'customer'
+    ? `${slic.numSlic} - ${slic.name} - ${slic.alphaSlic}`
+    : `${slic.numSlic} - ${slic.alphaSlic}`;
+
+// The search sits on the page background, not in a panel, so it's a raised
+// pill in the panel's own surface color (the same surface the soft cards
+// use) that presses in while you type (CLAUDE.md, "Visual style").
+const searchSx = (theme) => {
+  const raised = theme.soft.raisedSmall;
+  return {
+    width: '100%',
+    maxWidth: theme.layout.width.panel,
+    mt: 3,
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: theme.vars.palette.background.paper,
+      backgroundImage: theme.vars.overlays[theme.layout.elevation],
+      borderRadius: 999,
+      minHeight: '3.25rem',
+      pl: 2,
+      boxShadow: raised.light,
+      transition: theme.transitions.create('box-shadow', {
+        duration: theme.transitions.duration.short,
+      }),
+      ...theme.applyStyles('dark', { boxShadow: raised.dark }),
+      '&.Mui-focused': {
+        ...softFocus(theme),
+      },
+    },
+    '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+  };
+};
+
+// The dropdown, in the same soft surface, with roomy rows for a thumb.
+const listSx = (theme) => ({
+  mt: 1,
+  borderRadius: 4,
+  backgroundColor: theme.vars.palette.background.paper,
+  backgroundImage: theme.vars.overlays[theme.layout.elevation],
+  boxShadow: theme.soft.raised.light,
+  ...theme.applyStyles('dark', { boxShadow: theme.soft.raised.dark }),
+  '& .MuiAutocomplete-option': { minHeight: '3rem' },
+});
+
+
+// One option per SLIC: centers lead with their alpha code, customers with
+// their name, as on the lookup card (#40). `label` is what the input shows
+// once picked; `search` is what typing matches (it starts with the label, so
+// re-searching the picked text still finds it).
+const toOption = (slic) => {
+  const isCustomer = slic.type === 'customer';
+  const numSlic = String(slic.numSlic);
+  return {
+    numSlic,
+    type: isCustomer ? 'customer' : 'center',
+    title: (isCustomer ? slic.name : slic.alphaSlic) || `SLIC ${numSlic}`,
+    subtitle: [`SLIC ${numSlic}`, isCustomer ? slic.alphaSlic : null, slic.address?.city]
+      .filter(Boolean)
+      .join(' · '),
+    label: labelFor(slic),
+    search: [labelFor(slic), slic.name, slic.address?.city].filter(Boolean).join(' '),
+    group: 'All SLICs',
+  };
+};
+
+const filterAll = createFilterOptions({ stringify: (option) => option.search });
+
+// Bolds the first case-insensitive match of `query` in `text` (#42).
+function Highlight({ text, query }) {
+  const index = query ? text.toLowerCase().indexOf(query.toLowerCase()) : -1;
+  if (index < 0) return text;
+  return (
+    <>
+      {text.slice(0, index)}
+      <Box component='mark' sx={{ bgcolor: 'transparent', color: 'primary.main', fontWeight: 800 }}>
+        {text.slice(index, index + query.length)}
+      </Box>
+      {text.slice(index + query.length)}
+    </>
+  );
+}
+
+// The support notice can be dismissed for 30 days (#42), like the install
+// nudge: it used to sit above the search on every visit.
+const DONATION_KEY = 'slics-donation-dismissed';
+const DONATION_SNOOZE_MS = 30 * 24 * 60 * 60 * 1000;
+
+const donationSnoozed = () => {
+  try {
+    const at = Date.parse(localStorage.getItem(DONATION_KEY) ?? '');
+    return Date.now() - at < DONATION_SNOOZE_MS;
+  } catch {
+    return false;
+  }
+};
+
+// The SLIC search (UI-SUGGESTIONS.md #42). Focus it and this device's recent
+// lookups come first under "Recent" (utils/recentLookups.js); type and every
+// SLIC matches on number, code, name or city, with the match highlighted.
+// Enter takes the top match. `onSelect(numSlic | null)` shows the pick at
+// once (home/Main.jsx); the URL follows through router.push so Back and
+// sharing still work.
+function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
+  const [selected, setSelected] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  // True once the driver types; picking or clearing resets it.
+  const [typed, setTyped] = useState(false);
+  const [recentNums, setRecentNums] = useState([]);
+  // Hidden until storage is read, so a dismissed notice never flashes.
+  const [donationHidden, setDonationHidden] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
 
-  const slicLabels = slics.map((slic) => {
-    if (slic.type === 'center' || !slic.type) {
-      return `${slic.numSlic} - ${slic.alphaSlic}`;
-    } else if (slic.type === 'customer') {
-      return `${slic.numSlic} - ${slic.name} - ${slic.alphaSlic}`;
+  const options = useMemo(() => slics.map(toOption), [slics]);
+  const byNum = useMemo(
+    () => new Map(options.map((option) => [option.numSlic, option])),
+    [options],
+  );
+  const recentOptions = recentNums
+    .map((num) => byNum.get(num))
+    .filter(Boolean)
+    .map((option) => ({ ...option, group: 'Recent' }));
+
+  useEffect(() => setDonationHidden(donationSnoozed()), []);
+  const donationMessage =
+    isMember || donationHidden ? null : getDonationMessage(viewCount);
+
+  const dismissDonation = () => {
+    setDonationHidden(true);
+    try {
+      localStorage.setItem(DONATION_KEY, new Date().toISOString());
+    } catch {
+      // Storage blocked: it just comes back next visit.
     }
-    return '';
-  });
+  };
 
   const handleSlicChange = (event, value) => {
-    setLoading(true);
-    startTransition(() => {
-      setSelectedSlic(value || '');
-
-      const slicNum = value ? value.split(' ')[0] : '';
-      const newPath = slicNum ? `${pathname}?slic=${slicNum}` : pathname;
-
-      router.push(newPath);
-    });
+    setSelected(value);
+    onSelect?.(value?.numSlic ?? null);
+    router.push(value ? `${pathname}?slic=${value.numSlic}` : pathname);
   };
 
   useEffect(() => {
-    setLoading(isPending);
-  }, [searchParams, setLoading]);
-
-  useEffect(() => {
     const initialSlic = searchParams.get('slic');
-    if (initialSlic) {
-      const slic = slics.find(
-        (s) => s.numSlic === initialSlic || s.alphaSlic === initialSlic,
-      );
-      if (slic) {
-        const label =
-          slic.type === 'customer'
-            ? `${slic.numSlic} - ${slic.name} - ${slic.alphaSlic}`
-            : `${slic.numSlic} - ${slic.alphaSlic}`;
-        setSelectedSlic(label);
-      }
-    } else {
-      setSelectedSlic('');
-    }
-  }, [searchParams, slics]);
+    if (!initialSlic) return setSelected(null);
+    const slic = slics.find(
+      (s) => s.numSlic === initialSlic || s.alphaSlic === initialSlic,
+    );
+    if (slic) setSelected(byNum.get(String(slic.numSlic)) ?? null);
+  }, [searchParams, slics, byNum]);
+
+  // Before any typing: recents first, then everything. While typing: matches
+  // only, ungrouped, so a recent SLIC isn't listed twice.
+  const showRecent = !typed && recentOptions.length > 0;
 
   return (
     <Box
@@ -79,6 +200,8 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
       {donationMessage && (
         <Alert
           severity='info'
+          onClose={dismissDonation}
+          slotProps={{ closeButton: { 'aria-label': 'Hide for 30 days' } }}
           sx={{
             width: '100%',
             maxWidth: theme.layout.width.panel,
@@ -86,11 +209,7 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
           }}
         >
           {donationMessage}{' '}
-          <Link
-            href={BMC_URL}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
+          <Link href={BMC_URL} target='_blank' rel='noopener noreferrer'>
             Buy Me a Coffee{' '}
           </Link>
           or{' '}
@@ -105,20 +224,86 @@ function SlicsSearch({ slics, setLoading, loading, viewCount, isMember }) {
       )}
       <Autocomplete
         fullWidth
-        options={slicLabels}
-        renderInput={(params) => <TextField {...params} label='Search Slics' />}
-        sx={{
-          width: '100%',
-          maxWidth: theme.layout.width.panel,
-          mt: 3,
-          px: 2,
+        openOnFocus
+        autoHighlight
+        options={options}
+        value={selected}
+        inputValue={inputValue}
+        onInputChange={(event, value, reason) => {
+          setInputValue(value);
+          // MUI also fills the input with a picked label (reason 'reset');
+          // only real typing counts as a search.
+          setTyped(reason === 'input' && value !== '');
         }}
+        onOpen={() => setRecentNums(readRecentLookups().map((r) => r.numSlic))}
         onChange={handleSlicChange}
-        value={selectedSlic}
-        isOptionEqualToValue={(option, value) =>
-          option === value || value === ''
+        filterOptions={(all, state) =>
+          state.inputValue
+            ? filterAll(all, state)
+            : showRecent
+              ? [...recentOptions, ...all]
+              : all
         }
-        loading={loading}
+        groupBy={showRecent ? (option) => option.group : undefined}
+        getOptionLabel={(option) => option.label}
+        getOptionKey={(option) => `${option.group}-${option.numSlic}`}
+        isOptionEqualToValue={(option, value) => option.numSlic === value.numSlic}
+        renderGroup={(params) => (
+          <li key={params.key}>
+            <Typography
+              variant='overline'
+              color='text.secondary'
+              sx={{ display: 'block', px: 2, pt: 1 }}
+            >
+              {params.group}
+            </Typography>
+            <Box component='ul' sx={{ p: 0 }}>
+              {params.children}
+            </Box>
+          </li>
+        )}
+        renderOption={(props, option, { inputValue: query }) => {
+          const { key, ...rest } = props;
+          return (
+            <li key={key} {...rest}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
+                {option.type === 'customer' ? (
+                  <StorefrontOutlined sx={{ color: 'primary.main' }} />
+                ) : (
+                  <HubOutlined sx={{ color: 'primary.main' }} />
+                )}
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontWeight: 700 }} noWrap>
+                    <Highlight text={option.title} query={query} />
+                  </Typography>
+                  <Typography variant='body2' color='text.secondary' noWrap>
+                    <Highlight text={option.subtitle} query={query} />
+                  </Typography>
+                </Box>
+              </Box>
+            </li>
+          );
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder='SLIC, code or name'
+            slotProps={{
+              ...params.slotProps,
+              htmlInput: { ...params.inputProps, 'aria-label': 'Search SLICs' },
+              input: {
+                ...params.InputProps,
+                startAdornment: (
+                  <InputAdornment position='start'>
+                    <SearchOutlined sx={{ color: 'primary.main' }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        )}
+        slotProps={{ paper: { sx: listSx } }}
+        sx={searchSx}
       />
     </Box>
   );

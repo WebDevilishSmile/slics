@@ -84,7 +84,7 @@ const CommentComposer = forwardRef(function CommentComposer(
         <Box
           role='group'
           aria-label='Start a tip about'
-          sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}
+          sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}
         >
           {TOPICS.map((topic) => (
             <Chip

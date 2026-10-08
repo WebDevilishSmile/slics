@@ -1,13 +1,6 @@
-import { CircularProgress, Typography } from '@mui/material';
-import PageContainer from './components/layout/PageContainer';
+import LoadingFallback from '@/app/components/layout/LoadingFallback';
 
-function loading() {
-  return (
-    <PageContainer>
-      <Typography variant='h2'>Loading...</Typography>
-      <CircularProgress size='5rem' sx={{ mt: 4 }} />
-    </PageContainer>
-  );
+// The route's loading state: the shared page skeleton (UI-SUGGESTIONS.md #43).
+export default function Loading() {
+  return <LoadingFallback />;
 }
-
-export default loading;

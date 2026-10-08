@@ -1,38 +1,21 @@
 'use client';
 
-import { Suspense } from 'react';
-
-import { CircularProgress } from '@mui/material';
-
 import EmptySlic from './EmptySlic';
 import SlicActions from './SlicActions';
+import SlicCardSkeleton from './SlicCardSkeleton';
 import SlicDetailsContainer from './SlicDetailsContainer';
 import TitleAddress from './TitleAddress';
-import MemberDisplay from './MemberDisplay';
 
+// The lookup card, its skeleton while /home first mounts (#43), or the empty
+// state when no SLIC is selected (#44, for members and non-members alike).
 function SlicDisplay({ commentsCount, loading, slic, user }) {
-  if (loading) {
-    return (
-      <SlicDetailsContainer>
-        <CircularProgress aria-label='Loading SLIC' />
-      </SlicDetailsContainer>
-    );
-  }
-
-  if (!slic) {
-    if (user?.bmcMember) {
-      return <MemberDisplay user={user} />;
-    } else {
-      return <EmptySlic user={user} />;
-    }
-  }
+  if (loading) return <SlicCardSkeleton />;
+  if (!slic) return <EmptySlic user={user} />;
 
   return (
     <SlicDetailsContainer>
-      <Suspense fallback={<CircularProgress sx={{ mt: 2 }} />}>
-        <TitleAddress slic={slic} />
-        <SlicActions slic={slic} commentsCount={commentsCount} showTips />
-      </Suspense>
+      <TitleAddress slic={slic} />
+      <SlicActions slic={slic} commentsCount={commentsCount} showTips />
     </SlicDetailsContainer>
   );
 }

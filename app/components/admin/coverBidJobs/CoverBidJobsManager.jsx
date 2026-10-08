@@ -5,6 +5,7 @@ import {
   Alert,
   Box,
   Button,
+  Skeleton,
   Stack,
   Typography,
   useMediaQuery,
@@ -75,13 +76,14 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
       ? deletingAll
       : deletingKey === deleteRequest?.row?.key;
 
+  // Row-shaped skeletons while the week's jobs load (UI-SUGGESTIONS.md #43).
   if (loading) {
     return (
-      <Box sx={{ marginTop: 3 }}>
-        <Typography variant='body2' color='text.secondary'>
-          Loading...
-        </Typography>
-      </Box>
+      <Stack spacing={1.5} sx={{ marginTop: 3 }} aria-busy='true' aria-label='Loading jobs'>
+        {[0, 1, 2, 3].map((row) => (
+          <Skeleton key={row} variant='rounded' height='3rem' />
+        ))}
+      </Stack>
     );
   }
 

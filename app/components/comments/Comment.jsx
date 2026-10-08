@@ -116,7 +116,6 @@ function Comment({
   const vote = (voteType) =>
     onVote(comment, comment.myVote === voteType ? null : voteType);
 
-
   // Replies sit in a well pressed into the tip's card: one raised card per
   // thread, with flat reply rows inside, rather than cards stacked on cards.
   const replies = hasReplies && (
@@ -151,7 +150,7 @@ function Comment({
   );
 
   const replyBox = replying && (
-    <Box sx={{ mt: 1 }}>
+    <Box sx={{ mt: 2 }}>
       <CommentComposer
         numSlic={numSlic}
         parentId={comment._id}

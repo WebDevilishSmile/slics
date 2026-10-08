@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Alert,
   Box,
-  CircularProgress,
   Paper,
+  Skeleton,
   Snackbar,
   ToggleButton,
   ToggleButtonGroup,
@@ -20,7 +20,7 @@ import { COMMENTS_SECTION_ID } from '@/utils/variables';
 import Comment from './Comment';
 import CommentComposer from './CommentComposer';
 import NoSlicComments from './NoSlicComments';
-import { softInset, softRaisedSmall } from '../utility/soft';
+import { softInset, softRaised, softRaisedSmall } from '../utility/soft';
 
 const time = (value) => new Date(value).getTime() || 0;
 
@@ -243,8 +243,25 @@ function Comments({ user }) {
       {loadError && <Alert severity='error'>{loadError}</Alert>}
 
       {thread === null ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress aria-label='Loading tips' />
+        // Two tip-shaped skeletons in the soft card shape (UI-SUGGESTIONS.md #43).
+        <Box
+          aria-busy='true'
+          aria-label='Loading tips'
+          sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
+        >
+          {[0, 1].map((card) => (
+            <Box key={card} sx={[softRaised, { borderRadius: 3, p: 2 }]}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Skeleton variant='circular' width='2rem' height='2rem' />
+                <Box sx={{ flex: 1 }}>
+                  <Skeleton variant='text' sx={{ width: '30%' }} />
+                  <Skeleton variant='text' sx={{ width: '20%' }} />
+                </Box>
+              </Box>
+              <Skeleton variant='text' sx={{ mt: 1 }} />
+              <Skeleton variant='text' sx={{ width: '70%' }} />
+            </Box>
+          ))}
         </Box>
       ) : sorted.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 3 }}>

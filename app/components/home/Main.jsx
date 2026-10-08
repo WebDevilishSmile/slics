@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { recordLookup } from '@/utils/commentPrompt';
+import { recordRecentLookup } from '@/utils/recentLookups';
 import { serializeSlics } from '@/utils/functions';
 
 import SlicDisplay from './SlicDisplay';
@@ -44,11 +45,34 @@ function Main({ slics, commentsCount, user }) {
     setLoading(false); // End loading once processing is done
   }, [searchParams, slics]);
 
+  // A pick in the search shows its SLIC at once from the in-memory list
+  // (UI-SUGGESTIONS.md #43): the details need no fetch, so there's nothing to
+  // wait for. The URL catches up through the search's router.push, and the
+  // effect above then confirms the same SLIC.
+  const showSlic = useCallback(
+    (numSlic) => {
+      setSlic(
+        numSlic
+          ? (slics.find((s) => s.numSlic.toString() === String(numSlic)) ?? null)
+          : null,
+      );
+      setLoading(false);
+    },
+    [slics],
+  );
+
+  // The server's comment count is for the SLIC in the URL; until the URL
+  // catches up with a new pick it belongs to the previous SLIC, so hold it back.
+  const urlSlic = searchParams.get('slic');
+  const countForSlic =
+    slic && String(slic.numSlic) === urlSlic ? commentsCount : undefined;
+
   // Track each unique slic view
   useEffect(() => {
     if (slic && slic.numSlic !== prevSlicNumRef.current) {
       prevSlicNumRef.current = slic.numSlic;
       recordLookup(slic);
+      recordRecentLookup(slic);
       fetch('/api/user/track-view', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -68,19 +92,15 @@ function Main({ slics, commentsCount, user }) {
     <>
       <SlicsSearch
         slics={serializeSlics(slics)}
-        setLoading={setLoading}
-        loading={loading}
+        onSelect={showSlic}
         viewCount={viewCount}
         isMember={!!session?.user?.bmcMember}
       />
 
       <SlicDisplay
-        slics={serializeSlics(slics)}
-        commentsCount={commentsCount}
+        commentsCount={countForSlic}
         loading={loading}
-        setLoading={setLoading}
         slic={slic}
-        setSlic={setSlic}
         user={user}
       />
     </>

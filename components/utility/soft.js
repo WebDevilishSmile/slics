@@ -32,18 +32,27 @@ export const softRaisedSmall = (theme) => ({
 // A well pressed into the surface (replies, text boxes, a pressed button).
 export const softInset = (theme) => ({ ...surface(theme), ...shadow(theme, 'inset') });
 
-// A focused field: the well pressed a little deeper, with a hairline of
-// brand blue inside its edge. No outer ring: a glow around the well read as a
-// halo, but focus still has to show (WCAG 2.4.7), so the edge carries it.
-export const softFocus = (theme) => {
-  const edge = `inset 0 0 0 1px ${theme.vars.palette.primary.main}`;
+// A well with a 1px hairline of `color` inside its edge.
+const edgedWell = (theme, kind, color) => {
+  const edge = `inset 0 0 0 1px ${color}`;
   return {
-    boxShadow: `${theme.soft.insetDeep.light}, ${edge}`,
+    boxShadow: `${theme.soft[kind].light}, ${edge}`,
     ...theme.applyStyles('dark', {
-      boxShadow: `${theme.soft.insetDeep.dark}, ${edge}`,
+      boxShadow: `${theme.soft[kind].dark}, ${edge}`,
     }),
   };
 };
+
+// A focused field: the well pressed a little deeper, with a hairline of
+// brand blue inside its edge. No outer ring: a glow around the well read as a
+// halo, but focus still has to show (WCAG 2.4.7), so the edge carries it.
+export const softFocus = (theme) =>
+  edgedWell(theme, 'insetDeep', theme.vars.palette.primary.main);
+
+// A field in error draws the same hairline in the error color, so the well
+// shows it too, not only its label and helper text.
+const softError = (theme, kind) =>
+  edgedWell(theme, kind, theme.vars.palette.error.main);
 
 // A TextField (or select, or date picker) that reads as a pressed-in well.
 // The outline is gone, so focus deepens the well instead (softFocus). A lone
@@ -55,6 +64,8 @@ export const softInputSx = (theme) => ({
     ...softInset(theme),
     borderRadius: theme.spacing(2),
     '&.Mui-focused': softFocus(theme),
+    '&.Mui-error': softError(theme, 'inset'),
+    '&.Mui-error.Mui-focused': softError(theme, 'insetDeep'),
   },
   '& .MuiOutlinedInput-notchedOutline, & .MuiPickersOutlinedInput-notchedOutline': {
     border: 'none',

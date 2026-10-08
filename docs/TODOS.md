@@ -38,12 +38,7 @@
 - [x] drivers page
 - [x] planet fitness page
 
-- [x] the table when adding the cover bids from a photo is tough to use. The cells are so small I can't see what is written, the sun-sat cells should be times (date/time picker maybe), the description on the end is never big enough to see fully (I understand its limited, but maybe during the upload before we can have a button to open a dialog that the admin can verify each job thoroughly... accuracy is very important. Consider adding a preview or expand option for each row to make it easier to review the details. Take advantage of the screen size when available. Also, take into mind the admin may have to adjust some entries on mobile, so accessing and manipulating the data on mobile (although a secondary issue) has to be considered and optimized.
-  - Done 2026-10-08. A "Review jobs" dialog steps through the jobs one at a time beside the uploaded photo (zoom, drag to pan, opened at the job's own photo or PDF page). "Looks right" marks a job checked, and the list shows how many are checked and flagged.
-  - Day cells are 24-hour time fields typed as printed ("0630").
-  - On a wide screen (lg+), each job takes two lines of the table, so the description gets the full width and long text wraps instead of being cut off.
-  - On a phone, each job is a readable card that opens the full-screen dialog.
-  - The saved week below uses the same table, cards and dialog.
+- [x] the table when adding the cover bids from a photo is tough to use. The cells are so small I can't see what is written, the sun-sat cells should be times (date/time picker maybe), the description on the end is never big enough to see fully (I understand its limited, but maybe during the upload before we can have a button to open a dialog that the admin can verify each job thoroughly...) accuracy is very important. Consider adding a preview or expand option for each row to make it easier to review the details. Take advantage of the screen size when available. Also, take into mind the admin may have to adjust some entries on mobile, so accessing and manipulating the data on mobile (although a secondary issue) has to be considered and optimized.
 
 ### Whip It In and Whip It Out Page
 

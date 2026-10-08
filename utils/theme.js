@@ -22,7 +22,12 @@ const tokens = {
   ink: '#0172b5',
   chalk: '#f7f7f7', // light text; the Buy Me a Coffee tile
   canvas: '#edf3fc', // light page background; dark-scheme header/footer text
-  void: '#050505', // dark page background; text on the Buy Me a Coffee tile
+  void: '#050505', // dark shadows; text on the Buy Me a Coffee tile
+  // The dark scheme's one surface: page, panels, soft elements and overlays
+  // are all this (seamless, CLAUDE.md "Visual style"). Lifted off near-black
+  // so the soft shadows have something to fall on (UI-SUGGESTIONS.md #56).
+  night: '#15181c',
+  white: '#ffffff', // the light scheme's soft highlight; chalk is too close to the canvas
   comment: '#eaf8fe', // comment surface in the light scheme
 };
 
@@ -54,6 +59,20 @@ const bmc = {
   light: lighten(tokens.chalk, 0.5),
   dark: darken(tokens.chalk, 0.1),
   contrastText: tokens.void,
+};
+
+// A soft shadow pair, lit from the top left: a shadow down-right and a
+// highlight up-left (`inset` presses the element in instead). Light: a
+// brand-tinted shadow and a white highlight on the canvas. Dark: a deep shadow
+// and a faint highlight on `night`.
+const softShadow = ({ x, blur, inset = false }) => {
+  const i = inset ? 'inset ' : '';
+  const pair = (shade, light) =>
+    `${i}${x}px ${x}px ${blur}px ${shade}, ${i}-${x}px -${x}px ${blur}px ${light}`;
+  return {
+    light: pair(alpha(tokens.brand[900], 0.16), alpha(tokens.white, 0.9)),
+    dark: pair(alpha(tokens.void, 0.7), alpha(tokens.chalk, 0.06)),
+  };
 };
 
 let theme = createTheme({
@@ -105,19 +124,13 @@ let theme = createTheme({
   // highlight up there and a shadow down-right make it look pressed out of
   // the surface (`raised`) or into it (`inset`). One value per color scheme;
   // soft.js picks with applyStyles.
+  // `panel` for panels and dialogs, `raised` for cards and tiles,
+  // `raisedSmall` for pills, `inset` for wells.
   soft: {
-    raised: {
-      light: `6px 6px 14px ${alpha(tokens.brand[900], 0.16)}, -6px -6px 14px ${alpha(tokens.chalk, 0.95)}`,
-      dark: `6px 6px 14px ${alpha(tokens.void, 0.85)}, -5px -5px 12px ${alpha(tokens.chalk, 0.06)}`,
-    },
-    raisedSmall: {
-      light: `3px 3px 7px ${alpha(tokens.brand[900], 0.16)}, -3px -3px 7px ${alpha(tokens.chalk, 0.95)}`,
-      dark: `3px 3px 7px ${alpha(tokens.void, 0.85)}, -2px -2px 6px ${alpha(tokens.chalk, 0.06)}`,
-    },
-    inset: {
-      light: `inset 3px 3px 7px ${alpha(tokens.brand[900], 0.16)}, inset -3px -3px 7px ${alpha(tokens.chalk, 0.95)}`,
-      dark: `inset 3px 3px 7px ${alpha(tokens.void, 0.85)}, inset -2px -2px 6px ${alpha(tokens.chalk, 0.06)}`,
-    },
+    panel: softShadow({ x: 12, blur: 28 }),
+    raised: softShadow({ x: 6, blur: 14 }),
+    raisedSmall: softShadow({ x: 3, blur: 7 }),
+    inset: softShadow({ x: 3, blur: 7, inset: true }),
   },
   colorSchemes: {
     dark: {
@@ -125,9 +138,9 @@ let theme = createTheme({
         primary: darkPrimary,
         bmc,
         background: {
-          default: tokens.void,
-          paper: tokens.void,
-          comment: tokens.void,
+          default: tokens.night,
+          paper: tokens.night,
+          comment: tokens.night,
         },
         text: {
           light: tokens.canvas,
@@ -254,11 +267,54 @@ let theme = createTheme({
             alignItems: 'center',
             marginTop: theme.spacing(4),
             padding: theme.spacing(4),
-            boxShadow: (theme.vars || theme).shadows[theme.layout.elevation],
-            backgroundImage: theme.vars.overlays[theme.layout.elevation],
+            // Seamless soft style (CLAUDE.md "Visual style"): the panel is the
+            // page's own color and rises out of it with the soft shadow pair,
+            // in place of MUI's elevation shadow and dark-mode overlay.
+            borderRadius: theme.spacing(3),
+            backgroundColor: theme.vars.palette.background.default,
+            backgroundImage: 'none',
+            boxShadow: theme.soft.panel.light,
+            ...theme.applyStyles('dark', { boxShadow: theme.soft.panel.dark }),
           }),
         },
       ],
+    },
+
+    // Overlays in the same seamless soft style, app-wide: dialogs and bottom
+    // sheets, menus and popovers, and the header drawer take the page surface
+    // with a soft shadow instead of an elevation shadow and overlay. Call
+    // sites still win (BottomSheetDialog squares its bottom corners on phones).
+    MuiDialog: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          borderRadius: theme.spacing(3),
+          backgroundColor: theme.vars.palette.background.default,
+          backgroundImage: 'none',
+          boxShadow: theme.soft.panel.light,
+          ...theme.applyStyles('dark', { boxShadow: theme.soft.panel.dark }),
+        }),
+      },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          borderRadius: theme.spacing(2),
+          backgroundColor: theme.vars.palette.background.default,
+          backgroundImage: 'none',
+          boxShadow: theme.soft.raisedSmall.light,
+          ...theme.applyStyles('dark', { boxShadow: theme.soft.raisedSmall.dark }),
+        }),
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          backgroundColor: theme.vars.palette.background.default,
+          backgroundImage: 'none',
+          boxShadow: theme.soft.raised.light,
+          ...theme.applyStyles('dark', { boxShadow: theme.soft.raised.dark }),
+        }),
+      },
     },
 
     // `<Typography variant="sectionHeading">` — every page/section title
@@ -299,7 +355,7 @@ theme = responsiveFontSizes(theme);
 // app/manifest.js and layout/ThemeColorSync.jsx.
 export const statusBarColors = {
   light: primary.main,
-  dark: rgbToHex(lighten(tokens.void, getOverlayAlpha(4))),
+  dark: rgbToHex(lighten(tokens.night, getOverlayAlpha(4))),
 };
 
 export default theme;

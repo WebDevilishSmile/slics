@@ -1,14 +1,15 @@
-// sx helpers for the soft, embossed look of the lookup card and the Driver
-// tips. The shadows live in `theme.soft` (utils/theme.js), one per color
-// scheme. Every soft element takes the panel's own surface (paper, plus its
-// dark-mode elevation overlay), so only the light and shadow tell it apart
-// from the panel: no borders, no stacked Paper elevations. Use them inside a
-// `<Paper variant='panel'>`; on any other surface the colors won't match.
+// sx helpers for the app's soft, embossed look. The shadows live in
+// `theme.soft` (utils/theme.js), one per color scheme. The style is seamless:
+// the page, the `panel` Paper variant, the themed dialogs, menus and drawer,
+// and every soft element share one surface, `background.default` with no
+// overlay. Only light and shadow tell them apart: no borders, no Paper
+// elevation. That means these work on the page itself as well as in a panel.
 
-const surface = (theme) => ({
-  backgroundColor: theme.vars.palette.background.paper,
-  backgroundImage: theme.vars.overlays[theme.layout.elevation],
+export const softSurface = (theme) => ({
+  backgroundColor: theme.vars.palette.background.default,
+  backgroundImage: 'none',
 });
+const surface = softSurface;
 
 const shadow = (theme, kind) => ({
   boxShadow: theme.soft[kind].light,

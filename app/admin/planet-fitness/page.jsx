@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material';
 import GymFinder from '../../components/gyms/GymFinder';
 import HydrationGuard from '../../components/utility/HydrationGuard';
-import { getAllGyms } from '@/utils/gymsApi';
-import { getAllSlics } from '@/utils/slicsApi';
+import { getAllGyms } from '@/lib/db/gyms';
+import { getAllSlics } from '@/lib/db/slics';
 import { serializeGyms } from '@/utils/functions';
 
 // Admin-only (app/admin/layout.jsx gates every /admin page): truck-accessible

@@ -1,6 +1,6 @@
 import { serializeSlic, serializeSlicHistory } from '@/utils/functions';
-import { getSlicByNumSlic } from '@/utils/slicsApi';
-import { getSlicHistory } from '@/utils/slicHistoryApi';
+import { getSlicByNumSlic } from '@/lib/db/slics';
+import { getSlicHistory } from '@/lib/db/slicHistory';
 
 import SlicForm from '@/app/components/slicForm/SlicForm';
 import SlicAuditInfo from '@/app/components/slicForm/SlicAuditInfo';

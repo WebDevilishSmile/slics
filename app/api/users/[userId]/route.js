@@ -3,7 +3,7 @@ import {
   deleteUserAccount,
   getPublicUserById,
   getUserById,
-} from '@/utils/usersApi';
+} from '@/lib/db/users';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 

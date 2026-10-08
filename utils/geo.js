@@ -1,7 +1,7 @@
 // Coordinate helpers for the Planet Fitness page (/admin/planet-fitness) and
 // Whip It In & Out (/whip-it-in-and-out). Pure functions with no browser or
 // Node APIs, so both the client components and the server-side validation in
-// utils/gymsApi.js and utils/placesApi.js import them.
+// lib/db/gyms.js and lib/db/places.js import them.
 
 const EARTH_RADIUS_MILES = 3958.8;
 

@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { serializeSlics } from '@/utils/functions';
-import { getAllSlics } from '@/utils/slicsApi';
+import { getAllSlics } from '@/lib/db/slics';
 
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import { Typography } from '@mui/material';

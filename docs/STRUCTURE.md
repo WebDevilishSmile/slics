@@ -341,13 +341,18 @@ then `npm run build`. Each is independently revertible.
 
 ### 15. Move the data-access modules to `lib/db/` and drop the `Api` suffix
 
-- [ ] **Files:** `utils/slicsApi.js`, `slicHistoryApi.js`, `slicViewsApi.js`,
+- [x] **Files:** `utils/slicsApi.js`, `slicHistoryApi.js`, `slicViewsApi.js`,
   `usersApi.js`, `commentsApi.js`, `driversApi.js`, `coverBidJobsApi.js` → `lib/db/*.js`
 
 Each has between 1 and 11 importers. `lib/db.ts` becomes `lib/db/client.js` in the same
 move (29 importers of `@/lib/db` → `@/lib/db/client`).
 
 *Blast radius:* import paths only. Zero logic change.
+
+**Done 2026-10-08.** Also moved `gymsApi.js` → `lib/db/gyms.js` and `placesApi.js` →
+`lib/db/places.js` (both postdate this list), and `utils/rateLimit.js` → `lib/rateLimit.js`.
+`lib/db/client.js` is plain JS now (the two type annotations dropped), which is option 1 of
+item 32 apart from removing `@types/node`.
 
 ### 16. Merge the single-function collection modules
 

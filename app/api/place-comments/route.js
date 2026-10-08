@@ -5,8 +5,8 @@ import {
   addPlaceComment,
   getPlaceThread,
   validatePlaceComment,
-} from '@/utils/placesApi';
-import { checkRateLimit } from '@/utils/rateLimit';
+} from '@/lib/db/places';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 // Same limit as SLIC comments (app/api/comment/route.js), keyed by user id.
 const COMMENT_LIMIT = 10;

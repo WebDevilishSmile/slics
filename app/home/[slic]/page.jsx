@@ -3,8 +3,8 @@ import PageContainer from '../../components/layout/PageContainer';
 import RedirectMessage from '../../components/layout/RedirectMessage';
 import Title from '../../components/slicPage/Title';
 
-import { getSlicByNumSlic } from '@/utils/slicsApi';
-import { getCommentsBySlic } from '@/utils/commentsApi';
+import { getSlicByNumSlic } from '@/lib/db/slics';
+import { getCommentsBySlic } from '@/lib/db/comments';
 import { serializeSlic } from '@/utils/functions';
 
 export default async function SlicPage({ params }) {

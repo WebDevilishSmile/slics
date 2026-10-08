@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import clientPromise from '@/lib/db'; // Use clientPromise for consistency and safety
+import clientPromise from '@/lib/db/client'; // Use clientPromise for consistency and safety
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 

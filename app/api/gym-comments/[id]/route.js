@@ -5,7 +5,7 @@ import {
   deleteGymComment,
   updateGymComment,
   validateGymComment,
-} from '@/utils/gymsApi';
+} from '@/lib/db/gyms';
 
 // `[id]` is the gym comment's MongoDB _id. Admin-only, like every
 // /api/gym-comments* route.

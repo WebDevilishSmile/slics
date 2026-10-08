@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
-import { createPlace, validatePlace } from '@/utils/placesApi';
-import { checkRateLimit } from '@/utils/rateLimit';
+import { createPlace, validatePlace } from '@/lib/db/places';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 // Any signed-in driver can add a place (Whip It In & Out). Keyed by user id,
 // not IP — drivers share a building network (see app/api/comment/route.js).

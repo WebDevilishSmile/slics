@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { deleteSlic, getSlicById, updateSlic } from '@/utils/slicsApi';
+import { deleteSlic, getSlicById, updateSlic } from '@/lib/db/slics';
 
 // `[id]` is the slic's MongoDB _id for every method here and in ./pdf.
 

@@ -1,4 +1,4 @@
-import { getCoverBidJobWeeks } from '@/utils/coverBidJobsApi';
+import { getCoverBidJobWeeks } from '@/lib/db/coverBidJobs';
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 

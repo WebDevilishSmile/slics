@@ -11,7 +11,7 @@ fix) and independent unless it says `Depends on:`. Part 3 is the standing practi
 rules that keep the list from growing back. Part 4 is a summary table.
 
 **Audit scope (2026-09-20):** every file under `app/api/`, `auth.js`, `auth.config.js`,
-`middleware.js`, every `utils/*Api.js`, every page under `app/`, the serializers in
+`middleware.js`, every `lib/db/*.js`, every page under `app/`, the serializers in
 `utils/functions.js`, `lib/*`, `next.config.mjs`, `scripts/*`, `package.json` +
 `npm audit`, the git history, and the production build's server-action manifest
 (`.next/server/server-reference-manifest.json`). Installed at audit time: `next 15.3.6`,
@@ -71,7 +71,7 @@ before pushing. Prefer additive, reversible changes with a dry-run — the patte
   is present in every route today (good) — but it is written `if (!session)`, which the
   installed Auth.js can fail open on (#4), and pages under `app/admin/` rely on the
   layout for it (#7).
-- There is **no boundary at the data layer.** `utils/*Api.js` trust their callers
+- There is **no boundary at the data layer.** `lib/db/*.js` trust their callers
   completely, return whole documents (password hashes included), and one of them is
   itself exposed as a set of public endpoints (#5).
 
@@ -120,7 +120,7 @@ ID, seniority date and personal mobile number in a public repository.
 ### [ ] 2. Stored XSS through comments
 
 **Files:** `app/components/comments/CommentEditor.jsx:118` (`editor.getHTML()`),
-`app/api/comment/route.js` (POST — stores `content` as-is), `utils/commentsApi.js`
+`app/api/comment/route.js` (POST — stores `content` as-is), `lib/db/comments.js`
 (`createComment`), and the four render sites:
 `app/components/comments/Comment.jsx:50`, `app/components/admin/comments/Comment.jsx:36`,
 `app/components/profile/CommentBody.jsx:9`, `app/components/slicPage/CommentsPage.jsx:42`.
@@ -340,14 +340,14 @@ some routes and via a fresh `getUserByEmail` in others). That is how `SUGGESTION
 
 ---
 
-### [ ] 5. `utils/commentsApi.js` is a set of unauthenticated public endpoints
+### [ ] 5. `lib/db/comments.js` is a set of unauthenticated public endpoints
 
-**Files:** `utils/commentsApi.js:1` (`'use server'`)
+**Files:** `lib/db/comments.js:1` (`'use server'`)
 
 A file-level `'use server'` directive turns **every export** of that module into a
 Server Action — a `POST` endpoint Next.js will invoke for anyone who sends the action's
 id in a `Next-Action` header. The production build confirms it: the manifest at
-`.next/server/server-reference-manifest.json` bundles `utils/commentsApi.js` into the
+`.next/server/server-reference-manifest.json` bundles `lib/db/comments.js` into the
 actions loader for `app/home/page` — one action id per export, six in all. None of those
 functions check a session:
 
@@ -390,7 +390,7 @@ access module.**
   the admin page), `app/admin/users/[id]/page.jsx:69` → `UserComments`,
   `app/admin/comments/page.jsx:61` → `CommentsSection`, `app/profile/[id]/page.jsx:64`
   → `ProfileData`, `app/covers/page.jsx:56` → `CoversDate`.
-- `utils/usersApi.js` `getUsers()` / `getUserById()` — return full documents with no
+- `lib/db/users.js` `getUsers()` / `getUserById()` — return full documents with no
   projection, so every caller has to remember to strip.
 
 A hash reaching the user who owns it is not a break-in, but a hash reaching the admin's
@@ -400,7 +400,7 @@ every driver's password — and drivers reuse passwords. `getPublicUserById` alr
 this right (projects to `{ name, image }`); it is the exception, not the rule.
 
 **Fix:**
-1. In `utils/usersApi.js`, make projection the default. Keep a single internal
+1. In `lib/db/users.js`, make projection the default. Keep a single internal
    `findUserWithSecrets(_id)` for `authorize()` and nothing else; everything else reads
    through `USER_PUBLIC_PROJECTION = { name: 1, image: 1 }`,
    `USER_SELF_PROJECTION = { name: 1, firstName: 1, lastName: 1, email: 1, image: 1,
@@ -519,7 +519,7 @@ Three things combine here:
 
 ### [ ] 9. Password sign-in has no brute-force protection, no lockout, no reset, no MFA
 
-**Files:** `auth.js` (`authorize`), `app/api/auth/register/route.js`, `utils/rateLimit.js`
+**Files:** `auth.js` (`authorize`), `app/api/auth/register/route.js`, `lib/rateLimit.js`
 
 - `authorize()` runs one bcrypt compare per attempt with **no rate limit**. The limiter
   exists (`checkRateLimit`) and is used for registration and comments, but not for the
@@ -559,7 +559,7 @@ Three things combine here:
 
 **Files:** `app/api/cover/[position]/route.js:24` (`$set: updates`),
 `app/api/drivers/[id]/route.js:23` (`$set: updates`, only `_id` removed),
-`utils/coverBidJobsApi.js:190` (`...updates`), `utils/slicsApi.js:116-131`
+`lib/db/coverBidJobs.js:190` (`...updates`), `lib/db/slics.js:116-131`
 (`updateSlic` — strips `_id`, guards `numSlic`, spreads the rest)
 
 Each of these takes the request body and writes every key of it to the document. All
@@ -750,7 +750,7 @@ after a bad day.
 ### [ ] 15. No unique indexes → check-then-insert races
 
 **Files:** `scripts/createIndexes.js` (all five indexes are non-unique),
-`app/api/auth/register/route.js` (`findOne` then `insertOne`), `utils/slicsApi.js`
+`app/api/auth/register/route.js` (`findOne` then `insertOne`), `lib/db/slics.js`
 `createSlic` (same), `app/api/drivers/route.js` (same), `auth.js` (`MongoDBAdapter` —
 the adapter creates **no** indexes itself)
 
@@ -801,7 +801,7 @@ can finally be deleted.
 
 ### [ ] 17. The audit trail has holes and is best-effort
 
-**Files:** `utils/slicsApi.js` `deleteSlic` (no history entry), `utils/slicHistoryApi.js`
+**Files:** `lib/db/slics.js` `deleteSlic` (no history entry), `lib/db/slicHistory.js`
 `addSlicHistoryEntry` (catches and swallows), `app/api/users/[userId]/toggle-role/route.js`
 and `toggle-member` (no record of who changed whom), `app/api/comment/route.js` DELETE and
 `comments/[commentId]/route.js` (admin deletions of other people's comments leave nothing),
@@ -831,7 +831,7 @@ all, so a compromised admin session (#9) can promote an attacker and there is no
 
 ### [ ] 18. Hard deletes orphan everything keyed by `numSlic`
 
-**Files:** `utils/slicsApi.js` `deleteSlic`, `utils/usersApi.js` `deleteUserAccount`
+**Files:** `lib/db/slics.js` `deleteSlic`, `lib/db/users.js` `deleteUserAccount`
 
 CLAUDE.md notes `numSlic` is immutable *because* comments, `slic_history` and `slicViews`
 are keyed by it. Deleting a slic leaves all three pointing at nothing — and if an admin
@@ -874,7 +874,7 @@ disappear with #4.
 **Files:** none — Atlas, Vercel and Google Cloud console.
 **Evidence in the repo:** local `.env` points `MONGODB_URI` at the `slics.…mongodb.net`
 cluster; `.env.example` says the connection string names no database ("the driver's
-implicit default (`test`)"); `lib/db.ts` enables `serverApi.strict` (good).
+implicit default (`test`)"); `lib/db/client.js` enables `serverApi.strict` (good).
 
 Confirm, and note the answer in this file:
 
@@ -915,8 +915,8 @@ Confirm, and note the answer in this file:
 
 **Files:** `app/privacy/page.jsx` ("Lookup history is kept while your account exists.
 The History page shows the most recent six months."), `app/api/user/track-view/route.js`,
-`app/admin/users/[id]/page.jsx` (`getSlicViewsByUserId` — unbounded), `utils/rateLimit.js`
-(TTL — the one collection that already self-cleans), `utils/usersApi.js`
+`app/admin/users/[id]/page.jsx` (`getSlicViewsByUserId` — unbounded), `lib/rateLimit.js`
+(TTL — the one collection that already self-cleans), `lib/db/users.js`
 `deleteUserAccount` (leaves `{ id, name, email }` stamps in `slic_history`,
 `slics.createdBy/updatedBy`, `cover-bid-jobs`)
 
@@ -983,14 +983,14 @@ specific cases instead of `Error` and string-matching on `.message`.
 
 ### [ ] 24. Rate-limit coverage
 
-**Files:** `utils/rateLimit.js` (the limiter — sound, Mongo-backed, TTL-cleaned,
+**Files:** `lib/rateLimit.js` (the limiter — sound, Mongo-backed, TTL-cleaned,
 documented fail-open), `app/api/auth/register` (IP, 10/h ✓), `app/api/comment` POST
 (user, 10/10min ✓). Not limited: credentials sign-in (#9), `comments/[id]/vote`,
 `user/track-view`, `users/[id]/add-phone`, `users/[userId]` GET (id → name/avatar; ids
 are ObjectIds — time-ordered, not random), `webhooks/buymeacoffee`, `slic/[id]/pdf`
 POST and `coverBidJobs/extract` (admin; the cost is yours), `comments` GET.
 
-**Fix:** a table of keys and ceilings in `utils/rateLimit.js` so every route imports a
+**Fix:** a table of keys and ceilings in `lib/rateLimit.js` so every route imports a
 named policy instead of inventing numbers:
 `LOGIN_EMAIL 10/15min`, `LOGIN_IP 100/15min`, `VOTE 60/10min/user`, `TRACK_VIEW
 120/h/user`, `PROFILE_EDIT 20/h/user`, `USER_LOOKUP 600/h/user`, `WEBHOOK 60/h/ip`,
@@ -1022,7 +1022,7 @@ named policy instead of inventing numbers:
 
 ### [ ] 26. Privacy details the policy promises but the code doesn't quite keep
 
-**Files:** `app/api/comments/route.js` + `utils/commentsApi.js` `getCommentsBySlic`
+**Files:** `app/api/comments/route.js` + `lib/db/comments.js` `getCommentsBySlic`
 (returns full `upVotes`/`downVotes` id arrays to every signed-in user; the *voters*
 endpoint is members-only, but the ids are already in the comment payload — resolving
 them is one `GET /api/users/<id>` each), `app/components/signIn/RequestAccess.jsx` (a
@@ -1152,9 +1152,9 @@ PR checklist.
    `lib/commentHtml.js`. Everything else is rendered as text (React escapes it).
 6. Any change to `users`, `slics`, roles, membership or the roster writes a history /
    audit entry in the same transaction.
-7. New mutating route → pick a named rate-limit policy from `utils/rateLimit.js`.
+7. New mutating route → pick a named rate-limit policy from `lib/rateLimit.js`.
 
-### Data layer (`utils/*Api.js`)
+### Data layer (`lib/db/*.js`)
 
 - Never `'use server'`. These modules are libraries for server code, not endpoints.
 - Functions that return user documents take a projection; `password` is never in one.
@@ -1164,7 +1164,7 @@ PR checklist.
 - New collection → unique indexes, a `$jsonSchema`, a retention decision (TTL or
   "kept while the account exists" + a line in `deleteUserAccount`), and a line in the
   privacy page. Those four are one PR.
-- Mutations to audited collections go through the `utils/*Api.js` function that writes
+- Mutations to audited collections go through the `lib/db/*.js` function that writes
   history — CLAUDE.md already says this for `slics`; it applies to everything in #17.
 
 ### Sessions and identity

@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
-import { getSlicThread } from '@/utils/commentsApi';
-import { getSlicByNumSlic } from '@/utils/slicsApi';
+import { getSlicThread } from '@/lib/db/comments';
+import { getSlicByNumSlic } from '@/lib/db/slics';
 
 // GET ?slic=<numSlic> — the SLIC's tips as a thread, shaped for the signed-in
 // viewer (see getSlicThread). Responds `{ comments, slicName }`.

@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import client from '@/lib/db';
+import client from '@/lib/db/client';
 
 export async function PATCH(request, { params }) {
   const session = await auth();

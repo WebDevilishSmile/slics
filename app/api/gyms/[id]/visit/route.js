@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { markGymVisited } from '@/utils/gymsApi';
+import { markGymVisited } from '@/lib/db/gyms';
 
 // POST — stamp the gym's lastVisited with the server's current time.
 // Admin-only, like every /api/gyms* route.

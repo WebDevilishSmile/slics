@@ -1,4 +1,4 @@
-import client from '@/lib/db';
+import client from '@/lib/db/client';
 
 export async function getAllDrivers() {
   try {

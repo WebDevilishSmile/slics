@@ -4,7 +4,7 @@ import PageContainer from '../components/layout/PageContainer';
 import {
   getCoverBidJobsSince,
   serializeCoverBidJobs,
-} from '@/utils/coverBidJobsApi';
+} from '@/lib/db/coverBidJobs';
 import CoverBidJobsTable from '../components/coverBidJobs/CoverBidJobsTable';
 import { Typography } from '@mui/material';
 import { auth } from '@/auth';

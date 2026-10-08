@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import client from '@/lib/db';
-import { checkRateLimit, getClientIp } from '@/utils/rateLimit';
+import client from '@/lib/db/client';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
 // Generous on purpose: a whole building of drivers can share one egress IP,
 // so this has to stop scripted abuse without locking out a shift that signs

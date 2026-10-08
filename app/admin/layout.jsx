@@ -1,5 +1,5 @@
 // src/app/(admin)/layout.jsx
-import { getUserByEmail } from '@/utils/usersApi'; // Import your user utility
+import { getUserByEmail } from '@/lib/db/users'; // Import your user utility
 import PageContainer from '../components/layout/PageContainer'; // Adjust path if needed
 import RedirectMessage from '../components/layout/RedirectMessage';
 import { auth } from '@/auth';

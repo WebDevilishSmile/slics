@@ -1,9 +1,9 @@
 // src/app/api/webhooks/buymeacoffee/route.js
 import { NextResponse } from 'next/server';
 import crypto from 'crypto'; // Node.js crypto module for HMAC verification
-import clientPromise from '@/lib/db'; // Your MongoDB connection client
+import clientPromise from '@/lib/db/client'; // Your MongoDB connection client
 import { ObjectId } from 'mongodb';
-import client from '@/lib/db';
+import client from '@/lib/db/client';
 
 // Ensure this API route runs in a Node.js environment
 // This is default for API routes in App Router, but good to be explicit

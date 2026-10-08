@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
-import { getDriverById } from '@/utils/driversApi';
+import { getDriverById } from '@/lib/db/drivers';
 import { serializeDriver, serializeUser } from '@/utils/functions';
-import { getUserById } from '@/utils/usersApi';
+import { getUserById } from '@/lib/db/users';
 import { Typography } from '@mui/material';
 import { Suspense } from 'react';
 import LoadingFallback from '@/app/components/layout/LoadingFallback';

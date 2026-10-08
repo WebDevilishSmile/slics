@@ -7,8 +7,8 @@ import {
   getCommentById,
   validateCommentPin,
   validateSlicComment,
-} from '@/utils/commentsApi';
-import { checkRateLimit } from '@/utils/rateLimit';
+} from '@/lib/db/comments';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 // Keyed by user id, not IP — drivers share a building network, and one
 // driver's spam must not silence everyone else on the same wifi.

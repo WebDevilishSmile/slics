@@ -1,9 +1,9 @@
 import { auth } from '@/auth';
 import { Typography } from '@mui/material';
 
-import { getCommentsBySlic } from '@/utils/commentsApi';
+import { getCommentsBySlic } from '@/lib/db/comments';
 import { serializeSlics } from '@/utils/functions';
-import { getAllSlics } from '@/utils/slicsApi';
+import { getAllSlics } from '@/lib/db/slics';
 
 import CommentPrompt from '../components/comments/CommentPrompt';
 import Comments from '../components/comments/Comments';

@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { getCommentVoters } from '@/utils/commentsApi';
+import { getCommentVoters } from '@/lib/db/comments';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 

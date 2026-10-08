@@ -1,12 +1,12 @@
 import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { checkRateLimit } from '@/utils/rateLimit';
+import { checkRateLimit } from '@/lib/rateLimit';
 import {
   HISTORY_NOTE_MAX,
   setHistoryHidden,
   updateHistoryNote,
-} from '@/utils/slicViewsApi';
+} from '@/lib/db/slicViews';
 
 export const runtime = 'nodejs';
 

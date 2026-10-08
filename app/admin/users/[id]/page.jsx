@@ -1,7 +1,7 @@
-import { getCommentsByUserId } from '@/utils/commentsApi';
-import { getUserById } from '@/utils/usersApi';
-import { getSlicViewsByUserId } from '@/utils/slicViewsApi';
-import { getAllSlics } from '@/utils/slicsApi';
+import { getCommentsByUserId } from '@/lib/db/comments';
+import { getUserById } from '@/lib/db/users';
+import { getSlicViewsByUserId } from '@/lib/db/slicViews';
+import { getAllSlics } from '@/lib/db/slics';
 import { Box, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
 import {

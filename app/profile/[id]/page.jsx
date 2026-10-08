@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
-import { getCommentsByUserId } from '@/utils/commentsApi';
-import { getUserById } from '@/utils/usersApi';
+import { getCommentsByUserId } from '@/lib/db/comments';
+import { getUserById } from '@/lib/db/users';
 import { serializeComments, serializeUser } from '@/utils/functions';
 
 import RedirectMessage from '@/app/components/layout/RedirectMessage';

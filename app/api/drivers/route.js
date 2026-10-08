@@ -1,4 +1,4 @@
-import client from '@/lib/db';
+import client from '@/lib/db/client';
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 

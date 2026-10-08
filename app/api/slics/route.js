@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
-import { getAllSlics } from '@/utils/slicsApi';
+import { getAllSlics } from '@/lib/db/slics';
 
 // GET every slic. Any signed-in user may read. Nothing in the app calls this
 // today (pages load slics server-side via getAllSlics), so it exists for

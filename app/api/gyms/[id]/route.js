@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { deleteGym, updateGym, validateGym } from '@/utils/gymsApi';
+import { deleteGym, updateGym, validateGym } from '@/lib/db/gyms';
 
 // `[id]` is the gym's MongoDB _id. Admin-only, like every /api/gyms* route.
 

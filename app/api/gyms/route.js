@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
-import { createGym, validateGym } from '@/utils/gymsApi';
+import { createGym, validateGym } from '@/lib/db/gyms';
 
 // Every /api/gyms* and /api/gym-comments* route is admin-only: the Planet
 // Fitness page (app/admin/planet-fitness) is the admin's personal list.

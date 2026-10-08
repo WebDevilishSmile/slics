@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { getSlicById, updateSlic } from '@/utils/slicsApi';
+import { getSlicById, updateSlic } from '@/lib/db/slics';
 import { deleteSlicPdf, putSlicPdf } from '@/lib/blob';
 import { SLIC_PDF_MAX_BYTES } from '@/utils/variables';
 

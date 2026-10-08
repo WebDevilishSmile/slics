@@ -3,7 +3,7 @@ import {
   deleteCoverBidJobsByWeek,
   getCoverBidJobsByWeek,
   serializeCoverBidJobs,
-} from '@/utils/coverBidJobsApi';
+} from '@/lib/db/coverBidJobs';
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 

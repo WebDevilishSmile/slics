@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { getHistoryPage, parseHistoryQuery } from '@/utils/slicViewsApi';
+import { getHistoryPage, parseHistoryQuery } from '@/lib/db/slicViews';
 
 import HistoryView from '@/app/components/history/HistoryView';
 import PageContainer from '@/app/components/layout/PageContainer';

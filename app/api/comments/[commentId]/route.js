@@ -7,7 +7,7 @@ import {
   updateCommentContent,
   validateCommentPin,
   validateSlicComment,
-} from '@/utils/commentsApi';
+} from '@/lib/db/comments';
 
 // `[commentId]` is the comment's _id. Only its author, or an admin, may edit
 // or delete it.

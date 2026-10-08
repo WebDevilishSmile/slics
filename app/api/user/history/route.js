@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
-import { getHistoryPage, parseHistoryQuery } from '@/utils/slicViewsApi';
+import { getHistoryPage, parseHistoryQuery } from '@/lib/db/slicViews';
 
 export const runtime = 'nodejs';
 

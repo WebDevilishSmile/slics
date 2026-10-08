@@ -1,5 +1,5 @@
 import { serializeUsers } from '@/utils/functions';
-import { getSlicViewCounts, getUsers } from '@/utils/usersApi';
+import { getSlicViewCounts, getUsers } from '@/lib/db/users';
 
 import UserList from '@/app/components/admin/users/UserList';
 import { Typography } from '@mui/material';

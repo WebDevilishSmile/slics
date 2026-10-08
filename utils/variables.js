@@ -83,7 +83,7 @@ export const SLIC_COMMENT_EXAMPLE = {
 };
 
 // Statuses for a gym on the Planet Fitness page (/admin/planet-fitness). The
-// form, the card's chip and the server-side check in utils/gymsApi.js all read
+// form, the card's chip and the server-side check in lib/db/gyms.js all read
 // this list, so a new status only needs adding here. `color` is a Chip color.
 export const GYM_STATUSES = [
   { value: 'confirmed', label: 'Confirmed', color: 'success' },
@@ -91,7 +91,7 @@ export const GYM_STATUSES = [
   { value: 'no-go', label: 'No-go', color: 'error' },
 ];
 
-// Gym comments are plain text; enforced in the form and in utils/gymsApi.js.
+// Gym comments are plain text; enforced in the form and in lib/db/gyms.js.
 export const GYM_COMMENT_MAX_LENGTH = 2000;
 
 export const GYM_EXAMPLE = {
@@ -148,7 +148,7 @@ export const TRAILER_ACCESS = [
   { value: 'unknown', label: 'Trailer access unknown', color: 'default' },
 ];
 
-// Place comments are plain text; enforced in the form and in utils/placesApi.js.
+// Place comments are plain text; enforced in the form and in lib/db/places.js.
 export const PLACE_COMMENT_MAX_LENGTH = 2000;
 
 export const PLACE_EXAMPLE = {
@@ -187,5 +187,5 @@ export const PLACE_COMMENT_EXAMPLE = {
 };
 
 // SLIC comments (driver tips) are plain text since 2026-10-07; enforced in
-// the composer and in utils/commentsApi.js (validateSlicComment).
+// the composer and in lib/db/comments.js (validateSlicComment).
 export const SLIC_COMMENT_MAX_LENGTH = 2000;

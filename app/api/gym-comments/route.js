@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { addGymComment, validateGymComment } from '@/utils/gymsApi';
+import { addGymComment, validateGymComment } from '@/lib/db/gyms';
 
 // POST a comment on a gym: `{ gymId, content }`. Admin-only, like every
 // /api/gym-comments* route — the Planet Fitness page is the admin's own list.

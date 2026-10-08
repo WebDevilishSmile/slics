@@ -1,5 +1,5 @@
 // app/api/slics/newSlic/route.js
-import { createSlic } from '@/utils/slicsApi';
+import { createSlic } from '@/lib/db/slics';
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 

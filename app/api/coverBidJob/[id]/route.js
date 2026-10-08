@@ -1,4 +1,4 @@
-import { updateCoverBidJob, deleteCoverBidJob } from '@/utils/coverBidJobsApi';
+import { updateCoverBidJob, deleteCoverBidJob } from '@/lib/db/coverBidJobs';
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 

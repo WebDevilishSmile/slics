@@ -6,7 +6,7 @@ import {
   getPlaceCommentById,
   updatePlaceComment,
   validatePlaceComment,
-} from '@/utils/placesApi';
+} from '@/lib/db/places';
 
 // `[id]` is the place comment's MongoDB _id. Only its author or an admin may
 // edit or delete it.

@@ -21,7 +21,7 @@ import BottomSheetDialog, {
   BottomSheetActions,
 } from '../utility/BottomSheetDialog';
 
-export const NOTE_MAX = 280; // matches HISTORY_NOTE_MAX in utils/slicViewsApi.js
+export const NOTE_MAX = 280; // matches HISTORY_NOTE_MAX in lib/db/slicViews.js
 
 // A private note on one lookup ("load was late"). Saving an empty note, or
 // "Delete note", clears it. `view` is the row being edited, or null when closed.

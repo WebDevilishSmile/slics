@@ -2,7 +2,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
-import client from './lib/db'; // Your MongoDB connection client
+import client from './lib/db/client'; // Your MongoDB connection client
 import { ObjectId } from 'mongodb'; // Assuming you use ObjectId
 import { authConfig } from './auth.config'; // Import the base config for providers/callbacks
 import bcrypt from 'bcryptjs';

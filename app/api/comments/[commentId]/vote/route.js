@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
-import { voteComment } from '@/utils/commentsApi';
+import { voteComment } from '@/lib/db/comments';
 
 // POST `{ voteType: 'up' | 'down' | null }`. Up/down sets the driver's vote
 // (moving it off the other side); null takes it back.

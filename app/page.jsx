@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { getUserByEmail } from '@/utils/usersApi';
+import { getUserByEmail } from '@/lib/db/users';
 import { safeCallbackUrl } from '@/utils/functions';
 
 import PageContainer from './components/layout/PageContainer';

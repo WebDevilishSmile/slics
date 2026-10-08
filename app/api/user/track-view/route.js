@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { recordSlicView } from '@/utils/slicViewsApi';
+import { recordSlicView } from '@/lib/db/slicViews';
 
 export const runtime = 'nodejs';
 

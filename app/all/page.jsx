@@ -3,9 +3,9 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { Typography } from '@mui/material';
 
-import { getCommentsBySlic } from '@/utils/commentsApi';
+import { getCommentsBySlic } from '@/lib/db/comments';
 import { serializeSlics } from '@/utils/functions';
-import { getAllHubs } from '@/utils/slicsApi';
+import { getAllHubs } from '@/lib/db/slics';
 
 import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';

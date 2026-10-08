@@ -7,7 +7,7 @@ import {
   getPlaceById,
   updatePlace,
   validatePlace,
-} from '@/utils/placesApi';
+} from '@/lib/db/places';
 
 // `[id]` is the place's MongoDB _id. Only the driver who added a place, or an
 // admin, may edit or delete it.

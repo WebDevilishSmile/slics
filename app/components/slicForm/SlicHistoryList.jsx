@@ -1,6 +1,9 @@
+'use client';
+
 import theme from '@/utils/theme';
 import { Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
+import { softInset } from '../utility/soft';
 
 function formatUser(userStamp) {
   if (!userStamp) return 'Unknown';
@@ -25,12 +28,7 @@ function SlicHistoryList({ history }) {
       {history.map((entry) => (
         <Box
           key={entry._id}
-          sx={{
-            mb: 2,
-            pb: 2,
-            borderBottom: '1px solid',
-            borderColor: 'divider',
-          }}
+          sx={[softInset, { mb: 2, p: 2 }]}
         >
           <Typography variant='body2'>
             <strong>{entry.action === 'created' ? 'Created' : 'Updated'}</strong>{' '}

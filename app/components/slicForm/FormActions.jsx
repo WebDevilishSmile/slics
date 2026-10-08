@@ -2,6 +2,7 @@ import theme from '@/utils/theme';
 import { Alert, Box, Button, Snackbar } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { softContainedSx, softPressSx, softRaisedSmall } from '../utility/soft';
 
 function FormActions({
   handleClear,
@@ -98,7 +99,12 @@ function FormActions({
         mt: 4,
       }}
     >
-      <Button variant='contained' onClick={handleSave} disabled={isLoading}>
+      <Button
+        variant='contained'
+        onClick={handleSave}
+        disabled={isLoading}
+        sx={[softContainedSx, { px: 4, minHeight: '3rem' }]}
+      >
         {isLoading
           ? mode === 'edit'
             ? 'Updating...'
@@ -108,8 +114,7 @@ function FormActions({
           : 'Save'}
       </Button>
       <Button
-        variant='contained'
-        color='error'
+        sx={[softRaisedSmall, softPressSx, { px: 4, minHeight: '3rem' }]}
         onClick={() => {
           if (mode === 'edit') {
             router.back(); // or `router.back()` if you want to go to the previous page

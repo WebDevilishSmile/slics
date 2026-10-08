@@ -6,6 +6,7 @@ import { Alert, Box, Button, Typography } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SLIC_PDF_MAX_BYTES } from '@/utils/variables';
+import { softContainedSx, softPressSx, softRaisedSmall } from '../utility/soft';
 
 function isPdfFile(file) {
   return (
@@ -118,10 +119,10 @@ function PdfUpload({ slicId, pdfUrl: initialPdfUrl }) {
       >
         {pdfUrl ? (
           <Button
-            variant='outlined'
             href={pdfUrl}
             target='_blank'
             rel='noopener'
+            sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
           >
             View current PDF
           </Button>
@@ -136,17 +137,18 @@ function PdfUpload({ slicId, pdfUrl: initialPdfUrl }) {
           startIcon={<UploadFileIcon />}
           onClick={handlePickFile}
           disabled={busy}
+          sx={softContainedSx}
         >
           {busy ? 'Working...' : pdfUrl ? 'Replace PDF' : 'Upload PDF'}
         </Button>
 
         {pdfUrl && (
           <Button
-            variant='text'
             color='error'
             startIcon={<DeleteIcon />}
             onClick={handleRemove}
             disabled={busy}
+            sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
           >
             Remove
           </Button>

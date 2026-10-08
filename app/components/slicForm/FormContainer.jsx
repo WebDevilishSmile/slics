@@ -4,14 +4,10 @@ import { Paper } from '@mui/material';
 function FormContainer({ children }) {
   return (
     <Paper
+      variant='panel'
       sx={{
-        width: '100%',
         maxWidth: theme.layout.width.wide,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: 4,
+        minHeight: 0,
         mt: 4,
       }}
     >

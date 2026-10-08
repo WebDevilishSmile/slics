@@ -1,5 +1,6 @@
 import theme from '@/utils/theme';
 import { FormControl, TextField } from '@mui/material';
+import { softInputSx } from '../utility/soft';
 
 function AlphaSlicField({ alphaSlic, setAlphaSlic }) {
   const handleChange = (event) => {
@@ -11,6 +12,7 @@ function AlphaSlicField({ alphaSlic, setAlphaSlic }) {
       <TextField
         required
         label='AlphaSlic'
+        sx={softInputSx}
         value={alphaSlic}
         onChange={handleChange}
       />

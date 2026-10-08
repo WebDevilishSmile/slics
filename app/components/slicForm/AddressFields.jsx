@@ -1,6 +1,7 @@
 import theme from '@/utils/theme';
 import { capitalizeWords } from '@/utils/functions';
 import { FormControl, TextField } from '@mui/material';
+import { softInputSx } from '../utility/soft';
 
 function AddressFields({ address, setAddress }) {
   const handleStreetChange = (event) => {
@@ -34,6 +35,7 @@ function AddressFields({ address, setAddress }) {
         required
         autoFocus
         label='Street'
+        sx={softInputSx}
         value={address.street || ''}
         onChange={handleStreetChange}
       />
@@ -41,6 +43,7 @@ function AddressFields({ address, setAddress }) {
         required
         autoFocus
         label='City'
+        sx={softInputSx}
         value={address.city || ''}
         onChange={handleCityChange}
       />
@@ -48,6 +51,7 @@ function AddressFields({ address, setAddress }) {
         required
         autoFocus
         label='State'
+        sx={softInputSx}
         value={address.state || ''}
         onChange={handleStateChange}
       />
@@ -55,6 +59,7 @@ function AddressFields({ address, setAddress }) {
         required
         autoFocus
         label='Zip'
+        sx={softInputSx}
         value={address.zip || ''}
         onChange={handleZipChange}
       />

@@ -1,6 +1,6 @@
 import theme from '@/utils/theme';
 import { formatPhoneNumber } from '@/utils/functions';
-import { FormControl, FormLabel, TextField } from '@mui/material';
+import { FormControl, TextField } from '@mui/material';
 
 // `sx` merges over the slic form's column defaults (e.g. `{ mt: 0 }` inside a
 // dialog that spaces its fields with `gap`). It can be an sx array, and it

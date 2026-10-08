@@ -1,5 +1,6 @@
 import theme from '@/utils/theme';
-import { FormControl, FormLabel, TextField } from '@mui/material';
+import { FormControl, TextField } from '@mui/material';
+import { softInputSx } from '../utility/soft';
 
 // `readOnly` on edit: numSlic is the key comments, history and view counts
 // hang off, and the API rejects changing it.
@@ -14,6 +15,7 @@ function NumSlicField({ numSlic, setNumSlic, readOnly = false }) {
         required
         autoFocus
         label='NumSlic'
+        sx={softInputSx}
         value={numSlic}
         onChange={handleChange}
         slotProps={{ input: { readOnly } }}

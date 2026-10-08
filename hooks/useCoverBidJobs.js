@@ -43,7 +43,7 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
       setError(null);
 
       try {
-        const res = await fetch(`/api/coverBidJobs?weekEnding=${weekEnding}`);
+        const res = await fetch(`/api/cover-bid-jobs?weekEnding=${weekEnding}`);
         const data = await readJson(res, 'Failed to load cover bid jobs');
         if (!cancelled) setRows(data.data.map(toRowState));
       } catch (err) {
@@ -79,7 +79,7 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
 
       try {
         if (isUnsaved(row)) {
-          const res = await fetch('/api/coverBidJobs', {
+          const res = await fetch('/api/cover-bid-jobs', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ weekEnding, rows: [values] }),
@@ -96,7 +96,7 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
             )
           );
         } else {
-          const res = await fetch(`/api/coverBidJobs/${row._id}`, {
+          const res = await fetch(`/api/cover-bid-jobs/${row._id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(values),
@@ -127,7 +127,7 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
     setError(null);
 
     try {
-      const res = await fetch(`/api/coverBidJobs/${row._id}`, {
+      const res = await fetch(`/api/cover-bid-jobs/${row._id}`, {
         method: 'DELETE',
       });
       await readJson(res, 'Failed to delete job');
@@ -147,7 +147,7 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
     setError(null);
 
     try {
-      const res = await fetch(`/api/coverBidJobs?weekEnding=${weekEnding}`, {
+      const res = await fetch(`/api/cover-bid-jobs?weekEnding=${weekEnding}`, {
         method: 'DELETE',
       });
       await readJson(res, 'Failed to delete jobs');

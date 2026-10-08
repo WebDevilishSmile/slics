@@ -1,29 +1,4 @@
-import { getCoverBidJobWeeks } from '@/lib/db/coverBidJobs';
-import { auth } from '@/auth';
-import { NextResponse } from 'next/server';
-
-export async function GET() {
-  try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
-
-    const weeks = await getCoverBidJobWeeks();
-
-    return NextResponse.json({ success: true, data: weeks }, { status: 200 });
-  } catch (error) {
-    console.error('API Error fetching cover bid job weeks:', error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 400 }
-    );
-  }
-}
+// Old path, renamed on 2026-10-08 (docs/STRUCTURE.md #30). Kept as an alias so an
+// app that loaded before the rename (an installed app can stay open for days)
+// keeps working. Delete this file once the trial period is over.
+export { GET } from '@/app/api/cover-bid-jobs/weeks/route';

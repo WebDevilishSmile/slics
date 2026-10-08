@@ -647,12 +647,12 @@ to `DELETE /api/comments/[id]` (same rules; the profile delete button now calls 
 directly). `[commentId]` → `[id]` and `[userId]` → `[id]` changed no URL, only folder and
 `params` names, so they need no alias.
 
-- [ ] **Follow-up:** delete the five alias files after a trial period (two weeks is
+- [ ] **Follow-up:** delete the alias files (five here, four more from item 30) after a trial period (two weeks is
   plenty for stale tabs). `grep -rn "Old path, renamed on 2026-10-08" app/api` lists them.
 
 ### 30. One casing for URL segments
 
-- [ ] `api/coverBidJobs/**` → `api/cover-bid-jobs/**` (matches the page route
+- [x] `api/coverBidJobs/**` → `api/cover-bid-jobs/**` (matches the page route
   `/cover-bid-jobs`, which is already kebab)
 
 Everything else is either one word or already kebab (`track-view`, `add-phone`,
@@ -660,6 +660,11 @@ Everything else is either one word or already kebab (`track-view`, `add-phone`,
 ones out.
 
 *Blast radius:* four route folders, their `fetch` callers.
+
+**Done 2026-10-08,** the same way as item 29: the handlers live under `cover-bid-jobs/`, and
+the four old `coverBidJobs/**` routes are one-line aliases (same "Old path" header, so the
+item 29 follow-up grep finds them too). The `coverBidJob/[id]` alias from item 29 points
+straight at `cover-bid-jobs/[id]`.
 
 ### 31. Current-user routes under `users/me`
 

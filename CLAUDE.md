@@ -67,7 +67,7 @@ Roles: `user` and `admin` on `session.user.role`. Membership tier is `session.us
 
 ### API routes
 
-Paths are a plural collection with an `[id]` item segment (`/api/slics`, `/api/slics/[id]`, `/api/comments/[id]/vote`; `docs/STRUCTURE.md` #29). `app/api/newSlic`, `slic/[id]` (and `/pdf`), `comment` and `coverBidJob/[id]` are only aliases that re-export the new handlers, kept so an app opened before the 2026-10-08 rename keeps working. Never call them from new code; they'll be deleted.
+Paths are a plural collection with an `[id]` item segment (`/api/slics`, `/api/slics/[id]`, `/api/comments/[id]/vote`; `docs/STRUCTURE.md` #29), and multi-word segments are kebab-case (`/api/cover-bid-jobs`, `track-view`; #30). `app/api/newSlic`, `slic/[id]` (and `/pdf`), `comment`, `coverBidJob/[id]` and `coverBidJobs/**` are only aliases that re-export the new handlers, kept so an app opened before the 2026-10-08 renames keeps working. Never call them from new code; they'll be deleted.
 
 Standard shape for `app/api/**/route.js` (see `app/api/slics/[id]/route.js`, `app/api/comments/route.js`):
 1. `await auth()` and check session/role first for anything mutating.
@@ -124,7 +124,7 @@ Since 2026-10-07 the app's look is a **soft, embossed (neumorphic) style in the 
 
 ### External integrations
 
-- **Google Gemini** (`@google/genai`, `GEMINI_API_KEY`) — used by `app/api/coverBidJobs/extract` for extracting structured data.
+- **Google Gemini** (`@google/genai`, `GEMINI_API_KEY`) — used by `app/api/cover-bid-jobs/extract` for extracting structured data.
 - **Vercel Blob** (`@vercel/blob`, `BLOB_READ_WRITE_TOKEN` — injected by Vercel once the store is connected to the project; `vercel env pull` locally) — stores the per-slic directions PDF. `lib/blob.js` is the only module that talks to it; `app/api/slics/[id]/pdf` (admin-only, `[id]` = the slic `_id` like the parent route) uploads/removes and saves the resulting `slic.pdfUrl` through `updateSlic` so history records it. Every upload gets a random-suffix URL and the old blob is deleted afterwards — never overwrite in place (CDN cache). **Migration in progress:** PDFs used to live in a public Supabase bucket, flagged by the legacy `slic.pdf` boolean. `slicPdfHref` in `constants.js` (used by the PDF button in `home/SlicActions.jsx`) prefers `pdfUrl` and falls back to the Supabase URL (`legacyPdfUrl`, same file) when only `pdf` is set, so nothing breaks mid-migration. Don't remove the fallback or `$unset` `pdf` until the Supabase bucket is retired — `scripts/migratePdfsToBlob.mjs` / `scripts/rollbackPdfUrls.mjs` (`npm run pdfs:migrate` / `pdfs:rollback`, both with `--dry-run`) are the forward/reverse paths.
 - **Buy Me a Coffee webhook** (`app/api/webhooks/buymeacoffee`, `BMC_WEBHOOK_SECRET`) — toggles `bmcMember` on the user record.
 - **Vercel Analytics** — pageview/usage data referenced in `README.md`.

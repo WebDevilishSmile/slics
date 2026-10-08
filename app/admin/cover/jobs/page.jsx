@@ -29,7 +29,7 @@ function CoverJobs() {
 
     async function fetchWeeks() {
       try {
-        const res = await fetch('/api/coverBidJobs/weeks');
+        const res = await fetch('/api/cover-bid-jobs/weeks');
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.error || 'Failed to load posted weeks');

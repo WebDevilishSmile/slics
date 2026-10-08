@@ -136,7 +136,7 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
         )
       );
 
-      const res = await fetch('/api/coverBidJobs/extract', {
+      const res = await fetch('/api/cover-bid-jobs/extract', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ images }),
@@ -176,7 +176,7 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
     setSuccessMessage(null);
 
     try {
-      const res = await fetch('/api/coverBidJobs', {
+      const res = await fetch('/api/cover-bid-jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

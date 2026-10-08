@@ -605,7 +605,7 @@ inserts), `app/api/comments/[commentId]/vote/route.js` (no `ObjectId.isValid`, n
 existence check, no rate limit), `app/api/users/[userId]/add-phone/route.js` (`phone`
 any string, any length), `app/api/drivers/route.js` (`name`/`seniorityDate` not
 type-checked before `.trim()`), `app/api/drivers/[id]/route.js` (no `ObjectId.isValid`
-→ 500 instead of 400), `app/api/coverBidJobs/extract/route.js` (`images[].data`
+→ 500 instead of 400), `app/api/cover-bid-jobs/extract/route.js` (`images[].data`
 unbounded base64 → Gemini, cost is the admin's), `app/api/comments/route.js` (error
 responses with status 200)
 
@@ -964,9 +964,9 @@ fixed key list before `console.error` is enough — no dependency needed.
 
 **Files:** `app/api/slics/route.js` (POST), `app/api/slics/[id]/route.js:64,68,100`,
 `app/api/slics/[id]/pdf/route.js:98,131`, `app/api/cover/[position]/route.js:32`,
-`app/api/drivers/[id]/route.js:58`, `app/api/coverBidJobs/[id]/route.js:26,29,52,55`,
-`app/api/coverBidJobs/route.js:43,77,116`, `app/api/coverBidJobs/weeks/route.js:25`,
-`app/api/coverBidJobs/extract/route.js:139`
+`app/api/drivers/[id]/route.js:58`, `app/api/cover-bid-jobs/[id]/route.js:26,29,52,55`,
+`app/api/cover-bid-jobs/route.js:43,77,116`, `app/api/cover-bid-jobs/weeks/route.js:25`,
+`app/api/cover-bid-jobs/extract/route.js:139`
 
 CLAUDE.md's rule ("don't include the raw caught error in the body") is followed in about
 half the routes. The other half return `error.message` — which for a Mongo error
@@ -988,7 +988,7 @@ documented fail-open), `app/api/auth/register` (IP, 10/h ✓), `app/api/comments
 (user, 10/10min ✓). Not limited: credentials sign-in (#9), `comments/[id]/vote`,
 `user/track-view`, `users/[id]/add-phone`, `users/[userId]` GET (id → name/avatar; ids
 are ObjectIds — time-ordered, not random), `webhooks/buymeacoffee`, `slic/[id]/pdf`
-POST and `coverBidJobs/extract` (admin; the cost is yours), `comments` GET.
+POST and `cover-bid-jobs/extract` (admin; the cost is yours), `comments` GET.
 
 **Fix:** a table of keys and ceilings in `lib/rateLimit.js` so every route imports a
 named policy instead of inventing numbers:

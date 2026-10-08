@@ -43,7 +43,7 @@ const withVote = (comment, next) => ({
 const liveCount = (thread) =>
   thread.reduce((n, comment) => n + (comment.deleted ? 0 : 1) + comment.replies.length, 0);
 
-// The "Driver tips" section under the lookup card on /home (and /all): an
+// The "Driver tips" section under the lookup card on /home (and /hubs): an
 // always-visible composer with topic starters, the threaded tips sorted Top or
 // Newest, and "New" marks for tips posted since this device last showed them
 // (UI-SUGGESTIONS.md #45). The SLIC comes from ?slic= in the URL.

@@ -574,7 +574,7 @@ importers share, with one formatter. `utility/soft.js` is the one `.js` file lef
 
 ### 28. Dedupe `home/page.jsx` and `all/page.jsx`; rename `/all`
 
-- [ ] **Files:** `app/home/page.jsx`, `app/all/page.jsx`
+- [x] **Files:** `app/home/page.jsx`, `app/all/page.jsx`
 
 The two pages are ~90% identical: same auth guard, same `searchParams.slic` handling,
 same `Comments`/`Main` composition. They differ in `getAllSlics()` vs `getAllHubs()` and
@@ -587,6 +587,16 @@ true`) so any driver with it bookmarked isn't stranded.
 
 *Blast radius:* the redirect protects bookmarks. `AllHubsButton` (item 8) is the only
 thing that linked to `/all` and it's dead; grep for `'/all'` to confirm nothing else does.
+
+**Done 2026-10-08.** Both routes render `components/slic/SlicLookupPage.jsx`
+(`searchParams`, `slics`, `user`, `heading`, plus `children` under the heading). Each
+route still checks the session and loads its own list, so a signed-out request never
+queries Mongo; /home adds the install nudge and tip prompt as children. The grep did find
+links: the header menu's "All Hubs" entry, `HeaderBar`'s `PAGE_TITLES` and the middleware
+matcher, all now `/hubs`. `next.config.mjs` redirects `/all` → `/hubs` (308, query kept).
+Small differences the dedupe evened out on /hubs: the `sectionHeading` variant instead of an
+`h2` with the same styles inline, `HydrationGuard` around the lookup like /home, and the
+signed-out fallback is /home's message instead of a bare `redirect('/')`.
 
 ---
 

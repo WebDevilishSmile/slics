@@ -76,7 +76,7 @@ export const config = {
     '/protected/:path*',
     '/home/:path*',
     '/home',
-    '/all/:path*',
+    '/hubs/:path*',
     '/', // Explicitly include the root path in the matcher if you want middleware to run on it.
     // This is often good practice to ensure the `isLoggedIn` check always runs.
     '/((?!_next/static|_next/image|favicon.ico|api|auth|.*\\..*).*)',

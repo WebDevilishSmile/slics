@@ -219,10 +219,10 @@ function UserMenu({ user, signOutAction }) {
               />
               <NavItem
                 onClick={handleClose}
-                href='/all'
+                href='/hubs'
                 label='All Hubs'
                 icon={<HubOutlined />}
-                current={isCurrent('/all')}
+                current={isCurrent('/hubs')}
               />
               {user.bmcMember && (
                 <>

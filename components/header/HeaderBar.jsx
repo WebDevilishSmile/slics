@@ -23,7 +23,7 @@ import UserMenu from './UserMenu';
 const PAGE_TITLES = [
   ['/home/', 'SLIC'],
   ['/about', 'About'],
-  ['/all', 'All Hubs'],
+  ['/hubs', 'All Hubs'],
   ['/history', 'History'],
   ['/profile', 'Profile'],
   ['/privacy', 'Privacy Policy'],

@@ -32,7 +32,7 @@ function FormActions({
     setIsLoading(true);
 
     try {
-      let endpoint = '/api/newSlic';
+      let endpoint = '/api/slics';
       let method = 'POST';
 
       if (mode === 'edit') {
@@ -40,7 +40,7 @@ function FormActions({
           throw new Error('Missing slic ID for edit');
         }
 
-        endpoint = `/api/slic/${slicId}`;
+        endpoint = `/api/slics/${slicId}`;
         method = 'PATCH';
       }
 

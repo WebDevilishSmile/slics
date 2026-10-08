@@ -15,7 +15,7 @@ function isPdfFile(file) {
   );
 }
 
-// Attaches a directions PDF to an existing slic via app/api/slic/[id]/pdf.
+// Attaches a directions PDF to an existing slic via app/api/slics/[id]/pdf.
 // Lives on the edit form only — a PDF needs a saved slic to belong to.
 // Manages its own state rather than the form's, so the form's Update button
 // never touches `pdfUrl` and this never touches the other fields.
@@ -26,7 +26,7 @@ function PdfUpload({ slicId, pdfUrl: initialPdfUrl }) {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  const endpoint = `/api/slic/${slicId}/pdf`;
+  const endpoint = `/api/slics/${slicId}/pdf`;
 
   const handlePickFile = () => fileInputRef.current?.click();
 

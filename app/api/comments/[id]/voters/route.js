@@ -13,7 +13,7 @@ export async function GET(_request, { params }) {
   if (!session.user.bmcMember && session.user.role !== 'admin')
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const { commentId } = await params;
+  const { id: commentId } = await params;
 
   if (!commentId || !ObjectId.isValid(commentId))
     return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });

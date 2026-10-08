@@ -120,7 +120,7 @@ ID, seniority date and personal mobile number in a public repository.
 ### [ ] 2. Stored XSS through comments
 
 **Files:** `app/components/comments/CommentEditor.jsx:118` (`editor.getHTML()`),
-`app/api/comment/route.js` (POST — stores `content` as-is), `lib/db/comments.js`
+`app/api/comments/route.js` (POST — stores `content` as-is), `lib/db/comments.js`
 (`createComment`), and the four render sites:
 `components/comments/Comment.jsx:50`, `components/admin/comments/Comment.jsx:36`,
 `app/components/profile/CommentBody.jsx:9`, `app/components/slicPage/CommentsPage.jsx:42`.
@@ -147,7 +147,7 @@ they look up; the admin renders *all* comments on `/admin/comments`. This is
 attacker-chooses-victim, and one of the victims is the admin.
 
 **Fix (all four layers — they cover different failure modes):**
-1. **Sanitize at write time, on the server.** In `app/api/comment/route.js`, before
+1. **Sanitize at write time, on the server.** In `app/api/comments/route.js`, before
    `createComment`, run `content` through `sanitize-html` with an allowlist that matches
    what `@tiptap/starter-kit` can produce and nothing more:
    ```js
@@ -599,7 +599,7 @@ line.
 
 ### [ ] 11. Input validation at the API boundary is ad hoc
 
-**Files:** `app/api/comment/route.js` (POST: `numSlic`/`content` any type, any size),
+**Files:** `app/api/comments/route.js` (POST: `numSlic`/`content` any type, any size),
 `app/api/user/track-view/route.js` (`numSlic` any type, no rate limit, unbounded
 inserts), `app/api/comments/[commentId]/vote/route.js` (no `ObjectId.isValid`, no
 existence check, no rate limit), `app/api/users/[userId]/add-phone/route.js` (`phone`
@@ -703,7 +703,7 @@ and both stores serve them to anyone with the URL:
    the Supabase bucket, remove `LEGACY_PDF_BASE_URL`/`legacyPdfUrl`/`utils/pdfs.js` and
    the `slic.pdf` fallback in `PdfLink.jsx` (the CLAUDE.md note about the fallback is the
    reminder for this step). Also drop the hard-coded Supabase project ref from the code.
-2. Serve PDFs through the app: `GET /api/slic/[id]/pdf` → `requireUser()` → fetch the
+2. Serve PDFs through the app: `GET /api/slics/[id]/pdf` → `requireUser()` → fetch the
    blob server-side → stream it with `Content-Disposition: inline`. `PdfLink` links to
    that route; the blob URL never reaches a browser. Keep `addRandomSuffix` (it is what
    makes the blob unguessable) and, if the Blob store offers private access on your plan,
@@ -803,7 +803,7 @@ can finally be deleted.
 
 **Files:** `lib/db/slics.js` `deleteSlic` (no history entry), `lib/db/slicHistory.js`
 `addSlicHistoryEntry` (catches and swallows), `app/api/users/[userId]/toggle-role/route.js`
-and `toggle-member` (no record of who changed whom), `app/api/comment/route.js` DELETE and
+and `toggle-member` (no record of who changed whom), `app/api/comments/[id]/route.js` DELETE and
 `comments/[commentId]/route.js` (admin deletions of other people's comments leave nothing),
 `app/api/webhooks/buymeacoffee/route.js` (membership flips unrecorded)
 
@@ -962,9 +962,9 @@ fixed key list before `console.error` is enough — no dependency needed.
 
 ### [ ] 23. Internal error text in responses
 
-**Files:** `app/api/newSlic/route.js:37`, `app/api/slic/[id]/route.js:64,68,100`,
-`app/api/slic/[id]/pdf/route.js:98,131`, `app/api/cover/[position]/route.js:32`,
-`app/api/drivers/[id]/route.js:58`, `app/api/coverBidJob/[id]/route.js:26,29,52,55`,
+**Files:** `app/api/slics/route.js` (POST), `app/api/slics/[id]/route.js:64,68,100`,
+`app/api/slics/[id]/pdf/route.js:98,131`, `app/api/cover/[position]/route.js:32`,
+`app/api/drivers/[id]/route.js:58`, `app/api/coverBidJobs/[id]/route.js:26,29,52,55`,
 `app/api/coverBidJobs/route.js:43,77,116`, `app/api/coverBidJobs/weeks/route.js:25`,
 `app/api/coverBidJobs/extract/route.js:139`
 
@@ -984,7 +984,7 @@ specific cases instead of `Error` and string-matching on `.message`.
 ### [ ] 24. Rate-limit coverage
 
 **Files:** `lib/rateLimit.js` (the limiter — sound, Mongo-backed, TTL-cleaned,
-documented fail-open), `app/api/auth/register` (IP, 10/h ✓), `app/api/comment` POST
+documented fail-open), `app/api/auth/register` (IP, 10/h ✓), `app/api/comments` POST
 (user, 10/10min ✓). Not limited: credentials sign-in (#9), `comments/[id]/vote`,
 `user/track-view`, `users/[id]/add-phone`, `users/[userId]` GET (id → name/avatar; ids
 are ObjectIds — time-ordered, not random), `webhooks/buymeacoffee`, `slic/[id]/pdf`

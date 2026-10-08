@@ -8,7 +8,7 @@ import {
 } from '@/lib/db/places';
 import { checkRateLimit } from '@/lib/rateLimit';
 
-// Same limit as SLIC comments (app/api/comment/route.js), keyed by user id.
+// Same limit as SLIC comments (app/api/comments/route.js), keyed by user id.
 const COMMENT_LIMIT = 10;
 const COMMENT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 

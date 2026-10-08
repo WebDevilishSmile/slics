@@ -40,10 +40,8 @@ function CommentDelete({ comment }) {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/comment`, {
+      const response = await fetch(`/api/comments/${comment._id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ commentId: comment._id }),
       });
 
       if (!response.ok) {

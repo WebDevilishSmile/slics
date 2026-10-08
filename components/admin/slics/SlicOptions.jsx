@@ -68,7 +68,7 @@ function SlicOptions({ slic, onSlicDeleted }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/slic/${slic._id}`, {
+      const response = await fetch(`/api/slics/${slic._id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

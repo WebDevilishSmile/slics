@@ -96,7 +96,7 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
             )
           );
         } else {
-          const res = await fetch(`/api/coverBidJob/${row._id}`, {
+          const res = await fetch(`/api/coverBidJobs/${row._id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(values),
@@ -127,7 +127,7 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
     setError(null);
 
     try {
-      const res = await fetch(`/api/coverBidJob/${row._id}`, {
+      const res = await fetch(`/api/coverBidJobs/${row._id}`, {
         method: 'DELETE',
       });
       await readJson(res, 'Failed to delete job');

@@ -90,7 +90,7 @@ const CommentComposer = forwardRef(function CommentComposer(
     }
     setSaving(true);
     setError('');
-    const { data, error: message } = await apiRequest('/api/comment', {
+    const { data, error: message } = await apiRequest('/api/comments', {
       body: { numSlic, parentId, content: draft, pin },
     });
     setSaving(false);

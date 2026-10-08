@@ -15,7 +15,7 @@ export async function GET(_request, { params }) {
   if (!session)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { userId } = await params;
+  const { id: userId } = await params;
 
   if (!userId) {
     return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
@@ -47,7 +47,7 @@ export async function DELETE(request, { params }) {
   if (!session)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { userId } = await params;
+  const { id: userId } = await params;
 
   if (!userId || !ObjectId.isValid(userId)) {
     return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });

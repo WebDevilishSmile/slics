@@ -26,7 +26,7 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    const { userId } = await params;
+    const { id: userId } = await params;
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });

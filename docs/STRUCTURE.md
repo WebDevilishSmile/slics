@@ -624,12 +624,12 @@ for the item segment.
 
 ### 29. Plural collection, `[id]` item
 
-- [ ] `api/newSlic` → `POST api/slics` (already exists for GET; add the method)
-- [ ] `api/slic/[id]` → `api/slics/[id]`
-- [ ] `api/comment` → `POST api/comments` (already exists for GET; add the method)
-- [ ] `api/comments/[commentId]` → `api/comments/[id]` (and `/vote`)
-- [ ] `api/coverBidJob/[id]` → `api/coverBidJobs/[id]`
-- [ ] `api/users/[userId]` → `api/users/[id]` (and its three sub-routes)
+- [x] `api/newSlic` → `POST api/slics` (already exists for GET; add the method)
+- [x] `api/slic/[id]` → `api/slics/[id]`
+- [x] `api/comment` → `POST api/comments` (already exists for GET; add the method)
+- [x] `api/comments/[commentId]` → `api/comments/[id]` (and `/vote`)
+- [x] `api/coverBidJob/[id]` → `api/coverBidJobs/[id]`
+- [x] `api/users/[userId]` → `api/users/[id]` (and its three sub-routes)
 
 Each rename is one `grep -rn "'/api/<old>"` over `app/` and `components/` to find the
 `fetch` calls. (`SUGGESTIONS.md` #12 — the PATCH-by-`numSlic` / DELETE-by-`_id` mismatch on
@@ -638,6 +638,17 @@ rename is purely a folder move plus its three `fetch` paths.)
 
 *Blast radius:* every client `fetch` to a renamed path. Grep is exhaustive here — there
 is no dynamic path construction except the `[id]` segment.
+
+**Done 2026-10-08, with aliases instead of one hard cutover.** An installed app can stay open
+for days, not minutes, so each old URL still answers: `app/api/newSlic`, `slic/[id]`,
+`slic/[id]/pdf` and `coverBidJob/[id]` are one-line re-exports of the new handlers, and
+`app/api/comment` re-exports `POST` and forwards its old body-based `DELETE { commentId }`
+to `DELETE /api/comments/[id]` (same rules; the profile delete button now calls that one
+directly). `[commentId]` → `[id]` and `[userId]` → `[id]` changed no URL, only folder and
+`params` names, so they need no alias.
+
+- [ ] **Follow-up:** delete the five alias files after a trial period (two weeks is
+  plenty for stale tabs). `grep -rn "Old path, renamed on 2026-10-08" app/api` lists them.
 
 ### 30. One casing for URL segments
 

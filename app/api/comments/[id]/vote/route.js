@@ -11,7 +11,7 @@ export async function POST(request, { params }) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { commentId } = await params;
+  const { id: commentId } = await params;
   if (!commentId || !ObjectId.isValid(commentId))
     return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
 

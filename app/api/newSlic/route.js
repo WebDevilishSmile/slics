@@ -1,42 +1,4 @@
-// app/api/slics/newSlic/route.js
-import { createSlic } from '@/lib/db/slics';
-import { auth } from '@/auth';
-import { NextResponse } from 'next/server';
-
-export async function POST(request) {
-  try {
-    // Optional: Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
-
-    const body = await request.json();
-    const newSlic = await createSlic(body, session.user);
-
-    return NextResponse.json(
-      {
-        success: true,
-        data: newSlic,
-        message: 'Slic created successfully',
-      },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('API Error creating slic:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
-      { status: 400 }
-    );
-  }
-}
+// Old path, renamed on 2026-10-08 (docs/STRUCTURE.md #29). Kept as an alias so an
+// app that loaded before the rename (an installed app can stay open for days)
+// keeps working. Delete this file once the trial period is over.
+export { POST } from '@/app/api/slics/route';

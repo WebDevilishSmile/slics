@@ -10,16 +10,16 @@ export async function PATCH(req, { params }) {
 
   if (!session) {
     console.warn(
-      'API PATCH /users/[userId]/add-phone: Unauthorized attempt - No session.',
+      'API PATCH /users/[id]/add-phone: Unauthorized attempt - No session.',
     );
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { userId } = await params;
+  const { id: userId } = await params;
 
   if (!userId) {
     console.warn(
-      'API PATCH /users/[userId]/add-phone: Missing userId in parameters.',
+      'API PATCH /users/[id]/add-phone: Missing userId in parameters.',
     );
     return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
   }
@@ -29,7 +29,7 @@ export async function PATCH(req, { params }) {
     requestBody = await req.json();
   } catch (error) {
     console.error(
-      'API PATCH /users/[userId]/add-phone: Error parsing request body:',
+      'API PATCH /users/[id]/add-phone: Error parsing request body:',
       error,
     );
     return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
@@ -39,7 +39,7 @@ export async function PATCH(req, { params }) {
 
   if (phone !== undefined && typeof phone !== 'string') {
     console.warn(
-      `API PATCH /users/[userId]/add-phone: Invalid phone format for userId: ${userId}`,
+      `API PATCH /users/[id]/add-phone: Invalid phone format for userId: ${userId}`,
     );
     return NextResponse.json(
       { error: 'Invalid phone format (must be string or undefined/null)' },
@@ -58,7 +58,7 @@ export async function PATCH(req, { params }) {
     (!isNonEmptyString(firstName) || !isNonEmptyString(lastName))
   ) {
     console.warn(
-      `API PATCH /users/[userId]/add-phone: Invalid name for userId: ${userId}`,
+      `API PATCH /users/[id]/add-phone: Invalid name for userId: ${userId}`,
     );
     return NextResponse.json(
       { error: 'First and last name are both required' },
@@ -89,7 +89,7 @@ export async function PATCH(req, { params }) {
 
     if (Object.keys(updateDoc.$set).length === 0) {
       console.warn(
-        `API PATCH /users/[userId]/add-phone: No updatable fields provided for userId: ${userId}`,
+        `API PATCH /users/[id]/add-phone: No updatable fields provided for userId: ${userId}`,
       );
       return NextResponse.json(
         { error: 'No updatable fields provided (e.g., "phone" missing from body)' },
@@ -104,7 +104,7 @@ export async function PATCH(req, { params }) {
 
     if (!loggedInUserFromDb) {
       console.warn(
-        `API PATCH /users/[userId]/add-phone: Logged-in user email (${session.user.email}) not found in DB for authorization.`,
+        `API PATCH /users/[id]/add-phone: Logged-in user email (${session.user.email}) not found in DB for authorization.`,
       );
       return NextResponse.json(
         { error: 'Forbidden: Your user account could not be verified' },
@@ -117,7 +117,7 @@ export async function PATCH(req, { params }) {
 
     if (!isAdmin && !isUpdatingOwnProfile) {
       console.warn(
-        `API PATCH /users/[userId]/add-phone: Forbidden - User ${loggedInUserFromDb.email} (ID: ${loggedInUserFromDb._id}) attempted to update user ${userId} without admin rights.`,
+        `API PATCH /users/[id]/add-phone: Forbidden - User ${loggedInUserFromDb.email} (ID: ${loggedInUserFromDb._id}) attempted to update user ${userId} without admin rights.`,
       );
       return NextResponse.json(
         { error: 'Forbidden: You can only update your own profile unless you are an admin' },
@@ -137,7 +137,7 @@ export async function PATCH(req, { params }) {
     if (!updatedUserResult) {
       // Check if findOneAndUpdate returned null
       console.error(
-        `API PATCH /users/[userId]/add-phone: findOneAndUpdate returned null result for userId: ${userId}.`,
+        `API PATCH /users/[id]/add-phone: findOneAndUpdate returned null result for userId: ${userId}.`,
       );
       return NextResponse.json(
         { error: 'User not found for update (ID may not exist or database issue).' },
@@ -148,7 +148,7 @@ export async function PATCH(req, { params }) {
     // Now, updatedUserResult *is* the updated document.
     // Use it directly.
     console.log(
-      `API PATCH /users/[userId]/add-phone: Successfully updated user ${userId}. New data:`,
+      `API PATCH /users/[id]/add-phone: Successfully updated user ${userId}. New data:`,
       updatedUserResult,
     );
     return NextResponse.json(updatedUserResult, { status: 200 }); // Return the document directly

@@ -9,10 +9,10 @@ import {
   validateSlicComment,
 } from '@/lib/db/comments';
 
-// `[commentId]` is the comment's _id. Only its author, or an admin, may edit
+// `[id]` is the comment's _id. Only its author, or an admin, may edit
 // or delete it.
 async function loadManageable(params, session) {
-  const { commentId } = await params;
+  const { id: commentId } = await params;
   if (!commentId || !ObjectId.isValid(commentId))
     return { response: NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 }) };
 

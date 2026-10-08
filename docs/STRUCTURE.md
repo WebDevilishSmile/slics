@@ -647,7 +647,7 @@ to `DELETE /api/comments/[id]` (same rules; the profile delete button now calls 
 directly). `[commentId]` → `[id]` and `[userId]` → `[id]` changed no URL, only folder and
 `params` names, so they need no alias.
 
-- [ ] **Follow-up:** delete the alias files (five here, four more from item 30) after a trial period (two weeks is
+- [ ] **Follow-up:** delete the alias files (five here, four from item 30, four from item 31) after a trial period (two weeks is
   plenty for stale tabs). `grep -rn "Old path, renamed on 2026-10-08" app/api` lists them.
 
 ### 30. One casing for URL segments
@@ -668,13 +668,19 @@ straight at `cover-bid-jobs/[id]`.
 
 ### 31. Current-user routes under `users/me`
 
-- [ ] `api/user/track-view`, `api/user/view-history`, `api/user/views` →
+- [x] `api/user/track-view`, `api/user/view-history`, `api/user/views` →
   `api/users/me/track-view`, `api/users/me/view-history`, `api/users/me/views`
 
 `user/` (singular, current session) next to `users/[id]` (any user, admin) is a common
 REST idiom but only when it's spelled `me`. As is, `user` vs `users` looks like a typo.
 
 *Blast radius:* three routes, their callers.
+
+**Done 2026-10-08.** By then `view-history` had become `history` and `history/[id]`
+(the member History page), so four routes moved: `users/me/history`, `history/[id]`,
+`track-view` and `views`. The old `user/**` paths are aliases like item 29's; they repeat
+`export const runtime = 'nodejs'` because segment config can't be re-exported. A static
+`users/me` sits fine beside `users/[id]` (static segments win).
 
 ---
 

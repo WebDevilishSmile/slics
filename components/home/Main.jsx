@@ -22,7 +22,7 @@ function Main({ slics, commentsCount, user }) {
 
   // Fetch lifetime view count on mount
   useEffect(() => {
-    fetch('/api/user/views')
+    fetch('/api/users/me/views')
       .then((r) => r.json())
       .then((data) => {
         if (data.slicViews !== undefined) setViewCount(data.slicViews);
@@ -84,7 +84,7 @@ function Main({ slics, commentsCount, user }) {
       prevSlicNumRef.current = slic.numSlic;
       recordLookup(slic);
       recordRecentLookup(slic);
-      fetch('/api/user/track-view', {
+      fetch('/api/users/me/track-view', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ numSlic: slic.numSlic }),

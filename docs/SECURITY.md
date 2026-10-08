@@ -600,7 +600,7 @@ line.
 ### [ ] 11. Input validation at the API boundary is ad hoc
 
 **Files:** `app/api/comments/route.js` (POST: `numSlic`/`content` any type, any size),
-`app/api/user/track-view/route.js` (`numSlic` any type, no rate limit, unbounded
+`app/api/users/me/track-view/route.js` (`numSlic` any type, no rate limit, unbounded
 inserts), `app/api/comments/[commentId]/vote/route.js` (no `ObjectId.isValid`, no
 existence check, no rate limit), `app/api/users/[userId]/add-phone/route.js` (`phone`
 any string, any length), `app/api/drivers/route.js` (`name`/`seniorityDate` not
@@ -914,7 +914,7 @@ Confirm, and note the answer in this file:
 ### [ ] 21. Retention: keep what the policy says, delete the rest automatically
 
 **Files:** `app/privacy/page.jsx` ("Lookup history is kept while your account exists.
-The History page shows the most recent six months."), `app/api/user/track-view/route.js`,
+The History page shows the most recent six months."), `app/api/users/me/track-view/route.js`,
 `app/admin/users/[id]/page.jsx` (`getSlicViewsByUserId` — unbounded), `lib/rateLimit.js`
 (TTL — the one collection that already self-cleans), `lib/db/users.js`
 `deleteUserAccount` (leaves `{ id, name, email }` stamps in `slic_history`,

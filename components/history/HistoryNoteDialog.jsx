@@ -42,7 +42,7 @@ export default function HistoryNoteDialog({ view, onClose, onSaved }) {
     setSaving(true);
     setError('');
     const { data, error: message } = await apiRequest(
-      `/api/user/history/${view.id}`,
+      `/api/users/me/history/${view.id}`,
       { method: 'PATCH', body: { note } },
     );
     setSaving(false);

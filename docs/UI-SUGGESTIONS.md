@@ -1450,9 +1450,9 @@ _Done 2026-10-07,_ as part of the History page rework (TODOS.md):
   - The page now lives in `components/history/`.
   - Search covers code, name, address and note. There are date presets plus a custom
     range, Centers/Customers and With-notes filters, and Newest/Oldest sort.
-  - Paging is cursor-based through `GET /api/user/history`, with "Load more".
+  - Paging is cursor-based through `GET /api/users/me/history`, with "Load more".
   - Each row has a private note and a "Remove from history" with Undo
-    (`PATCH /api/user/history/[id]`).
+    (`PATCH /api/users/me/history/[id]`).
   - Removing only hides the row (`hidden: true`), so the /home lookup counter still counts
     it.
 

@@ -40,7 +40,7 @@ const toQuery = (params, extra = {}) => {
 
 // The member History page (TODOS.md "organize my history page"). The server
 // renders the first page; filters live in the URL (so Back keeps them) and
-// each change fetches from /api/user/history. Removing a row hides it on the
+// each change fetches from /api/users/me/history. Removing a row hides it on the
 // server and offers Undo; the /home lookup counter still counts it.
 export default function HistoryView({ initialPage, initialParams }) {
   const [params, setParams] = useState(initialParams);
@@ -74,7 +74,7 @@ export default function HistoryView({ initialPage, initialParams }) {
     const id = ++requestId.current;
     setLoading(true);
     setError('');
-    apiRequest(`/api/user/history?${query}`, { method: 'GET' }).then(
+    apiRequest(`/api/users/me/history?${query}`, { method: 'GET' }).then(
       ({ data, error: message }) => {
         if (id !== requestId.current) return; // a newer filter won
         setLoading(false);
@@ -87,7 +87,7 @@ export default function HistoryView({ initialPage, initialParams }) {
   const loadMore = async () => {
     setLoadingMore(true);
     const { data, error: message } = await apiRequest(
-      `/api/user/history?${toQuery(params, { cursor: page.nextCursor })}`,
+      `/api/users/me/history?${toQuery(params, { cursor: page.nextCursor })}`,
       { method: 'GET' },
     );
     setLoadingMore(false);
@@ -113,7 +113,7 @@ export default function HistoryView({ initialPage, initialParams }) {
     });
 
   const setHidden = (view, hidden) =>
-    apiRequest(`/api/user/history/${view.id}`, {
+    apiRequest(`/api/users/me/history/${view.id}`, {
       method: 'PATCH',
       body: { hidden },
     });

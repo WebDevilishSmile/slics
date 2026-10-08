@@ -1,11 +1,8 @@
-import { Typography } from '@mui/material';
+import { redirect } from 'next/navigation';
 
-function Cover() {
-  return (
-    <>
-      <Typography variant='sectionHeading'>Cover</Typography>
-    </>
-  );
+// There's no cover overview: the admin index links Cover Drivers and Cover
+// Jobs directly. A typed or old /admin/cover link lands there instead of on
+// an empty page.
+export default function Cover() {
+  redirect('/admin');
 }
-
-export default Cover;

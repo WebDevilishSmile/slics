@@ -27,20 +27,30 @@ async function CoversPage() {
   if (!userData || userData.email !== user.email) {
     return (
       <RedirectMessage
-        heading='You do not have permission to view this profile.'
-        subheading='Please check the user ID and try again.'
+        heading='We could not find your account.'
+        subheading='Please sign in again.'
         redirect='/'
       />
     );
   }
-  const driverData = await getDriverById(userData.driverId);
 
-  if (userData.driverId !== driverData._id.toString()) {
+  // Covers are per driver, so the account has to be linked to a row in
+  // `drivers`. Most accounts aren't: getDriverById throws for a missing or
+  // unknown id, which used to take the whole page down.
+  let driverData = null;
+  if (userData.driverId) {
+    try {
+      driverData = await getDriverById(userData.driverId);
+    } catch {
+      driverData = null;
+    }
+  }
+  if (!driverData) {
     return (
       <RedirectMessage
-        heading='You do not have permission to view this profile.'
-        subheading='Please check the user ID and try again.'
-        redirect='/'
+        heading='Your account is not linked to a driver yet.'
+        subheading='Covers show once it is. Taking you back to SLICs…'
+        redirect='/home'
       />
     );
   }

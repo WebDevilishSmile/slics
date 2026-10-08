@@ -1,22 +1,29 @@
 import theme from '@/utils/theme';
-import { Paper, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
+import { softRaised } from '../utility/soft';
+
+// One section of the privacy policy or terms: a soft raised card on the page
+// surface.
 export default function LegalSection({ title, children }) {
   return (
-    <Paper
+    <Box
       component='section'
-      elevation={3}
-      sx={{
-        width: '100%',
-        maxWidth: theme.layout.width.prose,
-        p: { xs: 2, sm: 4 },
-        my: 2,
-      }}
+      sx={[
+        softRaised(theme),
+        {
+          width: '100%',
+          maxWidth: theme.layout.width.prose,
+          p: { xs: 3, sm: 4 },
+          my: 1.5,
+          borderRadius: 3,
+        },
+      ]}
     >
       <Typography variant='h6' component='h3' sx={{ mb: 2 }}>
         {title}
       </Typography>
       {children}
-    </Paper>
+    </Box>
   );
 }

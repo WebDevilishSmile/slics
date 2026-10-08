@@ -494,7 +494,7 @@ a generic field; put it in `components/form/PhoneField.jsx` so neither feature o
 
 ### 24. Rename the colliding `DriversTable`
 
-- [ ] **Files:** `covers/DriversTable.jsx` → `covers/CoverDriversTable.jsx`;
+- [x] **Files:** `covers/DriversTable.jsx` → `covers/CoverDriversTable.jsx`;
   `covers/DriverTableHead.jsx` → `covers/CoverDriversTableHead.jsx`
 
 `drivers/DriversTable.jsx` and `covers/DriversTable.jsx` are different components with the
@@ -505,8 +505,8 @@ plurality.
 
 *Blast radius:* import paths only.
 
-**Half done (2026-10-08):** `CoverDriversTableHead` was renamed in item 22; only
-`covers/DriversTable.jsx` is left.
+**Done 2026-10-08.** `CoverDriversTableHead` was renamed in item 22, `CoverDriversTable`
+(file and component) here. Its one importer is `app/admin/cover/drivers/page.jsx`.
 
 ### 25. Collapse the `about/` wrappers
 

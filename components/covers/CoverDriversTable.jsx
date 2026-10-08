@@ -8,7 +8,7 @@ import CoverDriversTableHead from './CoverDriversTableHead';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation'; // Import the router
 
-function DriversTable({ covers }) {
+function CoverDriversTable({ covers }) {
   const [isEditing, setIsEditing] = useState(0);
   const router = useRouter(); // Initialize the router
 
@@ -51,4 +51,4 @@ function DriversTable({ covers }) {
   );
 }
 
-export default DriversTable;
+export default CoverDriversTable;

@@ -515,7 +515,7 @@ default reaches every Paper-derived component with no explicit prop, and **13 si
 on the implicit 1**: `admin/slics/SlicsTable.jsx`, `admin/comments/CommentsSection.jsx`,
 `slicForm/FormContainer.jsx`, `profile/ProfileData.jsx`, `comments/Comment.jsx:17`, four
 `TableContainer component={Paper}` (`admin/coverBidJobs/BidSheetUploader.jsx`,
-`admin/coverBidJobs/CoverBidJobsEditTable.jsx`, `covers/DriversTable.jsx`,
+`admin/coverBidJobs/CoverBidJobsEditTable.jsx`, `covers/CoverDriversTable.jsx`,
 `drivers/DriversTable.jsx`), three `Accordion`s (`admin/users/UserCard.jsx`,
 `covers/Calendar.jsx`, plus `admin/comments/Comment.jsx`'s `Card`), and every
 `Autocomplete` dropdown. Pinning `elevation={1}` on all of those to keep the app looking

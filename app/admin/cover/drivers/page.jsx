@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import DriversTable from '@/components/covers/DriversTable';
+import CoverDriversTable from '@/components/covers/CoverDriversTable';
 import LoadingFallback from '@/components/layout/LoadingFallback';
 import { Typography } from '@mui/material';
 import { getCovers } from '@/lib/db/covers';
@@ -13,7 +13,7 @@ async function CoverDrivers() {
     <Suspense fallback={<LoadingFallback />}>
       <Typography variant='sectionHeading'>Cover Drivers</Typography>
 
-      <DriversTable covers={serializeCovers(covers)} />
+      <CoverDriversTable covers={serializeCovers(covers)} />
     </Suspense>
   );
 }

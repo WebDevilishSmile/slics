@@ -1,27 +1,58 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Alert,
   Box,
   Button,
+  IconButton,
   Skeleton,
   Stack,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import CoverBidJobEditCard from './CoverBidJobEditCard';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import CoverBidJobReviewDialog from './CoverBidJobReviewDialog';
 import CoverBidJobRowActions from './CoverBidJobRowActions';
-import CoverBidJobsEditTable from './CoverBidJobsEditTable';
+import CoverBidJobSummaryCard from './CoverBidJobSummaryCard';
+import CoverBidJobsTable from './CoverBidJobsTable';
 import DeleteCoverBidJobsDialog from './DeleteCoverBidJobsDialog';
 import { useCoverBidJobs } from '@/hooks/useCoverBidJobs';
-import { isUnsaved } from '@/lib/coverBidJobRow';
+import {
+  findDuplicateJobNumbers,
+  isDirty,
+  isDuplicateJobNumber,
+  isUnsaved,
+} from '@/lib/coverBidJobRow';
 import { softContainedSx, softPressSx, softRaisedSmall } from '@/components/utility/soft';
+
+// Nothing for a row that matches what's saved.
+function UnsavedStatus({ row }) {
+  if (!isDirty(row)) return null;
+  return (
+    <Box
+      component='span'
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0.5,
+        typography: 'body2',
+        fontWeight: 600,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <EditNoteIcon fontSize='small' sx={{ color: 'warning.main' }} />
+      {isUnsaved(row) ? 'New, not saved' : 'Unsaved changes'}
+    </Box>
+  );
+}
 
 export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const wide = useMediaQuery(theme.breakpoints.up('lg'));
 
   const {
     rows,
@@ -39,15 +70,23 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
 
   // null when closed; otherwise the pending destructive action.
   const [deleteRequest, setDeleteRequest] = useState(null);
+  // The job open in the review dialog, or null.
+  const [reviewIndex, setReviewIndex] = useState(null);
+  if (rows.length === 0 && reviewIndex !== null) setReviewIndex(null);
 
-  const requestDeleteRow = (row) => {
-    // An unsaved draft isn't worth a confirmation — nothing has been persisted.
-    if (isUnsaved(row)) {
-      deleteRow(row);
-      return;
-    }
-    setDeleteRequest({ type: 'row', row });
-  };
+  const duplicates = useMemo(() => findDuplicateJobNumbers(rows), [rows]);
+
+  const requestDeleteRow = useCallback(
+    (row) => {
+      // An unsaved draft isn't worth a confirmation — nothing has been persisted.
+      if (isUnsaved(row)) {
+        deleteRow(row);
+        return;
+      }
+      setDeleteRequest({ type: 'row', row });
+    },
+    [deleteRow]
+  );
 
   const requestDeleteAll = () => {
     if (rows.length === 0 || !weekEndDate) return;
@@ -71,6 +110,40 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
       // retry or cancel.
     }
   };
+
+  const handleAddRow = () => {
+    addRow();
+    // Cards have nothing to type into, so open the new job in the review.
+    if (!wide) setReviewIndex(rows.length);
+  };
+
+  const renderLeading = useCallback(
+    (row, index) => (
+      <Tooltip title='Review'>
+        <IconButton
+          aria-label={`Review ${row.jobNumber ? `job ${row.jobNumber}` : `row ${index + 1}`}`}
+          onClick={() => setReviewIndex(index)}
+          sx={softPressSx}
+        >
+          <OpenInFullIcon fontSize='small' />
+        </IconButton>
+      </Tooltip>
+    ),
+    []
+  );
+
+  const renderActions = useCallback(
+    (row) => (
+      <CoverBidJobRowActions
+        row={row}
+        onSave={saveRow}
+        onDelete={requestDeleteRow}
+        saving={savingKey === row.key}
+        deleting={deletingKey === row.key}
+      />
+    ),
+    [saveRow, requestDeleteRow, savingKey, deletingKey]
+  );
 
   const deleteInFlight =
     deleteRequest?.type === 'all'
@@ -96,34 +169,34 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
         </Alert>
       )}
 
-      {isDesktop ? (
-        <CoverBidJobsEditTable
+      {wide ? (
+        <CoverBidJobsTable
           rows={rows}
+          duplicates={duplicates}
           onFieldChange={updateField}
-          onSaveRow={saveRow}
-          onDeleteRow={requestDeleteRow}
-          savingKey={savingKey}
-          deletingKey={deletingKey}
+          renderLeading={renderLeading}
+          renderActions={renderActions}
+          leadingLabel='Review'
         />
       ) : (
-        <Stack spacing={1.5}>
-          {rows.map((row) => (
-            <CoverBidJobEditCard
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+            gap: 2,
+          }}
+        >
+          {rows.map((row, index) => (
+            <CoverBidJobSummaryCard
               key={row.key}
               row={row}
-              onChange={(field, value) => updateField(row.key, field, value)}
-              actions={
-                <CoverBidJobRowActions
-                  row={row}
-                  onSave={saveRow}
-                  onDelete={requestDeleteRow}
-                  saving={savingKey === row.key}
-                  deleting={deletingKey === row.key}
-                />
-              }
+              index={index}
+              duplicate={isDuplicateJobNumber(row, duplicates)}
+              status={<UnsavedStatus row={row} />}
+              onOpen={setReviewIndex}
             />
           ))}
-        </Stack>
+        </Box>
       )}
 
       {rows.length === 0 && (
@@ -141,7 +214,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
         }}
       >
         <Button
-          onClick={addRow}
+          onClick={handleAddRow}
           sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
         >
           Add Row
@@ -156,6 +229,31 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
           {deletingAll ? 'Deleting…' : 'Delete All'}
         </Button>
       </Box>
+
+      <CoverBidJobReviewDialog
+        rows={rows}
+        index={reviewIndex}
+        onIndexChange={setReviewIndex}
+        onClose={() => setReviewIndex(null)}
+        onFieldChange={updateField}
+        duplicates={duplicates}
+        status={(row) => <UnsavedStatus row={row} />}
+        onDelete={requestDeleteRow}
+        renderPrimary={(row) => {
+          const saving = savingKey === row.key;
+          const dirty = isDirty(row);
+          return (
+            <Button
+              variant='contained'
+              onClick={() => saveRow(row)}
+              disabled={!dirty || saving || deletingKey === row.key}
+              sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
+            >
+              {saving ? 'Saving…' : dirty ? 'Save job' : 'Saved'}
+            </Button>
+          );
+        }}
+      />
 
       <DeleteCoverBidJobsDialog
         request={deleteRequest}

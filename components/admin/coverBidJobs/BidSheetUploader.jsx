@@ -1,35 +1,40 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   Box,
   Button,
+  Checkbox,
   IconButton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
+import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import {
-  CoverBidJobRowFields,
-  CoverBidJobRowHeadCells,
-} from './CoverBidJobRowCells';
-import CoverBidJobEditCard from './CoverBidJobEditCard';
+  FIELDS,
+  findDuplicateJobNumbers,
+  isDuplicateJobNumber,
+  rowIssues,
+  rowValues,
+} from '@/lib/coverBidJobRow';
+import { tapHaptic } from '@/lib/haptics';
 import {
   softContainedSx,
   softPressSx,
   softRaisedSmall,
-  softTableSx,
 } from '@/components/utility/soft';
+import CoverBidJobReviewDialog from './CoverBidJobReviewDialog';
+import CoverBidJobSummaryCard from './CoverBidJobSummaryCard';
+import CoverBidJobsTable from './CoverBidJobsTable';
 
 const MAX_DIMENSION = 3200;
 const JPEG_QUALITY = 0.92;
@@ -79,33 +84,92 @@ function isPdfFile(file) {
   );
 }
 
-function emptyRow() {
+// A job read off the sheet (or added by hand) before it's saved: the twelve
+// fields, whether the admin has checked it against the sheet, and which
+// uploaded file (and PDF page) it was read from, for the review to show.
+function draftRow(values = {}, { sourceIndex = null, sourcePage = null } = {}) {
   return {
-    id: crypto.randomUUID(),
-    jobNumber: '',
-    name: '',
-    assignedDriver: '',
-    coverReason: '',
-    sun: '',
-    mon: '',
-    tue: '',
-    wed: '',
-    thu: '',
-    fri: '',
-    sat: '',
-    description: '',
+    ...Object.fromEntries(FIELDS.map((field) => [field, values[field] ?? ''])),
+    key: crypto.randomUUID(),
+    checked: false,
+    sourceIndex,
+    sourcePage,
   };
 }
 
+const jobLabel = (row, index) =>
+  row.jobNumber ? `job ${row.jobNumber}` : `row ${index + 1}`;
+
+// The icon changes along with the color, so the state doesn't rest on color.
+function CheckedStatus({ checked }) {
+  return (
+    <Box
+      component='span'
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0.5,
+        typography: 'body2',
+        fontWeight: 600,
+        whiteSpace: 'nowrap',
+        color: checked ? 'primary.main' : 'text.secondary',
+      }}
+    >
+      {checked ? (
+        <CheckCircleIcon fontSize='small' />
+      ) : (
+        <RadioButtonUncheckedIcon fontSize='small' />
+      )}
+      {checked ? 'Checked' : 'Not checked'}
+    </Box>
+  );
+}
+
+const softButtonSx = [softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }];
+
+// Reads the week's jobs off photos or PDFs of the bid sheet, then has the
+// admin check each one against the sheet before saving: a table to edit in
+// place on a wide screen, cards on a phone, and a review dialog that steps
+// through the jobs with the sheet beside them. Accuracy matters more than
+// speed here, so every job carries a "checked" mark and anything odd is
+// flagged, but nothing blocks the save.
 export default function BidSheetUploader({ weekEndDate, onSaved }) {
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const wide = useMediaQuery(theme.breakpoints.up('lg'));
   const fileInputRef = useRef(null);
+  const viewerMemory = useRef({});
+  const objectUrls = useRef(new Set());
   const [rows, setRows] = useState([]);
+  // The uploaded files, as object URLs, so the review can show the sheet.
+  const [sources, setSources] = useState([]);
+  const [reviewIndex, setReviewIndex] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+
+  // Deleting the last job closes the review; it mustn't reopen on the next upload.
+  if (rows.length === 0 && reviewIndex !== null) setReviewIndex(null);
+
+  const duplicates = useMemo(() => findDuplicateJobNumbers(rows), [rows]);
+  const checkedCount = rows.filter((row) => row.checked).length;
+  const flaggedCount = rows.filter(
+    (row) =>
+      rowIssues(row, { duplicate: isDuplicateJobNumber(row, duplicates) })
+        .length > 0
+  ).length;
+
+  useEffect(() => {
+    const urls = objectUrls.current;
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, []);
+
+  const releaseSources = (list) => {
+    list.forEach(({ url }) => {
+      URL.revokeObjectURL(url);
+      objectUrls.current.delete(url);
+    });
+  };
 
   const handlePickFile = () => fileInputRef.current?.click();
 
@@ -117,6 +181,17 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
     setUploading(true);
     setError(null);
     setSuccessMessage(null);
+
+    const batch = files.map((file) => {
+      const url = URL.createObjectURL(file);
+      objectUrls.current.add(url);
+      return {
+        id: crypto.randomUUID(),
+        name: file.name,
+        kind: isPdfFile(file) ? 'pdf' : 'image',
+        url,
+      };
+    });
 
     try {
       const oversizedPdf = files.find(
@@ -146,28 +221,110 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
       if (!res.ok) {
         throw new Error(data.error || 'Failed to extract rows from upload');
       }
+      if (data.rows.length === 0) {
+        throw new Error(
+          'No job rows were found. Shoot each page flat and straight-on, then try again.'
+        );
+      }
 
-      const newRows = data.rows.map((row) => ({ id: crypto.randomUUID(), ...row }));
+      // `sourceFile` counts from 1 within this upload, and these files join
+      // any already uploaded, so offset it. A row the model didn't place goes
+      // with this upload's only file, when there's one.
+      const offset = sources.length;
+      const newRows = data.rows.map(({ sourceFile, sourcePage, ...values }) =>
+        draftRow(values, {
+          sourceIndex: sourceFile
+            ? offset + sourceFile - 1
+            : files.length === 1
+              ? offset
+              : null,
+          sourcePage,
+        })
+      );
+      setSources((prev) => [...prev, ...batch]);
       setRows((prev) => [...prev, ...newRows]);
     } catch (err) {
+      releaseSources(batch);
       setError(err.message);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleCellChange = (rowId, field, value) => {
+  const handleFieldChange = useCallback((key, field, value) => {
     setRows((prev) =>
-      prev.map((row) => (row.id === rowId ? { ...row, [field]: value } : row))
+      prev.map((row) => (row.key === key ? { ...row, [field]: value } : row))
     );
+  }, []);
+
+  const setChecked = useCallback((key, checked) => {
+    setRows((prev) =>
+      prev.map((row) => (row.key === key ? { ...row, checked } : row))
+    );
+  }, []);
+
+  const deleteRow = useCallback((key) => {
+    setRows((prev) => prev.filter((row) => row.key !== key));
+  }, []);
+
+  const renderLeading = useCallback(
+    (row, index) => (
+      <>
+        <Checkbox
+          checked={row.checked}
+          onChange={(event) => setChecked(row.key, event.target.checked)}
+          slotProps={{
+            input: {
+              'aria-label': `Checked ${jobLabel(row, index)} against the sheet`,
+            },
+          }}
+        />
+        <Tooltip title='Review'>
+          <IconButton
+            aria-label={`Review ${jobLabel(row, index)}`}
+            onClick={() => setReviewIndex(index)}
+            sx={softPressSx}
+          >
+            <OpenInFullIcon fontSize='small' />
+          </IconButton>
+        </Tooltip>
+      </>
+    ),
+    [setChecked]
+  );
+
+  const renderActions = useCallback(
+    (row, index) => (
+      <Tooltip title='Delete'>
+        <IconButton
+          aria-label={`Delete ${jobLabel(row, index)}`}
+          onClick={() => deleteRow(row.key)}
+          sx={[softPressSx, { color: 'error.main' }]}
+        >
+          <DeleteIcon fontSize='small' />
+        </IconButton>
+      </Tooltip>
+    ),
+    [deleteRow]
+  );
+
+  // Start at the first job not yet checked.
+  const startReview = () => {
+    const firstUnchecked = rows.findIndex((row) => !row.checked);
+    setReviewIndex(firstUnchecked === -1 ? 0 : firstUnchecked);
   };
 
-  const handleDeleteRow = (rowId) => {
-    setRows((prev) => prev.filter((row) => row.id !== rowId));
+  // Marks the job checked and moves on to the next; after the last, closes.
+  const handleLooksRight = (row, index) => {
+    tapHaptic();
+    setChecked(row.key, true);
+    setReviewIndex(index < rows.length - 1 ? index + 1 : null);
   };
 
   const handleAddBlankRow = () => {
-    setRows((prev) => [...prev, emptyRow()]);
+    setRows((prev) => [...prev, draftRow()]);
+    // Cards have nothing to type into, so open the new job in the review.
+    if (!wide) setReviewIndex(rows.length);
   };
 
   const handleSave = async () => {
@@ -181,7 +338,7 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           weekEnding: weekEndDate.format('YYYY-MM-DD'),
-          rows: rows.map(({ id, ...row }) => row),
+          rows: rows.map(rowValues),
         }),
       });
 
@@ -191,6 +348,9 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
       }
 
       setRows([]);
+      releaseSources(sources);
+      setSources([]);
+      viewerMemory.current = {};
       setSuccessMessage(
         `Saved ${data.data.length} job${data.data.length === 1 ? '' : 's'} for week ending ${weekEndDate.format('MM/DD/YYYY')}.`
       );
@@ -217,7 +377,7 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
         startIcon={<UploadFileIcon />}
         onClick={handlePickFile}
         disabled={uploading}
-        sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+        sx={softButtonSx}
       >
         {uploading ? 'Reading files…' : 'Upload Bid Sheet Photo(s) or PDF(s)'}
       </Button>
@@ -236,81 +396,78 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
 
       {rows.length > 0 && (
         <>
-          {isDesktop ? (
-            <TableContainer sx={{ marginTop: 2 }}>
-              <Table size='small' sx={softTableSx}>
-                <TableHead>
-                  <TableRow>
-                    <CoverBidJobRowHeadCells />
-                    <TableCell />
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id}>
-                      <CoverBidJobRowFields
-                        row={row}
-                        onChange={(field, value) =>
-                          handleCellChange(row.id, field, value)
-                        }
-                      />
-                      <TableCell>
-                        <IconButton
-                          size='small'
-                          sx={softPressSx}
-                          onClick={() => handleDeleteRow(row.id)}
-                          aria-label='Delete row'
-                        >
-                          <DeleteIcon fontSize='small' />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+          <Box
+            sx={{
+              mt: 3,
+              mb: 2,
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: { xs: 'stretch', sm: 'center' },
+              gap: 2,
+            }}
+          >
+            <Button
+              startIcon={<FactCheckOutlinedIcon />}
+              onClick={startReview}
+              sx={softButtonSx}
+            >
+              {checkedCount === 0
+                ? 'Review jobs'
+                : checkedCount < rows.length
+                  ? 'Continue review'
+                  : 'Review again'}
+            </Button>
+            <Typography variant='body2' role='status'>
+              {checkedCount} of {rows.length} checked against the sheet
+              {flaggedCount > 0 && ` · ${flaggedCount} flagged`}
+            </Typography>
+          </Box>
+
+          {wide ? (
+            <CoverBidJobsTable
+              rows={rows}
+              duplicates={duplicates}
+              onFieldChange={handleFieldChange}
+              renderLeading={renderLeading}
+              renderActions={renderActions}
+              leadingLabel='Checked, and review'
+            />
           ) : (
-            <Stack spacing={1.5} sx={{ marginTop: 2 }}>
-              {rows.map((row) => (
-                <CoverBidJobEditCard
-                  key={row.id}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' },
+                gap: 2,
+              }}
+            >
+              {rows.map((row, index) => (
+                <CoverBidJobSummaryCard
+                  key={row.key}
                   row={row}
-                  onChange={(field, value) =>
-                    handleCellChange(row.id, field, value)
-                  }
-                  actions={
-                    <IconButton
-                      size='small'
-                      sx={softPressSx}
-                      onClick={() => handleDeleteRow(row.id)}
-                      aria-label='Delete row'
-                    >
-                      <DeleteIcon fontSize='small' />
-                    </IconButton>
-                  }
+                  index={index}
+                  duplicate={isDuplicateJobNumber(row, duplicates)}
+                  status={<CheckedStatus checked={row.checked} />}
+                  onOpen={setReviewIndex}
                 />
               ))}
-            </Stack>
+            </Box>
           )}
 
           <Box
             sx={{
-              marginTop: 2,
+              marginTop: 3,
               display: 'flex',
               flexDirection: { xs: 'column', sm: 'row' },
               gap: 2,
               alignItems: { xs: 'stretch', sm: 'center' },
             }}
           >
-            <Button
-              onClick={handleAddBlankRow}
-              sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
-            >
+            <Button onClick={handleAddBlankRow} sx={softButtonSx}>
               Add Row
             </Button>
             <Button
               variant='contained'
-              sx={softContainedSx}
+              sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
               onClick={handleSave}
               disabled={saving || !weekEndDate}
             >
@@ -329,6 +486,29 @@ export default function BidSheetUploader({ weekEndDate, onSaved }) {
           each page flat and straight-on for the most accurate results.
         </Typography>
       )}
+
+      <CoverBidJobReviewDialog
+        rows={rows}
+        index={reviewIndex}
+        onIndexChange={setReviewIndex}
+        onClose={() => setReviewIndex(null)}
+        onFieldChange={handleFieldChange}
+        duplicates={duplicates}
+        status={(row) => <CheckedStatus checked={row.checked} />}
+        onDelete={(row) => deleteRow(row.key)}
+        renderPrimary={(row, index) => (
+          <Button
+            variant='contained'
+            startIcon={<CheckIcon />}
+            onClick={() => handleLooksRight(row, index)}
+            sx={[softContainedSx, { px: 3, minHeight: '3rem', whiteSpace: 'nowrap' }]}
+          >
+            Looks right
+          </Button>
+        )}
+        sources={sources}
+        viewerMemory={viewerMemory}
+      />
     </Box>
   );
 }

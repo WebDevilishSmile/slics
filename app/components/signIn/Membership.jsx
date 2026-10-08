@@ -6,6 +6,7 @@ import RequestAccess from './RequestAccess';
 import { isMobileDevice, serializeUser } from '@/utils/functions';
 import { headers } from 'next/headers';
 import BmcButton from '../layout/BmcButton';
+import RefreshOnReturn from './RefreshOnReturn';
 
 async function Membership() {
   // Ensure the auth function is called to get the session
@@ -68,6 +69,7 @@ async function Membership() {
       </Typography>
 
       <BmcButton />
+      <RefreshOnReturn />
 
       <Typography
         variant='body2'

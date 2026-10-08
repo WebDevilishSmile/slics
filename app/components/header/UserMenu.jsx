@@ -55,13 +55,16 @@ const rowSx = {
 };
 
 // An internal page. next/link makes it a client-side navigation instead of a
-// full reload (#53); the drawer closes itself when the route changes.
-function NavItem({ href, label, secondary, icon, current }) {
+// full reload (#53). `onClick` closes the drawer on the tap itself, so it's
+// out of the way while the page loads and also closes for the page that's
+// already open (which has no route change to close it).
+function NavItem({ href, label, secondary, icon, current, onClick }) {
   return (
     <ListItem disablePadding>
       <ListItemButton
         component={Link}
         href={href}
+        onClick={onClick}
         selected={current}
         aria-current={current ? 'page' : undefined}
         sx={rowSx}
@@ -201,12 +204,14 @@ function UserMenu({ user, signOutAction }) {
           <>
             <List>
               <NavItem
+                onClick={handleClose}
                 href='/home'
                 label='Look up a SLIC'
                 icon={<SearchOutlined />}
                 current={isCurrent('/home', true)}
               />
               <NavItem
+                onClick={handleClose}
                 href='/all'
                 label='All Hubs'
                 icon={<HubOutlined />}
@@ -215,6 +220,7 @@ function UserMenu({ user, signOutAction }) {
               {user.bmcMember && (
                 <>
                   <NavItem
+                    onClick={handleClose}
                     href='/history'
                     label='My History'
                     secondary='Member only'
@@ -222,6 +228,7 @@ function UserMenu({ user, signOutAction }) {
                     current={isCurrent('/history')}
                   />
                   <NavItem
+                    onClick={handleClose}
                     href='/cover-bid-jobs'
                     label='Cover Bids'
                     secondary='Member only'
@@ -234,6 +241,7 @@ function UserMenu({ user, signOutAction }) {
                   role check to launch it to every driver. */}
               {user.role === 'admin' && (
                 <NavItem
+                  onClick={handleClose}
                   href='/whip-it-in-and-out'
                   label='Whip It In & Out'
                   secondary='Admin only for now'
@@ -249,6 +257,7 @@ function UserMenu({ user, signOutAction }) {
         <List>
           {user && (
             <NavItem
+              onClick={handleClose}
               href={`/profile/${user.id}`}
               label='Profile'
               icon={<PersonOutline />}
@@ -258,6 +267,7 @@ function UserMenu({ user, signOutAction }) {
           {/* /covers is built but deliberately not linked yet. */}
           {user?.role === 'admin' && (
             <NavItem
+              onClick={handleClose}
               href='/admin'
               label='Admin'
               secondary='Admin only'
@@ -266,6 +276,7 @@ function UserMenu({ user, signOutAction }) {
             />
           )}
           <NavItem
+            onClick={handleClose}
             href='/about'
             label='About'
             icon={<InfoOutlined />}
@@ -323,6 +334,7 @@ function UserMenu({ user, signOutAction }) {
             </ListItem>
           ) : (
             <NavItem
+              onClick={handleClose}
               href='/'
               label='Sign in'
               icon={<LoginOutlined />}

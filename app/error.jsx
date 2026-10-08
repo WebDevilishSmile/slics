@@ -32,7 +32,9 @@ function Error({ error, reset }) {
         <Button variant='contained' color='primary' onClick={() => reset()}>
           Try again
         </Button>
-        <Button variant='outlined' color='primary' href='/'>
+        {/* A plain link on purpose: after a crash, a full reload is the
+            surest way back to a clean app (the theme defaults to next/link). */}
+        <Button variant='outlined' color='primary' href='/' LinkComponent='a'>
           Go to Home
         </Button>
       </Box>

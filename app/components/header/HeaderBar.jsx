@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ import {
   useScrollTrigger,
 } from '@mui/material';
 
+import NavigationProgress from './NavigationProgress';
 import UserMenu from './UserMenu';
 
 // The page name shown next to the back arrow, by path prefix (the longest
@@ -131,6 +132,10 @@ export default function HeaderBar({ user, signOutAction }) {
           />
         </Box>
       </Toolbar>
+      {/* useSearchParams needs a Suspense boundary on static pages. */}
+      <Suspense fallback={null}>
+        <NavigationProgress />
+      </Suspense>
     </AppBar>
   );
 }

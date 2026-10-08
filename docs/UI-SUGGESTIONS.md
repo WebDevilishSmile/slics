@@ -1735,9 +1735,38 @@ reads the session.
 
 ### 53. Internal links reload the whole page
 
-- [ ] **Files:** `utils/theme.js`, plus roughly two dozen internal `href`s on MUI components
+- [x] **Files:** `utils/theme.js`, plus roughly two dozen internal `href`s on MUI components
       (e.g. `header/UserMenu.jsx` ×5, `admin/page.jsx` ×6, `signIn/Membership.jsx`,
       `layout/RedirectMessage.jsx`, `not-found.jsx`)
+
+_Done 2026-10-08,_ in the theme, with a progress bar for the wait.
+
+- **The default:** `MuiButtonBase` gets `LinkComponent: NextLink` and `MuiLink` gets
+  `component: NextLink`, so every `href` on a Button, IconButton, ListItemButton or Link
+  navigates client-side. External, `mailto:` and `tel:` links still open as before.
+- **The opt-out:** `app/error.jsx` keeps a full reload on "Go to Home"
+  (`LinkComponent='a'`), because after a crash a fresh document is the surest way back.
+- **The wait:** `header/NavigationProgress.jsx` is a thin bar along the bottom of the header.
+  It starts on a tap of an internal link, appears only after 150ms (so a prefetched page
+  never flashes it), and stops when the URL changes or after 15s. It listens for clicks
+  instead of using `useLinkStatus`, so one component covers every link in the app.
+  `router.push` navigations don't show it.
+- **The menu:** each drawer row closes the drawer on the tap itself, so the drawer is out of
+  the way while the page loads. A tap on the page that's already open also closes it.
+- **The blast radius:** the header is rendered once, in the root layout, and a client-side
+  navigation doesn't re-render it. Pages still get fresh server data, because Next 15
+  doesn't cache dynamic pages on the client, but the header's menu keeps the session it
+  loaded with. The case that matters is membership. The Buy Me a Coffee page opens in a new
+  tab, so `signIn/RefreshOnReturn.jsx` on the membership screen calls `router.refresh()`
+  when the driver comes back to the tab. That re-renders the layout too, so "My History"
+  appears without a reload. A role or membership change made by an admin still shows in
+  the header on the next full load. Sign-in and sign-out set cookies, which already makes
+  Next refetch the whole tree.
+- **Checked in headless Chrome, signed out:** the footer links, the `Privacy Policy` link in
+  the terms text and the menu rows all navigate in the same document. The bar shows on a
+  slow route and is gone once the page is in. A tap on a protected page while signed out
+  still ends at `/signin` with a full load, from the middleware redirect, the same as
+  before.
 
 A MUI `Button`, `IconButton` or `ListItemButton` with an `href` renders a plain `<a>`. Every
 menu tap therefore reloads the whole document: the header, theme and session re-initialize

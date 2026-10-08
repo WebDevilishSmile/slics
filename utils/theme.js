@@ -1,3 +1,4 @@
+import NextLink from 'next/link';
 import { lightBlue } from '@mui/material/colors';
 import {
   alpha,
@@ -222,6 +223,25 @@ let theme = createTheme({
         root: {
           borderRadius: 18,
         },
+      },
+    },
+
+    // Internal links navigate client-side (UI-SUGGESTIONS.md #53). A Button,
+    // IconButton, ListItemButton, … with an `href` renders through next/link
+    // instead of a plain <a>, so a tap no longer reloads the whole document,
+    // and so does a MUI <Link>. External, mailto: and tel: hrefs still
+    // behave as plain links (next/link leaves non-local URLs to the browser).
+    // Opt out with `LinkComponent='a'` (ButtonBase) or `component='a'` (Link)
+    // where a full reload is the point (app/error.jsx).
+    // header/NavigationProgress.jsx shows the wait.
+    MuiButtonBase: {
+      defaultProps: {
+        LinkComponent: NextLink,
+      },
+    },
+    MuiLink: {
+      defaultProps: {
+        component: NextLink,
       },
     },
 

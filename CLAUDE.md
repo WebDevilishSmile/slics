@@ -86,6 +86,24 @@ Rate limiting (`utils/rateLimit.js`) is a MongoDB-backed fixed-window limiter, d
 - Custom hooks live in `utils/clientFunctions.js` (`'use client'` module) — e.g. `useGeolocation`, `useAppleDevice`, `useInstallPrompt`. For "is this a phone", use `useMediaQuery(theme.breakpoints.down('sm'))` against the theme's breakpoints; the old `useIsMobile` hook (a private 768px cutoff) was removed in `docs/UI-SUGGESTIONS.md` #29. Prefer adding new cross-component browser-state hooks here over duplicating logic in a component.
 - `app/context/CommentRefreshContext.js` is the refresh lock for the *server-rendered* comment lists (profile page, admin user page): `CommentDelete` calls its `refresh()` (a `useTransition` around `router.refresh()`) and every delete button in the list disables while `isRefreshing`. The home-page "Driver tips" section (`components/comments/Comments.jsx`) is client-fetched and refetches its own thread instead — the two don't share state.
 
+### Visual style: soft / embossed (match it in every UI change)
+
+Since 2026-10-07 the app's look is a **soft, embossed (neumorphic) style in the existing colors**. The lookup card, the SLIC search bar and the Driver tips use it. **Any UI you add or change should match it**, not the older outlined/elevated MUI look. Restyle what you touch, and say so in the summary. The rules:
+
+- **Inside a `<Paper variant='panel'>`**, build with the helpers in `app/components/utility/soft.js`:
+  - `softRaised` for cards and tiles;
+  - `softRaisedSmall` for pills and chips;
+  - `softInset` for wells (an address, a reply list, a sort track);
+  - `softInputSx` for text fields, which are wells with a placeholder (never a floating label) and the `softFocus` glow on focus;
+  - `softPressSx` for anything tappable, which presses in while held and stays pressed while `aria-pressed`.
+
+  Soft elements share the panel's surface, so light and shadow do the separating: no borders, no outlined variants, no extra Paper `elevation`. On the page background, use the same surface as a raised element: see the search bar in `home/SlicsSearch.jsx`.
+- **Color stays the theme's.** One solid brand-blue (`primary`, contained) element per card, its main action, sitting on `theme.soft.raisedSmall` instead of MUI's drop shadow. Everything else is surface-colored with `primary.main` icons and text. Status colors (error, the red "new" badge) keep their meaning. The shadow values are `theme.soft` in `utils/theme.js`; tune them there, never per component.
+- **Classy, not gimmicky.** Generous radii (16px cards and tiles, pill chips), even spacing (`gap` 1.5–3) so shadows have room, and restraint: one emboss level per element, never a raised card on a raised card. Nested content goes in an inset well.
+- **Don't trade away accessibility for the look.** A pressed or selected state also changes the icon (filled vs outlined) or the color, not just the shadow. Focus rings stay visible. Touch targets stay at least 40–48px. Text keeps AA contrast.
+- **Loading states** are `<Skeleton>`s shaped like the content, inside the same soft shapes (`home/SlicCardSkeleton.jsx`, `layout/LoadingFallback.jsx`). No "Loading..." text.
+- **Check light and dark at phone width** for every change. The dark scheme's emboss is subtler by design.
+
 ### External integrations
 
 - **Google Gemini** (`@google/genai`, `GEMINI_API_KEY`) — used by `app/api/coverBidJobs/extract` for extracting structured data.

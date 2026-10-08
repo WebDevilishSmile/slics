@@ -20,6 +20,13 @@ It has two parts:
 do it, check the box. Each item states its _blast radius_ so you can judge risk before
 starting.
 
+**Design direction (since 2026-10-07):** the app is moving to a soft, embossed
+(neumorphic) style in its existing colors. The lookup card, the search bar and the Driver
+tips already have it. Whatever an item changes should match that style, using the helpers in
+`app/components/utility/soft.js` and the rules in `CLAUDE.md` → "Visual style: soft /
+embossed". That holds even where an item's own text predates this and suggests outlined
+or elevated MUI defaults.
+
 **Before shipping any item:** there is no test suite in this repo. Run `npm run build`,
 then click through the affected screens in **both light and dark mode** at phone width.
 The app is used daily in production.
@@ -1186,6 +1193,8 @@ fewer bytes before the first text paints on a weak phone signal.
 
 ## Tier C — The lookup screen
 
+_Tier C complete 2026-10-07 (#40–#46), in the soft / embossed style._
+
 ### 40. Put the SLIC first in the details card
 
 - [x] **Files:** `home/SlicDetailsContainer.jsx`, `home/TitleAddress.jsx`
@@ -1272,7 +1281,26 @@ that the one big button and the rest secondary:
 
 ### 42. Search that remembers
 
-- [ ] **File:** `home/SlicsSearch.jsx`
+- [x] **File:** `home/SlicsSearch.jsx`
+
+_Done 2026-10-07:_ all four upgrades, in the soft style. The search is a raised pill in the
+panel surface that presses in with a primary glow on focus, with a search icon and a
+placeholder ("SLIC, code or name") in place of a floating label.
+
+1. **Recent:** `openOnFocus` shows this device's last six lookups under "Recent", then "All
+   SLICs". The list is `utils/recentLookups.js`, a separate module rather than an extension
+   of `recordLookup`; `home/Main.jsx` records it. While typing, the list is matches only,
+   ungrouped.
+2. **Options:** each one shows the alpha code or name in bold, a line like `SLIC 1809 ·
+   Easton` (customers add their code), and a hub or storefront icon. The match is
+   highlighted in primary, by a small local `Highlight`. Matching covers the number, code,
+   name and city.
+3. **Enter:** `autoHighlight`, so Enter takes the top match.
+4. **Donation notice:** it closes, and closing snoozes it for 30 days (localStorage, like
+   the install nudge).
+
+Also: a pick shows its SLIC at once from the in-memory list (#43). The URL follows through
+`router.push`.
 
 The search is an `Autocomplete` over plain strings. Upgrades, in order of value:
 
@@ -1293,9 +1321,24 @@ The search is an `Autocomplete` over plain strings. Upgrades, in order of value:
 
 ### 43. Skeletons instead of "Loading..."
 
-- [ ] **Files:** `app/loading.jsx`, `layout/LoadingFallback.jsx`, `home/SlicDisplay.jsx`,
+- [x] **Files:** `app/loading.jsx`, `layout/LoadingFallback.jsx`, `home/SlicDisplay.jsx`,
       `comments/Comment.jsx`, plus the `covers/` and admin loaders (8 files contain a
       "Loading..." string)
+
+_Done 2026-10-07:_ no "Loading..." text is left in the app. Every skeleton is in the soft
+style.
+
+- **Lookup card:** `home/SlicCardSkeleton.jsx`, shaped like the real card: title and
+  subline with the type pill, the address well, Navigate, and three tiles.
+- **Tips:** two tip-card skeletons (`comments/Comments.jsx`). "Loading comment..." was
+  already gone with #45.
+- **Pages:** `layout/LoadingFallback.jsx` is a title bar and a panel of soft blocks. The
+  route loaders (`app/loading.jsx`, `covers/`, `admin/cover/drivers/`) and the covers
+  Suspense fallback render it.
+- **Cover bids admin:** row skeletons.
+- **Instant pick:** picking a SLIC shows it at once from the in-memory list
+  (`home/Main.jsx` `showSlic`). The comment count waits until the URL matches, so the Tips
+  badge never shows the previous SLIC's count.
 
 The waiting states today:
 
@@ -1314,8 +1357,21 @@ fetched.
 
 ### 44. A useful empty state on `/home` (and delete the dead carousel)
 
-- [ ] **Files:** `home/EmptySlic.jsx`, `home/EmblaCarousel.jsx`, `app/globals.css:83-217`,
+- [x] **Files:** `home/EmptySlic.jsx`, `home/EmblaCarousel.jsx`, `app/globals.css:83-217`,
       `package.json`
+
+_Done 2026-10-07:_ `home/EmptySlic.jsx` is now the one empty state, and `MemberDisplay.jsx`
+is gone. It follows the suggested order, in the soft style:
+
+1. **Recent lookups:** raised chips with a hub or storefront icon. Each opens
+   `/home?slic=`.
+2. **A tip:** one-line, in an inset well, picked at random from four.
+3. **Support:** a quiet last line. Members see a thanks and a "Your lookup history" link;
+   everyone else sees "Buy me a coffee".
+
+The first visit on a device has no recents, so it shows a "Look up a SLIC" intro instead.
+The dead carousel, its CSS and the `embla-carousel-react` dependency were already gone
+before this item.
 
 With no SLIC selected, non-members see "Welcome to SLICs 5.0", the logo and a Buy Me a
 Coffee button. Better, in this order:

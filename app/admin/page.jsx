@@ -1,6 +1,5 @@
-import { Button, ButtonGroup, Typography, Box } from '@mui/material';
-import Link from 'next/link';
-
+import { Typography, Paper } from '@mui/material';
+import AdminLinks from '../components/admin/AdminLinks';
 
 async function AdminPage() {
   const adminLinks = [
@@ -17,18 +16,9 @@ async function AdminPage() {
     <>
       <Typography variant='sectionHeading'>Admin Page</Typography>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 4 }}>
-        {adminLinks.map(({ href, label }) => (
-          <Button
-            variant='contained'
-            key={href}
-            LinkComponent={Link}
-            href={href}
-          >
-            {label}
-          </Button>
-        ))}
-      </Box>
+      <Paper variant='panel'>
+        <AdminLinks links={adminLinks} />
+      </Paper>
     </>
   );
 }

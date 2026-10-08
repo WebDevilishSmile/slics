@@ -2,6 +2,7 @@ import { serializeSlic } from '@/lib/serializers';
 import { TableCell, TableRow, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import SlicOptions from './SlicOptions';
+import { wideOnly } from './SlicsTableHeader';
 
 function editorLabel(userStamp) {
   if (!userStamp) return null;
@@ -14,12 +15,7 @@ function SlicRow({ slic }) {
 
   return (
     <TableRow key={slic._id}>
-      <TableCell
-        sx={{
-          whiteSpace: 'nowrap',
-          maxWidth: '4rem',
-        }}
-      >
+      <TableCell sx={[wideOnly, { whiteSpace: 'nowrap' }]}>
         {dayjs(slic.created_at).format('MM/DD/YY')}
       </TableCell>
       <TableCell
@@ -41,7 +37,8 @@ function SlicRow({ slic }) {
       <TableCell
         sx={{
           whiteSpace: 'nowrap',
-          maxWidth: '4rem',
+          // With the dates hidden on a phone, the name gets the room.
+          maxWidth: { xs: '9rem', sm: '8rem' },
           overflow: 'hidden',
           textOverflow: 'ellipsis',
         }}
@@ -50,6 +47,7 @@ function SlicRow({ slic }) {
       </TableCell>
       <TableCell
         sx={{
+          ...wideOnly,
           whiteSpace: 'nowrap',
           maxWidth: '6rem',
           overflow: 'hidden',

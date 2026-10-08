@@ -8,9 +8,7 @@ import {
   Paper,
   Table,
   TableContainer,
-  TableFooter,
   TablePagination,
-  TableRow,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { softContainedSx, softTableSx } from '@/components/utility/soft';
@@ -99,7 +97,13 @@ function SlicsTable({ slics }) {
         </Button>
       </Box>
       <TableContainer>
-        <Table sx={softTableSx}>
+        <Table
+          sx={[
+            softTableSx,
+            // Tighter cells on a phone, so four columns fit without scrolling.
+            { '& .MuiTableCell-root': { px: { xs: 1, sm: 2 } } },
+          ]}
+        >
           <SlicsTableHeader
             sort={sort}
             setSort={setSort}
@@ -108,20 +112,17 @@ function SlicsTable({ slics }) {
           />
 
           <SlicsBody slics={filteredSlics} page={page} />
-
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPage={SLICS_PER_PAGE}
-                rowsPerPageOptions={[]}
-                onPageChange={handleChangePage}
-                count={filteredSlics.length}
-                page={page}
-              />
-            </TableRow>
-          </TableFooter>
         </Table>
       </TableContainer>
+      {/* Outside the table, so it never scrolls sideways with it. */}
+      <TablePagination
+        component='div'
+        rowsPerPage={SLICS_PER_PAGE}
+        rowsPerPageOptions={[]}
+        onPageChange={handleChangePage}
+        count={filteredSlics.length}
+        page={page}
+      />
     </Paper>
   );
 }

@@ -103,6 +103,10 @@ export const softTableSx = (theme) => ({
     color: theme.vars.palette.primary.main,
     fontWeight: 600,
   },
+  // A sortable header (TableSortLabel) keeps the header's brand blue instead
+  // of MUI's grays, arrow included.
+  '& .MuiTableSortLabel-root, & .MuiTableSortLabel-root:hover, & .MuiTableSortLabel-root:focus, & .MuiTableSortLabel-root.Mui-active, & .MuiTableSortLabel-root.Mui-active .MuiTableSortLabel-icon':
+    { color: 'inherit' },
   '& .MuiTableBody-root .MuiTableRow-root:hover': {
     backgroundColor: theme.vars.palette.action.hover,
   },

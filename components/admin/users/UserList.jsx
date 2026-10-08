@@ -209,6 +209,9 @@ function UserList({ users, viewCounts = {} }) {
             page={page + 1}
             onChange={(_, val) => update({ page: val - 1 })}
             color='primary'
+            // Just the current page between the first and last, so the
+            // arrows stay on one line at phone width.
+            siblingCount={0}
           />
         </Box>
       )}

@@ -76,7 +76,7 @@ function DriversTable({ allDrivers }) {
                     {index + 1 + page * rowsPerPage}
                   </TableCell>
                   <TableCell>{driver.name}</TableCell>
-                  <TableCell sx={{ width: '9rem' }}>
+                  <TableCell sx={{ width: '9rem', whiteSpace: 'nowrap' }}>
                     {/* Displaying the cleaned string directly */}
                     {driver.seniorityDate.includes('-A')
                       ? driver.seniorityDate.replace('-A', '')

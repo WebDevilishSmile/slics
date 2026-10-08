@@ -9,7 +9,8 @@ import PlaceComment from './PlaceComment';
 import PlaceCommentComposer from './PlaceCommentComposer';
 
 // Moves the viewer's vote on one comment (top-level or reply) the way the
-// server will: one vote per driver, switching sides moves it.
+// server will: one vote per driver, switching sides moves it, null takes it
+// back.
 function applyVote(comments, commentId, voteType) {
   const update = (comment) => {
     if (comment._id !== commentId || comment.myVote === voteType) return comment;
@@ -17,7 +18,7 @@ function applyVote(comments, commentId, voteType) {
     if (comment.myVote === 'up') next.upCount -= 1;
     if (comment.myVote === 'down') next.downCount -= 1;
     if (voteType === 'up') next.upCount += 1;
-    else next.downCount += 1;
+    if (voteType === 'down') next.downCount += 1;
     return next;
   };
   return comments.map((comment) => ({

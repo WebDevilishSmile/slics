@@ -445,21 +445,22 @@ export async function deletePlaceComment(comment) {
   return 'deleted';
 }
 
-// Same shape as the SLIC comment vote: one vote per driver per comment,
-// switching sides moves it. Returns false for a missing or deleted comment.
+// Same shape as the SLIC comment vote: one vote per driver per comment.
+// 'up' or 'down' sets it (moving it off the other side); null clears it,
+// which is how tapping your own vote again takes it back. Returns false for
+// a missing or deleted comment.
 export async function votePlaceComment(commentId, voteType, userId) {
-  const voteField = voteType === 'up' ? 'upVotes' : 'downVotes';
-  const oppositeField = voteType === 'up' ? 'downVotes' : 'upVotes';
+  const update =
+    voteType === null
+      ? { $pull: { upVotes: userId, downVotes: userId } }
+      : {
+          $addToSet: { [voteType === 'up' ? 'upVotes' : 'downVotes']: userId },
+          $pull: { [voteType === 'up' ? 'downVotes' : 'upVotes']: userId },
+        };
   const result = await client
     .db()
     .collection('placeComments')
-    .updateOne(
-      { _id: new ObjectId(commentId), deleted: { $ne: true } },
-      {
-        $addToSet: { [voteField]: userId },
-        $pull: { [oppositeField]: userId },
-      },
-    );
+    .updateOne({ _id: new ObjectId(commentId), deleted: { $ne: true } }, update);
   return result.matchedCount > 0;
 }
 

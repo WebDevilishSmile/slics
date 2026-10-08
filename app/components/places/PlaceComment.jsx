@@ -99,15 +99,15 @@ function PlaceComment({
     await onChanged();
   };
 
-  // One vote per driver; switching sides moves it. Casting one pops the
-  // filled thumb (.pop, only on the tap) with an Android haptic tick
-  // (UI-SUGGESTIONS.md #51).
+  // One vote per driver; switching sides moves it, tapping your own vote
+  // again takes it back. Casting one pops the filled thumb (.pop, only on
+  // the tap) with an Android haptic tick (UI-SUGGESTIONS.md #51).
   const [popped, setPopped] = useState(null);
   const vote = (voteType) => {
-    if (comment.myVote === voteType) return;
-    setPopped(voteType);
+    const next = comment.myVote === voteType ? null : voteType;
+    setPopped(next);
     tapHaptic();
-    onVote(comment._id, voteType);
+    onVote(comment._id, next);
   };
 
   // Replies sit in a well pressed into the comment's card: one raised card

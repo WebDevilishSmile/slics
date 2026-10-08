@@ -3,8 +3,8 @@ import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { votePlaceComment } from '@/utils/placesApi';
 
-// POST `{ voteType: 'up' | 'down' }` — any signed-in driver, one vote per
-// comment; voting the other way moves it.
+// POST `{ voteType: 'up' | 'down' | null }` — any signed-in driver, one vote
+// per comment; voting the other way moves it, null takes it back.
 export async function POST(request, { params }) {
   const session = await auth();
   if (!session)
@@ -21,12 +21,13 @@ export async function POST(request, { params }) {
   } catch {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
   }
-  if (!['up', 'down'].includes(body?.voteType)) {
+  const voteType = body?.voteType ?? null;
+  if (!['up', 'down', null].includes(voteType)) {
     return NextResponse.json({ error: 'Invalid vote type' }, { status: 400 });
   }
 
   try {
-    const found = await votePlaceComment(id, body.voteType, session.user.id);
+    const found = await votePlaceComment(id, voteType, session.user.id);
     if (!found)
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
     return NextResponse.json({ success: true });

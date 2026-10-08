@@ -5,6 +5,7 @@ import {
   createComment,
   deleteSlicComment,
   getCommentById,
+  validateCommentPin,
   validateSlicComment,
 } from '@/utils/commentsApi';
 import { checkRateLimit } from '@/utils/rateLimit';
@@ -14,8 +15,9 @@ import { checkRateLimit } from '@/utils/rateLimit';
 const COMMENT_LIMIT = 10;
 const COMMENT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 
-// POST `{ numSlic, content, parentId? }` — a plain-text tip, or a reply when
-// `parentId` is set (a reply to a reply joins the same thread).
+// POST `{ numSlic, content, parentId?, pin? }` — a plain-text tip, or a reply
+// when `parentId` is set (a reply to a reply joins the same thread). `pin` is
+// an optional `{ lat, lng }`; with one, `content` may be empty.
 export async function POST(request) {
   const session = await auth();
   if (!session)
@@ -47,7 +49,11 @@ export async function POST(request) {
   if (parentId && !ObjectId.isValid(parentId))
     return NextResponse.json({ error: 'Invalid reply target.' }, { status: 400 });
 
-  const { content, error } = validateSlicComment(body.content);
+  const { pin, error: pinError } = validateCommentPin(body.pin);
+  if (pinError) return NextResponse.json({ error: pinError }, { status: 400 });
+  const { content, error } = validateSlicComment(body.content, {
+    allowEmpty: Boolean(pin),
+  });
   if (error) return NextResponse.json({ error }, { status: 400 });
 
   try {
@@ -55,6 +61,7 @@ export async function POST(request) {
       numSlic,
       parentId: parentId || null,
       content,
+      pin,
       userId: session.user.id,
     });
     if (result.notFound)

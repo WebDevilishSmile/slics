@@ -79,6 +79,7 @@ export const SLIC_COMMENT_EXAMPLE = {
   numSlic: 'SLIC_ID', // numSlic of the SLIC this comment belongs to
   upVotes: ['user_id1', 'user_id2'], // Array of user IDs who upvoted the comment
   downVotes: [], // Array of user IDs who downvoted the comment
+  pin: { lat: 40.2732, lng: -76.8867 }, // optional spot the tip points at
 };
 
 // Statuses for a gym on the Planet Fitness page (/admin/planet-fitness). The

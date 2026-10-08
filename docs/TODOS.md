@@ -44,8 +44,8 @@
 ### SLIC Lookup
 
 - [ ] improve the UI/UX for better user experience
-- [ ] add ability for driver to add gps coordinates or pin to comment
 - [ ] add ability for driver to add photos or attachments to comments (must reduce file size, use vercel blob storage)
+- [x] add ability for driver to add gps coordinates or pin to comment ("Add pin" in the tip and reply boxes and when editing, with or without text; "Pinned spot" opens it in the driver's maps app)
 - [x] add ability to cycle through tips on empty state display (a "next tip" arrow; each visit starts at the tip after the last one seen)
 - [x] add ability for driver to edit their own comments
 

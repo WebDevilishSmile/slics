@@ -10,12 +10,14 @@ import {
 import { Box, Button, Typography } from '@mui/material';
 
 import CommentContent from '../comments/CommentContent';
+import CommentPin from '../comments/CommentPin';
 import { softPressSx, softRaised, softRaisedSmall } from '../utility/soft';
 import CommentDelete from './CommentDelete';
 
 // One of a driver's tips, listed on their profile and on the admin user page:
 // a soft raised card (utility/soft.js) like a tip on /home, with the SLIC it
-// belongs to, a link back to it, the tip, its date and votes, and delete.
+// belongs to, a link back to it, the tip and its pin, its date and votes,
+// and delete.
 // `comment` is serialized (utils/functions.js serializeComment). `index`
 // staggers the entry fade.
 function CommentCard({ comment, index = 0 }) {
@@ -56,7 +58,11 @@ function CommentCard({ comment, index = 0 }) {
       </Box>
 
       <Box sx={{ mt: 1.5 }}>
-        <CommentContent comment={comment} />
+        {/* A tip can be just a pin. */}
+        {comment.content && <CommentContent comment={comment} />}
+        {comment.pin && (
+          <CommentPin pin={comment.pin} sx={comment.content ? { mt: 1 } : undefined} />
+        )}
       </Box>
 
       <Box

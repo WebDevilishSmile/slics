@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {
+  AddLocationAltOutlined,
   DeleteOutline,
   EditOutlined,
   Reply,
@@ -33,7 +34,9 @@ import { tapHaptic } from '@/utils/clientFunctions';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 
 import CommentComposer from './CommentComposer';
+import PinField, { formatPin, readPin } from '../form/PinField';
 import CommentContent, { commentToText } from './CommentContent';
+import CommentPin from './CommentPin';
 import VotersDialog from './VotersDialog';
 import {
   softContainedSx,
@@ -67,6 +70,8 @@ function Comment({
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
+  const [pinOpen, setPinOpen] = useState(false);
+  const [pinText, setPinText] = useState('');
   const [replying, setReplying] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [votersOpen, setVotersOpen] = useState(false);
@@ -93,18 +98,28 @@ function Comment({
 
   const startEditing = () => {
     setDraft(commentToText(comment));
+    setPinOpen(Boolean(comment.pin));
+    setPinText(comment.pin ? formatPin(comment.pin) : '');
     setError('');
     setEditing(true);
   };
 
   const handleSave = async () => {
+    // The pin is always sent: null removes one the tip had.
+    const pin = pinOpen ? readPin(pinText) : null;
+    if (pin === false) {
+      setError(
+        "Couldn't read the pin. Paste coordinates like 40.2732, -76.8867 or a Google Maps link, or remove the pin.",
+      );
+      return;
+    }
     setSaving(true);
     setError('');
     const { error: message } = await apiRequest(
       `/api/comments/${comment._id}`,
       {
         method: 'PATCH',
-        body: { content: draft },
+        body: { content: draft, pin },
       },
     );
     setSaving(false);
@@ -302,7 +317,29 @@ function Comment({
             }}
             sx={softInputSx}
           />
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+          {pinOpen && (
+            <PinField
+              value={pinText}
+              onChange={setPinText}
+              onRemove={() => {
+                setPinOpen(false);
+                setPinText('');
+              }}
+              helperText="In Google Maps, long-press the spot, copy the coordinates and paste them here. Use my location only when you're at the spot."
+              disabled={saving}
+            />
+          )}
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 1 }}>
+            {!pinOpen && (
+              <Button
+                onClick={() => setPinOpen(true)}
+                disabled={saving}
+                startIcon={<AddLocationAltOutlined />}
+                sx={[softRaisedSmall, softPressSx, { px: 1.5, mr: 'auto' }]}
+              >
+                Add pin
+              </Button>
+            )}
             <Button
               onClick={() => setEditing(false)}
               disabled={saving}
@@ -313,7 +350,7 @@ function Comment({
             <Button
               variant='contained'
               onClick={handleSave}
-              disabled={saving || !draft.trim()}
+              disabled={saving || (!draft.trim() && !(pinOpen && readPin(pinText)))}
               sx={softContainedSx}
             >
               {saving ? 'Saving…' : 'Save'}
@@ -322,7 +359,11 @@ function Comment({
         </Box>
       ) : (
         <Box sx={{ mt: 1 }}>
-          <CommentContent comment={comment} />
+          {/* A tip can be just a pin. */}
+          {comment.content && <CommentContent comment={comment} />}
+          {comment.pin && (
+            <CommentPin pin={comment.pin} sx={comment.content ? { mt: 1 } : undefined} />
+          )}
         </Box>
       )}
 

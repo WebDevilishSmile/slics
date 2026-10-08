@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   ArrowDropDown,
   ChatBubbleOutline,
@@ -17,33 +17,14 @@ import {
   MenuItem,
 } from '@mui/material';
 
-import { useAppleDevice } from '@/utils/clientFunctions';
+import { useMapsApp } from '@/utils/clientFunctions';
 import { mapsHref } from '@/utils/geo';
 import { useTips } from '@/utils/tipsStore';
 import { COMMENTS_SECTION_ID, slicPdfHref } from '@/utils/variables';
 
 import { softPressSx, softRaised } from '../utility/soft';
 
-// Per-viewer convenience only, like the install nudge: which maps app Navigate
-// opens on this device.
-const STORAGE_KEY = 'slics-maps-app';
 const MAPS_APPS = { google: 'Google Maps', apple: 'Apple Maps' };
-
-const readMapsApp = () => {
-  try {
-    return localStorage.getItem(STORAGE_KEY);
-  } catch {
-    return null;
-  }
-};
-
-const writeMapsApp = (app) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, app);
-  } catch {
-    // Storage blocked (private mode etc.): the choice lasts until reload.
-  }
-};
 
 // A secondary action: icon over label, a third of the row, 56px tall. A soft
 // raised tile (utility/soft.js) that presses in while it's held.
@@ -75,21 +56,9 @@ function ActionButton({ icon, label, ...props }) {
 // needs the comments section on the page, so callers without one leave
 // `showTips` off.
 function SlicActions({ slic, commentsCount = 0, showTips = false }) {
-  const isAppleDevice = useAppleDevice();
-  const [mapsApp, setMapsApp] = useState('google');
+  // The device's maps app, shared with pinned spots on tips (utils/clientFunctions.js).
+  const { mapsApp, chooseMapsApp, isAppleDevice } = useMapsApp();
   const [menuAnchor, setMenuAnchor] = useState(null);
-
-  // Read after mount so the server render and the first client render agree.
-  // Apple Maps is only offered (and only remembered) on Apple devices.
-  useEffect(() => {
-    if (isAppleDevice && readMapsApp() === 'apple') setMapsApp('apple');
-  }, [isAppleDevice]);
-
-  const chooseMapsApp = (app) => {
-    setMapsApp(app);
-    writeMapsApp(app);
-    setMenuAnchor(null);
-  };
 
   // Live counts from the tips section once it has loaded (utils/tipsStore.js);
   // the server's count until then.
@@ -159,7 +128,10 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
           <MenuItem
             key={app}
             selected={app === mapsApp}
-            onClick={() => chooseMapsApp(app)}
+            onClick={() => {
+              chooseMapsApp(app);
+              setMenuAnchor(null);
+            }}
             sx={{ minHeight: '3rem' }}
           >
             {label}

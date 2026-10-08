@@ -1,5 +1,6 @@
 import client from '@/lib/db';
 import { ObjectId } from 'mongodb';
+import { isValidLatLng } from '@/utils/geo';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 
 // SLIC comments ("driver tips"), one document per comment or reply:
@@ -12,6 +13,9 @@ import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 // - `format: 'text'`: plain text. Comments without it are Tiptap HTML from
 //   before 2026-10-07 and still render as HTML.
 // - `updated_at`: set on edit.
+// - `pin: { lat, lng }`: a spot the tip points at (a gate, a dock, where to
+//   park), pasted from Google Maps or taken from GPS. Since 2026-10-08. A
+//   comment with a pin may have empty `content`.
 // - `deleted: true`: a top-level comment removed while it still has replies.
 //   It stays as a "Comment deleted" placeholder (empty content, no author) and
 //   goes once its last reply does. Every read below skips it except the thread.
@@ -19,17 +23,32 @@ import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 const comments = () => client.db().collection('comments');
 const LIVE = { deleted: { $ne: true } };
 
-// Trims, normalizes line endings and enforces the length limit. Returns
+// Trims, normalizes line endings and enforces the length limit. A tip with a
+// pin may have no text (`allowEmpty`): the pin is the tip. Returns
 // `{ content }` or `{ error }` with a message for a 400.
-export function validateSlicComment(value) {
+export function validateSlicComment(value, { allowEmpty = false } = {}) {
   const text = typeof value === 'string' ? value.replace(/\r\n?/g, '\n').trim() : '';
-  if (!text) return { error: "Comment can't be empty." };
+  if (!text) {
+    return allowEmpty ? { content: '' } : { error: 'Write a tip or add a pin.' };
+  }
   if (text.length > SLIC_COMMENT_MAX_LENGTH) {
     return {
       error: `Comments must be ${SLIC_COMMENT_MAX_LENGTH} characters or fewer.`,
     };
   }
   return { content: text };
+}
+
+// A comment's pin from a request body. `undefined` leaves an existing pin as
+// it is (an edit that doesn't mention it), null removes it. Returns `{ pin }`
+// or `{ error }` with a message for a 400.
+export function validateCommentPin(value) {
+  if (value === undefined || value === null) return { pin: value };
+  const pin = { lat: value.lat, lng: value.lng };
+  if (!isValidLatLng(pin)) return { error: "The pin isn't a valid location." };
+  return {
+    pin: { lat: Number(pin.lat.toFixed(6)), lng: Number(pin.lng.toFixed(6)) },
+  };
 }
 
 // `userId` strings → `{ firstName, image }`, in one query (comments store the
@@ -78,6 +97,7 @@ export async function getSlicThread(numSlic, viewerId) {
       content: doc.deleted ? '' : doc.content,
       format: doc.format === 'text' ? 'text' : 'html',
       deleted: Boolean(doc.deleted),
+      pin: doc.deleted ? null : (doc.pin ?? null),
       upCount: upVotes.length,
       downCount: downVotes.length,
       myVote: upVotes.includes(viewerId)
@@ -115,6 +135,7 @@ export async function getSlicThread(numSlic, viewerId) {
         content: '',
         format: 'text',
         deleted: true,
+        pin: null,
         upCount: 0,
         downCount: 0,
         myVote: null,
@@ -132,7 +153,7 @@ export async function getSlicThread(numSlic, viewerId) {
 
 // Returns `{ id }`, or `{ notFound: 'parent' }` when `parentId` doesn't name a
 // live comment on the same SLIC.
-export async function createComment({ numSlic, parentId, content, userId }) {
+export async function createComment({ numSlic, parentId, content, pin, userId }) {
   let threadId = null;
   if (parentId) {
     const parent = await comments().findOne(
@@ -150,6 +171,7 @@ export async function createComment({ numSlic, parentId, content, userId }) {
     userId,
     content,
     format: 'text',
+    ...(pin ? { pin } : {}),
     upVotes: [],
     downVotes: [],
   });
@@ -162,10 +184,18 @@ export async function getCommentById(commentId) {
 }
 
 // Saves an edit as plain text (an edited HTML comment becomes plain text).
-export async function updateCommentContent(commentId, content) {
+// `pin` as validateCommentPin returns it: undefined keeps the pin, null
+// removes it.
+export async function updateCommentContent(commentId, content, pin) {
+  const update = {
+    $set: { content, format: 'text', updated_at: new Date().toISOString() },
+  };
+  if (pin) update.$set.pin = pin;
+  else if (pin === null) update.$unset = { pin: '' };
+
   const result = await comments().updateOne(
     { _id: new ObjectId(commentId), ...LIVE },
-    { $set: { content, format: 'text', updated_at: new Date().toISOString() } },
+    update,
   );
   return result.matchedCount > 0;
 }
@@ -191,6 +221,7 @@ export async function deleteSlicComment(comment) {
             downVotes: [],
             updated_at: new Date().toISOString(),
           },
+          $unset: { pin: '' },
         },
       );
       return 'soft-deleted';

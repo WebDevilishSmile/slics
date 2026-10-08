@@ -5,6 +5,7 @@ import {
   deleteSlicComment,
   getCommentById,
   updateCommentContent,
+  validateCommentPin,
   validateSlicComment,
 } from '@/utils/commentsApi';
 
@@ -26,7 +27,9 @@ async function loadManageable(params, session) {
   return { comment };
 }
 
-// PATCH `{ content }` — edit a comment. It's saved as plain text.
+// PATCH `{ content, pin? }` — edit a comment. It's saved as plain text. `pin`
+// `{ lat, lng }` sets the pin, null removes it, leaving it out keeps it. The
+// text may be empty while the comment keeps a pin.
 export async function PATCH(request, { params }) {
   const session = await auth();
   if (!session)
@@ -38,14 +41,20 @@ export async function PATCH(request, { params }) {
   } catch {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
   }
-  const { content, error } = validateSlicComment(body?.content);
-  if (error) return NextResponse.json({ error }, { status: 400 });
+  const { pin, error: pinError } = validateCommentPin(body?.pin);
+  if (pinError) return NextResponse.json({ error: pinError }, { status: 400 });
 
   try {
     const { comment, response } = await loadManageable(params, session);
     if (response) return response;
 
-    await updateCommentContent(comment._id.toString(), content);
+    const keepsPin = pin === undefined ? Boolean(comment.pin) : Boolean(pin);
+    const { content, error } = validateSlicComment(body?.content, {
+      allowEmpty: keepsPin,
+    });
+    if (error) return NextResponse.json({ error }, { status: 400 });
+
+    await updateCommentContent(comment._id.toString(), content, pin);
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('Error editing comment:', err);

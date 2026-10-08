@@ -2,6 +2,7 @@ import { Launch } from '@mui/icons-material';
 import { Avatar, Box, IconButton, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import CommentContent from '../../comments/CommentContent';
+import CommentPin from '../../comments/CommentPin';
 import { softInset, softPressSx, softRaised } from '../../utility/soft';
 
 dayjs.extend(require('dayjs/plugin/localizedFormat'));
@@ -21,9 +22,13 @@ function Comment({ comment, slic, author }) {
         {slic.type === 'center' ? slic.alphaSlic : slic.name}
       </Typography>
 
-      <Box sx={[softInset, { mt: 2, p: 2, borderRadius: 2 }]}>
-        <CommentContent comment={comment} variant='body2' />
-      </Box>
+      {/* A tip can be just a pin. */}
+      {comment.content && (
+        <Box sx={[softInset, { mt: 2, p: 2, borderRadius: 2 }]}>
+          <CommentContent comment={comment} variant='body2' />
+        </Box>
+      )}
+      {comment.pin && <CommentPin pin={comment.pin} sx={{ mt: comment.content ? 1.5 : 2 }} />}
 
       <Box
         sx={{

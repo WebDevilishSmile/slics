@@ -21,7 +21,8 @@ export function recordRecentLookup(slic) {
   const isCustomer = slic.type === 'customer';
   const entry = {
     numSlic: String(slic.numSlic),
-    label: (isCustomer ? slic.name : slic.alphaSlic) || `SLIC ${slic.numSlic}`,
+    // String(): some SLICs store alphaSlic as a number.
+    label: String((isCustomer ? slic.name : slic.alphaSlic) || `SLIC ${slic.numSlic}`),
     type: isCustomer ? 'customer' : 'center',
   };
   const list = [

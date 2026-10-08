@@ -81,18 +81,26 @@ const listSx = (theme) => ({
 // their name, as on the lookup card (#40). `label` is what the input shows
 // once picked; `search` is what typing matches (it starts with the label, so
 // re-searching the picked text still finds it).
+//
+// Every field is coerced to a string: some SLICs store `alphaSlic` as a number
+// (e.g. 1075), and Highlight's toLowerCase on a number crashed the page as
+// soon as the list opened.
+const text = (value) => (value === null || value === undefined ? '' : String(value));
+
 const toOption = (slic) => {
   const isCustomer = slic.type === 'customer';
-  const numSlic = String(slic.numSlic);
+  const numSlic = text(slic.numSlic);
   return {
     numSlic,
     type: isCustomer ? 'customer' : 'center',
-    title: (isCustomer ? slic.name : slic.alphaSlic) || `SLIC ${numSlic}`,
-    subtitle: [`SLIC ${numSlic}`, isCustomer ? slic.alphaSlic : null, slic.address?.city]
+    title: text(isCustomer ? slic.name : slic.alphaSlic) || `SLIC ${numSlic}`,
+    subtitle: [`SLIC ${numSlic}`, isCustomer ? text(slic.alphaSlic) : '', text(slic.address?.city)]
       .filter(Boolean)
       .join(' · '),
     label: labelFor(slic),
-    search: [labelFor(slic), slic.name, slic.address?.city].filter(Boolean).join(' '),
+    search: [labelFor(slic), text(slic.name), text(slic.address?.city)]
+      .filter(Boolean)
+      .join(' '),
     group: 'All SLICs',
   };
 };
@@ -100,7 +108,8 @@ const toOption = (slic) => {
 const filterAll = createFilterOptions({ stringify: (option) => option.search });
 
 // Bolds the first case-insensitive match of `query` in `text` (#42).
-function Highlight({ text, query }) {
+function Highlight({ text: value, query }) {
+  const text = String(value ?? '');
   const index = query ? text.toLowerCase().indexOf(query.toLowerCase()) : -1;
   if (index < 0) return text;
   return (

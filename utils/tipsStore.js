@@ -6,7 +6,10 @@ import { useSyncExternalStore } from 'react';
 // (comments/Comments.jsx, which loads the thread and knows what's new) and the
 // lookup card's Tips button (home/SlicActions.jsx). They render in different
 // trees, so a tiny module store beats threading a context through /home.
-let state = { numSlic: null, total: null, newCount: 0 };
+// One frozen object, not a fresh literal per call: useSyncExternalStore
+// needs a stable snapshot or it warns about (and can loop on) a changing one.
+const EMPTY = Object.freeze({ numSlic: null, total: null, newCount: 0 });
+let state = EMPTY;
 const listeners = new Set();
 
 export function setTips(next) {
@@ -19,7 +22,7 @@ const subscribe = (listener) => {
   return () => listeners.delete(listener);
 };
 const getSnapshot = () => state;
-const getServerSnapshot = () => ({ numSlic: null, total: null, newCount: 0 });
+const getServerSnapshot = () => EMPTY;
 
 // The counts for `numSlic`, or null until the comments section has loaded it.
 export function useTips(numSlic) {

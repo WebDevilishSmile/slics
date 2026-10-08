@@ -22,6 +22,8 @@ import { mapsHref } from '@/utils/geo';
 import { useTips } from '@/utils/tipsStore';
 import { COMMENTS_SECTION_ID, slicPdfHref } from '@/utils/variables';
 
+import { softPressSx, softRaised } from '../utility/soft';
+
 // Per-viewer convenience only, like the install nudge: which maps app Navigate
 // opens on this device.
 const STORAGE_KEY = 'slics-maps-app';
@@ -43,12 +45,22 @@ const writeMapsApp = (app) => {
   }
 };
 
-// A secondary action: icon over label, a third of the row, 56px tall.
+// A secondary action: icon over label, a third of the row, 56px tall. A soft
+// raised tile (utility/soft.js) that presses in while it's held.
 function ActionButton({ icon, label, ...props }) {
   return (
     <Button
-      variant='outlined'
-      sx={{ flex: 1, minHeight: '3.5rem', flexDirection: 'column', gap: 0.5 }}
+      sx={[
+        softRaised,
+        softPressSx,
+        {
+          flex: 1,
+          minHeight: '3.5rem',
+          flexDirection: 'column',
+          gap: 0.5,
+          borderRadius: 4,
+        },
+      ]}
       {...props}
     >
       {icon}
@@ -96,7 +108,20 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
 
   return (
     <Box sx={{ width: '100%', mt: 3 }}>
-      <ButtonGroup variant='contained' fullWidth sx={{ minHeight: '3.25rem' }}>
+      {/* The one solid brand-blue element on the card. It sits on the same
+          soft shadow as the tiles instead of MUI's drop shadow. */}
+      <ButtonGroup
+        variant='contained'
+        fullWidth
+        sx={(theme) => ({
+          minHeight: '3.25rem',
+          boxShadow: theme.soft.raisedSmall.light,
+          ...theme.applyStyles('dark', {
+            boxShadow: theme.soft.raisedSmall.dark,
+          }),
+          '& .MuiButton-root': { boxShadow: 'none' },
+        })}
+      >
         <Button
           href={mapsHref({ address: slic.address }, mapsApp)}
           target='_blank'
@@ -143,7 +168,7 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
       </Menu>
 
       {(canCall || pdfHref || showTips) && (
-        <Box sx={{ display: 'flex', gap: 1, mt: 1.5 }}>
+        <Box sx={{ display: 'flex', gap: 1.5, mt: 2.5 }}>
           {canCall && (
             <ActionButton
               icon={<PhoneOutlined />}

@@ -40,14 +40,14 @@ import {
   softInset,
   softPressSx,
   softRaised,
-} from './soft';
+} from '../utility/soft';
 
 dayjs.extend(relativeTime);
 
 // 40px vote targets (UI-SUGGESTIONS.md #45): padding, not bigger icons.
 const voteSx = { width: '2.5rem', height: '2.5rem' };
 
-// One tip: a soft raised card (comments/soft.js) holding its replies in a
+// One tip: a soft raised card (utility/soft.js) holding its replies in a
 // pressed-in well, or, for a reply, a flat row inside that well. Threads
 // are one level deep: "Reply" on a reply posts into the same thread. A
 // top-level tip deleted while it had replies renders as "Comment deleted" so

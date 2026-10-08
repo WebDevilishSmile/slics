@@ -1,4 +1,4 @@
-import { ContentCopy } from '@mui/icons-material';
+import { ContentCopy, PlaceOutlined } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -9,6 +9,12 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+
+import {
+  softInset,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 
 function TitleAddress({ slic }) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -76,27 +82,50 @@ function TitleAddress({ slic }) {
             {subline}
           </Typography>
         </Box>
-        <Chip label={isCustomer ? 'Customer' : 'Center'} variant='outlined' />
+        {/* A small raised pill in the brand color (utility/soft.js). */}
+        <Chip
+          label={isCustomer ? 'Customer' : 'Center'}
+          sx={[
+            softRaisedSmall,
+            {
+              color: 'primary.main',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              flexShrink: 0,
+            },
+          ]}
+        />
       </Box>
 
+      {/* The address sits in a well pressed into the card, with the copy
+          button as a small raised disc that presses in when tapped. */}
       <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          gap: 1,
-          mt: 2,
-        }}
+        sx={[
+          softInset,
+          {
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            mt: 2.5,
+            p: 2,
+            borderRadius: 4,
+          },
+        ]}
       >
-        <Box>
+        <PlaceOutlined sx={{ color: 'primary.main', flexShrink: 0 }} />
+        <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography>{slic.address.street}</Typography>
           <Typography>
             {slic.address.city}, {slic.address.state} {slic.address.zip}
           </Typography>
         </Box>
         <Tooltip title='Copy address' placement='top'>
-          <IconButton onClick={handleCopyAddress} aria-label='Copy address'>
-            <ContentCopy />
+          <IconButton
+            onClick={handleCopyAddress}
+            aria-label='Copy address'
+            sx={[softRaisedSmall, softPressSx, { flexShrink: 0 }]}
+          >
+            <ContentCopy fontSize='small' />
           </IconButton>
         </Tooltip>
       </Box>

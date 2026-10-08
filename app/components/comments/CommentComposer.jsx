@@ -6,7 +6,7 @@ import { Alert, Box, Button, Chip, TextField } from '@mui/material';
 import { apiRequest } from '@/utils/apiRequest';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 
-import { softInputSx, softPressSx, softRaisedSmall } from './soft';
+import { softInputSx, softPressSx, softRaisedSmall } from '../utility/soft';
 
 // What's worth sharing, as one-tap starters. Tapping one begins the tip with
 // "Parking: " (or adds a new line with it), so a driver who doesn't know what

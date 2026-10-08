@@ -1,8 +1,9 @@
-// sx helpers for the Driver tips' soft, embossed look. The shadows live in
-// `theme.soft` (utils/theme.js), one per color scheme. Every soft element
-// takes the comments panel's own surface (paper, plus its dark-mode elevation
-// overlay), so only the light and shadow tell it apart from the panel: no
-// borders, no stacked Paper elevations.
+// sx helpers for the soft, embossed look of the lookup card and the Driver
+// tips. The shadows live in `theme.soft` (utils/theme.js), one per color
+// scheme. Every soft element takes the panel's own surface (paper, plus its
+// dark-mode elevation overlay), so only the light and shadow tell it apart
+// from the panel: no borders, no stacked Paper elevations. Use them inside a
+// `<Paper variant='panel'>`; on any other surface the colors won't match.
 
 const surface = (theme) => ({
   backgroundColor: theme.vars.palette.background.paper,

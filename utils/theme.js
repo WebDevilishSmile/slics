@@ -90,8 +90,9 @@ let theme = createTheme({
     minHeight: '24rem', // keeps the home/comments panels from collapsing
     elevation: 6, // Paper elevation for those panels (read by the `panel` variant below)
   },
-  // Soft, embossed surfaces: the Driver tips cards, their reply wells and
-  // controls (app/components/comments/soft.js). Not MUI keys. An element in
+  // Soft, embossed surfaces: the lookup card, the Driver tips cards, their
+  // reply wells and controls (app/components/utility/soft.js). Not MUI keys.
+  // An element in
   // the same color as the surface under it, lit from the top left: a pale
   // highlight up there and a shadow down-right make it look pressed out of
   // the surface (`raised`) or into it (`inset`). One value per color scheme;

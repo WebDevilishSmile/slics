@@ -20,7 +20,7 @@ import { COMMENTS_SECTION_ID } from '@/utils/variables';
 import Comment from './Comment';
 import CommentComposer from './CommentComposer';
 import NoSlicComments from './NoSlicComments';
-import { softInset, softRaisedSmall } from './soft';
+import { softInset, softRaisedSmall } from '../utility/soft';
 
 const time = (value) => new Date(value).getTime() || 0;
 
@@ -203,7 +203,7 @@ function Comments({ user }) {
             onChange={(_event, value) => value && setSort(value)}
             aria-label='Sort tips'
             // A soft segmented control: a pressed-in track with the chosen
-            // option raised out of it (comments/soft.js).
+            // option raised out of it (utility/soft.js).
             sx={[
               softInset,
               (theme) => ({

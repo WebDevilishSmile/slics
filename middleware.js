@@ -2,6 +2,7 @@
 import { authConfig } from './auth.config';
 import NextAuth from 'next-auth';
 import { NextResponse } from 'next/server';
+import { safeCallbackUrl } from './utils/functions';
 
 // Create the 'auth' helper specifically for the middleware using authConfig
 const { auth } = NextAuth(authConfig);
@@ -9,6 +10,16 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
   const url = req.nextUrl.clone();
   const isLoggedIn = !!req.auth;
+
+  // There's no /signin page: sign-in lives on `/`. Old links and bookmarks to
+  // /signin (this middleware used to send signed-out drivers there) go to `/`
+  // with their callbackUrl.
+  if (url.pathname === '/signin') {
+    const next = safeCallbackUrl(url.searchParams.get('callbackUrl'), null);
+    const signInUrl = new URL('/', url.origin);
+    if (next) signInUrl.searchParams.set('callbackUrl', next);
+    return NextResponse.redirect(signInUrl);
+  }
 
   // Define paths that require BMC membership
   const requiresBMCMembership = url.pathname.startsWith('/history');
@@ -18,15 +29,17 @@ export default auth((req) => {
   // List of public paths (accessible to anyone, logged in or not)
   // Legal pages stay public: the footer links to them before sign-in, and the
   // Google OAuth consent screen needs a reachable privacy policy URL.
-  const publicPaths = ['/', '/signin', '/privacy', '/terms'];
+  const publicPaths = ['/', '/privacy', '/terms'];
 
   // 1. Handle unauthenticated users
   if (!isLoggedIn) {
     // If the user is not logged in AND trying to access a path that is NOT public,
     // then redirect to sign-in.
     if (!publicPaths.includes(url.pathname)) {
-      const signInUrl = new URL('/signin', url.origin);
-      signInUrl.searchParams.set('callbackUrl', url.pathname);
+      // Sign-in lives on `/` (auth.config.js `pages.signIn`). The page they
+      // wanted, query included, rides along so they land there afterwards.
+      const signInUrl = new URL('/', url.origin);
+      signInUrl.searchParams.set('callbackUrl', `${url.pathname}${url.search}`);
       // console.log(
       //   'Middleware: User not logged in and accessing protected path, redirecting to sign-in.'
       // );

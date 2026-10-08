@@ -32,7 +32,7 @@ export default async function AdminLayout({ children }) {
       <RedirectMessage
         heading='An error occurred while verifying your account. Please try again.'
         subheading='If the problem persists, contact support.'
-        redirect='/signin'
+        redirect='/'
       />
     );
   }

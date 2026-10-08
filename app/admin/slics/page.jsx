@@ -15,7 +15,7 @@ async function SlicsTablePage() {
       <RedirectMessage
         heading='You must be logged in to access this page.'
         subheading='Please sign in to continue.'
-        redirect='/signin'
+        redirect='/'
       />
     );
   }

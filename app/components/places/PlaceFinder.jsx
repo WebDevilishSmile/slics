@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import theme from '@/theme';
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { distanceMiles } from '@/utils/geo';
+import { distanceMiles } from '@/lib/geo';
 import { CommentRefreshProvider } from '@/app/context/CommentRefreshContext';
 import { slicLabel } from '../form/SlicTagsField';
 import PlaceCard from './PlaceCard';

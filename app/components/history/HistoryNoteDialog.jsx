@@ -10,7 +10,7 @@ import {
   TextField,
 } from '@mui/material';
 
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest } from '@/lib/apiRequest';
 import {
   softContainedSx,
   softInputSx,

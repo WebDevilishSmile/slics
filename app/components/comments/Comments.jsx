@@ -13,8 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 
-import { apiRequest } from '@/utils/apiRequest';
-import { readTipsSeen, setTips, writeTipsSeen } from '@/utils/tipsStore';
+import { apiRequest } from '@/lib/apiRequest';
+import { readTipsSeen, setTips, writeTipsSeen } from '@/lib/tipsStore';
 import { COMMENTS_SECTION_ID } from '@/constants';
 
 import Comment from './Comment';

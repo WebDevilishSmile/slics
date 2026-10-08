@@ -23,9 +23,9 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import theme from '@/theme';
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest } from '@/lib/apiRequest';
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { formatLatLng, mapsHref, parseLatLng } from '@/utils/geo';
+import { formatLatLng, mapsHref, parseLatLng } from '@/lib/geo';
 import { PLACE_CATEGORIES, TRAILER_ACCESS } from '@/constants';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import PhoneField from '../form/PhoneField';

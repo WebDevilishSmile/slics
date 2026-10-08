@@ -18,8 +18,8 @@ import {
 } from '@mui/material';
 
 import { useMapsApp } from '@/hooks/useMapsApp';
-import { mapsHref } from '@/utils/geo';
-import { useTips } from '@/utils/tipsStore';
+import { mapsHref } from '@/lib/geo';
+import { useTips } from '@/lib/tipsStore';
 import { COMMENTS_SECTION_ID, slicPdfHref } from '@/constants';
 
 import { softPressSx, softRaised } from '../utility/soft';
@@ -60,7 +60,7 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
   const { mapsApp, chooseMapsApp, isAppleDevice } = useMapsApp();
   const [menuAnchor, setMenuAnchor] = useState(null);
 
-  // Live counts from the tips section once it has loaded (utils/tipsStore.js);
+  // Live counts from the tips section once it has loaded (lib/tipsStore.js);
   // the server's count until then.
   const tips = useTips(slic.numSlic);
   const tipTotal = tips?.total ?? commentsCount;

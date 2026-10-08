@@ -25,11 +25,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import theme from '@/theme';
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { formatLatLng, mapsHref, parseLatLng } from '@/utils/geo';
+import { formatLatLng, mapsHref, parseLatLng } from '@/lib/geo';
 import { GYM_STATUSES } from '@/constants';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import PhoneField from '../form/PhoneField';
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest } from '@/lib/apiRequest';
 import SlicTagsField from '../form/SlicTagsField';
 import {
   softContainedSx,

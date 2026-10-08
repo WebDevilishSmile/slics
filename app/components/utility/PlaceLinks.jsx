@@ -3,7 +3,7 @@
 import { Apple, Google, PhoneOutlined } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import { useAppleDevice } from '@/hooks/useAppleDevice';
-import { mapsHref } from '@/utils/geo';
+import { mapsHref } from '@/lib/geo';
 import { softContainedSx, softPressSx, softRaisedSmall } from './soft';
 
 // Apple Maps and the phone number: raised soft pills beside the blue button.

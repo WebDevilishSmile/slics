@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 
 import { useGeolocation } from '@/hooks/useGeolocation';
-import { mapsHref, parseLatLng } from '@/utils/geo';
+import { mapsHref, parseLatLng } from '@/lib/geo';
 
 import { softInputSx, softPressSx, softRaisedSmall } from '../utility/soft';
 
@@ -39,7 +39,7 @@ export function readPin(text) {
   return parseLatLng(trimmed) ?? false;
 }
 
-// A map pin as text: coordinates or a Google Maps link (utils/geo.js
+// A map pin as text: coordinates or a Google Maps link (lib/geo.js
 // parseLatLng), or the device's GPS fix. The parent keeps the text and reads
 // it with `readPin`. Below the box: use my location, a preview once it reads
 // as a pin, and, with `onRemove`, a way to drop it. "Use my location" waits

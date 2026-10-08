@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest } from '@/lib/apiRequest';
 
 import {
   softContainedSx,

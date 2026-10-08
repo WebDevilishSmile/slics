@@ -29,7 +29,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest } from '@/lib/apiRequest';
 import { tapHaptic } from '@/lib/haptics';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/constants';
 

@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { readRecentLookups } from '@/utils/recentLookups';
+import { readRecentLookups } from '@/lib/recentLookups';
 import { BMC_URL } from '@/constants';
 import SoftNotice from '../utility/SoftNotice';
 import { softFocus, softSurface } from '../utility/soft';
@@ -135,7 +135,7 @@ const donationSnoozed = () => {
 };
 
 // The SLIC search (UI-SUGGESTIONS.md #42). Focus it and this device's recent
-// lookups come first under "Recent" (utils/recentLookups.js); type and every
+// lookups come first under "Recent" (lib/recentLookups.js); type and every
 // SLIC matches on number, code, name or city, with the match highlighted.
 // Enter takes the top match. `onSelect(numSlic | null)` shows the pick at
 // once (home/Main.jsx); the URL follows through router.push so Back and

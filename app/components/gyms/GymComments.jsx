@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Alert, Box, Button, TextField, Typography } from '@mui/material';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { GYM_COMMENT_MAX_LENGTH } from '@/constants';
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest } from '@/lib/apiRequest';
 import { softContainedSx, softInputSx } from '../utility/soft';
 import GymComment from './GymComment';
 

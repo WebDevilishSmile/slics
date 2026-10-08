@@ -423,9 +423,13 @@ to `docs/DATA_MODEL.md` is still open.
 
 ### 20. Retire `utils/`
 
-- [ ] `rmdir utils` — `Depends on:` items 1, 2, 7, 15–19.
+- [x] `rmdir utils` — `Depends on:` items 1, 2, 7, 15–19.
 
 `grep -rn "@/utils/" app auth.js auth.config.js middleware.js` must return nothing.
+
+**Done 2026-10-08.** Six modules had appeared in `utils/` since this list was written and
+went to `lib/`: `apiRequest.js`, `commentPrompt.js`, `geo.js`, `recentLookups.js`,
+`tipsStore.js` and `viewTransition.js`. The grep above returns nothing.
 
 ---
 

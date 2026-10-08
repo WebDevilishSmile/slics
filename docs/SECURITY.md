@@ -934,7 +934,7 @@ but the policy says "everything tied to it" and the audit stamps keep the email.
    `cover-bid-jobs.createdBy/updatedBy`. The `id` stays (it is not PII on its own) so the
    trail still links.
 3. Write the retention table into the privacy page from one source of truth
-   (`utils/retention.js` exporting the day counts) so policy and index cannot drift.
+   (`lib/retention.js` exporting the day counts) so policy and index cannot drift.
 4. Consider whether the roster needs employee IDs at all. Every field you do not store
    is a field that cannot leak (again).
 

@@ -998,7 +998,7 @@ _Done 2026-10-07:_ every row below, with these notes:
 'baseline'`, because MUI's button-link style uses `'middle'` and that drops them below the
   sentence. Tab reaches them, and Enter and Space both switch the form (checked in headless
   Chrome).
-- **Map links:** these now use `mapsHref` from `utils/geo.js`, the builder the gym and
+- **Map links:** these now use `mapsHref` from `lib/geo.js`, the builder the gym and
   place cards already used. That one function fixes the state, the encoding and the `https`
   rows.
 - **CommentFooter:** the dialog is titled "Delete this comment?", with Cancel and Delete
@@ -1288,7 +1288,7 @@ panel surface that presses in with a primary glow on focus, with a search icon a
 placeholder ("SLIC, code or name") in place of a floating label.
 
 1. **Recent:** `openOnFocus` shows this device's last six lookups under "Recent", then "All
-   SLICs". The list is `utils/recentLookups.js`, a separate module rather than an extension
+   SLICs". The list is `lib/recentLookups.js`, a separate module rather than an extension
    of `recordLookup`; `home/Main.jsx` records it. While typing, the list is matches only,
    ungrouped.
 2. **Options:** each one shows the alpha code or name in bold, a line like `SLIC 1809 ·
@@ -1307,7 +1307,7 @@ The search is an `Autocomplete` over plain strings. Upgrades, in order of value:
 1. **Recent lookups on focus.** With `openOnFocus`, show the last ~5 SLICs this device
    looked up first, under a "Recent" group header (`groupBy`). Drivers run the same routes,
    so this turns most lookups into one tap. For storage, extend `recordLookup` in
-   `utils/commentPrompt.js` into a small `recentLookups` list using the same try/catch
+   `lib/commentPrompt.js` into a small `recentLookups` list using the same try/catch
    localStorage pattern.
 2. **Richer options** via `renderOption`:
    - two lines: alphaSlic or name in bold, then `SLIC 1809 · Easton` in `text.secondary`;
@@ -1518,7 +1518,7 @@ _Done 2026-10-07._
 - **One path:** every change of the SLIC on screen goes through `changeSlic` in
   `home/Main.jsx`. That covers a search pick (`showSlic`) and the URL (recent chips,
   Back/Forward, links).
-- **The wrapper:** a real change runs inside `withViewTransition` (`utils/viewTransition.js`),
+- **The wrapper:** a real change runs inside `withViewTransition` (`lib/viewTransition.js`),
   which is `document.startViewTransition(() => flushSync(update))`. It falls back to a
   plain update without support or under reduced motion.
 - **What animates:** the lookup card, `SlicCardSkeleton` and `EmptySlic` all carry

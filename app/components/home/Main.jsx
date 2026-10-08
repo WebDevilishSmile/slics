@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { recordLookup } from '@/utils/commentPrompt';
-import { recordRecentLookup } from '@/utils/recentLookups';
+import { recordLookup } from '@/lib/commentPrompt';
+import { recordRecentLookup } from '@/lib/recentLookups';
 import { serializeSlics } from '@/lib/serializers';
-import { withViewTransition } from '@/utils/viewTransition';
+import { withViewTransition } from '@/lib/viewTransition';
 
 import SlicDisplay from './SlicDisplay';
 import SlicsSearch from './SlicsSearch';

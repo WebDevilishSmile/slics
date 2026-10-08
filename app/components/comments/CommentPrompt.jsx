@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from '@mui/material';
 
-import { markPrompted, readDue, snooze } from '@/utils/commentPrompt';
+import { markPrompted, readDue, snooze } from '@/lib/commentPrompt';
 import BottomSheetDialog, {
   BottomSheetActions,
 } from '../utility/BottomSheetDialog';
@@ -20,7 +20,7 @@ import {
 } from '../utility/soft';
 
 // Asks a driver to leave a tip about the last SLIC they looked up, once they
-// come back to the app 15 min – 4 h later (see utils/commentPrompt.js). Checks
+// come back to the app 15 min – 4 h later (see lib/commentPrompt.js). Checks
 // on mount (fresh launch) and whenever the tab/PWA returns to the foreground —
 // the usual path is lookup → Maps → drive → back to SLICs.
 function CommentPrompt({ user }) {

@@ -24,7 +24,7 @@ import {
 import { softPressSx, softRaisedSmall } from '../utility/soft';
 import { GYM_STATUSES } from '@/constants';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest } from '@/lib/apiRequest';
 import GymComments from './GymComments';
 import PlaceLinks from '../utility/PlaceLinks';
 

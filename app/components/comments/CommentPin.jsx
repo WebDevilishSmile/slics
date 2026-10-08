@@ -4,7 +4,7 @@ import { OpenInNew, PlaceOutlined } from '@mui/icons-material';
 import { Button } from '@mui/material';
 
 import { useMapsApp } from '@/hooks/useMapsApp';
-import { mapsHref } from '@/utils/geo';
+import { mapsHref } from '@/lib/geo';
 
 import { softPressSx, softRaisedSmall } from '../utility/soft';
 

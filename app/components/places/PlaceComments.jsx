@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, Box, Skeleton, Typography } from '@mui/material';
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest } from '@/lib/apiRequest';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { softRaised } from '../utility/soft';
 import PlaceComment from './PlaceComment';

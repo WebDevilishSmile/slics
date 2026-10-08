@@ -26,7 +26,7 @@ import {
 } from '../utility/soft';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { GYM_COMMENT_MAX_LENGTH } from '@/constants';
-import { apiRequest } from '@/utils/apiRequest';
+import { apiRequest } from '@/lib/apiRequest';
 
 function GymComment({ comment }) {
   const { isRefreshing, refresh } = useCommentRefresh();

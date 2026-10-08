@@ -1,7 +1,7 @@
 'use client';
 
-import theme from '@/utils/theme';
-import { SLICS_PER_PAGE } from '@/utils/variables';
+import theme from '@/theme';
+import { SLICS_PER_PAGE } from '@/constants';
 import {
   Box,
   Button,

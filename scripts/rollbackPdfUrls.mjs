@@ -1,6 +1,6 @@
 // Reverse of scripts/migratePdfsToBlob.mjs. For every slic with a `pdfUrl`:
 // if its `<alphaSlic>.pdf` still exists in the legacy Supabase bucket, set the
-// legacy `pdf: true` flag and unset `pdfUrl`, so slicPdfHref (utils/variables.js) serves the
+// legacy `pdf: true` flag and unset `pdfUrl`, so slicPdfHref (constants.js) serves the
 // Supabase copy again. If it doesn't exist there, the PDF was uploaded through
 // the new admin flow only — it's left untouched and reported so it can be
 // re-uploaded to Supabase by hand before Blob is abandoned.
@@ -12,7 +12,7 @@
 // up on Blob). Pair with `git revert` of the Blob commit to restore the
 // pre-migration app exactly.
 import { MongoClient } from 'mongodb';
-import { legacyPdfUrl } from '../utils/variables.js';
+import { legacyPdfUrl } from '../constants.js';
 
 const dryRun = process.argv.includes('--dry-run');
 

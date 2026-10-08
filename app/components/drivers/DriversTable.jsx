@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { softTableSx } from '../utility/soft';
 import DriversTableFooter from './DriversTableFooter';
 import DriversTableHead from './DriversTableHead';

@@ -15,7 +15,7 @@ import {
 
 import { apiRequest } from '@/utils/apiRequest';
 import { readTipsSeen, setTips, writeTipsSeen } from '@/utils/tipsStore';
-import { COMMENTS_SECTION_ID } from '@/utils/variables';
+import { COMMENTS_SECTION_ID } from '@/constants';
 
 import Comment from './Comment';
 import CommentComposer from './CommentComposer';

@@ -1,4 +1,4 @@
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { Paper } from '@mui/material';
 
 function FormContainer({ children }) {

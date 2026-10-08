@@ -31,7 +31,7 @@ import {
 
 import { apiRequest } from '@/utils/apiRequest';
 import { tapHaptic } from '@/lib/haptics';
-import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
+import { SLIC_COMMENT_MAX_LENGTH } from '@/constants';
 
 import CommentComposer from './CommentComposer';
 import PinField, { formatPin, readPin } from '../form/PinField';

@@ -3,7 +3,7 @@
 import { CloseOutlined, InfoOutlined } from '@mui/icons-material';
 import { Box, IconButton, Typography } from '@mui/material';
 
-import theme from '@/utils/theme';
+import theme from '@/theme';
 
 import { softPressSx, softRaised } from './soft';
 

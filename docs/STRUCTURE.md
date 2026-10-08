@@ -405,8 +405,8 @@ so it went to `lib/haptics.js`. `useCoverBidJobs.js` stays put for item 27.
 
 ### 19. Move `theme.js` and `variables.js` to the root
 
-- [ ] `utils/theme.js` (5 importers) → `theme.js`
-- [ ] `utils/variables.js` (22 importers) → `constants.js`
+- [x] `utils/theme.js` (5 importers) → `theme.js`
+- [x] `utils/variables.js` (22 importers) → `constants.js`
 
 Neither is a "utility". `UI-SUGGESTIONS.md` #11 folds the layout constants (`MAX_WIDTH`,
 `BORDER_RADIUS`, `ELEVATION`…) into the theme; after that `constants.js` holds only
@@ -415,6 +415,11 @@ example shapes are documentation, not code — consider moving them to
 `docs/DATA_MODEL.md` and deleting the constants.
 
 *Blast radius:* import paths only.
+
+**Done 2026-10-08** as a plain move (38 importers of the theme, 26 of the constants by
+then). `constants.js` still holds more than the three values above: the PDF URL helpers,
+the place/gym enums and comment length caps, and the `*_EXAMPLE` shapes. Moving the shapes
+to `docs/DATA_MODEL.md` is still open.
 
 ### 20. Retire `utils/`
 

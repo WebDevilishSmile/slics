@@ -1,4 +1,4 @@
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { Box } from '@mui/material';
 
 // The content column of a page: width, side margins and padding. The

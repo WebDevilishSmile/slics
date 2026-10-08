@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { getSlicById, updateSlic } from '@/lib/db/slics';
 import { deleteSlicPdf, putSlicPdf } from '@/lib/blob';
-import { SLIC_PDF_MAX_BYTES } from '@/utils/variables';
+import { SLIC_PDF_MAX_BYTES } from '@/constants';
 
 // `[id]` is the slic's MongoDB _id, same as the parent route's methods.
 

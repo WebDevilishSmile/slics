@@ -5,7 +5,7 @@ import { AddLocationAltOutlined } from '@mui/icons-material';
 import { Alert, Box, Button, Chip, TextField } from '@mui/material';
 
 import { apiRequest } from '@/utils/apiRequest';
-import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
+import { SLIC_COMMENT_MAX_LENGTH } from '@/constants';
 
 import PinField, { readPin } from '../form/PinField';
 import {

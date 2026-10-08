@@ -1,6 +1,6 @@
 'use client';
 
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { Box, Paper, Table, TableBody } from '@mui/material';
 import { softTableSx } from '../utility/soft';
 import CoverPosition from './CoverPosition';

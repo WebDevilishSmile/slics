@@ -22,7 +22,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { PLACE_CATEGORIES, TRAILER_ACCESS } from '@/utils/variables';
+import { PLACE_CATEGORIES, TRAILER_ACCESS } from '@/constants';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import PlaceLinks from '../utility/PlaceLinks';
 import {

@@ -20,7 +20,7 @@ import {
 import { useMapsApp } from '@/hooks/useMapsApp';
 import { mapsHref } from '@/utils/geo';
 import { useTips } from '@/utils/tipsStore';
-import { COMMENTS_SECTION_ID, slicPdfHref } from '@/utils/variables';
+import { COMMENTS_SECTION_ID, slicPdfHref } from '@/constants';
 
 import { softPressSx, softRaised } from '../utility/soft';
 

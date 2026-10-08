@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { InstallMobileOutlined } from '@mui/icons-material';
 import { Button, useMediaQuery } from '@mui/material';
 
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { useInstallPrompt } from '@/hooks/useInstallPrompt';
 
 import SoftNotice from '../utility/SoftNotice';

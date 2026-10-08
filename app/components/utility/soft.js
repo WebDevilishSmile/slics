@@ -1,12 +1,12 @@
 // sx helpers for the app's soft, embossed look. The shadows live in
-// `theme.soft` (utils/theme.js), one per color scheme. The style is seamless:
+// `theme.soft` (theme.js), one per color scheme. The style is seamless:
 // the page, the `panel` Paper variant, the themed dialogs, menus and drawer,
 // and every soft element share one surface, `background.default` with no
 // overlay. Only light and shadow tell them apart: no borders, no Paper
 // elevation. That means these work on the page itself as well as in a panel.
 //
 // In a server component, call a helper with the imported theme
-// (`sx={softRaised(theme)}`, theme from '@/utils/theme'): a function can't be
+// (`sx={softRaised(theme)}`, theme from '@/theme'): a function can't be
 // passed to MUI's client components, but what it returns is a plain object.
 
 export const softSurface = (theme) => ({
@@ -112,7 +112,7 @@ export const softTableSx = (theme) => ({
 // "on" (aria-pressed), which is how a chosen vote shows. Light and shadow are
 // the only feedback: MUI's hover and focus washes are pinned to the surface,
 // because on a phone `:hover` sticks after a tap and left the control gray.
-// Keyboard focus shows as the theme's outline (MuiButtonBase, utils/theme.js).
+// Keyboard focus shows as the theme's outline (MuiButtonBase, theme.js).
 export const softPressSx = (theme) => ({
   transition: theme.transitions.create('box-shadow', {
     duration: theme.transitions.duration.shortest,

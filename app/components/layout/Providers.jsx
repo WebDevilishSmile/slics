@@ -1,6 +1,6 @@
 'use client';
 
-import theme from '@/utils/theme';
+import theme from '@/theme';
 
 import { SessionProvider } from 'next-auth/react';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';

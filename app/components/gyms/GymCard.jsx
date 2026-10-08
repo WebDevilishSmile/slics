@@ -22,7 +22,7 @@ import {
   Typography,
 } from '@mui/material';
 import { softPressSx, softRaisedSmall } from '../utility/soft';
-import { GYM_STATUSES } from '@/utils/variables';
+import { GYM_STATUSES } from '@/constants';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { apiRequest } from '@/utils/apiRequest';
 import GymComments from './GymComments';

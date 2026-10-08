@@ -36,7 +36,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 
-import { BMC_URL } from '@/utils/variables';
+import { BMC_URL } from '@/constants';
 
 import InstallMenuItem from '../install/InstallMenuItem';
 import ModeSwitch from '../layout/ModeSwitch';

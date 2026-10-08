@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 
 import { readRecentLookups } from '@/utils/recentLookups';
-import { BMC_URL } from '@/utils/variables';
+import { BMC_URL } from '@/constants';
 
 import {
   softInset,

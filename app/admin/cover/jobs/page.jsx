@@ -8,7 +8,7 @@ import BidSheetUploader from '@/app/components/admin/coverBidJobs/BidSheetUpload
 import CoverBidJobsManager from '@/app/components/admin/coverBidJobs/CoverBidJobsManager';
 import { getUpcomingSaturday } from '@/lib/format';
 import { Paper, Typography } from '@mui/material';
-import theme from '@/utils/theme';
+import theme from '@/theme';
 
 function CoverJobs() {
   // Default to next week — the week being posted — to match the driver-facing

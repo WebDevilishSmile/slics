@@ -1,11 +1,11 @@
 'use client';
 
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { useRef, useState } from 'react';
 import { Alert, Box, Button, Typography } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { SLIC_PDF_MAX_BYTES } from '@/utils/variables';
+import { SLIC_PDF_MAX_BYTES } from '@/constants';
 import { softContainedSx, softPressSx, softRaisedSmall } from '../utility/soft';
 
 function isPdfFile(file) {

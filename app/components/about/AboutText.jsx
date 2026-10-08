@@ -1,4 +1,4 @@
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { Typography } from '@mui/material';
 
 export default function AboutText({ children }) {

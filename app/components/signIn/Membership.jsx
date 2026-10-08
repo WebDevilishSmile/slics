@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { Box, Button, Paper, Typography } from '@mui/material';
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import Link from 'next/link';
 import RequestAccess from './RequestAccess';
 import { isMobileDevice } from '@/lib/format';

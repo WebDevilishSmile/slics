@@ -4,7 +4,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Montserrat } from 'next/font/google';
 import './globals.css';
 
-import { statusBarColors } from '@/utils/theme';
+import { statusBarColors } from '@/theme';
 
 import Footer from './components/footer/Footer';
 import Header from './components/header/Header';

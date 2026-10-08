@@ -10,7 +10,7 @@ import { Typography } from '@mui/material';
 import { auth } from '@/auth';
 import NotMember from '../components/coverBidJobs/NotMember';
 import { getUpcomingSaturday } from '@/lib/format';
-import { COVER_BID_MONTHS_BACK } from '@/utils/variables';
+import { COVER_BID_MONTHS_BACK } from '@/constants';
 
 export default async function CoverBidJobsPage() {
   // Snap the cutoff to a Saturday so the oldest week loads whole, and compute it

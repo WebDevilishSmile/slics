@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { auth } from '@/auth';
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { getPlaces } from '@/lib/db/places';
 import { getAllSlics } from '@/lib/db/slics';
 import PageContainer from '../components/layout/PageContainer';

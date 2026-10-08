@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useColorScheme } from '@mui/material';
 
-import { statusBarColors } from '@/utils/theme';
+import { statusBarColors } from '@/theme';
 
 // Keeps the browser/status bar on the header's color (UI-SUGGESTIONS.md #35).
 // app/layout.jsx renders one <meta name="theme-color"> per OS color scheme,

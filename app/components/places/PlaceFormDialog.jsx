@@ -22,11 +22,11 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { apiRequest } from '@/utils/apiRequest';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { formatLatLng, mapsHref, parseLatLng } from '@/utils/geo';
-import { PLACE_CATEGORIES, TRAILER_ACCESS } from '@/utils/variables';
+import { PLACE_CATEGORIES, TRAILER_ACCESS } from '@/constants';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import PhoneField from '../form/PhoneField';
 import SlicTagsField from '../form/SlicTagsField';

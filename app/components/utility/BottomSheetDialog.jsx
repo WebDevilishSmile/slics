@@ -3,7 +3,7 @@
 import { forwardRef } from 'react';
 import { Dialog, DialogActions, Slide, useMediaQuery } from '@mui/material';
 
-import theme from '@/utils/theme';
+import theme from '@/theme';
 
 const SlideUp = forwardRef(function SlideUp(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />;

@@ -1,4 +1,4 @@
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { Typography } from '@mui/material';

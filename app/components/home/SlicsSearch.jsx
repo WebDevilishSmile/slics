@@ -18,7 +18,7 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { readRecentLookups } from '@/utils/recentLookups';
-import { BMC_URL } from '@/utils/variables';
+import { BMC_URL } from '@/constants';
 import SoftNotice from '../utility/SoftNotice';
 import { softFocus, softSurface } from '../utility/soft';
 

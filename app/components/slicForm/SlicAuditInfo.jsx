@@ -1,4 +1,4 @@
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 

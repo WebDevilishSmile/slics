@@ -684,7 +684,7 @@ Safari in standalone (installed) mode — the PWA path is the one nobody checks.
 
 ### [ ] 13. Directions PDFs are reachable without signing in
 
-**Files:** `lib/blob.js:19` (`access: 'public'`), `utils/variables.js`
+**Files:** `lib/blob.js:19` (`access: 'public'`), `constants.js`
 (`LEGACY_PDF_BASE_URL`, `legacyPdfUrl`), `utils/pdfs.js` (a list of 65 legacy file
 names), `app/components/home/PdfLink.jsx`, `scripts/migratePdfsToBlob.mjs`
 
@@ -779,7 +779,7 @@ be dropped before the unique one is created; do it in the script.)
 
 ### [ ] 16. No schema validation on the collections
 
-**Files:** MongoDB (collection options), `utils/variables.js` (the `SLIC_*_EXAMPLE`
+**Files:** MongoDB (collection options), `constants.js` (the `SLIC_*_EXAMPLE`
 shapes are documentation only)
 
 The shape of every document is whatever the last writer sent (#10, #11). `numSlic` has
@@ -793,7 +793,7 @@ forgot — a script, the Atlas UI, the next migration.
 `comments`, `users`, `drivers`, `slicViews`, `slic_history`, run with
 `validationLevel: 'moderate'` (existing invalid docs are tolerated, new/updated ones
 must conform) and `validationAction: 'error'`. Start from the example shapes in
-`utils/variables.js`. Pair it with a one-off `scripts/normalizeDates.mjs --dry-run` that
+`constants.js`. Pair it with a one-off `scripts/normalizeDates.mjs --dry-run` that
 converts the legacy `MM/DD/YY` strings to ISO so the "don't assume" note in CLAUDE.md
 can finally be deleted.
 

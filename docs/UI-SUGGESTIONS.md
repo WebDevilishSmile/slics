@@ -8,7 +8,7 @@ comments and `CLAUDE.md` cite them (`#17`, `#18`, `#19`, …).
 It has two parts:
 
 - **[Part 1 — Theme plumbing](#part-1--theme-plumbing) (#1–#30).** This was the original
-  `THEME.md`. It makes styling controllable from `utils/theme.js`. Items 1–19 are done,
+  `THEME.md`. It makes styling controllable from `theme.js`. Items 1–19 are done,
   and #20's spacing half is done. Its other half (`fontSize` overrides) and #21–#30 are
   still open.
 - **[Part 2 — UI review and modernization](#part-2--ui-review-and-modernization) (#31–#57).**
@@ -37,7 +37,7 @@ The app is used daily in production.
 
 ## Why this list exists
 
-The theme file is partly inert. Three defects mean edits you make in `utils/theme.js`
+The theme file is partly inert. Three defects mean edits you make in `theme.js`
 currently have **no visible effect** — those are items 1, 2 and 3, and they're why this
 list starts where it does. Everything after that is about reducing the number of places a
 styling decision can hide: today there are 373 `sx={{ }}` blocks across 120 files, plus a
@@ -57,7 +57,7 @@ Defects, not preferences. Items 1–3 are the reason theme edits don't take.
 only ``className={`${font.className}`}``. In `next/font`, `font.variable` is the class
 that _defines_ the custom property; `font.className` merely sets `font-family` directly.
 So `--font-font` never enters the cascade, and every `fontFamily: 'var(--font-font)'` in
-`utils/theme.js` (lines 63, 103, 114, 126, 138, 153) resolves to an invalid value. Text
+`theme.js` (lines 63, 103, 114, 126, 138, 153) resolves to an invalid value. Text
 looks right only because `<body>` inherits Montserrat from `font.className`.
 
 **Fix applied:** `className={font.variable}` — MUI's documented next/font pattern.
@@ -82,13 +82,13 @@ theme.typography.fontFamily  →  body { font-family: var(--font-font) }  →  M
   Before this fix that edit had no visible effect.
 
 **To change the app's font now:** swap the `Montserrat(...)` loader in `app/layout.jsx:13`
-(both the family and the `weight` array). `utils/theme.js` just points at the variable.
+(both the family and the `weight` array). `theme.js` just points at the variable.
 
 _Blast radius:_ one line, but font rendering is global — worth a look at a real page.
 
 ### 2. `MuiButton` is declared twice; the first block is dead
 
-- [x] **DONE.** **File:** `utils/theme.js:100` and `:109`
+- [x] **DONE.** **File:** `theme.js:100` and `:109`
 
 Two `MuiButton` keys in the same `components` object. The second (`variants`) silently
 overwrote the first (`styleOverrides`), so the `styleOverrides.root` block never applied.
@@ -103,7 +103,7 @@ _Blast radius:_ none in practice. Done together with #3.
 ### 3. Palette paths in `MuiButton.variants` never resolve
 
 - [x] **DONE — but not the way this item originally proposed.** **File:**
-      `utils/theme.js:117, 129, 141` (and the `&:hover` blocks below each)
+      `theme.js:117, 129, 141` (and the `&:hover` blocks below each)
 
 `color: 'text.light'` and `backgroundColor: 'primary.dark'` were `sx` shorthand written
 into a **plain CSS** context. MUI does not resolve palette paths in `variants[].style`, so
@@ -321,9 +321,9 @@ _Blast radius:_ none — the toggle button only, and its behavior is unchanged.
 
 The core change: one place to edit colors.
 
-### 7. Introduce a `tokens` object at the top of `utils/theme.js`
+### 7. Introduce a `tokens` object at the top of `theme.js`
 
-- [x] **DONE.** **File:** `utils/theme.js:5-23`
+- [x] **DONE.** **File:** `theme.js:5-23`
 
 The dark scheme redefined colors by **copy-pasting hex values** — `#050505`, `#edf3fc`
 and `#222222` each appeared in both the light `palette` and `colorSchemes.dark.palette`
@@ -379,7 +379,7 @@ _Blast radius:_ none — nothing the browser receives changed.
 
 ### 8. Prune or wire up the dead palette keys
 
-- [x] **DONE.** **File:** `utils/theme.js`
+- [x] **DONE.** **File:** `theme.js`
 
 Verified zero references across `app/` and `utils/`, and **deleted** from both schemes:
 
@@ -445,7 +445,7 @@ custom properties.
 
 ### 11. Fold layout constants into the theme
 
-- [x] **DONE.** **Files:** `utils/variables.js`, `utils/theme.js`, 19 consumers
+- [x] **DONE.** **Files:** `constants.js`, `theme.js`, 19 consumers
 
 `variables.js` mixed UI tokens with domain constants. `ELEVATION`, `MAX_WIDTH`,
 `MIN_HEIGHT` and `BORDER_RADIUS` are gone from it; `SLICS_PER_PAGE` and
@@ -460,9 +460,9 @@ custom properties.
 | `ELEVATION = 6`                | `theme.layout.elevation`                                            |           |
 | `BORDER_RADIUS = '6px'` (dead) | `theme.shape.borderRadius = 8`                                      | see below |
 
-**How consumers read them:** `import theme from '@/utils/theme'` and
+**How consumers read them:** `import theme from '@/theme'` and
 `theme.layout.maxWidth` — the idiom `Comment.jsx` / `TablePaginationActions.jsx` already
-used. This required dropping the `'use client'` directive from `utils/theme.js`: with it,
+used. This required dropping the `'use client'` directive from `theme.js`: with it,
 the nine consumers that are server components (`history/page.jsx`, `home/EmptySlic.jsx`,
 `signIn/Membership.jsx`, …) would receive a client _reference_ whose `.layout` is
 unreadable on the server. The directive was never load-bearing — `Providers.jsx` is
@@ -547,7 +547,7 @@ make on purpose — set the default and walk the 18 + 20 sites above — not a c
 
 ### 14. `MuiChip.defaultProps.size = 'small'`
 
-- [x] **DONE.** Default set in `utils/theme.js`; `size='small'` removed from the 7 sites
+- [x] **DONE.** Default set in `theme.js`; `size='small'` removed from the 7 sites
       that had it (the 5 day-of-week chips plus `bids/BidsJobCard.jsx:65` and
       `admin/users/UserCard.jsx:124`). The one chip that had no size — the comment count on
       `home/TitleAddress.jsx` — is pinned `size='medium'` so the home page doesn't change.
@@ -598,7 +598,7 @@ was originally listed too, but it had drifted into a comment _card_ — `mt: 2, 
 min-height/flex — and is the twin of `admin/user-page/UserComments.jsx`; that pair is
 item 28, not this one.)
 
-**Done:** `MuiPaper.variants` in `utils/theme.js` defines `variant="panel"` with only the
+**Done:** `MuiPaper.variants` in `theme.js` defines `variant="panel"` with only the
 structural block; the five sites are now `<Paper variant='panel' sx={{ …delta }}>`.
 Reconciled deliberately: padding defaults to `2rem` all round (the majority), the two
 comments panels override `px: 2` so comment cards get the width; `justifyContent:
@@ -613,7 +613,7 @@ _Blast radius:_ five of the app's most visible surfaces. Check each in both sche
 ### 18. A `sectionHeading` typography variant
 
 - [x] Replaced `app/components/layout/StyledHeading.jsx` (18 sites). Heading style is now
-      a theme edit: `MuiTypography.variants` in `utils/theme.js` defines `sectionHeading` as
+      a theme edit: `MuiTypography.variants` in `theme.js` defines `sectionHeading` as
       `{ ...theme.typography.h2, fontWeight: 800, uppercase, centered, maxWidth, px }` inside
       a `({ theme })` callback, so it stays in lockstep with h2 — including the breakpoint
       sizes `responsiveFontSizes()` adds, which a static custom `typography.*` entry would
@@ -757,7 +757,7 @@ _Blast radius:_ none.
     `tokens.void`, and `light`/`dark` are derived for hover.
   - One `layout/BmcButton.jsx` (`color='bmc'`, logo, new tab) replaces all five copies.
     Contributions now uses `BuyMeACoffeeButton`, which is the same arrow-plus-button pair.
-  - The URL is `BMC_URL` in `utils/variables.js`, also used by the menu and the lookup
+  - The URL is `BMC_URL` in `constants.js`, also used by the menu and the lookup
     screen.
   - `background.opposite`/`text.opposite` were pruned at the same time. They had been dead
     since #34.
@@ -831,7 +831,7 @@ grep -rn "layout\.minHeight" app/
 
 1. `npm run dev`, open devtools, inspect `<body>` → `--font-font` is **not** among the
    computed custom properties.
-2. Change `typography.fontFamily` in `utils/theme.js` to something unmistakable like
+2. Change `typography.fontFamily` in `theme.js` to something unmistakable like
    `'Comic Sans MS'` → **nothing changes on screen**. That's the bug.
 3. Revert, apply the fix, repeat step 2 → the font now changes.
 
@@ -898,7 +898,7 @@ the feature keep today's instant behavior. Every animation also needs a
 
 ### 31. The brand blue fails text contrast
 
-- [x] **Files:** `utils/theme.js` (`primary`), `app/layout.jsx` (`themeColor`),
+- [x] **Files:** `theme.js` (`primary`), `app/layout.jsx` (`themeColor`),
       `app/manifest.js` (`theme_color`)
 
 _Done 2026-10-07:_ `primary` is split per scheme, with one change from the recommendation
@@ -1037,14 +1037,14 @@ fixed layer disappears.
 
 ### 35. Dark mode: the header isn't blue, so the status bar doesn't match
 
-- [x] **Files:** `app/layout.jsx:29-33`, `utils/theme.js`
+- [x] **Files:** `app/layout.jsx:29-33`, `theme.js`
 
 _Done 2026-10-07:_ went with **dark header in dark mode**. Blue in both schemes would have
 needed more retheming. The header and footer draw `text.light` (`#edf3fc` in dark), which
 is 2.76:1 on dark mode's `#039be5`. That fails 3:1 for the menu icon and 4.5:1 for the
 footer text. It would also put a bright blue slab in a dark cab at night.
 
-- `utils/theme.js` exports `statusBarColors`. Light is `primary.main`. Dark is computed
+- `theme.js` exports `statusBarColors`. Light is `primary.main`. Dark is computed
   the way MUI draws the dark AppBar: the paper with the elevation-4 white overlay, so
   `#1c1c1c` today. A sampled header pixel matches. Because it's computed, #56 can change
   the dark surfaces without the status bar drifting.
@@ -1142,7 +1142,7 @@ row above the title), or replace both with a back arrow in the header (#52).
 
 ### 38. Headings are oversized on phones
 
-- [x] **File:** `utils/theme.js:84-110`, `layout/Container.jsx:17`
+- [x] **File:** `theme.js:84-110`, `layout/Container.jsx:17`
 
 _Done 2026-10-07:_ the suggested scale, as written. At 390px: h1 36px, h2 and
 `sectionHeading` 28px, h3 24px, h4 20.8px, h5 18.8px, h6 17.2px. "Privacy Policy" and "Terms
@@ -1252,7 +1252,7 @@ _Done 2026-10-07:_ `home/SlicActions.jsx` replaces `MapPhoneLinks.jsx` and `PdfL
   tall.
   - Call shows for a center with a phone, and its name is "Call BETPA dispatch".
   - PDF is hidden when there's none. The link comes from the new `slicPdfHref` in
-    `utils/variables.js`, which keeps the legacy Supabase fallback.
+    `constants.js`, which keeps the legacy Supabase fallback.
   - Tips scrolls to the comments and carries the count as a badge. It replaces the comment
     chip from #40. The `/home/[slic]` page has no comments section, so it leaves Tips off.
 - **Checked:** at 390px through a temporary local preview page, with Android and iPhone
@@ -1472,7 +1472,7 @@ behavior.
 
 ### 47. Motion groundwork
 
-- [x] **Files:** `app/globals.css`, `utils/theme.js`
+- [x] **Files:** `app/globals.css`, `theme.js`
 
 _Done 2026-10-07:_ all three.
 
@@ -1735,7 +1735,7 @@ reads the session.
 
 ### 53. Internal links reload the whole page
 
-- [x] **Files:** `utils/theme.js`, plus roughly two dozen internal `href`s on MUI components
+- [x] **Files:** `theme.js`, plus roughly two dozen internal `href`s on MUI components
       (e.g. `header/UserMenu.jsx` ×5, `admin/page.jsx` ×6, `signIn/Membership.jsx`,
       `layout/RedirectMessage.jsx`, `not-found.jsx`)
 
@@ -1822,7 +1822,7 @@ depth.
   (`statusBarColors.dark` is computed from `night`).
 - OLED pure-black is given up for depth.
 
-- [x] **File:** `utils/theme.js` (`tokens`). Dark mode uses `#050505` for both the page and
+- [x] **File:** `theme.js` (`tokens`). Dark mode uses `#050505` for both the page and
       the paper, so panels separate only through MUI's elevation overlay. A slightly lifted
       ladder would read better in a cab at night and reduce OLED black smear while scrolling,
       e.g. page `#0b0d10`, panel `#14181d`, comment `#1b2027`. This is a token-only change.

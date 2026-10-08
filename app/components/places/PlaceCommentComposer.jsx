@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Alert, Box, Button, TextField } from '@mui/material';
 import { apiRequest } from '@/utils/apiRequest';
-import { PLACE_COMMENT_MAX_LENGTH } from '@/utils/variables';
+import { PLACE_COMMENT_MAX_LENGTH } from '@/constants';
 import {
   softContainedSx,
   softInputSx,

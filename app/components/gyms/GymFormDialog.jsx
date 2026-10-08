@@ -23,10 +23,10 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { formatLatLng, mapsHref, parseLatLng } from '@/utils/geo';
-import { GYM_STATUSES } from '@/utils/variables';
+import { GYM_STATUSES } from '@/constants';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import PhoneField from '../form/PhoneField';
 import { apiRequest } from '@/utils/apiRequest';

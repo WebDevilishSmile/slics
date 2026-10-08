@@ -8,7 +8,7 @@ import {
   Wc,
 } from '@mui/icons-material';
 
-// Icon per PLACE_CATEGORIES value (utils/variables.js). Named imports keep the
+// Icon per PLACE_CATEGORIES value (constants.js). Named imports keep the
 // bundle to these few icons; a category missing here gets the map pin.
 const ICONS = {
   fuel: LocalGasStation,

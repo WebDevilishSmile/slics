@@ -1,6 +1,6 @@
 'use client';
 
-import { SLICS_PER_PAGE } from '@/utils/variables';
+import { SLICS_PER_PAGE } from '@/constants';
 import { TableBody, TableCell, TableRow } from '@mui/material';
 import SlicRow from './SlicRow';
 

@@ -10,7 +10,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import { PLACE_CATEGORIES } from '@/utils/variables';
+import { PLACE_CATEGORIES } from '@/constants';
 import SlicTagsField from '../form/SlicTagsField';
 import {
   softContainedSx,

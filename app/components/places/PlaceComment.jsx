@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 import { apiRequest } from '@/utils/apiRequest';
 import { tapHaptic } from '@/lib/haptics';
-import { PLACE_COMMENT_MAX_LENGTH } from '@/utils/variables';
+import { PLACE_COMMENT_MAX_LENGTH } from '@/constants';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import {
   softContainedSx,

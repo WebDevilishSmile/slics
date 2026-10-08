@@ -1,4 +1,4 @@
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { Box, Button } from '@mui/material';
 
 import BouncingArrow from '../utility/BouncingArrow';

@@ -14,7 +14,7 @@
 // syntax detection); the app's own dev machine runs 24.
 import { MongoClient } from 'mongodb';
 import { putSlicPdf } from '../lib/blob.js';
-import { LEGACY_PDF_BASE_URL } from '../utils/variables.js';
+import { LEGACY_PDF_BASE_URL } from '../constants.js';
 
 // Snapshot of the bucket's contents (formerly utils/pdfs.js). Each name is
 // `<alphaSlic>.pdf`, lowercased.

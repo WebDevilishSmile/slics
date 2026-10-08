@@ -9,7 +9,7 @@ import {
   CircularProgress,
   Paper,
 } from '@mui/material';
-import { GYM_STATUSES } from '@/utils/variables';
+import { GYM_STATUSES } from '@/constants';
 import SlicTagsField from '../form/SlicTagsField';
 import {
   softContainedSx,

@@ -1,4 +1,4 @@
-import theme from '@/utils/theme';
+import theme from '@/theme';
 import { signIn } from '@/auth';
 import { Google } from '@mui/icons-material';
 import { Box, Button, Paper, Typography } from '@mui/material';

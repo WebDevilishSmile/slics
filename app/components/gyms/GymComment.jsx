@@ -25,7 +25,7 @@ import {
   softRaisedSmall,
 } from '../utility/soft';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
-import { GYM_COMMENT_MAX_LENGTH } from '@/utils/variables';
+import { GYM_COMMENT_MAX_LENGTH } from '@/constants';
 import { apiRequest } from '@/utils/apiRequest';
 
 function GymComment({ comment }) {

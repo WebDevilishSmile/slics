@@ -14,7 +14,7 @@ export default function SlicCardSkeleton() {
       variant='panel'
       aria-busy='true'
       aria-label='Loading SLIC'
-      sx={{ alignItems: 'stretch' }}
+      sx={{ alignItems: 'stretch', viewTransitionName: 'slic-details' }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
         <Box sx={{ flex: 1 }}>

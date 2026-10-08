@@ -4,7 +4,12 @@ import { Paper } from '@mui/material';
 // itself is the card's heading (home/TitleAddress.jsx, UI-SUGGESTIONS.md #40).
 function SlicDetailsContainer({ children }) {
   return (
-    <Paper variant='panel' sx={{ justifyContent: 'center' }}>
+    // The name lets a SLIC switch cross-fade this card (UI-SUGGESTIONS.md #48).
+    // EmptySlic and SlicCardSkeleton share it; only one renders at a time.
+    <Paper
+      variant='panel'
+      sx={{ justifyContent: 'center', viewTransitionName: 'slic-details' }}
+    >
       {children}
     </Paper>
   );

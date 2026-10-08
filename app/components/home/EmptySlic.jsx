@@ -43,7 +43,10 @@ function EmptySlic({ user }) {
   const firstName = user?.name?.split(' ').at(0);
 
   return (
-    <Paper variant='panel' sx={{ alignItems: 'stretch', gap: 3 }}>
+    <Paper
+      variant='panel'
+      sx={{ alignItems: 'stretch', gap: 3, viewTransitionName: 'slic-details' }}
+    >
       {recent.length > 0 ? (
         <Box>
           <Typography

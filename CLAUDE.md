@@ -102,6 +102,10 @@ Since 2026-10-07 the app's look is a **soft, embossed (neumorphic) style in the 
 - **Classy, not gimmicky.** Generous radii (16px cards and tiles, pill chips), even spacing (`gap` 1.5–3) so shadows have room, and restraint: one emboss level per element, never a raised card on a raised card. Nested content goes in an inset well.
 - **Don't trade away accessibility for the look.** A pressed or selected state also changes the icon (filled vs outlined) or the color, not just the shadow. Focus rings stay visible. Touch targets stay at least 40–48px. Text keeps AA contrast.
 - **Loading states** are `<Skeleton>`s shaped like the content, inside the same soft shapes (`home/SlicCardSkeleton.jsx`, `layout/LoadingFallback.jsx`). No "Loading..." text.
+- **Motion** is progressive enhancement and always respects reduced motion.
+  - Easing comes from `--ease-out` / `--ease-spring` (`app/globals.css`, mirrored as `theme.transitions.easing.out` / `.spring`). Durations are MUI's `theme.transitions.duration`.
+  - A global `prefers-reduced-motion: reduce` floor stills everything, so don't add per-component reduced-motion code for CSS animations.
+  - Animate a state change between two renders with `withViewTransition` (`utils/viewTransition.js`) and a `viewTransitionName` on the element. Only one element may hold a name at a time. The page root has no snapshot (`:root { view-transition-name: none }`), so only named elements animate.
 - **Check light and dark at phone width** for every change. The dark scheme's emboss is subtler by design.
 
 ### External integrations

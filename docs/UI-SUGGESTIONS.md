@@ -1472,7 +1472,18 @@ behavior.
 
 ### 47. Motion groundwork
 
-- [ ] **Files:** `app/globals.css`, `utils/theme.js`
+- [x] **Files:** `app/globals.css`, `utils/theme.js`
+
+_Done 2026-10-07:_ all three.
+
+1. **Smooth scroll:** it's inside `prefers-reduced-motion: no-preference`.
+2. **Reduced-motion floor:** one global rule. It sets animation and transition durations
+   to 0.01ms, iteration count to 1, and turns off every `::view-transition-*` animation.
+   It also stills MUI spinners and skeleton shimmer for those users, which is intended.
+3. **Easing tokens:** `--ease-out` (`cubic-bezier(0.2, 0.8, 0.2, 1)`) and `--ease-spring`
+   (a damped `linear()` spring with about 7% overshoot) are set on `:root`. The theme
+   mirrors them as `theme.transitions.easing.out` and `.spring` for `sx` and
+   `transitions.create()`. Durations stay MUI's.
 
 1. `html { scroll-behavior: smooth }` (`globals.css:11`) is unconditional. Wrap it in
    `@media (prefers-reduced-motion: no-preference)`.
@@ -1500,7 +1511,31 @@ behavior.
 
 ### 48. Animate switching SLICs with a View Transition
 
-- [ ] **File:** `home/Main.jsx`
+- [x] **File:** `home/Main.jsx`
+
+_Done 2026-10-07._
+
+- **One path:** every change of the SLIC on screen goes through `changeSlic` in
+  `home/Main.jsx`. That covers a search pick (`showSlic`) and the URL (recent chips,
+  Back/Forward, links).
+- **The wrapper:** a real change runs inside `withViewTransition` (`utils/viewTransition.js`),
+  which is `document.startViewTransition(() => flushSync(update))`. It falls back to a
+  plain update without support or under reduced motion.
+- **What animates:** the lookup card, `SlicCardSkeleton` and `EmptySlic` all carry
+  `viewTransitionName: 'slic-details'`, since only one renders at a time. The card
+  cross-fades in 200ms while its box morphs to the new height in 250ms, both on
+  `--ease-out`.
+- **What doesn't:** the page itself isn't captured (`:root { view-transition-name: none }`),
+  so the search and everything else stay live.
+- **Skipped cases:** the first render after the skeleton applies instantly, and so does
+  the URL catching up to a pick. Those are compared by `numSlic`, because a navigation
+  hands back fresh objects.
+- **Checked in headless Chrome:**
+  - No animation on first load.
+  - One per pick, even after `router.push` lands.
+  - Back animates.
+  - Reduced motion switches with none.
+  - Focus stays in the search, and the search label settles on the new SLIC.
 
 When a driver picks a different SLIC, the details card swaps instantly. A same-document
 View Transition cross-fades the old card into the new one. That makes it obvious the

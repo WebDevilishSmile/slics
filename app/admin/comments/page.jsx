@@ -2,7 +2,6 @@ import { auth } from '@/auth';
 import { getAllSlics } from '@/utils/slicsApi';
 
 import CommentsSection from '@/app/components/admin/comments/CommentsSection';
-import BackButton from '@/app/components/layout/BackButton';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import LoadingFallback from '@/app/components/layout/LoadingFallback';
 import { getAllComments } from '@/utils/commentsApi';
@@ -52,7 +51,6 @@ async function CommentsPage() {
 
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <BackButton />
       <Typography variant='sectionHeading'>Comments</Typography>
 
       <HydrationGuard>

@@ -6,7 +6,6 @@ import { Typography } from '@mui/material';
 import { Suspense } from 'react';
 import LoadingFallback from '@/app/components/layout/LoadingFallback';
 import CoversDate from '../components/covers/CoversDate';
-import BackButton from '../components/layout/BackButton';
 import PageContainer from '../components/layout/PageContainer';
 import RedirectMessage from '../components/layout/RedirectMessage';
 import HydrationGuard from '../components/utility/HydrationGuard';
@@ -49,7 +48,6 @@ async function CoversPage() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <PageContainer>
-        <BackButton />
         <Typography variant='sectionHeading'>Covers</Typography>
 
         <HydrationGuard>

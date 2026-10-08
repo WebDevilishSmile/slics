@@ -5,7 +5,6 @@ import { getSlicHistory } from '@/utils/slicHistoryApi';
 import SlicForm from '@/app/components/slicForm/SlicForm';
 import SlicAuditInfo from '@/app/components/slicForm/SlicAuditInfo';
 import SlicHistoryList from '@/app/components/slicForm/SlicHistoryList';
-import BackButton from '@/app/components/layout/BackButton';
 import { Typography } from '@mui/material';
 
 async function EditPage({ params }) {
@@ -15,7 +14,6 @@ async function EditPage({ params }) {
 
   return (
     <>
-      <BackButton />
       <Typography variant='sectionHeading'>
         Edit {slicData.name || slicData.alphaSlic}
       </Typography>

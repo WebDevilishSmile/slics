@@ -6,7 +6,6 @@ import dayjs from 'dayjs';
 import CoverCalendar from '@/app/components/covers/Calendar';
 import BidSheetUploader from '@/app/components/admin/coverBidJobs/BidSheetUploader';
 import CoverBidJobsManager from '@/app/components/admin/coverBidJobs/CoverBidJobsManager';
-import BackButton from '@/app/components/layout/BackButton';
 import { getUpcomingSaturday } from '@/utils/functions';
 import { Box, Typography } from '@mui/material';
 
@@ -50,7 +49,6 @@ function CoverJobs() {
 
   return (
     <>
-      <BackButton />
       <Typography variant='sectionHeading'>Cover Jobs</Typography>
 
       <CoverCalendar

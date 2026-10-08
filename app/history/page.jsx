@@ -2,7 +2,6 @@ import { auth } from '@/auth';
 import { getHistoryPage, parseHistoryQuery } from '@/utils/slicViewsApi';
 
 import HistoryView from '@/app/components/history/HistoryView';
-import HomeButton from '@/app/components/layout/HomeButton';
 import PageContainer from '@/app/components/layout/PageContainer';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import HydrationGuard from '@/app/components/utility/HydrationGuard';
@@ -49,7 +48,6 @@ export default async function HistoryPage({ searchParams }) {
 
   return (
     <PageContainer>
-      <HomeButton />
       <Typography variant='sectionHeading'>SLIC History</Typography>
 
       {/* Days are grouped in the phone's time zone, so render on the client. */}

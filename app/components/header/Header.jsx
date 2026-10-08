@@ -1,9 +1,8 @@
 import { auth, signOut } from '@/auth';
-import Image from 'next/image';
 
-import { AppBar, Box, Toolbar } from '@mui/material';
+import { Toolbar } from '@mui/material';
 
-import UserMenu from './UserMenu';
+import HeaderBar from './HeaderBar';
 
 export default async function Header() {
   const session = await auth();
@@ -16,21 +15,7 @@ export default async function Header() {
 
   return (
     <>
-      <AppBar>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <UserMenu user={session?.user} signOutAction={signOutAction} />
-
-          <Box sx={{ position: 'relative', height: '2.4rem', width: '2.4rem' }}>
-            <Image
-              src='/slics-logo-dark.png'
-              fill
-              style={{ objectFit: 'contain' }}
-              alt='SLICs Logo'
-              sizes='(max-width: 600px) 2.4rem, 2.4rem'
-            />
-          </Box>
-        </Toolbar>
-      </AppBar>
+      <HeaderBar user={session?.user} signOutAction={signOutAction} />
       {/* The AppBar is position: fixed, so it takes no room in the page. This
           empty Toolbar does, at the toolbar's own responsive height (56px on
           phones), so pages start just below the header (UI-SUGGESTIONS.md #37). */}

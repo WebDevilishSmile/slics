@@ -1,5 +1,4 @@
 import { Typography } from '@mui/material';
-import BackButton from '../../components/layout/BackButton';
 import GymFinder from '../../components/gyms/GymFinder';
 import HydrationGuard from '../../components/utility/HydrationGuard';
 import { getAllGyms } from '@/utils/gymsApi';
@@ -23,7 +22,6 @@ export default async function PlanetFitnessPage() {
 
   return (
     <>
-      <BackButton />
       <Typography variant='sectionHeading'>Planet Fitness</Typography>
       {/* Client-only render: dates and "days ago" use the phone's time zone. */}
       <HydrationGuard>

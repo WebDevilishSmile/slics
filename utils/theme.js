@@ -3,10 +3,8 @@ import {
   alpha,
   createTheme,
   darken,
-  getOverlayAlpha,
   lighten,
   responsiveFontSizes,
-  rgbToHex,
 } from '@mui/material/styles';
 
 // The raw colors both schemes are built from — the one place to change a color.
@@ -350,12 +348,12 @@ theme = responsiveFontSizes(theme);
 // The browser/status bar color in each scheme, matching the header
 // (UI-SUGGESTIONS.md #35). Light: the header is primary.main. Dark: MUI doesn't
 // color an AppBar in dark mode (enableColorOnDark is false), so it draws as the
-// dark paper under Paper's white elevation overlay. AppBar's default elevation
-// is 4, and lighten() is the same blend as that overlay. Read by app/layout.jsx,
-// app/manifest.js and layout/ThemeColorSync.jsx.
+// dark paper. The header has elevation 0 (header/HeaderBar.jsx, #52), so there's
+// no elevation overlay: it's plain `night`, seamless with the page. Read by
+// app/layout.jsx, app/manifest.js and layout/ThemeColorSync.jsx.
 export const statusBarColors = {
   light: primary.main,
-  dark: rgbToHex(lighten(tokens.night, getOverlayAlpha(4))),
+  dark: tokens.night,
 };
 
 export default theme;

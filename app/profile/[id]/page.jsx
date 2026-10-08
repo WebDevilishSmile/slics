@@ -3,7 +3,6 @@ import { getCommentsByUserId } from '@/utils/commentsApi';
 import { getUserById } from '@/utils/usersApi';
 import { serializeUser } from '@/utils/functions';
 
-import HomeButton from '@/app/components/layout/HomeButton';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import ProfileComments from '@/app/components/profile/ProfileComments';
 import ProfileData from '@/app/components/profile/ProfileData';
@@ -55,7 +54,6 @@ async function ProfilePage({ params }) {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <PageContainer>
-        <HomeButton />
         <Typography variant='sectionHeading'>Profile</Typography>
 
         <HydrationGuard>

@@ -1,5 +1,4 @@
 import { Link, Typography } from '@mui/material';
-import HomeButton from '../components/layout/HomeButton';
 import PageContainer from '../components/layout/PageContainer';
 import LegalList from '../components/legal/LegalList';
 import LegalSection from '../components/legal/LegalSection';
@@ -15,7 +14,6 @@ const EFFECTIVE_DATE = 'October 7, 2026';
 export default function PrivacyPage() {
   return (
     <PageContainer>
-      <HomeButton />
 
       <Typography variant='sectionHeading'>Privacy Policy</Typography>
       <Typography variant='body2' sx={{ mb: 4, textAlign: 'center' }}>

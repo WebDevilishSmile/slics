@@ -2,7 +2,6 @@ import { auth } from '@/auth';
 import { serializeSlics } from '@/utils/functions';
 import { getAllSlics } from '@/utils/slicsApi';
 
-import BackButton from '@/app/components/layout/BackButton';
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import { Typography } from '@mui/material';
 import SlicsTable from '../../components/admin/slics/SlicsTable';
@@ -35,7 +34,6 @@ async function SlicsTablePage() {
 
   return (
     <>
-      <BackButton />
       <Typography variant='sectionHeading'>SLICs</Typography>
 
       <SlicsTable slics={serializeSlics(slics)} />

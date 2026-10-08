@@ -1651,7 +1651,32 @@ bottom pinning, and `BottomSheetActions` (stacked, full-width, 48px buttons).
 
 ### 52. A header that does more
 
-- [ ] **Files:** `header/Header.jsx`, `layout/HomeButton.jsx`, `layout/BackButton.jsx`
+- [x] **Files:** `header/Header.jsx`, `layout/HomeButton.jsx`, `layout/BackButton.jsx`
+
+_Done 2026-10-07,_ except the bottom navigation, which is left for a separate decision.
+`header/HeaderBar.jsx` is the client header, and `Header.jsx` stays the server wrapper that
+reads the session.
+
+- **Logo:** a link to `/home` when signed in, `/` otherwise, labelled "SLICs home".
+- **Back arrow and page name:** any path in `PAGE_TITLES` shows a back arrow and its page
+  name next to the menu. Matching is by longest prefix, for example `/admin/cover/jobs` →
+  "Cover Jobs".
+  - The arrow goes back only when the previous page was in the app: a module-level count
+    of in-app navigations. Otherwise it goes home, so a cold start or a shared link never
+    leaves the app.
+  - `HomeButton` and `BackButton` are deleted, along with their uses on 20 pages.
+- **Shadow on scroll:** `useScrollTrigger`. The header has `elevation={0}` and is flat at
+  the top, then gets the soft `raised` shadow once content scrolls under it.
+  - In dark mode that means no elevation overlay, so the header is plain `night`, seamless
+    with the page.
+  - `statusBarColors.dark` is now `night`.
+- **Checked in headless Chrome, both schemes:**
+  - `/` has no arrow.
+  - A cold `/privacy` shows "Privacy Policy" and a logo linking to `/`. The header is flat
+    at the top and shadowed after scrolling, and back goes to `/`.
+  - Back after an in-app push to `/terms` returns to `/privacy`.
+- **Not done:** `BottomNavigation`. It changes how drivers navigate and needs safe-area
+  CSS. Decide it on its own.
 
 - The logo isn't a link. Make it go to `/home` when signed in, otherwise `/`.
 - On sub-pages, replace the floating Home/Back buttons (#37) with a back arrow and the page

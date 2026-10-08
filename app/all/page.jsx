@@ -9,7 +9,6 @@ import { getAllHubs } from '@/utils/slicsApi';
 
 import Comments from '../components/comments/Comments';
 import Main from '../components/home/Main';
-import HomeButton from '../components/layout/HomeButton';
 import PageContainer from '../components/layout/PageContainer';
 
 async function AllHubs({ searchParams }) {
@@ -34,7 +33,6 @@ async function AllHubs({ searchParams }) {
 
   return (
     <PageContainer>
-      <HomeButton />
 
       <Typography variant='h2' sx={{ textAlign: 'center', maxWidth: theme.layout.width.prose }}>
         All Hubs

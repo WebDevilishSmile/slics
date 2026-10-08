@@ -3,7 +3,6 @@ import { auth } from '@/auth';
 import theme from '@/utils/theme';
 import { getPlaces } from '@/utils/placesApi';
 import { getAllSlics } from '@/utils/slicsApi';
-import BackButton from '../components/layout/BackButton';
 import PageContainer from '../components/layout/PageContainer';
 import PlaceFinder from '../components/places/PlaceFinder';
 import HydrationGuard from '../components/utility/HydrationGuard';
@@ -33,7 +32,6 @@ export default async function WhipItInAndOutPage() {
 
   return (
     <PageContainer>
-      <BackButton />
       <Typography variant='sectionHeading'>
         Whip It In And <br /> Whip It Out
       </Typography>

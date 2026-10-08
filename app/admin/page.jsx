@@ -1,7 +1,6 @@
 import { Button, ButtonGroup, Typography, Box } from '@mui/material';
 import Link from 'next/link';
 
-import HomeButton from '../components/layout/HomeButton';
 
 async function AdminPage() {
   const adminLinks = [
@@ -16,7 +15,6 @@ async function AdminPage() {
 
   return (
     <>
-      <HomeButton />
       <Typography variant='sectionHeading'>Admin Page</Typography>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 4 }}>

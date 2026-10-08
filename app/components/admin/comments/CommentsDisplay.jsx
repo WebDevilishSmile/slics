@@ -1,8 +1,9 @@
 'use client';
 
-import { KeyboardArrowDown, KeyboardArrowUp, Sort } from '@mui/icons-material';
-import { Box, Button, Typography, Divider } from '@mui/material';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { Box, Button, Typography } from '@mui/material';
 import { useState, useMemo } from 'react';
+import { softPressSx, softRaisedSmall } from '../../utility/soft';
 import Comment from './Comment';
 import CommentsSearch from './CommentsSearch';
 
@@ -55,7 +56,7 @@ function CommentsDisplay({ comments = [], slics = [], users = [] }) {
 
   return (
     <Box
-      sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 2 }}
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
     >
       <CommentsSearch
         comments={processedComments}
@@ -73,9 +74,9 @@ function CommentsDisplay({ comments = [], slics = [], users = [] }) {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Button
             size='small'
-            variant='outlined'
             onClick={() => setIsDesc(!isDesc)}
             startIcon={isDesc ? <KeyboardArrowDown /> : <KeyboardArrowUp />}
+            sx={[softRaisedSmall, softPressSx, { px: 2, minHeight: '2.5rem' }]}
           >
             {isDesc ? 'Newest First' : 'Oldest First'}
           </Button>
@@ -86,9 +87,7 @@ function CommentsDisplay({ comments = [], slics = [], users = [] }) {
         </Typography>
       </Box>
 
-      <Divider />
-
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         {processedComments.length > 0 ? (
           processedComments.map((comment) => (
             <Comment

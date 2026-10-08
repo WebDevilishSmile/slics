@@ -22,20 +22,11 @@ a {
   text-decoration: none;
 }
 
-/* Surface color for the comment editor. Reads the palette variable MUI emits
-   for background.comment (redefined under .dark by
-   cssVariables: { colorSchemeSelector: 'class' } in utils/theme.js), so it
-   follows the color scheme — including 'system' — with no JS branching.
-   Needed because tiptap renders its own element and sx can't reach it. */
-.comment-surface {
-  background-color: var(--mui-palette-background-comment);
-}
-
-/* Rich-text content styles, shared by the comment editor (tiptap) and rendered
-   comments (Comment.jsx) so a code block looks the same while typing and after
-   posting. StarterKit creates these elements from markdown-style shortcuts
-   (`code`, ```, >, ---). Colors are translucent MUI palette overlays, so they
-   sit correctly on any surface in both schemes. Text color is inherited. */
+/* Styles for older SLIC comments, which are Tiptap HTML (comments/CommentContent.jsx
+   renders them; tips posted since 2026-10-07 are plain text). Tiptap's
+   StarterKit made these elements from markdown-style shortcuts (`code`, ```,
+   >, ---). Colors are translucent MUI palette overlays, so they sit correctly
+   on any surface in both schemes. Text color is inherited. */
 .comment-content {
   :first-child {
     margin-top: 0;
@@ -70,14 +61,4 @@ a {
     border-top: 1px solid var(--mui-palette-divider);
     margin: 2rem 0;
   }
-}
-
-/* text.secondary, not a fixed grey: #adb5bd was 1.91:1 on the light comment
-   surface (UI-SUGGESTIONS.md #33). */
-.tiptap p.is-editor-empty:first-child::before {
-  color: var(--mui-palette-text-secondary);
-  content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
 }

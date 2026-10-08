@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { softContainedSx, softTableSx } from '../../utility/soft';
 import SlicsBody from './SlicsBody';
 import SlicsFilter from './SlicsFilter';
 import TableHeader from './TableHeader';
@@ -67,23 +68,38 @@ function SlicsTable({ slics }) {
   }, [search, slics, sort, sortCategory]);
 
   return (
-    <Paper sx={{ width: '100%', maxWidth: theme.layout.width.wide, mt: 4 }}>
+    <Paper
+      variant='panel'
+      sx={{
+        maxWidth: theme.layout.width.wide,
+        minHeight: 0,
+        alignItems: 'stretch',
+        px: { xs: 1, sm: 3 },
+      }}
+    >
       <Box
         sx={{
           width: '100%',
           display: 'flex',
+          alignItems: 'center',
           justifyContent: 'space-between',
-          px: 2,
-          pt: 2,
+          gap: 2,
+          px: 1,
           pb: 2,
         }}
       >
         <SlicsFilter search={search} setSearch={setSearch} />
 
-        <Button href='/admin/new'>New SLIC</Button>
+        <Button
+          variant='contained'
+          href='/admin/new'
+          sx={[softContainedSx, { flexShrink: 0, minHeight: '3rem' }]}
+        >
+          New SLIC
+        </Button>
       </Box>
       <TableContainer>
-        <Table>
+        <Table sx={softTableSx}>
           <TableHeader
             sort={sort}
             setSort={setSort}

@@ -19,6 +19,11 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import {
+  softContainedSx,
+  softPressSx,
+  softRaisedSmall,
+} from '../../utility/soft';
 
 function SlicOptions({ slic, onSlicDeleted }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -129,6 +134,7 @@ function SlicOptions({ slic, onSlicDeleted }) {
         onClick={handleClick}
         size='small'
         aria-label={`Options for ${slic.alphaSlic || slic.numSlic}`}
+        sx={softPressSx}
       >
         <MoreVertOutlined />
       </IconButton>
@@ -150,27 +156,28 @@ function SlicOptions({ slic, onSlicDeleted }) {
         </MenuItem>
       </Menu>
 
-      <Dialog fullScreen open={openWarning} onClose={handleWarningClose}>
+      <Dialog
+        open={openWarning}
+        onClose={handleWarningClose}
+        fullWidth
+        maxWidth='xs'
+      >
         <Box
           sx={{
-            width: '100%',
-            height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
             alignItems: 'center',
-            px: 4,
+            p: 4,
           }}
         >
-          <Typography textAlign='center' variant='h4' sx={{ mb: 4 }}>
-            Are you sure you want to delete slic{' '}
-            {slic.alphaSlic || slic.numSlic}?
+          <Typography textAlign='center' variant='h5' sx={{ mb: 2 }}>
+            Delete SLIC {slic.alphaSlic || slic.numSlic}?
           </Typography>
 
           <Typography
             textAlign='center'
-            variant='body1'
-            sx={{ mb: 6, color: 'text.secondary' }}
+            variant='body2'
+            sx={{ mb: 4, color: 'text.secondary' }}
           >
             This action cannot be undone. All data associated with this slic
             will be permanently removed.
@@ -178,10 +185,9 @@ function SlicOptions({ slic, onSlicDeleted }) {
 
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
-              variant='outlined'
-              color='error'
               onClick={handleWarningClose}
               disabled={isLoading}
+              sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
             >
               Cancel
             </Button>
@@ -190,6 +196,7 @@ function SlicOptions({ slic, onSlicDeleted }) {
               color='error'
               onClick={handleDelete}
               disabled={isLoading}
+              sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
             >
               {isLoading ? 'Deleting...' : 'Confirm Delete'}
             </Button>

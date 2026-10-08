@@ -89,6 +89,20 @@ export const softToggleSx = (theme) => ({
   },
 });
 
+// A table that lives straight on the surface: no cell borders, no row
+// dividers. Rows are told apart by spacing and a faint hover wash.
+export const softTableSx = (theme) => ({
+  backgroundColor: 'transparent',
+  '& .MuiTableCell-root': { borderBottom: 'none' },
+  '& .MuiTableCell-head': {
+    color: theme.vars.palette.primary.main,
+    fontWeight: 600,
+  },
+  '& .MuiTableBody-root .MuiTableRow-root:hover': {
+    backgroundColor: theme.vars.palette.action.hover,
+  },
+});
+
 // A soft button: flat at rest, pressed in while held, and pressed in while
 // "on" (aria-pressed), which is how a chosen vote shows.
 export const softPressSx = (theme) => ({

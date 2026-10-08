@@ -123,13 +123,22 @@ let theme = createTheme({
   // highlight up there and a shadow down-right make it look pressed out of
   // the surface (`raised`) or into it (`inset`). One value per color scheme;
   // soft.js picks with applyStyles.
-  // `panel` for panels and dialogs, `raised` for cards and tiles,
-  // `raisedSmall` for pills, `inset` for wells.
+  // `panel` for panels, `raised` for cards and tiles, `raisedSmall` for
+  // pills, `inset` for wells, `overlay` for whatever floats over a backdrop.
   soft: {
     panel: softShadow({ x: 12, blur: 28 }),
     raised: softShadow({ x: 6, blur: 14 }),
     raisedSmall: softShadow({ x: 3, blur: 7 }),
     inset: softShadow({ x: 3, blur: 7, inset: true }),
+    // A focused field: the same well, pressed a little deeper.
+    insetDeep: softShadow({ x: 4, blur: 10, inset: true }),
+    // Anything over a backdrop (dialogs, the drawer, a snackbar): a plain
+    // drop shadow with no highlight. The highlight only reads as light when it
+    // falls on the same surface; over the dimmed backdrop it was a white halo.
+    overlay: {
+      light: `0 16px 40px ${alpha(tokens.brand[900], 0.28)}`,
+      dark: `0 16px 40px ${alpha(tokens.void, 0.8)}`,
+    },
   },
   colorSchemes: {
     dark: {
@@ -252,11 +261,6 @@ let theme = createTheme({
         size: 'small', // every chip but the home-page comment count
       },
     },
-    MuiCard: {
-      defaultProps: {
-        variant: 'outlined',
-      },
-    },
     MuiSnackbar: {
       defaultProps: {
         autoHideDuration: 6000, // pass null for a toast that must stay up
@@ -300,16 +304,19 @@ let theme = createTheme({
 
     // Overlays in the same seamless soft style, app-wide: dialogs and bottom
     // sheets, menus and popovers, and the header drawer take the page surface
-    // with a soft shadow instead of an elevation shadow and overlay. Call
-    // sites still win (BottomSheetDialog squares its bottom corners on phones).
+    // instead of an elevation shadow and overlay. Dialogs and the drawer sit
+    // over a dimmed backdrop, so they take the plain `overlay` drop shadow
+    // (a soft highlight there is a white halo); menus open over the surface
+    // itself and keep the soft pair. Call sites still win (BottomSheetDialog
+    // squares its bottom corners on phones).
     MuiDialog: {
       styleOverrides: {
         paper: ({ theme }) => ({
           borderRadius: theme.spacing(3),
           backgroundColor: theme.vars.palette.background.default,
           backgroundImage: 'none',
-          boxShadow: theme.soft.panel.light,
-          ...theme.applyStyles('dark', { boxShadow: theme.soft.panel.dark }),
+          boxShadow: theme.soft.overlay.light,
+          ...theme.applyStyles('dark', { boxShadow: theme.soft.overlay.dark }),
         }),
       },
     },
@@ -329,8 +336,48 @@ let theme = createTheme({
         paper: ({ theme }) => ({
           backgroundColor: theme.vars.palette.background.default,
           backgroundImage: 'none',
-          boxShadow: theme.soft.raised.light,
-          ...theme.applyStyles('dark', { boxShadow: theme.soft.raised.dark }),
+          boxShadow: theme.soft.overlay.light,
+          ...theme.applyStyles('dark', { boxShadow: theme.soft.overlay.dark }),
+        }),
+      },
+    },
+    // The desktop date picker's calendar is a Popper, not a Popover, so the
+    // override above misses it; without this it's an elevation-8 Paper.
+    MuiPickerPopper: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          borderRadius: theme.spacing(2),
+          backgroundColor: theme.vars.palette.background.default,
+          backgroundImage: 'none',
+          boxShadow: theme.soft.raisedSmall.light,
+          ...theme.applyStyles('dark', { boxShadow: theme.soft.raisedSmall.dark }),
+        }),
+      },
+    },
+
+    // Alerts in the soft style, every severity and variant: the surface with
+    // the severity's color on the icon only, instead of a tinted or solid
+    // fill. Inline they're an inset well (they usually sit inside a card);
+    // in a snackbar they float, so they take the overlay drop shadow.
+    MuiAlert: {
+      styleOverrides: {
+        root: ({ theme, ownerState }) => ({
+          borderRadius: theme.spacing(2),
+          border: 'none',
+          backgroundColor: theme.vars.palette.background.default,
+          backgroundImage: 'none',
+          color: theme.vars.palette.text.primary,
+          boxShadow: theme.soft.inset.light,
+          ...theme.applyStyles('dark', { boxShadow: theme.soft.inset.dark }),
+          '.MuiSnackbar-root &': {
+            boxShadow: theme.soft.overlay.light,
+            ...theme.applyStyles('dark', { boxShadow: theme.soft.overlay.dark }),
+          },
+          '& .MuiAlert-icon': {
+            color:
+              theme.vars.palette[ownerState.color || ownerState.severity || 'success']
+                .main,
+          },
         }),
       },
     },

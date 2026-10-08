@@ -4,6 +4,10 @@
 // and every soft element share one surface, `background.default` with no
 // overlay. Only light and shadow tell them apart: no borders, no Paper
 // elevation. That means these work on the page itself as well as in a panel.
+//
+// In a server component, call a helper with the imported theme
+// (`sx={softRaised(theme)}`, theme from '@/utils/theme'): a function can't be
+// passed to MUI's client components, but what it returns is a plain object.
 
 export const softSurface = (theme) => ({
   backgroundColor: theme.vars.palette.background.default,
@@ -28,23 +32,24 @@ export const softRaisedSmall = (theme) => ({
 // A well pressed into the surface (replies, text boxes, a pressed button).
 export const softInset = (theme) => ({ ...surface(theme), ...shadow(theme, 'inset') });
 
-// A pressed-in well with a faint primary glow, for a focused field.
+// A focused field: the well pressed a little deeper, with a hairline of
+// brand blue inside its edge. No outer ring: a glow around the well read as a
+// halo, but focus still has to show (WCAG 2.4.7), so the edge carries it.
 export const softFocus = (theme) => {
-  const glow = (pct) =>
-    `0 0 0 3px color-mix(in srgb, ${theme.vars.palette.primary.main} ${pct}%, transparent)`;
+  const edge = `inset 0 0 0 1px ${theme.vars.palette.primary.main}`;
   return {
-    boxShadow: `${theme.soft.inset.light}, ${glow(28)}`,
+    boxShadow: `${theme.soft.insetDeep.light}, ${edge}`,
     ...theme.applyStyles('dark', {
-      boxShadow: `${theme.soft.inset.dark}, ${glow(40)}`,
+      boxShadow: `${theme.soft.insetDeep.dark}, ${edge}`,
     }),
   };
 };
 
 // A TextField (or select, or date picker) that reads as a pressed-in well.
-// The outline is gone, so focus gets a glow. A lone box uses a placeholder
-// (with an aria-label); in a form, give it a `label` and the label sits above
-// the well instead of floating into an outline it no longer has, and the
-// placeholder stays visible under it.
+// The outline is gone, so focus deepens the well instead (softFocus). A lone
+// box uses a placeholder (with an aria-label); in a form, give it a `label`
+// and the label sits above the well instead of floating into an outline it no
+// longer has, and the placeholder stays visible under it.
 export const softInputSx = (theme) => ({
   '& .MuiOutlinedInput-root, & .MuiPickersOutlinedInput-root': {
     ...softInset(theme),
@@ -104,10 +109,20 @@ export const softTableSx = (theme) => ({
 });
 
 // A soft button: flat at rest, pressed in while held, and pressed in while
-// "on" (aria-pressed), which is how a chosen vote shows.
+// "on" (aria-pressed), which is how a chosen vote shows. Light and shadow are
+// the only feedback: MUI's hover and focus washes are pinned to the surface,
+// because on a phone `:hover` sticks after a tap and left the control gray.
+// Keyboard focus gets an outline instead.
 export const softPressSx = (theme) => ({
   transition: theme.transitions.create('box-shadow', {
     duration: theme.transitions.duration.shortest,
   }),
+  '&:hover, &.Mui-focusVisible': {
+    backgroundColor: theme.vars.palette.background.default,
+  },
+  '&.Mui-focusVisible': {
+    outline: `2px solid ${theme.vars.palette.primary.main}`,
+    outlineOffset: 2,
+  },
   '&:active, &[aria-pressed="true"]': shadow(theme, 'inset'),
 });

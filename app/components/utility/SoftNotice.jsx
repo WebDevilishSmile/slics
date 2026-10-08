@@ -10,7 +10,8 @@ import { softPressSx, softRaised } from './soft';
 // An informational notice in the soft style: a raised card in the page's own
 // surface with a blue icon, the message, optional actions and an optional
 // dismiss button (CLAUDE.md "Visual style"). For info only. Errors and
-// successes keep MUI's colored Alerts, whose colors carry meaning.
+// successes are MUI Alerts, themed soft too, with the severity's color on
+// the icon, where it carries meaning.
 export default function SoftNotice({ icon, children, actions, onClose, closeLabel = 'Dismiss', sx }) {
   return (
     <Box

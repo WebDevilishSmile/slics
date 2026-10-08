@@ -8,8 +8,63 @@
   margin: 0;
 }
 
-html {
-  scroll-behavior: smooth;
+/* Motion groundwork (UI-SUGGESTIONS.md #47). Easing tokens for every
+   animation: --ease-out for things arriving or settling, --ease-spring for
+   small "pop" feedback (a damped spring as a linear() curve, with a little
+   overshoot). Durations come from MUI's theme.transitions.duration (shortest
+   150ms to standard 300ms), not new numbers. The theme mirrors both as
+   theme.transitions.easing.out / .spring for sx and transitions.create(). */
+:root {
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: linear(
+    0, 0.013, 0.05 2.6%, 0.2 5.6%, 0.437 9.1%, 0.708 13.2%, 0.883 16.8%, 1.003 20.5%,
+    1.057 24.1%, 1.073 27.3%, 1.066 31.2%, 1.025 39.5%, 1.003 47.2%, 0.995 55.4%, 1
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* One reduced-motion floor for the whole app, so a later animation can't
+   forget it: everything snaps, View Transitions included. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Switching SLICs (UI-SUGGESTIONS.md #48, home/Main.jsx): only the lookup
+   card animates. The old card cross-fades into the new one while the box
+   morphs to the new height. The page itself isn't captured at all
+   (no root snapshot), so everything outside the card, the search field
+   included, stays live and current during the 250ms. */
+:root {
+  view-transition-name: none;
+}
+::view-transition-group(slic-details) {
+  animation-duration: 250ms;
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-old(slic-details),
+::view-transition-new(slic-details) {
+  animation-duration: 200ms;
+  animation-timing-function: var(--ease-out);
+  /* Both snapshots keep their own aspect while the group resizes. */
+  height: 100%;
+  object-fit: none;
+  object-position: top;
 }
 
 body {

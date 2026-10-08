@@ -90,6 +90,14 @@ let theme = createTheme({
     minHeight: '24rem', // keeps the home/comments panels from collapsing
     elevation: 6, // Paper elevation for those panels (read by the `panel` variant below)
   },
+  // The app's two easing tokens (UI-SUGGESTIONS.md #47), defined once as CSS
+  // custom properties in app/globals.css. MUI's own curves and durations stay.
+  transitions: {
+    easing: {
+      out: 'var(--ease-out)', // arriving or settling
+      spring: 'var(--ease-spring)', // small "pop" feedback
+    },
+  },
   // Soft, embossed surfaces: the lookup card, the Driver tips cards, their
   // reply wells and controls (app/components/utility/soft.js). Not MUI keys.
   // An element in

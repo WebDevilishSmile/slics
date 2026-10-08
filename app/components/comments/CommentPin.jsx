@@ -3,7 +3,7 @@
 import { OpenInNew, PlaceOutlined } from '@mui/icons-material';
 import { Button } from '@mui/material';
 
-import { useMapsApp } from '@/utils/clientFunctions';
+import { useMapsApp } from '@/hooks/useMapsApp';
 import { mapsHref } from '@/utils/geo';
 
 import { softPressSx, softRaisedSmall } from '../utility/soft';
@@ -11,7 +11,7 @@ import { softPressSx, softRaisedSmall } from '../utility/soft';
 const MAPS_APPS = { google: 'Google Maps', apple: 'Apple Maps' };
 
 // A tip's pinned spot: a soft pill that opens it in the maps app this device
-// uses for Navigate (utils/clientFunctions.js useMapsApp). Shown on /home, on
+// uses for Navigate (hooks/useMapsApp.js). Shown on /home, on
 // a driver's profile and on the admin pages.
 function CommentPin({ pin, sx }) {
   const { mapsApp } = useMapsApp();

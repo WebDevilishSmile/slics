@@ -17,7 +17,7 @@ import {
   MenuItem,
 } from '@mui/material';
 
-import { useMapsApp } from '@/utils/clientFunctions';
+import { useMapsApp } from '@/hooks/useMapsApp';
 import { mapsHref } from '@/utils/geo';
 import { useTips } from '@/utils/tipsStore';
 import { COMMENTS_SECTION_ID, slicPdfHref } from '@/utils/variables';
@@ -56,7 +56,7 @@ function ActionButton({ icon, label, ...props }) {
 // needs the comments section on the page, so callers without one leave
 // `showTips` off.
 function SlicActions({ slic, commentsCount = 0, showTips = false }) {
-  // The device's maps app, shared with pinned spots on tips (utils/clientFunctions.js).
+  // The device's maps app, shared with pinned spots on tips (hooks/useMapsApp.js).
   const { mapsApp, chooseMapsApp, isAppleDevice } = useMapsApp();
   const [menuAnchor, setMenuAnchor] = useState(null);
 

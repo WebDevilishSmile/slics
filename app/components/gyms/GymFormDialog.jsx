@@ -24,7 +24,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import theme from '@/utils/theme';
-import { useGeolocation } from '@/utils/clientFunctions';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { formatLatLng, mapsHref, parseLatLng } from '@/utils/geo';
 import { GYM_STATUSES } from '@/utils/variables';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';

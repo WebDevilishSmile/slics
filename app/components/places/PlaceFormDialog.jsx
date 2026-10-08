@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 import theme from '@/utils/theme';
 import { apiRequest } from '@/utils/apiRequest';
-import { useGeolocation } from '@/utils/clientFunctions';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { formatLatLng, mapsHref, parseLatLng } from '@/utils/geo';
 import { PLACE_CATEGORIES, TRAILER_ACCESS } from '@/utils/variables';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';

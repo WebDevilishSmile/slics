@@ -26,7 +26,7 @@ import {
   Typography,
 } from '@mui/material';
 import { apiRequest } from '@/utils/apiRequest';
-import { tapHaptic } from '@/utils/clientFunctions';
+import { tapHaptic } from '@/lib/haptics';
 import { PLACE_COMMENT_MAX_LENGTH } from '@/utils/variables';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import {

@@ -2,7 +2,7 @@
 
 import { Apple, Google, PhoneOutlined } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
-import { useAppleDevice } from '@/utils/clientFunctions';
+import { useAppleDevice } from '@/hooks/useAppleDevice';
 import { mapsHref } from '@/utils/geo';
 import { softContainedSx, softPressSx, softRaisedSmall } from './soft';
 

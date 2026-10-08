@@ -389,7 +389,7 @@ serializers (item 16).
 
 ### 18. Move the hooks to `hooks/`
 
-- [ ] **File:** `utils/clientFunctions.js` (2 importers) → `hooks/useIsMobile.js`,
+- [x] **File:** `utils/clientFunctions.js` (2 importers) → `hooks/useIsMobile.js`,
   `hooks/useAppleDevice.js`
 
 It's a `'use client'` module living next to server-only Mongo code. Also the home for
@@ -397,6 +397,11 @@ It's a `'use client'` module living next to server-only Mongo code. Also the hom
 `useIsMobile` rebased on theme breakpoints — do that in the same touch if convenient.
 
 *Blast radius:* import paths only.
+
+**Done 2026-10-08.** By now the module held four hooks and a helper (`useIsMobile` went in
+`UI-SUGGESTIONS.md` #29): `hooks/useAppleDevice.js`, `useMapsApp.js` (which uses
+`useAppleDevice`), `useGeolocation.js` and `useInstallPrompt.js`. `tapHaptic` isn't a hook,
+so it went to `lib/haptics.js`. `useCoverBidJobs.js` stays put for item 27.
 
 ### 19. Move `theme.js` and `variables.js` to the root
 

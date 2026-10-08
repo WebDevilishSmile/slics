@@ -9,7 +9,7 @@ import {
   ListItemText,
 } from '@mui/material';
 
-import { useInstallPrompt } from '@/utils/clientFunctions';
+import { useInstallPrompt } from '@/hooks/useInstallPrompt';
 
 import { softListItemSx } from '../utility/soft';
 

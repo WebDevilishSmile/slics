@@ -41,7 +41,7 @@ export const viewport = {
 
 // Chrome fires `beforeinstallprompt` as soon as the page is installable, which
 // on a slow phone can be before React hydrates. Stash it so useInstallPrompt
-// (utils/clientFunctions.js) can pick it up on mount; preventDefault keeps
+// (hooks/useInstallPrompt.js) can pick it up on mount; preventDefault keeps
 // Chrome's own mini-infobar from competing with the in-app install UI.
 const captureInstallPrompt =
   "window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__slicsInstallPrompt=e;});";

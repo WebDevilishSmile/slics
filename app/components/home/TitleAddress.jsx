@@ -7,7 +7,7 @@ import {
 import { Box, Chip, IconButton, Tooltip, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 
-import { tapHaptic } from '@/utils/clientFunctions';
+import { tapHaptic } from '@/lib/haptics';
 
 import {
   softInset,

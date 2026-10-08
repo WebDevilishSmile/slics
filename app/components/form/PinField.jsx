@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import { useGeolocation } from '@/utils/clientFunctions';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { mapsHref, parseLatLng } from '@/utils/geo';
 
 import { softInputSx, softPressSx, softRaisedSmall } from '../utility/soft';

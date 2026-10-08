@@ -30,7 +30,7 @@ import {
 } from '@mui/material';
 
 import { apiRequest } from '@/utils/apiRequest';
-import { tapHaptic } from '@/utils/clientFunctions';
+import { tapHaptic } from '@/lib/haptics';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 
 import CommentComposer from './CommentComposer';

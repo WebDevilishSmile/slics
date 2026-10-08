@@ -5,7 +5,7 @@ import { InstallMobileOutlined } from '@mui/icons-material';
 import { Button, useMediaQuery } from '@mui/material';
 
 import theme from '@/utils/theme';
-import { useInstallPrompt } from '@/utils/clientFunctions';
+import { useInstallPrompt } from '@/hooks/useInstallPrompt';
 
 import SoftNotice from '../utility/SoftNotice';
 import { softPressSx } from '../utility/soft';

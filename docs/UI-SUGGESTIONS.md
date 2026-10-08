@@ -1673,7 +1673,7 @@ _Done 2026-10-08,_ all three. `CommentHeader.jsx` no longer exists; the votes li
 - **Vote:** a new global `.pop` class (`app/globals.css`) springs an icon up from 60% on
   `--ease-spring`. A cast vote's filled thumb gets it only on the tap (`popped` state),
   never on load.
-- **Haptics:** `tapHaptic()` in `utils/clientFunctions.js` gives a 10ms `navigator.vibrate`
+- **Haptics:** `tapHaptic()` in `lib/haptics.js` gives a 10ms `navigator.vibrate`
   on copy and vote. It's feature-detected (Android only), skipped under reduced motion, and
   wrapped in try/catch.
 - **Checked in headless Chrome, with clipboard permission granted:**

@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import theme from '@/utils/theme';
-import { useGeolocation } from '@/utils/clientFunctions';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { distanceMiles } from '@/utils/geo';
 import { CommentRefreshProvider } from '@/app/context/CommentRefreshContext';
 import GymCard from './GymCard';

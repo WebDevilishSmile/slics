@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { softRaised } from '@/components/utility/soft';
-import { DAY_COLORS, DAY_LABELS, formatDayValue } from './dayFormat';
+import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 
 // The phone card for one bid job, shared by /bids (bids/BidsJobCard.jsx) and
 // /cover-bid-jobs (coverBidJobs/CoverBidJobCard.jsx); each maps its own job

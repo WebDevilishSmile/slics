@@ -6,7 +6,7 @@ import {
   isUnsaved,
   rowValues,
   toRowState,
-} from './coverBidJobRow';
+} from '@/lib/coverBidJobRow';
 
 async function readJson(res, fallbackMessage) {
   const data = await res.json();
@@ -23,7 +23,7 @@ async function readJson(res, fallbackMessage) {
  * Keyed on the formatted week string rather than the dayjs object so a caller
  * that builds a fresh dayjs each render doesn't send this into a refetch loop.
  */
-export default function useCoverBidJobs({ weekEndDate, refreshKey }) {
+export function useCoverBidJobs({ weekEndDate, refreshKey }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

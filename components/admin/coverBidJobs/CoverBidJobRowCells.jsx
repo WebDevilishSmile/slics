@@ -1,7 +1,7 @@
 'use client';
 
 import { TableCell, TextField } from '@mui/material';
-import { DAY_FIELDS, DAY_LABELS } from '@/components/coverBidJobs/dayFormat';
+import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
 import { softInputSx } from '@/components/utility/soft';
 
 // A pressed-in well per cell. The column header is the visible label, so the

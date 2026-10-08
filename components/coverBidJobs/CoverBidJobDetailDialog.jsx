@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { softInset, softPressSx } from '@/components/utility/soft';
-import { DAY_FIELDS, DAY_LABELS, DAY_COLORS, formatDayValue } from './dayFormat';
+import { DAY_FIELDS, DAY_LABELS, DAY_COLORS, formatDayValue } from '@/lib/dayFormat';
 
 function DetailRow({ label, value }) {
   return (

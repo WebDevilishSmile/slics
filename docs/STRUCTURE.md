@@ -555,15 +555,22 @@ longer crashes on a tip whose SLIC or author was deleted.
 
 ### 27. Move non-components out of component folders
 
-- [ ] `admin/coverBidJobs/useCoverBidJobs.js` → `hooks/useCoverBidJobs.js`
-- [ ] `admin/coverBidJobs/coverBidJobRow.js` → `lib/coverBidJobRow.js` (or fold into
+- [x] `admin/coverBidJobs/useCoverBidJobs.js` → `hooks/useCoverBidJobs.js`
+- [x] `admin/coverBidJobs/coverBidJobRow.js` → `lib/coverBidJobRow.js` (or fold into
   `lib/db/coverBidJobs.js` if it's a serializer)
-- [ ] `coverBidJobs/dayFormat.js` → `lib/format.js` (item 17)
+- [x] `coverBidJobs/dayFormat.js` → `lib/format.js` (item 17)
 
 Three `.js` files with lowercase names in folders where everything else is a
 PascalCase `.jsx`. They stand out because they don't belong.
 
 *Blast radius:* import paths only.
+
+**Done 2026-10-08.** `useCoverBidJobs` is a named export now, like the other hooks.
+`coverBidJobRow.js` is the editor's draft-row model, not a serializer, so it went to
+`lib/` as is. `dayFormat.js` went to `lib/dayFormat.js` whole rather than into
+`lib/format.js`: it's mostly the day constants (fields, labels, chip colors) its seven
+importers share, with one formatter. `utility/soft.js` is the one `.js` file left in
+`components/`, and it belongs there (the soft style's sx helpers).
 
 ### 28. Dedupe `home/page.jsx` and `all/page.jsx`; rename `/all`
 

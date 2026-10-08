@@ -14,7 +14,7 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import CoverBidJobCard from './CoverBidJobCard';
 import CoverBidJobDetailDialog from './CoverBidJobDetailDialog';
-import { DAY_FIELDS, DAY_LABELS } from './dayFormat';
+import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
 import {
   DayTimeChip,
   descriptionColumn,

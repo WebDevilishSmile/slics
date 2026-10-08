@@ -15,8 +15,8 @@ import CoverBidJobEditCard from './CoverBidJobEditCard';
 import CoverBidJobRowActions from './CoverBidJobRowActions';
 import CoverBidJobsEditTable from './CoverBidJobsEditTable';
 import DeleteCoverBidJobsDialog from './DeleteCoverBidJobsDialog';
-import useCoverBidJobs from './useCoverBidJobs';
-import { isUnsaved } from './coverBidJobRow';
+import { useCoverBidJobs } from '@/hooks/useCoverBidJobs';
+import { isUnsaved } from '@/lib/coverBidJobRow';
 import { softContainedSx, softPressSx, softRaisedSmall } from '@/components/utility/soft';
 
 export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {

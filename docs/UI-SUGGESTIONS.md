@@ -397,7 +397,7 @@ on `#222222`) didn't match the Buy-Me-a-Coffee style anyway, so item 26 should a
 purpose-named key if it wants one rather than resurrect this.
 
 `palette.secondary` turned out **not** to be unreferenced — the original claim missed
-`DAY_COLORS.tue = 'secondary'` (`coverBidJobs/dayFormat.js`, duplicated in
+`DAY_COLORS.tue = 'secondary'` (`lib/dayFormat.js`, duplicated in
 `bids/BidsJobCard.jsx` and `bids/BidsTable.jsx`), which colors every Tuesday `Chip`. That
 made the scheme divergence a visible defect: Tuesday was orange in light mode (same family
 as Sun/Sat's `warning`) and green in dark mode (same as Wed's `success`). Both overrides
@@ -556,7 +556,7 @@ make on purpose — set the default and walk the 18 + 20 sites above — not a c
   their `sx` (`fontWeight: 700, minWidth: 48` ×2, `fontWeight: 600, fontSize: '0.7rem'`
   ×2, none ×1), so a component would just be a prop bag. `DAY_COLORS` is still duplicated
   in `bids/BidsJobCard.jsx` and `bids/BidsTable.jsx` — collapsing those onto
-  `coverBidJobs/dayFormat.js` is a separate, non-styling cleanup.
+  `lib/dayFormat.js` is a separate, non-styling cleanup.
 
 ### 15. `MuiCard.defaultProps.variant = 'outlined'`
 

@@ -3,7 +3,7 @@
 import { IconButton } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { softPressSx } from '@/components/utility/soft';
-import { DAY_FIELDS } from './dayFormat';
+import { DAY_FIELDS } from '@/lib/dayFormat';
 import JobCard from './JobCard';
 
 // A cover bid job (flat day fields: job.sun … job.sat) on the shared JobCard.

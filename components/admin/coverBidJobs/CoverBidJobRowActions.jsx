@@ -3,7 +3,7 @@
 import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
-import { isDirty } from './coverBidJobRow';
+import { isDirty } from '@/lib/coverBidJobRow';
 import { softPressSx } from '@/components/utility/soft';
 
 export default function CoverBidJobRowActions({

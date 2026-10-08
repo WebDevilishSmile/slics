@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Stack, TextField } from '@mui/material';
-import { DAY_FIELDS, DAY_LABELS } from '@/components/coverBidJobs/dayFormat';
+import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
 import { softInputSx, softRaised } from '@/components/utility/soft';
 
 export default function CoverBidJobEditCard({ row, onChange, actions }) {

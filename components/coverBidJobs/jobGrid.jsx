@@ -2,7 +2,7 @@
 
 import { Chip, Tooltip, Typography } from '@mui/material';
 import { softRaised } from '@/components/utility/soft';
-import { DAY_COLORS, DAY_LABELS, formatDayValue } from './dayFormat';
+import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 
 // DataGrid pieces shared by the desktop tables on /bids (bids/BidsTable.jsx)
 // and /cover-bid-jobs (coverBidJobs/CoverBidJobsTable.jsx), UI-SUGGESTIONS.md

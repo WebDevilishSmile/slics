@@ -4,17 +4,18 @@ import { useEffect, useState } from 'react';
 import {
   Avatar,
   Box,
-  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
-  Divider,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Skeleton,
   Typography,
 } from '@mui/material';
+
+import { softInset } from '../utility/soft';
 
 function VoterList({ title, voters, emptyText }) {
   return (
@@ -66,12 +67,22 @@ export default function VotersDialog({ comment, open, onClose }) {
     <Dialog open={open} onClose={onClose} fullWidth maxWidth='xs' disableScrollLock>
       <DialogTitle>Votes</DialogTitle>
       <DialogContent>
-        <Typography>Helpful: {comment.upCount}</Typography>
-        <Typography>Not helpful: {comment.downCount}</Typography>
-        <Divider sx={{ mt: 1 }} />
+        <Box sx={[softInset, { borderRadius: 3, px: 2, py: 1.5 }]}>
+          <Typography>Helpful: {comment.upCount}</Typography>
+          <Typography>Not helpful: {comment.downCount}</Typography>
+        </Box>
+        {/* Loading: rows shaped like the voter list. */}
         {!voters && !error && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            <CircularProgress size='1.5rem' />
+          <Box sx={{ mt: 2 }} aria-busy='true'>
+            {[0, 1, 2].map((row) => (
+              <Box
+                key={row}
+                sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 0.75 }}
+              >
+                <Skeleton variant='circular' width='2rem' height='2rem' />
+                <Skeleton variant='text' width='40%' />
+              </Box>
+            ))}
           </Box>
         )}
         {error && (

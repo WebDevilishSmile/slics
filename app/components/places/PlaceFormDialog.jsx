@@ -179,7 +179,10 @@ function PlaceFormDialog({ place, slics, onClose }) {
         onClick={onClose}
         disabled={busy}
         aria-label='Close'
-        sx={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}
+        sx={[
+          softPressSx,
+          { position: 'absolute', top: '0.75rem', right: '0.75rem' },
+        ]}
       >
         <Close />
       </IconButton>
@@ -350,6 +353,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
                   target='_blank'
                   rel='noopener noreferrer'
                   endIcon={<OpenInNew />}
+                  sx={[softRaisedSmall, softPressSx, { px: 1.5 }]}
                 >
                   Preview pin
                 </Button>
@@ -396,7 +400,11 @@ function PlaceFormDialog({ place, slics, onClose }) {
                   ? This can&apos;t be undone.
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                  <Button onClick={() => setConfirmDelete(false)} disabled={busy}>
+                  <Button
+                    onClick={() => setConfirmDelete(false)}
+                    disabled={busy}
+                    sx={[softRaisedSmall, softPressSx, { px: 2 }]}
+                  >
                     Keep it
                   </Button>
                   <Button
@@ -416,7 +424,11 @@ function PlaceFormDialog({ place, slics, onClose }) {
                 startIcon={<Delete />}
                 onClick={() => setConfirmDelete(true)}
                 disabled={busy}
-                sx={{ alignSelf: 'flex-start' }}
+                sx={[
+                  softRaisedSmall,
+                  softPressSx,
+                  { alignSelf: 'flex-start', px: 2, minHeight: '2.5rem' },
+                ]}
               >
                 Delete place
               </Button>
@@ -424,8 +436,8 @@ function PlaceFormDialog({ place, slics, onClose }) {
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button onClick={onClose} disabled={busy}>
+      <DialogActions disableSpacing sx={{ px: 3, py: 2, gap: 1.5 }}>
+        <Button onClick={onClose} disabled={busy} sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}>
           Cancel
         </Button>
         <Button
@@ -436,7 +448,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
           startIcon={
             saving ? <CircularProgress size={16} color='inherit' /> : null
           }
-          sx={softContainedSx}
+          sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
         >
           {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Add place'}
         </Button>

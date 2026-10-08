@@ -23,7 +23,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
   IconButton,
   TextField,
   Typography,
@@ -37,10 +36,12 @@ import CommentComposer from './CommentComposer';
 import CommentContent, { commentToText } from './CommentContent';
 import VotersDialog from './VotersDialog';
 import {
+  softContainedSx,
   softInputSx,
   softInset,
   softPressSx,
   softRaised,
+  softRaisedSmall,
 } from '../utility/soft';
 
 dayjs.extend(relativeTime);
@@ -151,12 +152,12 @@ function Comment({
           py: 0.5,
           display: 'flex',
           flexDirection: 'column',
+          gap: 0.5, // replies are told apart by space, not divider lines
         },
       ]}
     >
-      {comment.replies.map((reply, index) => (
+      {comment.replies.map((reply) => (
         <Box key={reply._id}>
-          {index > 0 && <Divider />}
           <Comment
             comment={reply}
             numSlic={numSlic}
@@ -302,13 +303,18 @@ function Comment({
             sx={softInputSx}
           />
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            <Button onClick={() => setEditing(false)} disabled={saving}>
+            <Button
+              onClick={() => setEditing(false)}
+              disabled={saving}
+              sx={[softRaisedSmall, softPressSx, { px: 2 }]}
+            >
               Cancel
             </Button>
             <Button
               variant='contained'
               onClick={handleSave}
               disabled={saving || !draft.trim()}
+              sx={softContainedSx}
             >
               {saving ? 'Saving…' : 'Save'}
             </Button>
@@ -407,8 +413,12 @@ function Comment({
               : "This can't be undone."}
           </DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setConfirmOpen(false)} disabled={saving}>
+        <DialogActions disableSpacing sx={{ px: 3, pb: 3, gap: 1.5 }}>
+          <Button
+            onClick={() => setConfirmOpen(false)}
+            disabled={saving}
+            sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+          >
             Cancel
           </Button>
           <Button
@@ -416,6 +426,7 @@ function Comment({
             color='error'
             onClick={handleDelete}
             disabled={saving}
+            sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
           >
             Delete
           </Button>

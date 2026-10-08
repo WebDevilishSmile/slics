@@ -8,6 +8,7 @@ import theme from '@/utils/theme';
 import { useInstallPrompt } from '@/utils/clientFunctions';
 
 import SoftNotice from '../utility/SoftNotice';
+import { softPressSx } from '../utility/soft';
 import IosInstallDialog from './IosInstallDialog';
 
 // Per-viewer convenience only (see the privacy policy's local-storage note);
@@ -69,7 +70,11 @@ function InstallNudge() {
         onClose={dismiss}
         sx={{ mb: 2 }}
         actions={
-          <Button size='small' onClick={handleAction}>
+          <Button
+            size='small'
+            onClick={handleAction}
+            sx={[softPressSx, { px: 1.5, minHeight: '2.5rem' }]}
+          >
             {platform === 'ios' ? 'Show me how' : 'Install'}
           </Button>
         }

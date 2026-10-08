@@ -6,7 +6,12 @@ import { Alert, Box, Button, Chip, TextField } from '@mui/material';
 import { apiRequest } from '@/utils/apiRequest';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 
-import { softInputSx, softPressSx, softRaisedSmall } from '../utility/soft';
+import {
+  softContainedSx,
+  softInputSx,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 
 // What's worth sharing, as one-tap starters. Tapping one begins the tip with
 // "Parking: " (or adds a new line with it), so a driver who doesn't know what
@@ -140,11 +145,17 @@ const CommentComposer = forwardRef(function CommentComposer(
                 onCancel?.();
               }}
               disabled={saving}
+              sx={[softRaisedSmall, softPressSx, { px: 2 }]}
             >
               Cancel
             </Button>
           )}
-          <Button type='submit' variant='contained' disabled={saving || empty}>
+          <Button
+            type='submit'
+            variant='contained'
+            disabled={saving || empty}
+            sx={softContainedSx}
+          >
             {saving ? 'Posting…' : parentId ? 'Reply' : 'Post tip'}
           </Button>
         </Box>

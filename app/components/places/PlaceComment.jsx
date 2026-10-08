@@ -21,7 +21,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
   IconButton,
   TextField,
   Typography,
@@ -31,10 +30,12 @@ import { tapHaptic } from '@/utils/clientFunctions';
 import { PLACE_COMMENT_MAX_LENGTH } from '@/utils/variables';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import {
+  softContainedSx,
   softInputSx,
   softInset,
   softPressSx,
   softRaised,
+  softRaisedSmall,
 } from '../utility/soft';
 import PlaceCommentComposer from './PlaceCommentComposer';
 
@@ -122,12 +123,12 @@ function PlaceComment({
           py: 0.5,
           display: 'flex',
           flexDirection: 'column',
+          gap: 0.5, // replies are told apart by space, not divider lines
         },
       ]}
     >
-      {comment.replies.map((reply, replyIndex) => (
+      {comment.replies.map((reply) => (
         <Box key={reply._id}>
-          {replyIndex > 0 && <Divider />}
           <PlaceComment
             comment={reply}
             placeId={placeId}
@@ -221,13 +222,18 @@ function PlaceComment({
             sx={softInputSx}
           />
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            <Button onClick={() => setEditing(false)} disabled={busy}>
+            <Button
+              onClick={() => setEditing(false)}
+              disabled={busy}
+              sx={[softRaisedSmall, softPressSx, { px: 2 }]}
+            >
               Cancel
             </Button>
             <Button
               variant='contained'
               onClick={handleSave}
               disabled={busy || !draft.trim()}
+              sx={softContainedSx}
             >
               {saving ? 'Saving…' : 'Save'}
             </Button>
@@ -326,7 +332,12 @@ function PlaceComment({
 
       {replies}
 
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        fullWidth
+        maxWidth='xs'
+      >
         <DialogTitle>Delete this comment?</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -335,8 +346,12 @@ function PlaceComment({
               : "This can't be undone."}
           </DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setConfirmOpen(false)} disabled={saving}>
+        <DialogActions disableSpacing sx={{ px: 3, pb: 3, gap: 1.5 }}>
+          <Button
+            onClick={() => setConfirmOpen(false)}
+            disabled={saving}
+            sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+          >
             Cancel
           </Button>
           <Button
@@ -344,6 +359,7 @@ function PlaceComment({
             color='error'
             onClick={handleDelete}
             disabled={saving}
+            sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
           >
             Delete
           </Button>

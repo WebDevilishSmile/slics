@@ -4,7 +4,12 @@ import { useState } from 'react';
 import { Alert, Box, Button, TextField } from '@mui/material';
 import { apiRequest } from '@/utils/apiRequest';
 import { PLACE_COMMENT_MAX_LENGTH } from '@/utils/variables';
-import { softContainedSx, softInputSx } from '../utility/soft';
+import {
+  softContainedSx,
+  softInputSx,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 
 // Text box for a new comment on a place, or a reply when `parentId` is set
 // (the API files a reply-to-a-reply under the thread's top-level comment).
@@ -70,6 +75,7 @@ function PlaceCommentComposer({
               onCancel?.();
             }}
             disabled={saving}
+            sx={[softRaisedSmall, softPressSx, { px: 2 }]}
           >
             Cancel
           </Button>

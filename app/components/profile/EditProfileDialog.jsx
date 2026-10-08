@@ -130,8 +130,8 @@ function EditProfileDialog({
           </Box>
         )}
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={handleClose} disabled={isSubmitting}>
+      <DialogActions disableSpacing sx={{ px: 3, pb: 3, gap: 1.5 }}>
+        <Button onClick={handleClose} disabled={isSubmitting} sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}>
           Cancel
         </Button>
         <Button

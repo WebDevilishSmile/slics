@@ -11,7 +11,12 @@ import {
 } from '@mui/material';
 
 import { apiRequest } from '@/utils/apiRequest';
-import { softContainedSx, softInputSx } from '../utility/soft';
+import {
+  softContainedSx,
+  softInputSx,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 import BottomSheetDialog, {
   BottomSheetActions,
 } from '../utility/BottomSheetDialog';
@@ -91,11 +96,20 @@ export default function HistoryNoteDialog({ view, onClose, onSaved }) {
           Save note
         </Button>
         {view?.note && (
-          <Button color='error' onClick={() => save('')} disabled={saving}>
+          <Button
+            color='error'
+            onClick={() => save('')}
+            disabled={saving}
+            sx={[softRaisedSmall, softPressSx]}
+          >
             Delete note
           </Button>
         )}
-        <Button onClick={onClose} disabled={saving}>
+        <Button
+          onClick={onClose}
+          disabled={saving}
+          sx={[softRaisedSmall, softPressSx]}
+        >
           Cancel
         </Button>
       </BottomSheetActions>

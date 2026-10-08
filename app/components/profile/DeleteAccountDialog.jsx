@@ -14,7 +14,12 @@ import {
   TextField,
 } from '@mui/material';
 
-import { softContainedSx, softInputSx } from '../utility/soft';
+import {
+  softContainedSx,
+  softInputSx,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 
 const CONFIRM_WORD = 'DELETE';
 
@@ -84,8 +89,8 @@ function DeleteAccountDialog({ open, onClose, userId, commentCount }) {
           </Alert>
         )}
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={handleClose} disabled={isDeleting}>
+      <DialogActions disableSpacing sx={{ px: 3, pb: 3, gap: 1.5 }}>
+        <Button onClick={handleClose} disabled={isDeleting} sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}>
           Cancel
         </Button>
         <Button
@@ -96,7 +101,7 @@ function DeleteAccountDialog({ open, onClose, userId, commentCount }) {
           startIcon={
             isDeleting ? <CircularProgress size={16} color='inherit' /> : null
           }
-          sx={softContainedSx}
+          sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
         >
           {isDeleting ? 'Deleting…' : 'Delete account'}
         </Button>

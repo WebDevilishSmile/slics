@@ -15,7 +15,11 @@ import {
 } from '@mui/material';
 import { DeleteOutline } from '@mui/icons-material';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
-import { softContainedSx, softPressSx } from '../utility/soft';
+import {
+  softContainedSx,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 
 // The delete button on a CommentCard: a soft icon button that asks first, as
 // the tips on /home do. While any delete in the list is refreshing the
@@ -92,8 +96,12 @@ function CommentDelete({ comment }) {
         <DialogContent>
           <DialogContentText>This can&apos;t be undone.</DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setConfirmOpen(false)} disabled={isDeleting}>
+        <DialogActions disableSpacing sx={{ px: 3, pb: 3, gap: 1.5 }}>
+          <Button
+            onClick={() => setConfirmOpen(false)}
+            disabled={isDeleting}
+            sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+          >
             Cancel
           </Button>
           <Button
@@ -104,7 +112,7 @@ function CommentDelete({ comment }) {
             startIcon={
               isDeleting ? <CircularProgress size={16} color='inherit' /> : null
             }
-            sx={softContainedSx}
+            sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
           >
             {isDeleting ? 'Deleting…' : 'Delete'}
           </Button>

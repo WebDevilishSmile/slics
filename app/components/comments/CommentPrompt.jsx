@@ -7,13 +7,17 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
 } from '@mui/material';
 
 import { markPrompted, readDue, snooze } from '@/utils/commentPrompt';
 import BottomSheetDialog, {
   BottomSheetActions,
 } from '../utility/BottomSheetDialog';
+import {
+  softContainedSx,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 
 // Asks a driver to leave a tip about the last SLIC they looked up, once they
 // come back to the app 15 min – 4 h later (see utils/commentPrompt.js). Checks
@@ -109,17 +113,29 @@ function CommentPrompt({ user }) {
           </DialogContentText>
         )}
       </DialogContent>
-      {/* "Don't ask" silences the prompt for two weeks, so it sits apart
-          below a divider rather than next to "Not now". */}
+      {/* "Don't ask" silences the prompt for two weeks, so it sits apart,
+          a flat text button below a gap, rather than next to "Not now". */}
       <BottomSheetActions>
-        <Button variant='contained' size='large' onClick={handleComment}>
+        <Button
+          variant='contained'
+          size='large'
+          onClick={handleComment}
+          sx={softContainedSx}
+        >
           Leave a tip
         </Button>
-        <Button variant='outlined' size='large' onClick={close}>
+        <Button
+          size='large'
+          onClick={close}
+          sx={[softRaisedSmall, softPressSx]}
+        >
           Not now
         </Button>
-        <Divider sx={{ my: 0.5 }} />
-        <Button color='inherit' onClick={handleSnooze}>
+        <Button
+          color='inherit'
+          onClick={handleSnooze}
+          sx={[softPressSx, { mt: 1 }]}
+        >
           Don&apos;t ask again for 2 weeks
         </Button>
       </BottomSheetActions>

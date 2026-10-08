@@ -16,6 +16,7 @@ import {
   ListItemText,
 } from '@mui/material';
 
+import { softContainedSx } from '../utility/soft';
 import BottomSheetDialog, {
   BottomSheetActions,
 } from '../utility/BottomSheetDialog';
@@ -70,7 +71,12 @@ function IosInstallDialog({ open, onClose }) {
         </DialogContentText>
       </DialogContent>
       <BottomSheetActions>
-        <Button variant='contained' size='large' onClick={onClose}>
+        <Button
+          variant='contained'
+          size='large'
+          onClick={onClose}
+          sx={softContainedSx}
+        >
           Got it
         </Button>
       </BottomSheetActions>

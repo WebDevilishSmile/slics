@@ -1,6 +1,6 @@
 import { TableCell, TableHead, TableRow } from '@mui/material';
 
-function DriverTableHead() {
+function CoverDriversTableHead() {
   return (
     <TableHead>
       <TableRow>
@@ -12,4 +12,4 @@ function DriverTableHead() {
   );
 }
 
-export default DriverTableHead;
+export default CoverDriversTableHead;

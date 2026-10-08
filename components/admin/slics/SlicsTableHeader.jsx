@@ -1,7 +1,7 @@
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 import { TableCell, TableHead, TableRow } from '@mui/material';
 
-function TableHeader({ sortCategory, setSortCategory, sort, setSort }) {
+function SlicsTableHeader({ sortCategory, setSortCategory, sort, setSort }) {
   // This component renders the table header with sortable columns
   // It receives the current sort category and a function to set the sort category
   // Clicking on a header cell will change the sort category
@@ -62,4 +62,4 @@ function TableHeader({ sortCategory, setSortCategory, sort, setSort }) {
   );
 }
 
-export default TableHeader;
+export default SlicsTableHeader;

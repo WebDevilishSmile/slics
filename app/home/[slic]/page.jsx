@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import PageContainer from '@/components/layout/PageContainer';
 import RedirectMessage from '@/components/layout/RedirectMessage';
-import Title from '@/components/slicPage/Title';
+import Title from '@/components/slic/Title';
 
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getCommentsBySlic } from '@/lib/db/comments';

@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react';
 import { softContainedSx, softTableSx } from '@/components/utility/soft';
 import SlicsBody from './SlicsBody';
 import SlicsFilter from './SlicsFilter';
-import TableHeader from './TableHeader';
+import SlicsTableHeader from './SlicsTableHeader';
 
 function SlicsTable({ slics }) {
   const [page, setPage] = useState(0);
@@ -100,7 +100,7 @@ function SlicsTable({ slics }) {
       </Box>
       <TableContainer>
         <Table sx={softTableSx}>
-          <TableHeader
+          <SlicsTableHeader
             sort={sort}
             setSort={setSort}
             sortCategory={sortCategory}

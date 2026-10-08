@@ -4,7 +4,7 @@ import theme from '@/theme';
 import { Box, Paper, Table, TableBody } from '@mui/material';
 import { softTableSx } from '@/components/utility/soft';
 import CoverPosition from './CoverPosition';
-import DriverTableHead from './DriverTableHead';
+import CoverDriversTableHead from './CoverDriversTableHead';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation'; // Import the router
 
@@ -33,7 +33,7 @@ function DriversTable({ covers }) {
           size='small'
           sx={[softTableSx, { minWidth: '20rem', width: '100%', tableLayout: 'fixed' }]}
         >
-          <DriverTableHead />
+          <CoverDriversTableHead />
           <TableBody>
             {covers.map((cover) => (
               <CoverPosition

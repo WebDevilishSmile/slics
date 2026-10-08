@@ -510,7 +510,7 @@ Each is a few lines in `theme.components`.
 The 9 `elevation={theme.layout.elevation}` sites (`comments/CommentsContainer.jsx`,
 `comments/NoSlicComments.jsx`, `home/EmptySlic.jsx`, `home/MemberDisplay.jsx`,
 `home/SlicDetailsContainer.jsx`, `profile/ProfileComments.jsx`, `profile/ProfileImage.jsx`,
-`admin/user-page/UserComments.jsx`, `app/history/page.jsx`) are the minority. A `Paper`
+`admin/users/UserComments.jsx`, `app/history/page.jsx`) are the minority. A `Paper`
 default reaches every Paper-derived component with no explicit prop, and **13 sites rely
 on the implicit 1**: `admin/slics/SlicsTable.jsx`, `admin/comments/CommentsSection.jsx`,
 `slicForm/FormContainer.jsx`, `profile/ProfileData.jsx`, `comments/Comment.jsx:17`, four
@@ -595,7 +595,7 @@ mt: '2rem', py: '2rem', px: '1rem'
 `comments/CommentsContainer.jsx`, `comments/NoSlicComments.jsx`, `home/EmptySlic.jsx`,
 `home/MemberDisplay.jsx`, `home/SlicDetailsContainer.jsx`. (`profile/ProfileComments.jsx`
 was originally listed too, but it had drifted into a comment _card_ — `mt: 2, p: 2`, no
-min-height/flex — and is the twin of `admin/user-page/UserComments.jsx`; that pair is
+min-height/flex — and is the twin of `admin/users/UserComments.jsx`; that pair is
 item 28, not this one.)
 
 **Done:** `MuiPaper.variants` in `theme.js` defines `variant="panel"` with only the
@@ -1241,7 +1241,7 @@ still works.
 - [x] **Files:** `home/MapPhoneLinks.jsx`, `home/PdfLink.jsx`, `home/SlicDisplay.jsx`
 
 _Done 2026-10-07:_ `home/SlicActions.jsx` replaces `MapPhoneLinks.jsx` and `PdfLink.jsx`.
-`SlicDisplay` and `slicPage/Title.jsx` both render it.
+`SlicDisplay` and `slic/Title.jsx` both render it.
 
 - **Navigate:** a contained, full-width button, 52px tall. It's built with `mapsHref`. On
   non-Apple devices it reads "Navigate … Google Maps". On Apple devices a ▾ segment opens

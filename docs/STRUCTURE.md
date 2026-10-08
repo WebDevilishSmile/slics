@@ -460,7 +460,7 @@ anything outside the importer's own folder, `./X` only for a sibling in the same
 
 ### 22. Rename feature folders to mirror their routes
 
-- [ ] **Folder renames inside `components/`:**
+- [x] **Folder renames inside `components/`:**
 
 | Current | Proposed | Why |
 |---|---|---|
@@ -472,6 +472,12 @@ anything outside the importer's own folder, `./X` only for a sibling in the same
 | `covers/DriverTableHead.jsx` | `covers/CoverDriversTableHead.jsx` | see item 24 |
 
 *Blast radius:* import paths only.
+
+**Done 2026-10-08,** except `HydrationGuard`: `utility/` has six files now (`soft.js`,
+`SoftNotice`, `PlaceLinks`…), so the "single-file folder" reason is gone and it stays.
+`slicPage/` held only `Title.jsx` by then. `MemberDisplay.jsx` no longer existed, so only
+`RedirectMember.jsx` moved to `signIn/`. The two table heads were renamed inside too
+(`SlicsTableHeader`, `CoverDriversTableHead`), which covers the second half of item 24.
 
 ### 23. Merge `newSlic/` and `createEditSlic/` into `slicForm/`
 
@@ -498,6 +504,9 @@ stack trace needs the folder to disambiguate. The `covers/` one also uses singul
 plurality.
 
 *Blast radius:* import paths only.
+
+**Half done (2026-10-08):** `CoverDriversTableHead` was renamed in item 22; only
+`covers/DriversTable.jsx` is left.
 
 ### 25. Collapse the `about/` wrappers
 

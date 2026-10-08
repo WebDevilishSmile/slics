@@ -126,3 +126,17 @@ export const softPressSx = (theme) => ({
   },
   '&:active, &[aria-pressed="true"]': shadow(theme, 'inset'),
 });
+
+// A row in a soft list (the header menu): a rounded row in the surface that
+// presses in while held. The current page (`selected`) stays pressed in, in
+// brand blue, in place of MUI's tinted selection.
+export const softListItemSx = (theme) => ({
+  ...softPressSx(theme),
+  mx: 1.5,
+  borderRadius: 3,
+  '&.Mui-selected, &.Mui-selected:hover, &.Mui-selected.Mui-focusVisible': {
+    backgroundColor: theme.vars.palette.background.default,
+    ...shadow(theme, 'inset'),
+    color: theme.vars.palette.primary.main,
+  },
+});

@@ -24,7 +24,6 @@ import {
 } from '@mui/icons-material';
 import {
   Box,
-  Divider,
   IconButton,
   List,
   ListItem,
@@ -41,18 +40,25 @@ import { BMC_URL } from '@/utils/variables';
 
 import InstallMenuItem from '../install/InstallMenuItem';
 import ModeSwitch from '../layout/ModeSwitch';
+import { softListItemSx } from '../utility/soft';
 
 const MENU_ID = 'app-menu';
 
 // Every row is at least 48px tall — a driver's thumb, maybe gloved, in a cab
-// (UI-SUGGESTIONS.md "Design target").
-const rowSx = {
-  minHeight: '3rem',
-  // The current page: bold label and a brand-colored icon. primary.main is
-  // picked per scheme to read on that scheme's paper (#31).
-  '&.Mui-selected .MuiListItemText-primary': { fontWeight: 700 },
-  '&.Mui-selected .MuiListItemIcon-root': { color: 'primary.main' },
-};
+// (UI-SUGGESTIONS.md "Design target"). Soft rows (utility/soft.js): the
+// current page is pressed in, with a bold label and a brand-colored icon.
+// primary.main is picked per scheme to read on that scheme's surface (#31).
+const rowSx = [
+  softListItemSx,
+  {
+    minHeight: '3rem',
+    '&.Mui-selected .MuiListItemText-primary': { fontWeight: 700 },
+    '&.Mui-selected .MuiListItemIcon-root': { color: 'primary.main' },
+  },
+];
+
+// The menu's groups are told apart by space, not divider lines.
+const groupSx = { display: 'flex', flexDirection: 'column', gap: 0.5, py: 1.5 };
 
 // An internal page. next/link makes it a client-side navigation instead of a
 // full reload (#53). `onClick` closes the drawer on the tap itself, so it's
@@ -202,7 +208,7 @@ function UserMenu({ user, signOutAction }) {
 
         {user && (
           <>
-            <List>
+            <List sx={groupSx}>
               <NavItem
                 onClick={handleClose}
                 href='/home'
@@ -250,11 +256,10 @@ function UserMenu({ user, signOutAction }) {
                 />
               )}
             </List>
-            <Divider />
           </>
         )}
 
-        <List>
+        <List sx={groupSx}>
           {user && (
             <NavItem
               onClick={handleClose}
@@ -286,32 +291,33 @@ function UserMenu({ user, signOutAction }) {
         </List>
 
         {user && (
-          <>
-            <Divider />
-            <List
-              subheader={<ListSubheader disableSticky>Links</ListSubheader>}
-            >
-              <ExternalItem
-                href='https://www.upsers.com'
-                label='UPSers'
-                icon={<BadgeOutlined />}
-              />
-              <ExternalItem
-                href='https://vestisuniforms.com/ups/'
-                label='Socks'
-                icon={<CheckroomOutlined />}
-              />
-              <ExternalItem
-                href={BMC_URL}
-                label='Buy me a Coffee'
-                icon={<LocalCafeOutlined />}
-              />
-            </List>
-          </>
+          <List
+            sx={groupSx}
+            subheader={
+              <ListSubheader disableSticky sx={{ bgcolor: 'transparent' }}>
+                Links
+              </ListSubheader>
+            }
+          >
+            <ExternalItem
+              href='https://www.upsers.com'
+              label='UPSers'
+              icon={<BadgeOutlined />}
+            />
+            <ExternalItem
+              href='https://vestisuniforms.com/ups/'
+              label='Socks'
+              icon={<CheckroomOutlined />}
+            />
+            <ExternalItem
+              href={BMC_URL}
+              label='Buy me a Coffee'
+              icon={<LocalCafeOutlined />}
+            />
+          </List>
         )}
 
-        <Divider />
-        <List>
+        <List sx={groupSx}>
           <ModeSwitch />
           {user ? (
             <ListItem disablePadding>
@@ -323,7 +329,7 @@ function UserMenu({ user, signOutAction }) {
                 <ListItemButton
                   component='button'
                   type='submit'
-                  sx={[rowSx, { width: '100%' }]}
+                  sx={[...rowSx, { width: '100%' }]}
                 >
                   <ListItemIcon>
                     <LogoutOutlined />

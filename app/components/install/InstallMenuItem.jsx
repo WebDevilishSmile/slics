@@ -11,6 +11,8 @@ import {
 
 import { useInstallPrompt } from '@/utils/clientFunctions';
 
+import { softListItemSx } from '../utility/soft';
+
 import IosInstallDialog from './IosInstallDialog';
 
 // Lives in the header menu so install stays discoverable after the one-time
@@ -32,7 +34,10 @@ function InstallMenuItem() {
   return (
     <>
       <ListItem disablePadding>
-        <ListItemButton onClick={handleClick} sx={{ minHeight: '3rem' }}>
+        <ListItemButton
+          onClick={handleClick}
+          sx={[softListItemSx, { minHeight: '3rem' }]}
+        >
           <ListItemIcon>
             <InstallMobileOutlined />
           </ListItemIcon>

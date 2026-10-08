@@ -33,11 +33,12 @@ function ModeSwitch() {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          width: '100%',
+          flex: 1,
           minHeight: '3rem',
+          // Lined up with the soft menu rows above it (utility/soft.js).
+          mx: 1.5,
           px: 2,
           cursor: 'pointer',
-          '&:hover': { bgcolor: 'action.hover' },
         }}
       >
         <ListItemIcon>

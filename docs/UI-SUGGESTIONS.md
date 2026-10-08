@@ -1525,10 +1525,16 @@ after `transition.finished` if it was lost.
 **Support:** View Transitions have been Baseline since 2025-10 (Chrome/Edge 111, Safari 18,
 Firefox 144). Older browsers just swap.
 
-**Not recommended yet:** React's `<ViewTransition>` component. In Next 15.3 it needs
+**Not recommended yet:** React's `<ViewTransition>` component. It needs
 `experimental.viewTransition`, and that flag switches the whole app to React's
 _experimental_ release channel (`next/dist/lib/needs-experimental-react.js`). That's not for
 a production app. Revisit when it ships in stable React.
+
+_Checked 2026-10-07:_ this still holds on Next 15.5.27 (SECURITY.md #3). The plan above
+doesn't depend on the Next version. `home/Main.jsx` now has `showSlic` (#43): one
+synchronous `setSlic` from the in-memory list, which is the exact update to wrap in
+`startViewTransition`. The `router.push` that follows doesn't re-render the card, because
+the URL effect lands on the same SLIC.
 
 ### 49. Entry animations for cards and new comments
 

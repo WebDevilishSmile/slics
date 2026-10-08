@@ -53,7 +53,7 @@ function CommentPrompt({ user }) {
     } finally {
       checkingRef.current = false;
     }
-  }, [user?.id]);
+  }, []);
 
   useEffect(() => {
     check();

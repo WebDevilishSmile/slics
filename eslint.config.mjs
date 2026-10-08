@@ -9,6 +9,12 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const eslintConfig = [...compat.extends("next/core-web-vitals")];
+const eslintConfig = [
+  // ESLint 9's flat config only lints .js/.mjs/.cjs unless a config names
+  // other extensions. Most of this app is .jsx, which `next lint` used to
+  // skip with "File ignored because no matching configuration was supplied".
+  { files: ["**/*.{js,jsx,mjs}"] },
+  ...compat.extends("next/core-web-vitals"),
+];
 
 export default eslintConfig;

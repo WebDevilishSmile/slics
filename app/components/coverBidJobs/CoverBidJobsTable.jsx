@@ -94,7 +94,7 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
   return (
     <Box sx={{ width: '100%' }}>
       <Alert severity='info' sx={{ mb: 2 }}>
-        This is a work in progress. I'm working to see if I can show the weekly
+        This is a work in progress. I&apos;m working to see if I can show the weekly
         cover bid jobs effectively. If you have some suggestions or feedback,
         please let me know.
       </Alert>

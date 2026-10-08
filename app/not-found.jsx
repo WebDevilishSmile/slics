@@ -21,7 +21,7 @@ function NotFound() {
       <Typography variant='sectionHeading'>Oops! Page not found.</Typography>
 
       <Typography sx={{ maxWidth: theme.layout.width.panel, my: 4, textAlign: 'center' }}>
-        Sorry, we couldn't find the page you're looking for. Redirecting you to
+        Sorry, we couldn&apos;t find the page you&apos;re looking for. Redirecting you to
         the home page... If you are not redirected automatically, click the
         button below.
       </Typography>

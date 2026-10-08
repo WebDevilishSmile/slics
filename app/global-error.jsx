@@ -36,6 +36,8 @@ function GlobalError({ error, reset }) {
           <button type='button' onClick={() => reset()} style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}>
             Try again
           </button>
+          {/* A full page load, not next/link: this replaces a crashed root layout. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a href='/' style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}>
             Go to Home
           </a>

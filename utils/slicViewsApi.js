@@ -13,6 +13,39 @@ const VIEWS_COLLECTION = 'slicViews';
 export const HISTORY_NOTE_MAX = 280;
 export const HISTORY_PAGE_SIZE = 50;
 
+// A lookup of the SLIC the driver looked up last, within this window, is the
+// same lookup coming back: phones reload a backgrounded page (iOS does when
+// the driver switches to Maps), and /home?slic= then reports it again.
+export const REPEAT_LOOKUP_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
+
+/**
+ * Records a lookup unless it repeats the driver's latest one (see
+ * REPEAT_LOOKUP_WINDOW_MS); a different SLIC in between makes it a new
+ * lookup. Returns `{ recorded, total }`, `total` being the driver's lifetime
+ * lookup count, the /home counter.
+ */
+export async function recordSlicView(userId, numSlic) {
+  const views = client.db().collection(VIEWS_COLLECTION);
+  const user = new ObjectId(userId);
+
+  // Backed by the { userId, viewedAt } index (scripts/createIndexes.js).
+  const latest = await views.findOne(
+    { userId: user },
+    { sort: { viewedAt: -1 }, projection: { numSlic: 1, viewedAt: 1 } },
+  );
+  const repeat =
+    latest &&
+    String(latest.numSlic) === String(numSlic) &&
+    Date.now() - new Date(latest.viewedAt).getTime() < REPEAT_LOOKUP_WINDOW_MS;
+
+  if (!repeat) {
+    await views.insertOne({ userId: user, numSlic, viewedAt: new Date() });
+  }
+
+  const total = await views.countDocuments({ userId: user });
+  return { recorded: !repeat, total };
+}
+
 export async function getSlicViewsByUserId(userId) {
   try {
     if (!userId) {

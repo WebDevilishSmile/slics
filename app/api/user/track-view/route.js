@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
-import { ObjectId } from 'mongodb';
 import { auth } from '@/auth';
-import client from '@/lib/db';
+import { recordSlicView } from '@/utils/slicViewsApi';
 
 export const runtime = 'nodejs';
 
+// POST `{ numSlic }` — /home reports each SLIC it shows. A repeat of the
+// driver's latest lookup within 30 minutes isn't recorded again (see
+// recordSlicView). Responds `{ slicViews }`, the lifetime lookup count.
 export async function POST(req) {
   try {
     const session = await auth();
@@ -19,17 +21,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'numSlic is required' }, { status: 400 });
     }
 
-    const db = client.db();
-
-    await db.collection('slicViews').insertOne({
-      userId: new ObjectId(session.user.id),
-      numSlic,
-      viewedAt: new Date(),
-    });
-
-    const total = await db
-      .collection('slicViews')
-      .countDocuments({ userId: new ObjectId(session.user.id) });
+    const { total } = await recordSlicView(session.user.id, numSlic);
 
     return NextResponse.json({ slicViews: total }, { status: 200 });
   } catch (error) {

@@ -5,6 +5,7 @@
 ### General Improvements
 
 - [x] disable MUI ripple
+- [x] when a user comes back to the app, it is logging the lookup again. Fixed server-side instead of redirecting: `recordSlicView` skips a repeat of the latest lookup within 30 minutes, so the card is still there after Maps.
 
 ### UI/UX Improvements
 

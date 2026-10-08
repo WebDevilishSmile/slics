@@ -2,25 +2,25 @@
 
 import {
   HubOutlined,
+  LocalCafeOutlined,
   SearchOutlined,
   StorefrontOutlined,
 } from '@mui/icons-material';
 import {
-  Alert,
   Autocomplete,
   Box,
+  Button,
   createFilterOptions,
   InputAdornment,
-  Link,
   TextField,
   Typography,
 } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import theme from '@/utils/theme';
 import { readRecentLookups } from '@/utils/recentLookups';
 import { BMC_URL } from '@/utils/variables';
-import { softFocus } from '../utility/soft';
+import SoftNotice from '../utility/SoftNotice';
+import { softFocus, softSurface } from '../utility/soft';
 
 function getDonationMessage(count) {
   if (count <= 0) return null;
@@ -37,9 +37,8 @@ const labelFor = (slic) =>
     ? `${slic.numSlic} - ${slic.name} - ${slic.alphaSlic}`
     : `${slic.numSlic} - ${slic.alphaSlic}`;
 
-// The search sits on the page background, not in a panel, so it's a raised
-// pill in the panel's own surface color (the same surface the soft cards
-// use) that presses in while you type (CLAUDE.md, "Visual style").
+// The search is a raised pill in the page's own surface, seamless like the
+// panels (CLAUDE.md, "Visual style"), that presses in while you type.
 const searchSx = (theme) => {
   const raised = theme.soft.raisedSmall;
   return {
@@ -47,8 +46,7 @@ const searchSx = (theme) => {
     maxWidth: theme.layout.width.panel,
     mt: 3,
     '& .MuiOutlinedInput-root': {
-      backgroundColor: theme.vars.palette.background.paper,
-      backgroundImage: theme.vars.overlays[theme.layout.elevation],
+      ...softSurface(theme),
       borderRadius: 999,
       minHeight: '3.25rem',
       pl: 2,
@@ -69,8 +67,7 @@ const searchSx = (theme) => {
 const listSx = (theme) => ({
   mt: 1,
   borderRadius: 4,
-  backgroundColor: theme.vars.palette.background.paper,
-  backgroundImage: theme.vars.overlays[theme.layout.elevation],
+  ...softSurface(theme),
   boxShadow: theme.soft.raised.light,
   ...theme.applyStyles('dark', { boxShadow: theme.soft.raised.dark }),
   '& .MuiAutocomplete-option': { minHeight: '3rem' },
@@ -207,29 +204,29 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
       }}
     >
       {donationMessage && (
-        <Alert
-          severity='info'
+        <SoftNotice
+          icon={<LocalCafeOutlined />}
           onClose={dismissDonation}
-          slotProps={{ closeButton: { 'aria-label': 'Hide for 30 days' } }}
-          sx={{
-            width: '100%',
-            maxWidth: theme.layout.width.panel,
-            mt: 3,
-          }}
+          closeLabel='Hide for 30 days'
+          sx={{ mt: 3 }}
+          actions={
+            <>
+              <Button size='small' href={BMC_URL} target='_blank' rel='noopener noreferrer'>
+                Buy Me a Coffee
+              </Button>
+              <Button
+                size='small'
+                href={`${BMC_URL}/membership`}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                Become a member
+              </Button>
+            </>
+          }
         >
-          {donationMessage}{' '}
-          <Link href={BMC_URL} target='_blank' rel='noopener noreferrer'>
-            Buy Me a Coffee{' '}
-          </Link>
-          or{' '}
-          <Link
-            href={`${BMC_URL}/membership`}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            Become a member
-          </Link>
-        </Alert>
+          {donationMessage}
+        </SoftNotice>
       )}
       <Autocomplete
         fullWidth

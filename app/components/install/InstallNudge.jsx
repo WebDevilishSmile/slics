@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Close } from '@mui/icons-material';
-import { Alert, Button, IconButton, useMediaQuery } from '@mui/material';
+import { InstallMobileOutlined } from '@mui/icons-material';
+import { Button, useMediaQuery } from '@mui/material';
 
 import theme from '@/utils/theme';
 import { useInstallPrompt } from '@/utils/clientFunctions';
 
+import SoftNotice from '../utility/SoftNotice';
 import IosInstallDialog from './IosInstallDialog';
 
 // Per-viewer convenience only (see the privacy policy's local-storage note);
@@ -63,27 +64,18 @@ function InstallNudge() {
 
   return (
     <>
-      <Alert
-        severity='info'
-        sx={{ maxWidth: theme.layout.width.panel, width: '100%', mb: 2 }}
-        action={
-          <>
-            <Button color='inherit' size='small' onClick={handleAction}>
-              {platform === 'ios' ? 'Show me how' : 'Install'}
-            </Button>
-            <IconButton
-              color='inherit'
-              size='small'
-              onClick={dismiss}
-              aria-label='Dismiss'
-            >
-              <Close fontSize='inherit' />
-            </IconButton>
-          </>
+      <SoftNotice
+        icon={<InstallMobileOutlined />}
+        onClose={dismiss}
+        sx={{ mb: 2 }}
+        actions={
+          <Button size='small' onClick={handleAction}>
+            {platform === 'ios' ? 'Show me how' : 'Install'}
+          </Button>
         }
       >
         Add SLICs to your home screen for one-tap access.
-      </Alert>
+      </SoftNotice>
 
       <IosInstallDialog
         open={iosOpen}

@@ -4,6 +4,8 @@
 
 ### General Improvements
 
+- [x] disable MUI ripple
+
 ### UI/UX Improvements
 
 - [x] change dialogs, alerts, and other UI design to match neumorphic style and remove weird glow.

@@ -112,17 +112,13 @@ export const softTableSx = (theme) => ({
 // "on" (aria-pressed), which is how a chosen vote shows. Light and shadow are
 // the only feedback: MUI's hover and focus washes are pinned to the surface,
 // because on a phone `:hover` sticks after a tap and left the control gray.
-// Keyboard focus gets an outline instead.
+// Keyboard focus shows as the theme's outline (MuiButtonBase, utils/theme.js).
 export const softPressSx = (theme) => ({
   transition: theme.transitions.create('box-shadow', {
     duration: theme.transitions.duration.shortest,
   }),
   '&:hover, &.Mui-focusVisible': {
     backgroundColor: theme.vars.palette.background.default,
-  },
-  '&.Mui-focusVisible': {
-    outline: `2px solid ${theme.vars.palette.primary.main}`,
-    outlineOffset: 2,
   },
   '&:active, &[aria-pressed="true"]': shadow(theme, 'inset'),
 });

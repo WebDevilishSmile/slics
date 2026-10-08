@@ -132,7 +132,8 @@ function UserMenu({ user, signOutAction }) {
   return (
     <>
       <IconButton
-        sx={{ color: 'text.light' }}
+        // On the blue header the focus outline takes the icon's color.
+        sx={{ color: 'text.light', '&.Mui-focusVisible': { outlineColor: 'currentColor' } }}
         onClick={handleOpen}
         aria-label='Open menu'
         aria-expanded={open}
@@ -200,7 +201,7 @@ function UserMenu({ user, signOutAction }) {
           <IconButton
             onClick={handleClose}
             aria-label='Close menu'
-            sx={{ color: 'inherit' }}
+            sx={{ color: 'inherit', '&.Mui-focusVisible': { outlineColor: 'currentColor' } }}
           >
             <CloseOutlined />
           </IconButton>

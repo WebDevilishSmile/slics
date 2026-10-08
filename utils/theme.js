@@ -243,9 +243,24 @@ let theme = createTheme({
     // Opt out with `LinkComponent='a'` (ButtonBase) or `component='a'` (Link)
     // where a full reload is the point (app/error.jsx).
     // header/NavigationProgress.jsx shows the wait.
+    //
+    // No ripple anywhere (buttons, chips, menu rows, switches): soft controls
+    // answer a tap by pressing in (softPressSx), and the ripple's flash and
+    // pulsing focus halo fought that. MUI's keyboard focus cue was the focus
+    // ripple, so `.Mui-focusVisible` gets an outline in its place. It follows
+    // the text color on the blue header (header/HeaderBar.jsx).
     MuiButtonBase: {
       defaultProps: {
         LinkComponent: NextLink,
+        disableRipple: true,
+      },
+      styleOverrides: {
+        root: ({ theme }) => ({
+          '&.Mui-focusVisible': {
+            outline: `2px solid ${theme.vars.palette.primary.main}`,
+            outlineOffset: 2,
+          },
+        }),
       },
     },
     MuiLink: {

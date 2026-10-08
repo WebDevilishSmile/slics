@@ -96,7 +96,8 @@ export default function HeaderBar({ user, signOutAction }) {
             <IconButton
               onClick={goBack}
               aria-label='Back'
-              sx={{ color: 'text.light' }}
+              // On the blue header the focus outline takes the icon's color.
+              sx={{ color: 'text.light', '&.Mui-focusVisible': { outlineColor: 'currentColor' } }}
             >
               <ArrowBack />
             </IconButton>

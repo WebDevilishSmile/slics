@@ -1,14 +1,13 @@
-import { ContentCopy, PlaceOutlined } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Chip,
-  IconButton,
-  Snackbar,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import { useState } from 'react';
+  Check,
+  ContentCopy,
+  ErrorOutline,
+  PlaceOutlined,
+} from '@mui/icons-material';
+import { Box, Chip, IconButton, Tooltip, Typography } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
+
+import { tapHaptic } from '@/utils/clientFunctions';
 
 import {
   softInset,
@@ -16,38 +15,45 @@ import {
   softRaisedSmall,
 } from '../utility/soft';
 
-function TitleAddress({ slic }) {
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackMessage, setSnackMessage] = useState(
-    'Address copied to clipboard',
-  );
-  const [snackSeverity, setSnackSeverity] = useState('success');
+// How long the copy button shows its result before going back to the copy icon.
+const COPY_FEEDBACK_MS = 1500;
 
-  const handleCloseSnack = () => {
-    setOpenSnackbar(false);
-    setSnackMessage('');
-    setSnackSeverity('success');
-  };
+// Read by screen readers, never shown (the usual clip pattern).
+const visuallyHidden = {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+  padding: 0,
+  margin: '-1px',
+};
+
+function TitleAddress({ slic }) {
+  // 'idle' | 'copied' | 'failed'. Feedback lives on the button itself, not in
+  // a toast over the search (UI-SUGGESTIONS.md #51): the icon becomes a check
+  // (or an error mark) for 1.5s, and a polite live region says what happened.
+  const [copyState, setCopyState] = useState('idle');
+  const [announcement, setAnnouncement] = useState('');
+  const resetTimer = useRef(null);
+  useEffect(() => () => clearTimeout(resetTimer.current), []);
 
   const handleCopyAddress = async () => {
     const fullAddress = `${slic.address.street}, ${slic.address.city}, ${slic.address.state} ${slic.address.zip}`;
-
+    clearTimeout(resetTimer.current);
     try {
       await navigator.clipboard.writeText(fullAddress);
-      // Optional: You could add a toast notification here to confirm the copy
-      setOpenSnackbar(true);
-      setSnackMessage('Address copied to clipboard');
-      setSnackSeverity('success');
+      setCopyState('copied');
+      setAnnouncement('Address copied');
+      tapHaptic();
     } catch (err) {
       console.error('Failed to copy address: ', err);
-      setOpenSnackbar(true);
-      setSnackMessage('Failed to copy address');
-      setSnackSeverity('error');
-    } finally {
-      setTimeout(() => {
-        setOpenSnackbar(false);
-      }, 3000); // Hide snackbar after 3 seconds
+      setCopyState('failed');
+      setAnnouncement("Couldn't copy the address");
     }
+    resetTimer.current = setTimeout(() => setCopyState('idle'), COPY_FEEDBACK_MS);
   };
 
   // The SLIC leads the card (UI-SUGGESTIONS.md #40): what the driver searched
@@ -123,18 +129,35 @@ function TitleAddress({ slic }) {
           <IconButton
             onClick={handleCopyAddress}
             aria-label='Copy address'
-            sx={[softRaisedSmall, softPressSx, { flexShrink: 0 }]}
+            sx={[
+              softRaisedSmall,
+              softPressSx,
+              {
+                flexShrink: 0,
+                color:
+                  copyState === 'copied'
+                    ? 'success.main'
+                    : copyState === 'failed'
+                      ? 'error.main'
+                      : undefined,
+              },
+            ]}
           >
-            <ContentCopy fontSize='small' />
+            {/* Keyed so each state's icon mounts fresh and pops in (.pop). */}
+            {copyState === 'copied' ? (
+              <Check key='copied' fontSize='small' className='pop' />
+            ) : copyState === 'failed' ? (
+              <ErrorOutline key='failed' fontSize='small' className='pop' />
+            ) : (
+              <ContentCopy key='idle' fontSize='small' />
+            )}
           </IconButton>
         </Tooltip>
       </Box>
 
-      <Snackbar open={openSnackbar} onClose={handleCloseSnack}>
-        <Alert severity={snackSeverity} onClose={handleCloseSnack}>
-          {snackMessage}
-        </Alert>
-      </Snackbar>
+      <Box role='status' aria-live='polite' sx={visuallyHidden}>
+        {announcement}
+      </Box>
     </Box>
   );
 }

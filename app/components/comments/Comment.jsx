@@ -30,6 +30,7 @@ import {
 } from '@mui/material';
 
 import { apiRequest } from '@/utils/apiRequest';
+import { tapHaptic } from '@/utils/clientFunctions';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/utils/variables';
 
 import CommentComposer from './CommentComposer';
@@ -127,8 +128,15 @@ function Comment({
   };
 
   // Tapping your own vote again takes it back.
-  const vote = (voteType) =>
-    onVote(comment, comment.myVote === voteType ? null : voteType);
+  // Tap feedback (UI-SUGGESTIONS.md #51): casting a vote pops the filled thumb
+  // (.pop, only on the tap, never on load) and gives an Android haptic tick.
+  const [popped, setPopped] = useState(null);
+  const vote = (voteType) => {
+    const next = comment.myVote === voteType ? null : voteType;
+    setPopped(next);
+    tapHaptic();
+    onVote(comment, next);
+  };
 
   // Replies sit in a well pressed into the tip's card: one raised card per
   // thread, with flat reply rows inside, rather than cards stacked on cards.
@@ -330,7 +338,10 @@ function Comment({
             sx={[voteSx, softPressSx]}
           >
             {comment.myVote === 'up' ? (
-              <ThumbUp sx={{ fontSize: '1.1rem' }} />
+              <ThumbUp
+                sx={{ fontSize: '1.1rem' }}
+                className={popped === 'up' ? 'pop' : undefined}
+              />
             ) : (
               <ThumbUpOutlined sx={{ fontSize: '1.1rem' }} />
             )}
@@ -344,7 +355,10 @@ function Comment({
             sx={[voteSx, softPressSx, { ml: 0.5 }]}
           >
             {comment.myVote === 'down' ? (
-              <ThumbDown sx={{ fontSize: '1.1rem' }} />
+              <ThumbDown
+                sx={{ fontSize: '1.1rem' }}
+                className={popped === 'down' ? 'pop' : undefined}
+              />
             ) : (
               <ThumbDownOutlined sx={{ fontSize: '1.1rem' }} />
             )}

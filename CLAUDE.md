@@ -108,6 +108,7 @@ Since 2026-10-07 the app's look is a **soft, embossed (neumorphic) style in the 
   - A global `prefers-reduced-motion: reduce` floor stills everything, so don't add per-component reduced-motion code for CSS animations.
   - Animate a state change between two renders with `withViewTransition` (`utils/viewTransition.js`) and a `viewTransitionName` on the element. Only one element may hold a name at a time. The page root has no snapshot (`:root { view-transition-name: none }`), so only named elements animate.
   - For an element appearing for the first time, add the `enter` class (a CSS `@starting-style` fade with a lift; set `--i` on list items to stagger them). It never replays on re-render. A Paper needs nothing extra: `.MuiPaper-root.enter` already outranks MUI's own Paper transition.
+  - Tap feedback: add the `pop` class to an icon as it mounts for a small spring pop (only on the tap, never on load), and call `tapHaptic()` (`utils/clientFunctions.js`; Android-only, feature-detected) on the actions that matter. Confirm in place, by changing the control itself plus a polite live region, rather than with a toast (see the copy button in `home/TitleAddress.jsx`).
 - **Check light and dark at phone width** for every change. The dark scheme's emboss is subtler by design.
 
 ### External integrations

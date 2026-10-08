@@ -67,6 +67,21 @@
   }
 }
 
+/* Tap feedback (UI-SUGGESTIONS.md #51): an icon that mounts with `.pop`
+   springs up from 60% on --ease-spring, which overshoots slightly and settles.
+   Used for a cast vote and the copy button's check. */
+.pop {
+  animation: pop 400ms var(--ease-spring);
+}
+@keyframes pop {
+  from {
+    scale: 0.6;
+  }
+  to {
+    scale: 1;
+  }
+}
+
 /* A tip or reply the driver just posted (comments/Comment.jsx) gets a brief
    brand-blue tint that fades out, to show where it landed. The element needs
    position: relative; the tint follows its corners. */

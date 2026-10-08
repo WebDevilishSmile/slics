@@ -1660,7 +1660,28 @@ bottom pinning, and `BottomSheetActions` (stacked, full-width, 48px buttons).
 
 ### 51. Feedback on tap
 
-- [ ] **Files:** `home/TitleAddress.jsx`, `comments/CommentHeader.jsx`
+- [x] **Files:** `home/TitleAddress.jsx`, `comments/CommentHeader.jsx`
+
+_Done 2026-10-08,_ all three. `CommentHeader.jsx` no longer exists; the votes live in
+`comments/Comment.jsx`.
+
+- **Copy address:** the Snackbar and its `setTimeout(3000)` are gone.
+  - On success the button's icon becomes a green `Check`; on failure, a red `ErrorOutline`.
+    Either pops in, then reverts after 1.5s.
+  - A visually hidden `role='status' aria-live='polite'` region says "Address copied" or
+    "Couldn't copy the address".
+- **Vote:** a new global `.pop` class (`app/globals.css`) springs an icon up from 60% on
+  `--ease-spring`. A cast vote's filled thumb gets it only on the tap (`popped` state),
+  never on load.
+- **Haptics:** `tapHaptic()` in `utils/clientFunctions.js` gives a 10ms `navigator.vibrate`
+  on copy and vote. It's feature-detected (Android only), skipped under reduced motion, and
+  wrapped in try/catch.
+- **Checked in headless Chrome, with clipboard permission granted:**
+  - The icon goes Copy → Check (`pop`) → Copy after 1.5s.
+  - The live region says "Address copied", and the clipboard holds the full address with
+    the state.
+  - No snackbar appears.
+  - No thumb pops on load; voting on a tip pops only that thumb (`animation-name: pop`).
 
 - **Copy address.** Today it opens a Snackbar and runs a separate `setTimeout(3000)`, which
   fights the theme's 6000ms auto-hide. Instead, swap the copy icon for a check for about

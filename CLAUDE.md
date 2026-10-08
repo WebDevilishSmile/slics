@@ -88,14 +88,16 @@ Rate limiting (`utils/rateLimit.js`) is a MongoDB-backed fixed-window limiter, d
 
 ### Visual style: soft / embossed (match it in every UI change)
 
-Since 2026-10-07 the app's look is a **soft, embossed (neumorphic) style in the existing colors**. The lookup card, the SLIC search bar and the Driver tips use it. **Any UI you add or change should match it**, not the older outlined/elevated MUI look. Restyle what you touch, and say so in the summary. The rules:
+Since 2026-10-07 the app's look is a **soft, embossed (neumorphic) style in the existing colors**. /home (the lookup card, the SLIC search bar, the Driver tips), `/history` and `/whip-it-in-and-out` use it (2026-10-08). The admin gyms page has only its card surface converted. **Any UI you add or change should match it**, not the older outlined/elevated MUI look. Restyle what you touch, and say so in the summary. The rules:
 
 - **Inside a `<Paper variant='panel'>`**, build with the helpers in `app/components/utility/soft.js`:
   - `softRaised` for cards and tiles;
   - `softRaisedSmall` for pills and chips;
   - `softInset` for wells (an address, a reply list, a sort track);
-  - `softInputSx` for text fields, which are wells with a placeholder (never a floating label) and the `softFocus` glow on focus;
-  - `softPressSx` for anything tappable, which presses in while held and stays pressed while `aria-pressed`.
+  - `softInputSx` for text fields, selects and date pickers. Each is a well with the `softFocus` glow on focus, and never has a floating label. A lone box takes a placeholder and an aria-label. A form field keeps its `label`, which `softInputSx` moves above the well (`places/PlaceFormDialog.jsx`). `PhoneField` takes it through `sx`, `SlicTagsField` through `soft`;
+  - `softPressSx` for anything tappable, which presses in while held and stays pressed while `aria-pressed`;
+  - `softToggleSx` for filter chips that toggle (`aria-pressed`): raised when off, pressed in with brand-blue text when on;
+  - `softContainedSx` on the one `variant='contained'` button, swapping MUI's drop shadow for the soft one.
 
   **It's seamless.** The page, the `panel` Paper variant, the themed overlays (`MuiDialog`, `MuiPopover`/menus, `MuiDrawer`) and every soft element share one surface, `background.default` with no overlay. That's `#edf3fc` in light and the lifted `night` `#15181c` in dark (not near-black; shadows need something to fall on). Only light and shadow separate them: no borders, no outlined variants, no Paper `elevation`, no `elevation` on dialogs or menus. So the helpers work on the page itself as well as inside a panel (the search bar, `utility/SoftNotice.jsx`).
 - **Info notices are `utility/SoftNotice.jsx`**: a raised card with a blue icon, the message, actions and an optional dismiss. Errors, successes and snackbars keep MUI's colored Alerts.

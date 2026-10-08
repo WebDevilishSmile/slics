@@ -3,7 +3,8 @@ import { formatPhoneNumber } from '@/utils/functions';
 import { FormControl, FormLabel, TextField } from '@mui/material';
 
 // `sx` merges over the slic form's column defaults (e.g. `{ mt: 0 }` inside a
-// dialog that spaces its fields with `gap`).
+// dialog that spaces its fields with `gap`). It can be an sx array, and it
+// reaches the field inside (e.g. `softInputSx` from utility/soft.js).
 function PhoneField({ phone, setPhone, sx, disabled }) {
   const handleChange = (event) => {
     const rawValue = event.target.value;
@@ -13,7 +14,10 @@ function PhoneField({ phone, setPhone, sx, disabled }) {
 
   return (
     <FormControl
-      sx={{ width: '100%', maxWidth: theme.layout.width.field, mt: 4, ...sx }}
+      sx={[
+        { width: '100%', maxWidth: theme.layout.width.field, mt: 4 },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
     >
       <TextField
         label='Phone'

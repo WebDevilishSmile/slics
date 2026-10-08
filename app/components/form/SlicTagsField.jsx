@@ -3,6 +3,21 @@
 import { useMemo } from 'react';
 import { Autocomplete, TextField, createFilterOptions } from '@mui/material';
 
+import { softInputSx, softRaised, softRaisedSmall } from '../utility/soft';
+
+// Picked SLICs are small raised pills inside the well.
+const softTagsSx = (theme) => ({
+  '& .MuiAutocomplete-tag': softRaisedSmall(theme),
+});
+
+// The dropdown as a raised card on the page surface, with roomy rows for a
+// thumb, like the SLIC search on /home. (The themed MuiPopover doesn't reach
+// an Autocomplete's own Paper.)
+const softListSx = [
+  softRaised,
+  { mt: 1, borderRadius: 4, '& .MuiAutocomplete-option': { minHeight: '3rem' } },
+];
+
 // "1809 - BETPA · Bethlehem Center"; parts that are missing are skipped.
 export function slicLabel(slic) {
   const code = slic.alphaSlic
@@ -18,8 +33,9 @@ const filterOptions = createFilterOptions({
 
 // Multi-select of SLICs; `value` and `onChange` deal in numSlic strings. A tag
 // whose SLIC has since been deleted still shows (by number) instead of being
-// silently dropped on the next save.
-function SlicTagsField({ slics, value, onChange, label, placeholder, disabled }) {
+// silently dropped on the next save. `soft` draws it as a pressed-in well
+// with raised tags (utility/soft.js); the label then sits above the well.
+function SlicTagsField({ slics, value, onChange, label, placeholder, disabled, soft = false }) {
   const byNumSlic = useMemo(
     () => new Map(slics.map((slic) => [slic.numSlic, slic])),
     [slics],
@@ -42,8 +58,14 @@ function SlicTagsField({ slics, value, onChange, label, placeholder, disabled })
       filterOptions={filterOptions}
       filterSelectedOptions
       disabled={disabled}
+      slotProps={soft ? { paper: { sx: softListSx } } : undefined}
       renderInput={(params) => (
-        <TextField {...params} label={label} placeholder={placeholder} />
+        <TextField
+          {...params}
+          label={label}
+          placeholder={placeholder}
+          sx={soft ? [softInputSx, softTagsSx] : undefined}
+        />
       )}
     />
   );

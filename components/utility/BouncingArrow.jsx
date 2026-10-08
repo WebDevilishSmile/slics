@@ -1,6 +1,6 @@
 import { ArrowDownward } from '@mui/icons-material';
 
-// The down arrow that bobs above a call-to-action button (about/AboutLink.jsx,
+// The down arrow that bobs above a call-to-action button (about/Future.jsx,
 // layout/BuyMeACoffeeButton.jsx). Holds still for prefers-reduced-motion.
 function BouncingArrow() {
   return (

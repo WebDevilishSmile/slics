@@ -510,7 +510,7 @@ plurality.
 
 ### 25. Collapse the `about/` wrappers
 
-- [ ] **Files:** `about/AboutContainer.jsx` (12 lines), `AboutImage.jsx` (49),
+- [x] **Files:** `about/AboutContainer.jsx` (12 lines), `AboutImage.jsx` (49),
   `AboutLink.jsx` (36), `AboutText.jsx` (12), `AboutTitle.jsx` (9)
 
 Five single-purpose wrappers for one static page, each imported only by the four section
@@ -519,6 +519,12 @@ prop. Fold them into the sections that use them, or into one `AboutSection.jsx` 
 repetition is real. Ten files → five.
 
 *Blast radius:* the About page only. `UI-SUGGESTIONS.md` #25 touches two of the sections.
+
+**Done 2026-10-08.** The repetition was real (every section is card, title, picture or
+icon well, text), so the five wrappers became one `about/AboutSection.jsx` with `title`,
+`imageSrc`/`imageAlt` or `icon`/`iconSize`, the text as children and an optional `action`.
+`AboutLink` folded into `Future.jsx`, its only user. Ten files → six; the markup and
+styles are unchanged.
 
 ### 26. Three comment renderers → one
 

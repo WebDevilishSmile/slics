@@ -1715,7 +1715,18 @@ membership page after a Buy Me a Coffee purchase.
 
 ### 56. Dark surfaces with depth
 
-- [ ] **File:** `utils/theme.js` (`tokens`). Dark mode uses `#050505` for both the page and
+_Done 2026-10-07,_ as part of the seamless soft style, and differently than suggested.
+There is one lifted dark surface, `tokens.night` `#15181c`, for the page, panels, comment
+surface and overlays. There isn't a three-step ladder: the soft shadow pairs supply the
+depth.
+
+- Every text color stays at least 4.5:1 on `night`: white 17.8, `text.secondary` 9.2, primary
+  `#039be5` 5.8, error 4.8.
+- The dark header and footer lift with it, and the status bar follows
+  (`statusBarColors.dark` is computed from `night`).
+- OLED pure-black is given up for depth.
+
+- [x] **File:** `utils/theme.js` (`tokens`). Dark mode uses `#050505` for both the page and
       the paper, so panels separate only through MUI's elevation overlay. A slightly lifted
       ladder would read better in a cab at night and reduce OLED black smear while scrolling,
       e.g. page `#0b0d10`, panel `#14181d`, comment `#1b2027`. This is a token-only change.

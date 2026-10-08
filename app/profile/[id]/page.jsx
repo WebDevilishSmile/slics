@@ -1,12 +1,11 @@
 import { auth } from '@/auth';
 import { getCommentsByUserId } from '@/utils/commentsApi';
 import { getUserById } from '@/utils/usersApi';
-import { serializeUser } from '@/utils/functions';
+import { serializeComments, serializeUser } from '@/utils/functions';
 
 import RedirectMessage from '@/app/components/layout/RedirectMessage';
 import ProfileComments from '@/app/components/profile/ProfileComments';
 import ProfileData from '@/app/components/profile/ProfileData';
-import ProfileImage from '@/app/components/profile/ProfileImage';
 import HydrationGuard from '@/app/components/utility/HydrationGuard';
 import PageContainer from '../../components/layout/PageContainer';
 import { Typography } from '@mui/material';
@@ -57,12 +56,11 @@ async function ProfilePage({ params }) {
         <Typography variant='sectionHeading'>Profile</Typography>
 
         <HydrationGuard>
-          <ProfileImage userData={userData} />
           <ProfileData
             userData={serializeUser(userData)}
             commentCount={comments.length}
           />
-          <ProfileComments comments={comments} />
+          <ProfileComments comments={serializeComments(comments)} />
         </HydrationGuard>
       </PageContainer>
     </Suspense>

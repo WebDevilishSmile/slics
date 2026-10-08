@@ -88,7 +88,7 @@ Rate limiting (`utils/rateLimit.js`) is a MongoDB-backed fixed-window limiter, d
 
 ### Visual style: soft / embossed (match it in every UI change)
 
-Since 2026-10-07 the app's look is a **soft, embossed (neumorphic) style in the existing colors**. /home (the lookup card, the SLIC search bar, the Driver tips), `/history` and `/whip-it-in-and-out` use it (2026-10-08). The admin gyms page has only its card surface converted. **Any UI you add or change should match it**, not the older outlined/elevated MUI look. Restyle what you touch, and say so in the summary. The rules:
+Since 2026-10-07 the app's look is a **soft, embossed (neumorphic) style in the existing colors**. /home (the lookup card, the SLIC search bar, the Driver tips), `/history`, `/whip-it-in-and-out` and `/profile` use it (2026-10-08). A driver's tips on their profile and on the admin user page are one shared card, `profile/CommentCard.jsx`. The admin gyms page has only its card surface converted. **Any UI you add or change should match it**, not the older outlined/elevated MUI look. Restyle what you touch, and say so in the summary. The rules:
 
 - **Inside a `<Paper variant='panel'>`**, build with the helpers in `app/components/utility/soft.js`:
   - `softRaised` for cards and tiles;

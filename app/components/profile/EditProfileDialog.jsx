@@ -1,16 +1,23 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Divider,
   TextField,
   Typography,
 } from '@mui/material';
 import PhoneField from '../form/PhoneField';
+import {
+  softContainedSx,
+  softInputSx,
+  softInset,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 import DeleteAccountDialog from './DeleteAccountDialog';
 
 // Credentials users are registered with firstName/lastName; OAuth users only
@@ -85,7 +92,7 @@ function EditProfileDialog({
           onChange={(event) => setFirstName(event.target.value)}
           autoComplete='given-name'
           fullWidth
-          sx={{ mt: 1 }}
+          sx={[softInputSx, { mt: 1 }]}
         />
         <TextField
           label='Last name'
@@ -93,30 +100,34 @@ function EditProfileDialog({
           onChange={(event) => setLastName(event.target.value)}
           autoComplete='family-name'
           fullWidth
-          sx={{ mt: 2 }}
+          sx={[softInputSx, { mt: 2.5 }]}
         />
-        <PhoneField phone={phone} setPhone={setPhone} />
+        <PhoneField
+          phone={phone}
+          setPhone={setPhone}
+          sx={[softInputSx, { mt: 2.5, maxWidth: 'none' }]}
+        />
 
         {/* Admins can't delete themselves here (the route refuses too), so
             the last admin can't lock everyone out. */}
         {userData.role !== 'admin' && (
-          <>
-            <Divider sx={{ mt: 4, mb: 2 }} />
+          // Set apart in a pressed-in well rather than behind a divider.
+          <Box sx={[softInset, { mt: 4, p: 2, borderRadius: 4 }]}>
             <Typography variant='subtitle2'>Delete account</Typography>
-            <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
+            <Typography variant='body2' color='text.secondary' sx={{ mb: 1.5 }}>
               Removes your profile, comments, votes and lookup history. This
               can&apos;t be undone.
             </Typography>
             <Button
-              variant='outlined'
               color='error'
               size='small'
               onClick={() => setDeleteOpen(true)}
               disabled={isSubmitting}
+              sx={[softRaisedSmall, softPressSx, { px: 1.5 }]}
             >
               Delete account
             </Button>
-          </>
+          </Box>
         )}
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
@@ -127,6 +138,7 @@ function EditProfileDialog({
           variant='contained'
           onClick={handleSave}
           disabled={!firstName.trim() || !lastName.trim() || isSubmitting}
+          sx={softContainedSx}
         >
           Save
         </Button>

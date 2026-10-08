@@ -1,18 +1,35 @@
 'use client';
 
 import { useState } from 'react';
-import { Alert, Box, Button, Snackbar, CircularProgress } from '@mui/material';
-import { DeleteForeverOutlined } from '@mui/icons-material';
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Snackbar,
+} from '@mui/material';
+import { DeleteOutline } from '@mui/icons-material';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
+import { softContainedSx, softPressSx } from '../utility/soft';
 
+// The delete button on a CommentCard: a soft icon button that asks first, as
+// the tips on /home do. While any delete in the list is refreshing the
+// server-rendered list (CommentRefreshContext), every button waits.
 function CommentDelete({ comment }) {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
     severity: 'success',
   });
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const { isRefreshing, refresh } = useCommentRefresh();
+  const busy = isDeleting || isRefreshing;
 
   const handleCloseSnack = () => setSnackbar({ ...snackbar, open: false });
 
@@ -20,7 +37,6 @@ function CommentDelete({ comment }) {
     setIsDeleting(true);
     try {
       const response = await fetch(`/api/comment`, {
-        // Removed ID from URL string
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ commentId: comment._id }),
@@ -30,9 +46,10 @@ function CommentDelete({ comment }) {
         throw new Error('Failed to delete comment');
       }
 
+      setConfirmOpen(false);
       setSnackbar({
         open: true,
-        message: 'Comment deleted successfully!',
+        message: 'Tip deleted.',
         severity: 'success',
       });
 
@@ -41,9 +58,10 @@ function CommentDelete({ comment }) {
       setTimeout(refresh, 1500);
     } catch (error) {
       console.error('Error deleting comment:', error);
+      setConfirmOpen(false);
       setSnackbar({
         open: true,
-        message: 'Could not delete comment. Please try again.',
+        message: 'Could not delete the tip. Please try again.',
         severity: 'error',
       });
       setIsDeleting(false);
@@ -51,28 +69,47 @@ function CommentDelete({ comment }) {
   };
 
   return (
-    <Box
-      sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: 2 }}
-    >
-      <Button
-        variant='contained'
-        color='error'
-        startIcon={
-          isDeleting || isRefreshing ? (
-            <CircularProgress size={20} color='inherit' />
-          ) : (
-            <DeleteForeverOutlined />
-          )
-        }
-        onClick={handleDelete}
-        disabled={isDeleting || isRefreshing}
+    <>
+      <IconButton
+        aria-label={`Delete tip on SLIC ${comment.numSlic}`}
+        onClick={() => setConfirmOpen(true)}
+        disabled={busy}
+        sx={[softPressSx, { width: '2.5rem', height: '2.5rem' }]}
       >
-        {isDeleting
-          ? 'Deleting...'
-          : isRefreshing
-          ? 'Refreshing...'
-          : 'Delete Comment'}
-      </Button>
+        {busy ? (
+          <CircularProgress size={18} color='inherit' />
+        ) : (
+          <DeleteOutline fontSize='small' color='error' />
+        )}
+      </IconButton>
+
+      <Dialog
+        open={confirmOpen}
+        onClose={isDeleting ? undefined : () => setConfirmOpen(false)}
+        aria-labelledby={`delete-${comment._id}`}
+      >
+        <DialogTitle id={`delete-${comment._id}`}>Delete this tip?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>This can&apos;t be undone.</DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setConfirmOpen(false)} disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button
+            variant='contained'
+            color='error'
+            onClick={handleDelete}
+            disabled={isDeleting}
+            startIcon={
+              isDeleting ? <CircularProgress size={16} color='inherit' /> : null
+            }
+            sx={softContainedSx}
+          >
+            {isDeleting ? 'Deleting…' : 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snackbar.open}
@@ -87,7 +124,7 @@ function CommentDelete({ comment }) {
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </Box>
+    </>
   );
 }
 

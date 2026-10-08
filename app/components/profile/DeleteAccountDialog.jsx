@@ -14,6 +14,8 @@ import {
   TextField,
 } from '@mui/material';
 
+import { softContainedSx, softInputSx } from '../utility/soft';
+
 const CONFIRM_WORD = 'DELETE';
 
 function DeleteAccountDialog({ open, onClose, userId, commentCount }) {
@@ -74,7 +76,7 @@ function DeleteAccountDialog({ open, onClose, userId, commentCount }) {
           autoComplete='off'
           disabled={isDeleting}
           fullWidth
-          sx={{ mt: 2 }}
+          sx={[softInputSx, { mt: 2.5 }]}
         />
         {error && (
           <Alert severity='error' sx={{ mt: 2 }}>
@@ -94,6 +96,7 @@ function DeleteAccountDialog({ open, onClose, userId, commentCount }) {
           startIcon={
             isDeleting ? <CircularProgress size={16} color='inherit' /> : null
           }
+          sx={softContainedSx}
         >
           {isDeleting ? 'Deleting…' : 'Delete account'}
         </Button>

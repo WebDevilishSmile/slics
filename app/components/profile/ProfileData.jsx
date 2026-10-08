@@ -4,21 +4,52 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 
 import { capitalizeFirstLetter } from '@/utils/functions';
-import theme from '@/utils/theme';
 
-import { Settings as SettingsIcon } from '@mui/icons-material';
+import {
+  BadgeOutlined,
+  EmailOutlined,
+  EventOutlined,
+  LocalCafeOutlined,
+  PhoneOutlined,
+  SettingsOutlined,
+} from '@mui/icons-material';
 import {
   Alert,
   Box,
   IconButton,
-  Snackbar,
-  Typography,
   Paper,
+  Snackbar,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 
 import BmcButton from '../layout/BmcButton';
+import SoftNotice from '../utility/SoftNotice';
+import { softInset, softPressSx } from '../utility/soft';
 import EditProfileDialog from './EditProfileDialog';
+import ProfileImage from './ProfileImage';
 
+// One line of the details well: a brand-blue icon, a quiet label, the value.
+function Detail({ icon, label, children }) {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+      <Box sx={{ color: 'primary.main', display: 'flex', flexShrink: 0, pt: 0.25 }}>
+        {icon}
+      </Box>
+      <Box sx={{ minWidth: 0 }}>
+        <Typography variant='body2' color='text.secondary'>
+          {label}
+        </Typography>
+        <Typography sx={{ overflowWrap: 'anywhere' }}>{children}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
+// The profile card in the soft style (CLAUDE.md "Visual style"): a seamless
+// panel with the avatar on a raised ring, the name, the details in a
+// pressed-in well, and, for a non-member, a soft notice with the Buy Me a
+// Coffee button. The gear opens EditProfileDialog (name, phone, delete).
 function ProfileData({ userData, commentCount }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
@@ -46,57 +77,79 @@ function ProfileData({ userData, commentCount }) {
 
   return (
     <Paper
+      variant='panel'
+      className='enter'
       sx={{
-        maxWidth: theme.layout.width.panel,
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        py: 2,
-        px: 1,
+        mt: 3,
+        minHeight: 0,
+        px: { xs: 2, sm: 3 },
+        py: 3,
+        gap: 2.5,
+        position: 'relative',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Typography variant='h5' textAlign='center'>
-          {userData.name}
-        </Typography>
-
+      <Tooltip title='Edit profile'>
         <IconButton
-          sx={{ height: '2rem', width: '2rem' }}
           onClick={() => setEditProfileOpen(true)}
           aria-label='Edit profile'
+          sx={[
+            softPressSx,
+            { position: 'absolute', top: '0.75rem', right: '0.75rem', width: '3rem', height: '3rem' },
+          ]}
         >
-          <SettingsIcon sx={{ fontSize: '1.2rem' }} />
+          <SettingsOutlined />
         </IconButton>
+      </Tooltip>
+
+      <ProfileImage userData={userData} />
+
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography variant='h5' component='p' sx={{ fontWeight: 700 }}>
+          {userData.name}
+        </Typography>
+        <Typography variant='body2' color='text.secondary'>
+          {commentCount} tip{commentCount === 1 ? '' : 's'} shared
+        </Typography>
       </Box>
 
-      <Typography textAlign='center'>
-        <strong>Email:</strong> {userData.email}
-      </Typography>
-      <Typography>
-        <strong>Joined:</strong>{' '}
-        {dayjs(userData.created_at).format('MMM D, YYYY')}
-      </Typography>
-      <Typography>
-        <strong>Role:</strong> {capitalizeFirstLetter(userData.role)}
-      </Typography>
-      <Typography>
-        <strong>Membership:</strong>{' '}
-        {userData.bmcMember ? 'Active' : 'Inactive'}
-      </Typography>
+      <Box
+        sx={[
+          softInset,
+          {
+            alignSelf: 'stretch',
+            borderRadius: 4,
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          },
+        ]}
+      >
+        <Detail icon={<EmailOutlined />} label='Email'>
+          {userData.email}
+        </Detail>
+        <Detail icon={<PhoneOutlined />} label='Phone'>
+          {userData.phone || 'Not provided'}
+        </Detail>
+        <Detail icon={<BadgeOutlined />} label='Role'>
+          {capitalizeFirstLetter(userData.role)}
+        </Detail>
+        <Detail icon={<LocalCafeOutlined />} label='Membership'>
+          {userData.bmcMember ? 'Active' : 'Inactive'}
+        </Detail>
+        <Detail icon={<EventOutlined />} label='Joined'>
+          {dayjs(userData.created_at).format('MMM D, YYYY')}
+        </Detail>
+      </Box>
 
       {!userData.bmcMember && (
-        <>
-          <BmcButton sx={{ mt: 1 }} />
-          <Typography variant='caption' sx={{ mb: 1 }}>
-            Become a member
-          </Typography>
-        </>
+        <SoftNotice
+          icon={<LocalCafeOutlined />}
+          actions={<BmcButton sx={{ ml: 1 }} />}
+        >
+          Become a member to keep your SLIC history and support the app.
+        </SoftNotice>
       )}
-
-      <Typography>
-        <strong>Phone:</strong> {userData.phone || 'Not provided'}
-      </Typography>
 
       <EditProfileDialog
         open={editProfileOpen}
@@ -106,10 +159,7 @@ function ProfileData({ userData, commentCount }) {
         showSnackbar={showSnackbar}
       />
 
-      <Snackbar
-        open={openSnack}
-        onClose={handleCloseSnack}
-      >
+      <Snackbar open={openSnack} onClose={handleCloseSnack}>
         <Alert severity={snackSeverity} onClose={handleCloseSnack}>
           {snackMessage}
         </Alert>

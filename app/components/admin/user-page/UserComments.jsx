@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Button, Paper, Typography } from '@mui/material';
-import CommentHeader from '@/app/components/profile/CommentHeader';
-import CommentBody from '@/app/components/profile/CommentBody';
-import CommentFoot from '@/app/components/profile/CommentFoot';
-import CommentDelete from '@/app/components/profile/CommentDelete';
+import { Box, Button, Typography } from '@mui/material';
+import CommentCard from '@/app/components/profile/CommentCard';
+import { softPressSx, softRaisedSmall } from '@/app/components/utility/soft';
 import { CommentRefreshProvider } from '@/app/context/CommentRefreshContext';
 import { serializeComment } from '@/utils/functions';
 import theme from '@/utils/theme';
+
+const pillSx = [softRaisedSmall, softPressSx, { px: 2 }];
 
 const PAGE_SIZE = 3;
 
@@ -35,50 +35,45 @@ export default function UserComments({ userComments, user }) {
 
       {userComments.length > 0 ? (
         <CommentRefreshProvider>
-          <>
-            {visibleComments.map((comment) => {
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 3,
+              mt: 2,
+            }}
+          >
+            {visibleComments.map((comment, index) => {
               const serialized = serializeComment(comment);
               return (
-                <Paper
+                <CommentCard
                   key={serialized._id}
-                  elevation={theme.layout.elevation}
-                  sx={{
-                    maxWidth: theme.layout.width.panel,
-                    width: '100%',
-                    mt: 2,
-                    p: 2,
-                    boxShadow: 1,
-                  }}
-                >
-                  <CommentHeader comment={serialized} />
-                  <CommentBody comment={serialized} />
-                  <CommentFoot comment={serialized} />
-                  <CommentDelete comment={serialized} />
-                </Paper>
+                  comment={serialized}
+                  index={index}
+                />
               );
             })}
 
-            <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 2 }}>
               {visibleCount < userComments.length && (
                 <Button
-                  variant='outlined'
                   onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
-                  sx={{ mb: 2 }}
+                  sx={pillSx}
                 >
                   See more
                 </Button>
               )}
               {visibleCount > PAGE_SIZE && (
                 <Button
-                  variant='outlined'
                   onClick={() => setVisibleCount((count) => count - PAGE_SIZE)}
-                  sx={{ mb: 2, ml: 2 }}
+                  sx={pillSx}
                 >
                   See less
                 </Button>
               )}
             </Box>
-          </>
+          </Box>
         </CommentRefreshProvider>
       ) : (
         <Typography variant='body2'>

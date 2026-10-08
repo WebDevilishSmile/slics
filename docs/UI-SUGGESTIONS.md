@@ -1829,8 +1829,47 @@ depth.
 
 ### 57. Admin and Cover Bids screens
 
-- [ ] Not reviewed in depth here. #28 (the near-duplicate card and table components) comes
+- [x] Not reviewed in depth here. #28 (the near-duplicate card and table components) comes
       first, so a restyle doesn't have to be done twice.
+
+  _Reviewed and fixed 2026-10-08._ The admin pages and their data need an admin session,
+  which a headless browser doesn't have. So a scratch build stubbed `auth()` to a fixed admin,
+  turned the middleware off and read the real data (pages loaded, nothing submitted). It
+  screenshotted all 15 screens at 390px in both schemes: `/admin` and its SLICs, new and edit
+  SLIC, users, user, comments, drivers, cover, cover drivers, cover jobs and Planet Fitness
+  pages, plus `/cover-bid-jobs`, `/bids` and `/covers`. Every screen already had the soft
+  style, and none overflowed sideways or threw. Planet Fitness and Cover Bid Jobs needed
+  nothing. Fixed, one commit per group:
+  - **SLIC form.** It opened on a "Please fill in all required fields" toast, because the
+    check ran on every render. It now runs when Save is pressed, and stops the save, which
+    nothing did before. The Phone field was the one outlined input left, and now matches.
+    The labels read "SLIC number" and "Alpha code" instead of the field names `NumSlic`/`AlphaSlic`.
+  - **`/covers`** crashed for any signed-in driver without a linked driver row
+    (`getDriverById` throws on a missing id), and its messages were copied from the profile
+    page. It now says the account isn't linked yet. **`/admin/cover`** was an empty page
+    with a heading and no links to it; it redirects to `/admin`.
+  - **Admin tables at phone width.**
+    - The SLICs table needed sideways scrolling to reach a row's edit/delete menu, and its
+      "1–5 of 357" was clipped. On a phone it shows SLIC, Alpha, Name and the menu (the
+      dates return from `sm`), and the pager sits outside the table.
+    - Its sortable headers are `TableSortLabel` buttons with `aria-sort` (they were bare
+      `onClick` cells, unreachable by keyboard).
+    - Driver seniority dates no longer break mid-date, and the users pager stays on one line.
+  - **Consistency.**
+    - "Admin Page", "Users Page" and "Drivers Page" drop "Page", and the admin index says SLICs.
+    - `/bids` gets a page heading.
+    - The admin user page's tips sit in a "Tips (n)" panel like "SLICs pulled up", not
+      under a floating "Comments by <name>:".
+    - The Cover Jobs week picker moves inside its panel.
+
+  Still open, smaller:
+  - On `/admin/users` the lookup count and the member icon (person vs. crossed-out person)
+    have no visible label.
+  - Edit SLIC's "Back" button repeats the header's back arrow (#52).
+  - The admin SLICs table shows 5 rows a page (`SLICS_PER_PAGE`), and its search placeholder
+    is cut off at 390px ("SLIC, alpha or nam…").
+  - `/cover-bid-jobs` is titled "Cover Bid Jobs" on the page and "Cover Bids" in the header.
+  - `/covers` itself wasn't screenshotted; it needs an account linked to a driver.
 
 ---
 

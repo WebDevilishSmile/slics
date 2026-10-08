@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
 import { getUserByEmail } from '@/utils/usersApi';
+import { safeCallbackUrl } from '@/utils/functions';
 
 import PageContainer from './components/layout/PageContainer';
 import { Typography } from '@mui/material';
@@ -7,7 +8,13 @@ import Membership from './components/signIn/Membership';
 import SignIn from './components/signIn/SignIn';
 import RedirectMember from './components/home/RedirectMember';
 
-export default async function Main() {
+// `callbackUrl` is where a signed-out driver was headed (middleware.js). Sign-in
+// comes back here with it, so a non-member still sees the membership prompt;
+// a member goes straight on, and "Use SLICs now" takes a non-member there.
+export default async function Main({ searchParams }) {
+  const callbackUrl = safeCallbackUrl((await searchParams).callbackUrl, null);
+  const next = callbackUrl ?? '/home';
+
   // Check if the user is logged in
   const session = await auth();
 
@@ -22,7 +29,7 @@ export default async function Main() {
     isMember = user?.bmcMember;
 
     if (isLoggedIn && isMember) {
-      return <RedirectMember userName={user.name.split(' ')[0]} />;
+      return <RedirectMember userName={user.name.split(' ')[0]} to={next} />;
     }
   }
 
@@ -31,8 +38,8 @@ export default async function Main() {
   return (
     <PageContainer>
       <Typography variant='h1'>SLICs</Typography>
-      {!isLoggedIn && !isMember && <SignIn />}
-      {isLoggedIn && !isMember && <Membership />}
+      {!isLoggedIn && !isMember && <SignIn callbackUrl={callbackUrl} />}
+      {isLoggedIn && !isMember && <Membership next={next} />}
     </PageContainer>
   );
 }

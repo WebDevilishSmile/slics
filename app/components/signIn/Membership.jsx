@@ -9,7 +9,8 @@ import BmcButton from '../layout/BmcButton';
 import RefreshOnReturn from './RefreshOnReturn';
 import { softContainedSx } from '../utility/soft';
 
-async function Membership() {
+// `next` is where "Use SLICs now" goes: the page they were headed for, or /home.
+async function Membership({ next = '/home' }) {
   // Ensure the auth function is called to get the session
   // This is necessary to check if the user is logged in
   const session = await auth();
@@ -65,7 +66,7 @@ async function Membership() {
       </Typography>
       <Button
         variant='contained'
-        href='/home'
+        href={next}
         sx={[softContainedSx(theme), { px: 3, minHeight: '3rem' }]}
       >
         Use SLICs now

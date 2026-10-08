@@ -23,7 +23,8 @@ const modeLinkSx = { verticalAlign: 'baseline' };
 
 const formSx = { display: 'flex', flexDirection: 'column', gap: 2.5 };
 
-function EmailAuth() {
+// `returnTo` is `/`, with the callbackUrl when there is one (SignIn.jsx).
+function EmailAuth({ returnTo = '/' }) {
   const router = useRouter();
   const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
   const [loading, setLoading] = useState(false);
@@ -56,7 +57,7 @@ function EmailAuth() {
       if (result?.error) {
         setError('Invalid email or password.');
       } else {
-        router.push('/');
+        router.push(returnTo);
         router.refresh();
       }
     } catch {
@@ -105,7 +106,7 @@ function EmailAuth() {
         setError('Account created. Please sign in.');
         switchMode('signin');
       } else {
-        router.push('/');
+        router.push(returnTo);
         router.refresh();
       }
     } catch {

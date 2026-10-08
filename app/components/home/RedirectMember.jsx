@@ -6,18 +6,19 @@ import { useEffect } from 'react';
 import PageContainer from '../layout/PageContainer';
 import { softInset } from '../utility/soft';
 
-// A signed-in member on `/` is on their way to /home: a thin progress bar in
+// A signed-in member on `/` is on their way to `to` (/home, or the page they
+// were headed for before signing in): a thin progress bar in
 // a soft inset track shows the wait (router.push doesn't drive the header's
 // navigation bar).
-function RedirectMember({ userName }) {
+function RedirectMember({ userName, to = '/home' }) {
   const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/home');
+      router.push(to);
     }, 500); // Redirect after 0.5 second
     return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  }, [router]);
+  }, [router, to]);
 
   return (
     <PageContainer>

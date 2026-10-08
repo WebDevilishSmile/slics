@@ -7,7 +7,12 @@ import EmailAuth from './EmailAuth';
 
 // Sign-in on `/` for a signed-out visitor: one soft panel. The email form's
 // Sign In is the panel's one solid blue button, so Google is a raised pill.
-function SignIn() {
+// Both come back to `/`, keeping `callbackUrl` (app/page.jsx).
+function SignIn({ callbackUrl }) {
+  const returnTo = callbackUrl
+    ? `/?callbackUrl=${encodeURIComponent(callbackUrl)}`
+    : '/';
+
   return (
     <Paper
       variant='panel'
@@ -22,7 +27,7 @@ function SignIn() {
         action={async () => {
           'use server';
           await signIn('google', {
-            redirectTo: '/',
+            redirectTo: returnTo,
           });
         }}
       >
@@ -39,7 +44,7 @@ function SignIn() {
           Continue with Google
         </Button>
       </Box>
-      <EmailAuth />
+      <EmailAuth returnTo={returnTo} />
     </Paper>
   );
 }

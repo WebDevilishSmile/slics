@@ -10,10 +10,11 @@ import {
   CircularProgress,
   Dialog,
   DialogTitle,
-  Divider,
   IconButton,
   Typography,
 } from '@mui/material';
+
+import { softContainedSx, softPressSx, softRaisedSmall } from '../utility/soft';
 
 export default function DeleteDriverDialog({
   openDialog,
@@ -62,7 +63,7 @@ export default function DeleteDriverDialog({
     >
       {/* Driver details pop-up */}
       <IconButton
-        sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
+        sx={[softPressSx, { position: 'absolute', top: '1rem', right: '1rem' }]}
         aria-label='Close'
         onClick={() => {
           setOpenDialog(false);
@@ -73,7 +74,6 @@ export default function DeleteDriverDialog({
       </IconButton>
 
       <DialogTitle>Delete Driver</DialogTitle>
-      <Divider width='90%' />
 
       <Box
         sx={{
@@ -110,6 +110,7 @@ export default function DeleteDriverDialog({
           color='error'
           onClick={handleDelete}
           disabled={loading}
+          sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
           startIcon={
             loading ? <CircularProgress size={16} color='inherit' /> : null
           }
@@ -117,11 +118,11 @@ export default function DeleteDriverDialog({
           {loading ? 'Deleting…' : 'Delete'}
         </Button>
         <Button
-          variant='outlined'
           onClick={() => {
             setOpenDialog(false);
             setError('');
           }}
+          sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
         >
           Cancel
         </Button>

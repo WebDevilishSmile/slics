@@ -1,6 +1,7 @@
 import { Close } from '@mui/icons-material';
-import { Box, Dialog, DialogTitle, Divider, IconButton } from '@mui/material';
+import { Box, Dialog, DialogTitle, IconButton } from '@mui/material';
 import EditDriverField from './EditDriverField';
+import { softPressSx } from '../../utility/soft';
 
 export default function EditDriverDialog({
   openDialog,
@@ -9,18 +10,17 @@ export default function EditDriverDialog({
 }) {
   return (
     <Dialog
-      fullScreen
+      fullWidth
+      maxWidth='xs'
       open={openDialog}
       onClose={() => setOpenDialog(false)}
       slotProps={{
         paper: {
           sx: {
-            width: '100%',
-            height: '100%',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            pt: 20,
+            py: 4,
           },
         },
       }}
@@ -28,14 +28,13 @@ export default function EditDriverDialog({
       {/* Driver details pop-up */}
       <IconButton
         onClick={() => setOpenDialog(false)}
-        sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
+        sx={[softPressSx, { position: 'absolute', top: '1rem', right: '1rem' }]}
         aria-label='Close'
       >
         <Close />
       </IconButton>
 
       <DialogTitle>Driver Details</DialogTitle>
-      <Divider width='90%' />
 
       <Box
         sx={{

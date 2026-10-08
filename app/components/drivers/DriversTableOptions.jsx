@@ -1,20 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { Close, MoreHoriz } from '@mui/icons-material';
+import { MoreHoriz } from '@mui/icons-material';
 import {
-  Box,
-  Dialog,
-  DialogTitle,
-  Divider,
   IconButton,
   Menu,
   MenuItem,
   TableCell,
 } from '@mui/material';
-import EditDriverField from './editDriver/EditDriverField';
 import EditDriverDialog from './editDriver/EditDriverDialog';
 import DeleteDriverDialog from './DeleteDriverDialog';
+import { softPressSx } from '../utility/soft';
 
 function DriversTableOptions({ driver }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -30,18 +26,13 @@ function DriversTableOptions({ driver }) {
     setAnchorEl(null);
   };
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-    handleClose();
-    console.log(driver);
-  };
-
   return (
     <TableCell sx={{ width: '2rem' }}>
       <IconButton
         size='small'
         onClick={handleClick}
         aria-label={`Options for ${driver.name}`}
+        sx={softPressSx}
       >
         <MoreHoriz />
       </IconButton>

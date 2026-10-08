@@ -1,7 +1,9 @@
 'use client';
 
-import { Box, Button, TextField } from '@mui/material';
+import { SearchOutlined } from '@mui/icons-material';
+import { Box, Button, InputAdornment, TextField } from '@mui/material';
 import { useState } from 'react';
+import { softContainedSx, softInputSx } from '../utility/soft';
 import NewDriverDialog from './newDriver/NewDriverDialog';
 
 export default function SearchAddDriver({
@@ -26,20 +28,34 @@ export default function SearchAddDriver({
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        px: { xs: 2 },
+        alignItems: 'stretch',
         gap: 2,
-        my: 4,
+        pb: 2,
       }}
     >
       <TextField
-        label='Search Drivers'
-        variant='outlined'
+        placeholder='Search drivers'
+        aria-label='Search drivers'
         fullWidth
+        sx={softInputSx}
         value={searchTerm}
         onChange={(e) => handleSearch(e.target.value)}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position='start'>
+                <SearchOutlined />
+              </InputAdornment>
+            ),
+          },
+        }}
       />
-      <Button variant='contained' color='primary' onClick={handleOpenAddDialog}>
+      <Button
+        variant='contained'
+        color='primary'
+        onClick={handleOpenAddDialog}
+        sx={[softContainedSx, { alignSelf: 'center', minHeight: '3rem', px: 3 }]}
+      >
         Add New Driver
       </Button>
 

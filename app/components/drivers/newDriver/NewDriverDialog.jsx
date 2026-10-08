@@ -10,9 +10,9 @@ import {
   CircularProgress,
   Dialog,
   DialogTitle,
-  Divider,
   IconButton,
 } from '@mui/material';
+import { softContainedSx, softInputSx, softPressSx, softRaisedSmall } from '../../utility/soft';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -92,7 +92,7 @@ export default function NewDriverDialog({ open, onClose }) {
       }}
     >
       <IconButton
-        sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
+        sx={[softPressSx, { position: 'absolute', top: '1rem', right: '1rem' }]}
         onClick={handleClose}
         aria-label='Close'
       >
@@ -100,7 +100,6 @@ export default function NewDriverDialog({ open, onClose }) {
       </IconButton>
 
       <DialogTitle>New Driver</DialogTitle>
-      <Divider sx={{ width: '90%' }} />
 
       <Box
         component='form'
@@ -146,7 +145,12 @@ export default function NewDriverDialog({ open, onClose }) {
             onChange={set('seniorityDate')}
             disabled={loading}
             slotProps={{
-              textField: { size: 'small', fullWidth: true, required: true },
+              textField: {
+                size: 'small',
+                fullWidth: true,
+                required: true,
+                sx: softInputSx,
+              },
             }}
           />
         </LocalizationProvider>
@@ -173,13 +177,18 @@ export default function NewDriverDialog({ open, onClose }) {
             type='submit'
             variant='contained'
             disabled={loading}
+            sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
             startIcon={
               loading ? <CircularProgress size={16} color='inherit' /> : null
             }
           >
             {loading ? 'Adding…' : 'Add Driver'}
           </Button>
-          <Button variant='outlined' onClick={handleClose} disabled={loading}>
+          <Button
+            onClick={handleClose}
+            disabled={loading}
+            sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+          >
             Cancel
           </Button>
         </Box>

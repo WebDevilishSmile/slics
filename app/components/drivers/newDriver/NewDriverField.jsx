@@ -1,4 +1,5 @@
 import { TextField } from '@mui/material';
+import { softInputSx } from '../../utility/soft';
 
 export default function NewDriverField({
   label,
@@ -15,6 +16,7 @@ export default function NewDriverField({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       size='small'
+      sx={softInputSx}
       fullWidth
       required={required}
       type={type}

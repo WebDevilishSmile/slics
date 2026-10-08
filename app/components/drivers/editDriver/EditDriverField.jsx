@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { softInputSx, softPressSx, softRaisedSmall } from '../../utility/soft';
 
 function EditDriverField({ driver, fieldName, label }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -70,6 +71,7 @@ function EditDriverField({ driver, fieldName, label }) {
           <TextField
             size='small'
             label={label}
+            sx={softInputSx}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             disabled={isLoading}
@@ -114,8 +116,7 @@ function EditDriverField({ driver, fieldName, label }) {
             {currentDisplayValue || 'Not set'}{' '}
             {label === 'Phone' && (
               <Button
-                sx={{ mt: 0.6 }}
-                variant='outlined'
+                sx={[softRaisedSmall, softPressSx, { mt: 0.6 }]}
                 href={`tel:${currentDisplayValue}`}
                 disabled={!currentDisplayValue}
               >
@@ -126,6 +127,7 @@ function EditDriverField({ driver, fieldName, label }) {
           <IconButton
             size='small'
             onClick={() => setIsEditing(true)}
+            sx={softPressSx}
             aria-label={`Edit ${label}`}
           >
             <Edit fontSize='small' />

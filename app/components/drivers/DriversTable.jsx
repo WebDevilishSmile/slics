@@ -1,6 +1,5 @@
 'use client';
 
-import { MoreHoriz } from '@mui/icons-material';
 import {
   Paper,
   Table,
@@ -11,6 +10,8 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
+import theme from '@/utils/theme';
+import { softTableSx } from '../utility/soft';
 import DriversTableFooter from './DriversTableFooter';
 import DriversTableHead from './DriversTableHead';
 import DriversTableOptions from './DriversTableOptions';
@@ -26,10 +27,6 @@ function DriversTable({ allDrivers }) {
     setFilteredDrivers(allDrivers);
     setSearchTerm('');
   }, [allDrivers]);
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - allDrivers.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -50,7 +47,15 @@ function DriversTable({ allDrivers }) {
   };
 
   return (
-    <>
+    <Paper
+      variant='panel'
+      sx={{
+        maxWidth: theme.layout.width.prose,
+        minHeight: 0,
+        alignItems: 'stretch',
+        px: { xs: 1, sm: 3 },
+      }}
+    >
       <SearchAddDriver
         drivers={allDrivers}
         searchTerm={searchTerm}
@@ -59,8 +64,8 @@ function DriversTable({ allDrivers }) {
         handleSearch={handleSearch}
       />
 
-      <TableContainer component={Paper}>
-        <Table size='small'>
+      <TableContainer>
+        <Table size='small' sx={softTableSx}>
           <DriversTableHead />
           <TableBody>
             {filteredDrivers
@@ -90,7 +95,7 @@ function DriversTable({ allDrivers }) {
           />
         </Table>
       </TableContainer>
-    </>
+    </Paper>
   );
 }
 

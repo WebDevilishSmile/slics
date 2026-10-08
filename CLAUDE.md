@@ -107,6 +107,7 @@ Since 2026-10-07 the app's look is a **soft, embossed (neumorphic) style in the 
   - Easing comes from `--ease-out` / `--ease-spring` (`app/globals.css`, mirrored as `theme.transitions.easing.out` / `.spring`). Durations are MUI's `theme.transitions.duration`.
   - A global `prefers-reduced-motion: reduce` floor stills everything, so don't add per-component reduced-motion code for CSS animations.
   - Animate a state change between two renders with `withViewTransition` (`utils/viewTransition.js`) and a `viewTransitionName` on the element. Only one element may hold a name at a time. The page root has no snapshot (`:root { view-transition-name: none }`), so only named elements animate.
+  - For an element appearing for the first time, add the `enter` class (a CSS `@starting-style` fade with a lift; set `--i` on list items to stagger them). It never replays on re-render. A Paper needs nothing extra: `.MuiPaper-root.enter` already outranks MUI's own Paper transition.
 - **Check light and dark at phone width** for every change. The dark scheme's emboss is subtler by design.
 
 ### External integrations

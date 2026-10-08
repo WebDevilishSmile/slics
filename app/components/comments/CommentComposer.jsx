@@ -65,13 +65,14 @@ const CommentComposer = forwardRef(function CommentComposer(
     event.preventDefault();
     setSaving(true);
     setError('');
-    const { error: message } = await apiRequest('/api/comment', {
+    const { data, error: message } = await apiRequest('/api/comment', {
       body: { numSlic, parentId, content: draft },
     });
     setSaving(false);
     if (message) return setError(message);
     setDraft('');
-    await onPosted?.();
+    // The new id lets the list mark where it landed (Comments.jsx justPosted).
+    await onPosted?.(data?.id);
   };
 
   return (

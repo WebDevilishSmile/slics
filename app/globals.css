@@ -45,6 +45,51 @@
   }
 }
 
+/* Entry animations (UI-SUGGESTIONS.md #49). `.enter` fades an element in and
+   lifts it 8px the first time it renders, via @starting-style, so there's no
+   JS and no replay on re-render or re-sort. Set --i on list items to stagger
+   them by 40ms each (capped at 8). Browsers without @starting-style just show
+   the element, and reduced motion makes it instant (the floor above).
+   .MuiPaper-root.enter outranks the transition MUI sets on every Paper
+   (box-shadow only), which would otherwise win and skip the entry. */
+.enter,
+.MuiPaper-root.enter {
+  transition:
+    opacity 250ms var(--ease-out),
+    translate 250ms var(--ease-out);
+  transition-delay: calc(min(var(--i, 0), 8) * 40ms);
+}
+@starting-style {
+  .enter,
+  .MuiPaper-root.enter {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+/* A tip or reply the driver just posted (comments/Comment.jsx) gets a brief
+   brand-blue tint that fades out, to show where it landed. The element needs
+   position: relative; the tint follows its corners. */
+.just-posted::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--mui-palette-primary-main);
+  opacity: 0;
+  animation: just-posted 1.8s var(--ease-out);
+}
+@keyframes just-posted {
+  0%,
+  30% {
+    opacity: 0.16;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Switching SLICs (UI-SUGGESTIONS.md #48, home/Main.jsx): only the lookup
    card animates. The old card cross-fades into the new one while the box
    morphs to the new height. The page itself isn't captured at all

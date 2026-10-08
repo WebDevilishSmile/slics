@@ -77,6 +77,23 @@ function Comments({ user }) {
     setSlicName(data.slicName);
   }, [numSlic]);
 
+  // Reload after a change. A post passes its new id, which marks that tip or
+  // reply "just posted" for the tint in comments/Comment.jsx (UI-SUGGESTIONS.md
+  // #49); the mark clears once the 1.8s animation is done, so it can play again.
+  const [justPosted, setJustPosted] = useState(null);
+  const refresh = useCallback(
+    async (id) => {
+      await fetchThread();
+      if (id) setJustPosted(id);
+    },
+    [fetchThread],
+  );
+  useEffect(() => {
+    if (!justPosted) return undefined;
+    const timer = setTimeout(() => setJustPosted(null), 2000);
+    return () => clearTimeout(timer);
+  }, [justPosted]);
+
   // A new SLIC: start over. "New" is relative to the last time this device
   // showed this SLIC's tips; on a first visit nothing is new, and this visit
   // becomes the baseline.
@@ -234,8 +251,8 @@ function Comments({ user }) {
         numSlic={numSlic}
         topics
         placeholder={`Share a tip about ${stop}`}
-        onPosted={async () => {
-          await fetchThread();
+        onPosted={async (id) => {
+          await refresh(id);
           setSnack({ message: 'Thanks! Your tip is posted.', severity: 'success' });
         }}
       />
@@ -275,7 +292,7 @@ function Comments({ user }) {
         </Box>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {sorted.map((comment) => (
+          {sorted.map((comment, index) => (
             <Comment
               key={comment._id}
               comment={comment}
@@ -283,7 +300,9 @@ function Comments({ user }) {
               user={user}
               isNew={isNew}
               onVote={handleVote}
-              onChanged={fetchThread}
+              onChanged={refresh}
+              index={index}
+              justPosted={justPosted}
             />
           ))}
         </Box>

@@ -1573,7 +1573,28 @@ the URL effect lands on the same SLIC.
 
 ### 49. Entry animations for cards and new comments
 
-- [ ] **Files:** `app/globals.css` (or a `MuiPaper` variant), `comments/Comment.jsx`
+- [x] **Files:** `app/globals.css` (or a `MuiPaper` variant), `comments/Comment.jsx`
+
+_Done 2026-10-08,_ all three, in CSS.
+
+- **`.enter`** (`app/globals.css`): an `@starting-style` fade with an 8px lift, 250ms on
+  `--ease-out`, delayed by `--i` × 40ms (capped at 8).
+  - It's on the lookup card (`SlicDetailsContainer`) and each top-level tip card, with
+    `--i` set to the card's list index.
+  - It plays only when an element first renders. A re-sort, a vote or a refetch with the
+    same keys doesn't replay it.
+  - `.MuiPaper-root.enter` outranks the box-shadow-only transition MUI puts on every
+    Paper. Without that, the card silently skipped the animation.
+- **Just posted:** the composer passes the new id to `onPosted`, and `Comments` marks it
+  `justPosted` for 2s. That tip or reply gets `.just-posted`, a brand-blue `::after` tint
+  (16% → 0 over 1.8s), and scrolls itself into view (`block: 'nearest'`; instant under
+  reduced motion). In Top order a brand-new tip can sort below the fold.
+- **Reduced motion:** the #47 floor makes all of it instant.
+- **Checked in headless Chrome:**
+  - The card's computed transition is opacity and translate.
+  - Tip delays are 0, 40 and 80ms.
+  - After posting, the new tip has the tint at 0.16 opacity and sits in view, and the mark
+    clears after about 2s.
 
 `@starting-style` gives an element an entry transition in plain CSS (the
 `animate-element-entry-exit` guide; Baseline since 2024-08). Good candidates:

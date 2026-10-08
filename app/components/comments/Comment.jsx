@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {
@@ -60,6 +60,8 @@ function Comment({
   onVote,
   onChanged,
   isReply = false,
+  index = 0,
+  justPosted = null,
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
@@ -68,6 +70,18 @@ function Comment({
   const [votersOpen, setVotersOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const shellRef = useRef(null);
+
+  // A tip just posted can sort below the fold (a new tip has no votes), so
+  // bring it into view for its tint. Smooth unless reduced motion is on.
+  useEffect(() => {
+    if (comment._id !== justPosted || !shellRef.current) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    shellRef.current.scrollIntoView({
+      behavior: reduce ? 'auto' : 'smooth',
+      block: 'nearest',
+    });
+  }, [comment._id, justPosted]);
 
   const canManage = comment.isMine || user?.role === 'admin';
   const canViewVoters = Boolean(user?.bmcMember || user?.role === 'admin');
@@ -142,6 +156,7 @@ function Comment({
             isNew={isNew}
             onVote={onVote}
             onChanged={onChanged}
+            justPosted={justPosted}
             isReply
           />
         </Box>
@@ -157,9 +172,9 @@ function Comment({
         label={`Reply to ${authorName}`}
         autoFocus
         onCancel={() => setReplying(false)}
-        onPosted={async () => {
+        onPosted={async (id) => {
           setReplying(false);
-          await onChanged();
+          await onChanged(id);
         }}
       />
     </Box>
@@ -167,12 +182,24 @@ function Comment({
 
   // A top-level card or, for a reply, a flat row inside the replies well.
   const shellSx = isReply
-    ? { py: 1.5 }
-    : [softRaised, { borderRadius: 3, p: 2, pb: 1.5 }];
+    ? { py: 1.5, position: 'relative' }
+    : [softRaised, { borderRadius: 3, p: 2, pb: 1.5, position: 'relative' }];
+
+  // Entry and "just posted" animations (UI-SUGGESTIONS.md #49, app/globals.css):
+  // top-level cards fade up as the list loads, staggered by `index`; the tip
+  // or reply the driver just posted gets a fading brand-blue tint.
+  const isJustPosted = comment._id === justPosted;
+  const shellProps = {
+    ref: shellRef,
+    className: [isReply ? '' : 'enter', isJustPosted ? 'just-posted' : '']
+      .filter(Boolean)
+      .join(' ') || undefined,
+    style: isReply ? undefined : { '--i': index },
+  };
 
   if (comment.deleted) {
     return (
-      <Box sx={shellSx}>
+      <Box sx={shellSx} {...shellProps}>
         <Typography
           color='text.secondary'
           sx={{ fontStyle: 'italic', py: 0.5 }}
@@ -202,7 +229,7 @@ function Comment({
     );
 
   return (
-    <Box sx={shellSx}>
+    <Box sx={shellSx} {...shellProps}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Avatar
           src={comment.author?.image ?? undefined}

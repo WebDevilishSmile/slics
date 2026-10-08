@@ -1,6 +1,5 @@
 'use client';
 
-import theme from '@/utils/theme';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -9,17 +8,20 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
   Link,
   TextField,
   Typography,
 } from '@mui/material';
+
+import { softContainedSx, softInputSx } from '../utility/soft';
 
 // The "Create one" / "Sign in" mode switches (UI-SUGGESTIONS.md #33). They're
 // real buttons, so Tab and Enter reach them, styled as links. MUI's button-link
 // style sets verticalAlign: 'middle', which drops them off the sentence's
 // baseline.
 const modeLinkSx = { verticalAlign: 'baseline' };
+
+const formSx = { display: 'flex', flexDirection: 'column', gap: 2.5 };
 
 function EmailAuth() {
   const router = useRouter();
@@ -114,59 +116,61 @@ function EmailAuth() {
   }
 
   return (
-    <Box sx={{ width: '100%', maxWidth: theme.layout.width.field, mx: 'auto', mt: 3 }}>
-      <Divider sx={{ mb: 3 }}>
-        <Typography variant='caption' color='text.secondary'>
-          or continue with email
-        </Typography>
-      </Divider>
+    <Box sx={{ width: '100%', mt: 3 }}>
+      <Typography
+        variant='caption'
+        color='text.secondary'
+        component='p'
+        sx={{ textAlign: 'center', mb: 2 }}
+      >
+        or continue with email
+      </Typography>
 
       {error && (
-        <Alert severity='error' sx={{ mb: 2 }}>
+        <Alert severity='error' sx={{ mb: 2.5 }}>
           {error}
         </Alert>
       )}
 
       {mode === 'signin' ? (
-        <Box component='form' onSubmit={handleSignIn}>
+        <Box component='form' onSubmit={handleSignIn} sx={formSx}>
           <TextField
             label='Email'
             type='email'
-            size='small'
             fullWidth
+            sx={softInputSx}
             required
             autoComplete='email'
             value={signInFields.email}
             onChange={(e) =>
               setSignInFields((f) => ({ ...f, email: e.target.value }))
             }
-            sx={{ mb: 1.5 }}
           />
           <TextField
             label='Password'
             type='password'
-            size='small'
             fullWidth
+            sx={softInputSx}
             required
             autoComplete='current-password'
             value={signInFields.password}
             onChange={(e) =>
               setSignInFields((f) => ({ ...f, password: e.target.value }))
             }
-            sx={{ mb: 2 }}
           />
           <Button
             type='submit'
             variant='contained'
             fullWidth
             disabled={loading}
+            sx={[softContainedSx, { minHeight: '3rem' }]}
             startIcon={
               loading ? <CircularProgress size={16} color='inherit' /> : null
             }
           >
             {loading ? 'Signing in…' : 'Sign In'}
           </Button>
-          <Typography variant='body2' sx={{ mt: 1.5, textAlign: 'center' }}>
+          <Typography variant='body2' sx={{ textAlign: 'center' }}>
             Don&apos;t have an account?{' '}
             <Link
               component='button'
@@ -179,12 +183,12 @@ function EmailAuth() {
           </Typography>
         </Box>
       ) : (
-        <Box component='form' onSubmit={handleSignUp}>
-          <Box sx={{ display: 'flex', gap: 1.5, mb: 1.5 }}>
+        <Box component='form' onSubmit={handleSignUp} sx={formSx}>
+          <Box sx={{ display: 'flex', gap: 1.5 }}>
             <TextField
               label='First Name'
-              size='small'
               fullWidth
+              sx={softInputSx}
               required
               autoComplete='given-name'
               value={signUpFields.firstName}
@@ -194,8 +198,8 @@ function EmailAuth() {
             />
             <TextField
               label='Last Name'
-              size='small'
               fullWidth
+              sx={softInputSx}
               required
               autoComplete='family-name'
               value={signUpFields.lastName}
@@ -207,21 +211,20 @@ function EmailAuth() {
           <TextField
             label='Email'
             type='email'
-            size='small'
             fullWidth
+            sx={softInputSx}
             required
             autoComplete='email'
             value={signUpFields.email}
             onChange={(e) =>
               setSignUpFields((f) => ({ ...f, email: e.target.value }))
             }
-            sx={{ mb: 1.5 }}
           />
           <TextField
             label='Password'
             type='password'
-            size='small'
             fullWidth
+            sx={softInputSx}
             required
             autoComplete='new-password'
             helperText='Minimum 8 characters'
@@ -229,13 +232,12 @@ function EmailAuth() {
             onChange={(e) =>
               setSignUpFields((f) => ({ ...f, password: e.target.value }))
             }
-            sx={{ mb: 1.5 }}
           />
           <TextField
             label='Confirm Password'
             type='password'
-            size='small'
             fullWidth
+            sx={softInputSx}
             required
             autoComplete='new-password'
             value={signUpFields.confirmPassword}
@@ -245,20 +247,20 @@ function EmailAuth() {
                 confirmPassword: e.target.value,
               }))
             }
-            sx={{ mb: 2 }}
           />
           <Button
             type='submit'
             variant='contained'
             fullWidth
             disabled={loading}
+            sx={[softContainedSx, { minHeight: '3rem' }]}
             startIcon={
               loading ? <CircularProgress size={16} color='inherit' /> : null
             }
           >
             {loading ? 'Creating account…' : 'Create Account'}
           </Button>
-          <Typography variant='body2' sx={{ mt: 1.5, textAlign: 'center' }}>
+          <Typography variant='body2' sx={{ textAlign: 'center' }}>
             Already have an account?{' '}
             <Link
               component='button'

@@ -5,7 +5,12 @@ export default function AboutText({ children }) {
   return (
     <Typography
       variant='body1'
-      sx={{ textAlign: 'center', maxWidth: theme.layout.width.prose, margin: '1rem auto' }}
+      sx={{
+        textAlign: 'center',
+        maxWidth: theme.layout.width.prose,
+        mx: 'auto',
+        my: 2,
+      }}
     >
       {children}
     </Typography>

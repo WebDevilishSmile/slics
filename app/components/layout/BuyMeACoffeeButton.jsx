@@ -11,7 +11,7 @@ export default function BuyMeACoffeeButton() {
       sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
     >
       <BouncingArrow />
-      <BmcButton sx={{ mb: 4 }} />
+      <BmcButton sx={{ mb: 1 }} />
     </Box>
   );
 }

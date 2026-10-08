@@ -1,5 +1,3 @@
-import { Box, Typography, Paper } from '@mui/material';
-import Image from 'next/image';
 import AboutTitle from './AboutTitle';
 import AboutImage from './AboutImage';
 import AboutContainer from './AboutContainer';

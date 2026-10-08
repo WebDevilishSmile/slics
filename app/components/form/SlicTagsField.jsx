@@ -33,9 +33,9 @@ const filterOptions = createFilterOptions({
 
 // Multi-select of SLICs; `value` and `onChange` deal in numSlic strings. A tag
 // whose SLIC has since been deleted still shows (by number) instead of being
-// silently dropped on the next save. `soft` draws it as a pressed-in well
-// with raised tags (utility/soft.js); the label then sits above the well.
-function SlicTagsField({ slics, value, onChange, label, placeholder, disabled, soft = false }) {
+// silently dropped on the next save. It's drawn as a pressed-in well with
+// raised tags (utility/soft.js), so the label sits above the well.
+function SlicTagsField({ slics, value, onChange, label, placeholder, disabled }) {
   const byNumSlic = useMemo(
     () => new Map(slics.map((slic) => [slic.numSlic, slic])),
     [slics],
@@ -58,13 +58,13 @@ function SlicTagsField({ slics, value, onChange, label, placeholder, disabled, s
       filterOptions={filterOptions}
       filterSelectedOptions
       disabled={disabled}
-      slotProps={soft ? { paper: { sx: softListSx } } : undefined}
+      slotProps={{ paper: { sx: softListSx } }}
       renderInput={(params) => (
         <TextField
           {...params}
           label={label}
           placeholder={placeholder}
-          sx={soft ? [softInputSx, softTagsSx] : undefined}
+          sx={[softInputSx, softTagsSx]}
         />
       )}
     />

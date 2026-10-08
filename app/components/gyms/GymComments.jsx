@@ -5,6 +5,7 @@ import { Alert, Box, Button, TextField, Typography } from '@mui/material';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { GYM_COMMENT_MAX_LENGTH } from '@/utils/variables';
 import { apiRequest } from '@/utils/apiRequest';
+import { softContainedSx, softInputSx } from '../utility/soft';
 import GymComment from './GymComment';
 
 // Plain-text comments on one gym — how to get in, where to park. The list
@@ -36,22 +37,27 @@ function GymComments({ gym }) {
         sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
       >
         <TextField
-          label='Add a comment'
-          placeholder='How to get in, where to park…'
+          placeholder='Add a comment: how to get in, where to park…'
           multiline
           minRows={2}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           disabled={saving}
           fullWidth
-          slotProps={{ htmlInput: { maxLength: GYM_COMMENT_MAX_LENGTH } }}
+          sx={softInputSx}
+          slotProps={{
+            htmlInput: {
+              maxLength: GYM_COMMENT_MAX_LENGTH,
+              'aria-label': 'Add a comment',
+            },
+          }}
         />
         {error && <Alert severity='error'>{error}</Alert>}
         <Button
           type='submit'
           variant='contained'
           disabled={saving || isRefreshing || !draft.trim()}
-          sx={{ alignSelf: 'flex-end' }}
+          sx={[softContainedSx, { alignSelf: 'flex-end' }]}
         >
           {saving ? 'Posting…' : 'Post'}
         </Button>

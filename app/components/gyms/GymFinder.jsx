@@ -76,7 +76,7 @@ function GymFinder({ gyms, slics }) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 2,
+          gap: 3, // room for the soft shadows between cards
         }}
       >
         <GymSearchBar

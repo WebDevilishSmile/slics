@@ -4,6 +4,7 @@ import { useState } from 'react';
 import dayjs from 'dayjs';
 import {
   ChatBubbleOutline,
+  Circle,
   Edit,
   ExpandLess,
   ExpandMore,
@@ -14,13 +15,13 @@ import {
   Button,
   Chip,
   Collapse,
-  Divider,
   IconButton,
   Paper,
   Snackbar,
   Tooltip,
   Typography,
 } from '@mui/material';
+import { softPressSx, softRaisedSmall } from '../utility/soft';
 import { GYM_STATUSES } from '@/utils/variables';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { apiRequest } from '@/utils/apiRequest';
@@ -107,6 +108,7 @@ function GymCard({ gym, miles, slicLabels, onEdit }) {
             aria-label={`Edit ${gym.name}`}
             onClick={() => onEdit(gym)}
             disabled={isRefreshing}
+            sx={softPressSx}
           >
             <Edit />
           </IconButton>
@@ -114,17 +116,24 @@ function GymCard({ gym, miles, slicLabels, onEdit }) {
       </Box>
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-        {status && <Chip label={status.label} color={status.color} />}
+        {status && (
+          <Chip
+            icon={<Circle />}
+            label={status.label}
+            sx={[
+              softRaisedSmall,
+              { '& .MuiChip-icon': { fontSize: 12, color: `${status.color}.main` } },
+            ]}
+          />
+        )}
         <Chip
-          variant='outlined'
           label={gym.open24h ? 'Open 24 hours' : gym.hours || 'Hours not set'}
-          sx={{ maxWidth: '100%' }}
+          sx={[softRaisedSmall, { maxWidth: '100%' }]}
         />
         {miles != null && (
           <Chip
-            variant='outlined'
-            color='primary'
             label={`${formatMiles(miles)} away`}
+            sx={[softRaisedSmall, { color: 'primary.main' }]}
           />
         )}
       </Box>
@@ -136,12 +145,12 @@ function GymCard({ gym, miles, slicLabels, onEdit }) {
           <Typography variant='body2' color='text.secondary' sx={{ mb: 0.5 }}>
             On the way to/from
           </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {gym.slics.map((numSlic) => (
               <Chip
                 key={numSlic}
                 label={slicLabels[numSlic] ?? numSlic}
-                sx={{ maxWidth: '100%' }}
+                sx={[softRaisedSmall, { maxWidth: '100%' }]}
               />
             ))}
           </Box>
@@ -160,22 +169,20 @@ function GymCard({ gym, miles, slicLabels, onEdit }) {
         <Typography variant='body2'>{lastVisitedLabel(gym.lastVisited)}</Typography>
         <Button
           size='small'
-          variant='outlined'
           onClick={handleMarkVisited}
           disabled={marking || isRefreshing}
+          sx={[softRaisedSmall, softPressSx, { px: 2, minHeight: '2.5rem' }]}
         >
           {marking ? 'Saving…' : 'Mark visited'}
         </Button>
       </Box>
-
-      <Divider />
 
       <Button
         onClick={() => setShowComments((open) => !open)}
         startIcon={<ChatBubbleOutline />}
         endIcon={showComments ? <ExpandLess /> : <ExpandMore />}
         aria-expanded={showComments}
-        sx={{ alignSelf: 'flex-start' }}
+        sx={[softRaisedSmall, softPressSx, { alignSelf: 'flex-start', px: 2 }]}
       >
         Comments ({gym.comments.length})
       </Button>

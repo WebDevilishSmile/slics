@@ -363,7 +363,6 @@ function PlaceFormDialog({ place, slics, onClose }) {
           </Box>
 
           <SlicTagsField
-            soft
             slics={slics}
             value={fields.slics}
             onChange={set('slics')}

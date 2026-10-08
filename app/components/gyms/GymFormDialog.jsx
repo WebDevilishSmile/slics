@@ -31,6 +31,13 @@ import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import PhoneField from '../form/PhoneField';
 import { apiRequest } from '@/utils/apiRequest';
 import SlicTagsField from '../form/SlicTagsField';
+import {
+  softContainedSx,
+  softInputSx,
+  softInset,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 
 function toFields(gym) {
   return {
@@ -157,17 +164,20 @@ function GymFormDialog({ gym, slics, onClose }) {
         onClick={onClose}
         disabled={busy}
         aria-label='Close'
-        sx={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}
+        sx={[
+          softPressSx,
+          { position: 'absolute', top: '0.75rem', right: '0.75rem' },
+        ]}
       >
         <Close />
       </IconButton>
 
-      <DialogContent dividers>
+      <DialogContent>
         <Box
           component='form'
           id={formId}
           onSubmit={handleSubmit}
-          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          sx={[softInputSx, { display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }]}
         >
           <TextField
             label='Name'
@@ -267,8 +277,8 @@ function GymFormDialog({ gym, slics, onClose }) {
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
               <Button
                 size='small'
-                variant='outlined'
                 onClick={handleUseLocation}
+                sx={[softRaisedSmall, softPressSx, { px: 2 }]}
                 disabled={busy || location.loading}
                 startIcon={
                   location.loading ? (
@@ -287,6 +297,7 @@ function GymFormDialog({ gym, slics, onClose }) {
                   target='_blank'
                   rel='noopener noreferrer'
                   endIcon={<OpenInNew />}
+                  sx={[softRaisedSmall, softPressSx, { px: 1.5 }]}
                 >
                   Preview pin
                 </Button>
@@ -327,15 +338,7 @@ function GymFormDialog({ gym, slics, onClose }) {
           {isEdit &&
             (confirmDelete ? (
               <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1,
-                  p: 2,
-                  border: 1,
-                  borderColor: 'error.main',
-                  borderRadius: 1,
-                }}
+                sx={[softInset, { display: 'flex', flexDirection: 'column', gap: 1, p: 2 }]}
               >
                 <Typography>
                   Delete this gym
@@ -344,7 +347,11 @@ function GymFormDialog({ gym, slics, onClose }) {
                   ? This can&apos;t be undone.
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                  <Button onClick={() => setConfirmDelete(false)} disabled={busy}>
+                  <Button
+                    onClick={() => setConfirmDelete(false)}
+                    disabled={busy}
+                    sx={[softRaisedSmall, softPressSx, { px: 2 }]}
+                  >
                     Keep it
                   </Button>
                   <Button
@@ -352,6 +359,7 @@ function GymFormDialog({ gym, slics, onClose }) {
                     color='error'
                     onClick={handleDelete}
                     disabled={busy}
+                    sx={softContainedSx}
                   >
                     Delete
                   </Button>
@@ -363,7 +371,11 @@ function GymFormDialog({ gym, slics, onClose }) {
                 startIcon={<Delete />}
                 onClick={() => setConfirmDelete(true)}
                 disabled={busy}
-                sx={{ alignSelf: 'flex-start' }}
+                sx={[
+                  softRaisedSmall,
+                  softPressSx,
+                  { alignSelf: 'flex-start', px: 2, minHeight: '2.5rem' },
+                ]}
               >
                 Delete gym
               </Button>
@@ -371,8 +383,12 @@ function GymFormDialog({ gym, slics, onClose }) {
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button onClick={onClose} disabled={busy}>
+<DialogActions disableSpacing sx={{ px: 3, py: 2, gap: 1.5 }}>
+        <Button
+          onClick={onClose}
+          disabled={busy}
+          sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+        >
           Cancel
         </Button>
         <Button
@@ -380,6 +396,7 @@ function GymFormDialog({ gym, slics, onClose }) {
           form={formId}
           variant='contained'
           disabled={busy}
+          sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
           startIcon={
             saving ? <CircularProgress size={16} color='inherit' /> : null
           }

@@ -9,9 +9,14 @@ import {
   CircularProgress,
   Paper,
 } from '@mui/material';
-import theme from '@/utils/theme';
 import { GYM_STATUSES } from '@/utils/variables';
 import SlicTagsField from '../form/SlicTagsField';
+import {
+  softContainedSx,
+  softPressSx,
+  softRaisedSmall,
+  softToggleSx,
+} from '../utility/soft';
 
 // `location` is the useGeolocation() result owned by GymFinder.
 function GymSearchBar({
@@ -25,14 +30,12 @@ function GymSearchBar({
 }) {
   return (
     <Paper
-      elevation={2}
+      variant='panel'
       sx={{
-        width: '100%',
-        maxWidth: theme.layout.width.panel,
+        minHeight: 0,
+        alignItems: 'stretch',
         mt: 4,
         p: 2,
-        display: 'flex',
-        flexDirection: 'column',
         gap: 2,
       }}
     >
@@ -53,9 +56,9 @@ function GymSearchBar({
         }}
       >
         <Button
-          variant={location.position ? 'contained' : 'outlined'}
           onClick={() => location.request()}
           disabled={location.loading}
+          sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
           startIcon={
             location.loading ? (
               <CircularProgress size={16} color='inherit' />
@@ -66,7 +69,12 @@ function GymSearchBar({
         >
           {location.position ? 'Update my location' : 'Near me'}
         </Button>
-        <Button variant='contained' startIcon={<Add />} onClick={onAdd}>
+        <Button
+          variant='contained'
+          startIcon={<Add />}
+          onClick={onAdd}
+          sx={softContainedSx}
+        >
           Add gym
         </Button>
       </Box>
@@ -80,17 +88,17 @@ function GymSearchBar({
         aria-label='Filter by status'
         sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}
       >
-        {GYM_STATUSES.map(({ value, label, color }) => {
+        {GYM_STATUSES.map(({ value, label }) => {
           const selected = statuses.includes(value);
           return (
             <Chip
               key={value}
               size='medium'
               label={label}
-              color={selected ? color : 'default'}
-              variant={selected ? 'filled' : 'outlined'}
+              clickable
               onClick={() => onToggleStatus(value)}
               aria-pressed={selected}
+              sx={softToggleSx}
             />
           );
         })}

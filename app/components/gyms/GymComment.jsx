@@ -9,13 +9,21 @@ import {
   Button,
   Dialog,
   DialogActions,
+  DialogContent,
+  DialogContentText,
   DialogTitle,
   IconButton,
-  Paper,
   TextField,
   Tooltip,
   Typography,
 } from '@mui/material';
+import {
+  softContainedSx,
+  softInputSx,
+  softInset,
+  softPressSx,
+  softRaisedSmall,
+} from '../utility/soft';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { GYM_COMMENT_MAX_LENGTH } from '@/utils/variables';
 import { apiRequest } from '@/utils/apiRequest';
@@ -61,7 +69,7 @@ function GymComment({ comment }) {
   };
 
   return (
-    <Paper elevation={1} sx={{ bgcolor: 'background.comment', p: 2 }}>
+    <Box sx={[softInset, { p: 2 }]}>
       <Box
         sx={{
           display: 'flex',
@@ -81,6 +89,7 @@ function GymComment({ comment }) {
                 aria-label='Edit comment'
                 onClick={startEditing}
                 disabled={busy}
+                sx={softPressSx}
               >
                 <Edit fontSize='small' />
               </IconButton>
@@ -91,6 +100,7 @@ function GymComment({ comment }) {
                 aria-label='Delete comment'
                 onClick={() => setConfirmOpen(true)}
                 disabled={busy}
+                sx={softPressSx}
               >
                 <Delete fontSize='small' color='error' />
               </IconButton>
@@ -109,16 +119,22 @@ function GymComment({ comment }) {
             disabled={busy}
             autoFocus
             fullWidth
+            sx={softInputSx}
             slotProps={{ htmlInput: { maxLength: GYM_COMMENT_MAX_LENGTH } }}
           />
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            <Button onClick={() => setEditing(false)} disabled={busy}>
+            <Button
+              onClick={() => setEditing(false)}
+              disabled={busy}
+              sx={[softRaisedSmall, softPressSx, { px: 2 }]}
+            >
               Cancel
             </Button>
             <Button
               variant='contained'
               onClick={handleSave}
               disabled={busy || !draft.trim()}
+              sx={softContainedSx}
             >
               {saving ? 'Saving…' : 'Save'}
             </Button>
@@ -136,10 +152,22 @@ function GymComment({ comment }) {
         </Alert>
       )}
 
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        fullWidth
+        maxWidth='xs'
+      >
         <DialogTitle>Delete this comment?</DialogTitle>
-        <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)} disabled={saving}>
+        <DialogContent>
+          <DialogContentText>This can&apos;t be undone.</DialogContentText>
+        </DialogContent>
+        <DialogActions disableSpacing sx={{ px: 3, pb: 3, gap: 1.5 }}>
+          <Button
+            onClick={() => setConfirmOpen(false)}
+            disabled={saving}
+            sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+          >
             Cancel
           </Button>
           <Button
@@ -147,12 +175,13 @@ function GymComment({ comment }) {
             color='error'
             onClick={handleDelete}
             disabled={saving}
+            sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
           >
             Delete
           </Button>
         </DialogActions>
       </Dialog>
-    </Paper>
+    </Box>
   );
 }
 

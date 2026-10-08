@@ -44,7 +44,6 @@ function PlaceSearchBar({
       }}
     >
       <SlicTagsField
-        soft
         slics={slics}
         value={selectedSlics}
         onChange={onSlicsChange}

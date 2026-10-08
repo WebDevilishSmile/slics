@@ -30,6 +30,14 @@ import { PLACE_CATEGORIES, TRAILER_ACCESS } from '@/utils/variables';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import PhoneField from '../form/PhoneField';
 import SlicTagsField from '../form/SlicTagsField';
+import {
+  softContainedSx,
+  softInputSx,
+  softInset,
+  softPressSx,
+  softRaisedSmall,
+  softToggleSx,
+} from '../utility/soft';
 import PlaceCategoryIcon from './PlaceCategoryIcon';
 
 function toFields(place) {
@@ -51,7 +59,9 @@ function toFields(place) {
 
 // Add (`place` null) or edit a place. Only rendered for an edit when the
 // viewer may manage the place; the API enforces the same rule. Mounted only
-// while open, so each opening starts from the place's current values.
+// while open, so each opening starts from the place's current values. In the
+// soft style (CLAUDE.md "Visual style"): every field is a pressed-in well with
+// its label above it, and the categories toggle in and out.
 function PlaceFormDialog({ place, slics, onClose }) {
   const isEdit = Boolean(place);
   const formId = useId();
@@ -174,14 +184,15 @@ function PlaceFormDialog({ place, slics, onClose }) {
         <Close />
       </IconButton>
 
-      <DialogContent dividers>
+      <DialogContent>
         <Box
           component='form'
           id={formId}
           onSubmit={handleSubmit}
-          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 1 }}
         >
           <TextField
+            sx={softInputSx}
             label='Name'
             required
             value={fields.name}
@@ -192,13 +203,17 @@ function PlaceFormDialog({ place, slics, onClose }) {
           />
 
           <Box>
-            <FormLabel component='legend' required>
+            <FormLabel
+              component='legend'
+              required
+              sx={{ typography: 'body2', fontWeight: 500 }}
+            >
               What&apos;s there?
             </FormLabel>
             <Box
               role='group'
               aria-label='Categories'
-              sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}
+              sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 1.5 }}
             >
               {PLACE_CATEGORIES.map(({ value, label }) => {
                 const selected = fields.categories.includes(value);
@@ -208,11 +223,10 @@ function PlaceFormDialog({ place, slics, onClose }) {
                     size='medium'
                     icon={<PlaceCategoryIcon category={value} />}
                     label={label}
-                    color={selected ? 'primary' : 'default'}
-                    variant={selected ? 'filled' : 'outlined'}
                     onClick={() => toggleCategory(value)}
                     aria-pressed={selected}
                     disabled={busy}
+                    sx={softToggleSx}
                   />
                 );
               })}
@@ -221,6 +235,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
           </Box>
 
           <TextField
+            sx={softInputSx}
             select
             label='Tractor-trailer access'
             value={fields.trailerAccess}
@@ -235,6 +250,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
           </TextField>
 
           <TextField
+            sx={softInputSx}
             label='Street'
             value={fields.street}
             onChange={setFromEvent('street')}
@@ -243,6 +259,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
             slotProps={{ htmlInput: { maxLength: 120 } }}
           />
           <TextField
+            sx={softInputSx}
             label='City'
             required
             value={fields.city}
@@ -252,6 +269,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
           />
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
             <TextField
+              sx={softInputSx}
               label='State'
               required
               value={fields.state}
@@ -260,6 +278,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
               slotProps={{ htmlInput: { maxLength: 20 } }}
             />
             <TextField
+              sx={softInputSx}
               label='Zip'
               value={fields.zip}
               onChange={setFromEvent('zip')}
@@ -271,7 +290,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
             phone={fields.phone}
             setPhone={set('phone')}
             disabled={busy}
-            sx={{ mt: 0, maxWidth: 'none' }}
+            sx={[softInputSx, { mt: 0, maxWidth: 'none' }]}
           />
 
           <FormControlLabel
@@ -286,6 +305,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
           />
           {!fields.open24h && (
             <TextField
+              sx={softInputSx}
               label='Hours'
               value={fields.hours}
               onChange={setFromEvent('hours')}
@@ -297,6 +317,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
 
           <Box>
             <TextField
+              sx={softInputSx}
               label='Parking pin'
               value={fields.parking}
               onChange={setFromEvent('parking')}
@@ -306,10 +327,9 @@ function PlaceFormDialog({ place, slics, onClose }) {
               disabled={busy}
               fullWidth
             />
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 1.5 }}>
               <Button
                 size='small'
-                variant='outlined'
                 onClick={handleUseLocation}
                 disabled={busy || location.loading}
                 startIcon={
@@ -319,6 +339,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
                     <MyLocation />
                   )
                 }
+                sx={[softRaisedSmall, softPressSx, { px: 1.5 }]}
               >
                 Use my current location
               </Button>
@@ -342,6 +363,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
           </Box>
 
           <SlicTagsField
+            soft
             slics={slics}
             value={fields.slics}
             onChange={set('slics')}
@@ -354,16 +376,19 @@ function PlaceFormDialog({ place, slics, onClose }) {
 
           {isEdit &&
             (confirmDelete ? (
+              // The confirmation sits in a pressed-in well; the red Delete
+              // button carries the warning.
               <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1,
-                  p: 2,
-                  border: 1,
-                  borderColor: 'error.main',
-                  borderRadius: 1,
-                }}
+                sx={[
+                  softInset,
+                  {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    p: 2,
+                    borderRadius: 4,
+                  },
+                ]}
               >
                 <Typography>
                   Delete this place
@@ -380,6 +405,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
                     color='error'
                     onClick={handleDelete}
                     disabled={busy}
+                    sx={softContainedSx}
                   >
                     Delete
                   </Button>
@@ -411,6 +437,7 @@ function PlaceFormDialog({ place, slics, onClose }) {
           startIcon={
             saving ? <CircularProgress size={16} color='inherit' /> : null
           }
+          sx={softContainedSx}
         >
           {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Add place'}
         </Button>

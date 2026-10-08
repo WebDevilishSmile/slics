@@ -1,9 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Box, CircularProgress, Typography } from '@mui/material';
+import { Alert, Box, Skeleton, Typography } from '@mui/material';
 import { apiRequest } from '@/utils/apiRequest';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
+import { softRaised } from '../utility/soft';
 import PlaceComment from './PlaceComment';
 import PlaceCommentComposer from './PlaceCommentComposer';
 
@@ -65,10 +66,9 @@ function PlaceComments({ place, user }) {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 1 }}>
       <PlaceCommentComposer
         placeId={place._id}
-        label='Add a comment'
         placeholder='What should other drivers know? Where to park, which lanes, how clean…'
         onPosted={handleChanged}
       />
@@ -81,18 +81,32 @@ function PlaceComments({ place, user }) {
 
       {comments === null ? (
         !error && (
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <CircularProgress size={24} />
+          // A comment-shaped skeleton in the soft card shape.
+          <Box
+            aria-busy='true'
+            aria-label='Loading comments'
+            sx={[softRaised, { borderRadius: 3, p: 2 }]}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Skeleton variant='circular' width='2rem' height='2rem' />
+              <Box sx={{ flex: 1 }}>
+                <Skeleton variant='text' sx={{ width: '30%' }} />
+                <Skeleton variant='text' sx={{ width: '20%' }} />
+              </Box>
+            </Box>
+            <Skeleton variant='text' sx={{ mt: 1 }} />
+            <Skeleton variant='text' sx={{ width: '70%' }} />
           </Box>
         )
       ) : comments.length === 0 ? (
-        <Typography color='text.secondary'>
+        <Typography color='text.secondary' sx={{ textAlign: 'center' }}>
           No comments yet. Been there? Tell other drivers how it went.
         </Typography>
       ) : (
-        comments.map((comment) => (
+        comments.map((comment, index) => (
           <PlaceComment
             key={comment._id}
+            index={index}
             comment={comment}
             placeId={place._id}
             user={user}

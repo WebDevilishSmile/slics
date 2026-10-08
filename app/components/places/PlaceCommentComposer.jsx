@@ -4,9 +4,13 @@ import { useState } from 'react';
 import { Alert, Box, Button, TextField } from '@mui/material';
 import { apiRequest } from '@/utils/apiRequest';
 import { PLACE_COMMENT_MAX_LENGTH } from '@/utils/variables';
+import { softContainedSx, softInputSx } from '../utility/soft';
 
 // Text box for a new comment on a place, or a reply when `parentId` is set
 // (the API files a reply-to-a-reply under the thread's top-level comment).
+// A pressed-in soft well with a placeholder, not a floating label (`label`
+// still names it for screen readers); the buttons show once there's a draft,
+// as in the Driver tips composer (comments/CommentComposer.jsx).
 function PlaceCommentComposer({
   placeId,
   parentId = null,
@@ -40,32 +44,45 @@ function PlaceCommentComposer({
       sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
     >
       <TextField
-        label={label}
-        placeholder={placeholder}
+        placeholder={label ?? placeholder}
         multiline
-        minRows={2}
+        minRows={draft ? 3 : 1}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         disabled={saving}
         autoFocus={autoFocus}
         fullWidth
-        slotProps={{ htmlInput: { maxLength: PLACE_COMMENT_MAX_LENGTH } }}
+        slotProps={{
+          htmlInput: {
+            maxLength: PLACE_COMMENT_MAX_LENGTH,
+            'aria-label': label ?? placeholder,
+          },
+        }}
+        sx={softInputSx}
       />
       {error && <Alert severity='error'>{error}</Alert>}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-        {onCancel && (
-          <Button onClick={onCancel} disabled={saving}>
+      {(draft || onCancel) && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+          <Button
+            onClick={() => {
+              setDraft('');
+              setError('');
+              onCancel?.();
+            }}
+            disabled={saving}
+          >
             Cancel
           </Button>
-        )}
-        <Button
-          type='submit'
-          variant='contained'
-          disabled={saving || !draft.trim()}
-        >
-          {saving ? 'Posting…' : parentId ? 'Reply' : 'Post'}
-        </Button>
-      </Box>
+          <Button
+            type='submit'
+            variant='contained'
+            disabled={saving || !draft.trim()}
+            sx={softContainedSx}
+          >
+            {saving ? 'Posting…' : parentId ? 'Reply' : 'Post'}
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 }

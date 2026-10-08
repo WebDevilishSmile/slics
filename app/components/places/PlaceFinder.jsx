@@ -82,7 +82,7 @@ function PlaceFinder({ places, slics, user }) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 2,
+          gap: 3, // room for the soft shadows between cards
         }}
       >
         <PlaceSearchBar
@@ -103,13 +103,14 @@ function PlaceFinder({ places, slics, user }) {
           </Typography>
         ) : (
           <>
-            <Typography variant='body2' color='text.secondary'>
+            <Typography variant='body2' color='text.secondary' sx={{ mb: -1 }}>
               {results.length} place{results.length === 1 ? '' : 's'}
               {location.position && ', nearest first (straight-line)'}
             </Typography>
-            {results.map(({ place, miles }) => (
+            {results.map(({ place, miles }, index) => (
               <PlaceCard
                 key={place._id}
+                index={index}
                 place={place}
                 miles={miles}
                 slicLabels={slicLabels}

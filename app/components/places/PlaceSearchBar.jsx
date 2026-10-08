@@ -10,12 +10,20 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import theme from '@/utils/theme';
 import { PLACE_CATEGORIES } from '@/utils/variables';
 import SlicTagsField from '../form/SlicTagsField';
+import {
+  softContainedSx,
+  softPressSx,
+  softRaisedSmall,
+  softToggleSx,
+} from '../utility/soft';
 import PlaceCategoryIcon from './PlaceCategoryIcon';
 
-// `location` is the useGeolocation() result owned by PlaceFinder.
+// The filters, as a seamless soft panel (CLAUDE.md "Visual style"): the SLIC
+// picker is a pressed-in well, the categories toggle in and out, and Add
+// place is the one brand-blue button. `location` is the useGeolocation()
+// result owned by PlaceFinder.
 function PlaceSearchBar({
   slics,
   selectedSlics,
@@ -27,18 +35,16 @@ function PlaceSearchBar({
 }) {
   return (
     <Paper
-      elevation={2}
+      variant='panel'
       sx={{
-        width: '100%',
-        maxWidth: theme.layout.width.panel,
-        mt: 4,
-        p: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
+        minHeight: 0,
+        p: { xs: 2, sm: 3 },
+        alignItems: 'stretch',
+        gap: 2.5,
       }}
     >
       <SlicTagsField
+        soft
         slics={slics}
         value={selectedSlics}
         onChange={onSlicsChange}
@@ -51,11 +57,10 @@ function PlaceSearchBar({
           display: 'flex',
           flexWrap: 'wrap',
           justifyContent: 'space-between',
-          gap: 1,
+          gap: 1.5,
         }}
       >
         <Button
-          variant={location.position ? 'contained' : 'outlined'}
           onClick={() => location.request()}
           disabled={location.loading}
           startIcon={
@@ -65,10 +70,16 @@ function PlaceSearchBar({
               <MyLocation />
             )
           }
+          sx={[softRaisedSmall, softPressSx, { px: 2 }]}
         >
           {location.position ? 'Update my location' : 'Near me'}
         </Button>
-        <Button variant='contained' startIcon={<Add />} onClick={onAdd}>
+        <Button
+          variant='contained'
+          startIcon={<Add />}
+          onClick={onAdd}
+          sx={softContainedSx}
+        >
           Add place
         </Button>
       </Box>
@@ -78,7 +89,7 @@ function PlaceSearchBar({
       )}
 
       <Box>
-        <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
+        <Typography variant='body2' color='text.secondary' sx={{ mb: 1.5 }}>
           {categories.length === 0
             ? 'Showing every kind of place. Tap to narrow it down.'
             : 'Showing places with any of:'}
@@ -86,7 +97,7 @@ function PlaceSearchBar({
         <Box
           role='group'
           aria-label='Filter by category'
-          sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}
+          sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}
         >
           {PLACE_CATEGORIES.map(({ value, label }) => {
             const selected = categories.includes(value);
@@ -96,10 +107,9 @@ function PlaceSearchBar({
                 size='medium'
                 icon={<PlaceCategoryIcon category={value} />}
                 label={label}
-                color={selected ? 'primary' : 'default'}
-                variant={selected ? 'filled' : 'outlined'}
                 onClick={() => onToggleCategory(value)}
                 aria-pressed={selected}
+                sx={softToggleSx}
               />
             );
           })}

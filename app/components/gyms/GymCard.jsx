@@ -21,7 +21,6 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import theme from '@/utils/theme';
 import { GYM_STATUSES } from '@/utils/variables';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { apiRequest } from '@/utils/apiRequest';
@@ -74,14 +73,15 @@ function GymCard({ gym, miles, slicLabels, onEdit }) {
   const closeToast = () => setToast((current) => ({ ...current, open: false }));
 
   return (
+    // The seamless soft panel, so PlaceLinks' soft buttons (shared with
+    // Whip It In & Out) sit on the surface they're shaded for.
     <Paper
-      elevation={2}
+      variant='panel'
       sx={{
-        width: '100%',
-        maxWidth: theme.layout.width.panel,
+        mt: 0,
+        minHeight: 0,
         p: 2,
-        display: 'flex',
-        flexDirection: 'column',
+        alignItems: 'stretch',
         gap: 1.5,
       }}
     >

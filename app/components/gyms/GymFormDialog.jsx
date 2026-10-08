@@ -87,7 +87,8 @@ function GymFormDialog({ gym, slics, onClose }) {
   }
 
   const handleUseLocation = async () => {
-    const position = await location.request();
+    // A pin wants a precise fix, not a quick one (useGeolocation).
+    const position = await location.requestPrecise();
     if (position) set('parking')(formatLatLng(position));
   };
 

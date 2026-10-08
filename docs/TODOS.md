@@ -2,28 +2,47 @@
 
 ## Ideas
 
-## General Improvements
+### General Improvements
 
-- [ ] consider removing home button on pages like My History, use other methods or navigation or rely on hamburger menu
-- [ ] consider asking Claude for advice on UI/UX improvements, including layout, animations, and a better overall user experience
-- [ ] use the new neumorphic design elements throughout the app
-  - [ ] apply neumorphic design to all buttons and interactive elements
-  - [ ] apply neumorphic design to all cards and containers
-  - [ ] apply neumorphic design to all input fields and forms
-  - [ ] apply neumorphic design to all modals and dialogs
-  - [ ] apply neumorphic design to all navigation elements (e.g., menus, tabs)
-  - [ ] apply neumorphic design to all typography elements (e.g., headings, paragraphs)
+### UI/UX Improvements
+
+- [x] change dialogs, alerts, and other UI design to match neumorphic style and remove weird glow.
+
+#### Neumorphic Design
+
+- [x] use the new neumorphic design elements throughout the app
+  - [x] apply neumorphic design to all buttons and interactive elements
+  - [x] apply neumorphic design to all cards and containers
+  - [x] apply neumorphic design to all input fields and forms
+  - [x] apply neumorphic design to all modals and dialogs
+  - [x] apply neumorphic design to all navigation elements (e.g., menus, tabs)
+  - [x] apply neumorphic design to all typography elements (e.g., headings, paragraphs)
+  - [x] about page
+  - [x] cover-bid-jobs page
+  - [x] privacy and terms pages
+  - [x] membership page
 
 ### Admin Page
 
-- [ ] consider changing users search to url so navigating back preserves the search state
+- [x] consider changing users search to url so navigating back preserves the search state
 - [ ] improve the UI/UX for better user experience
+- [x] slics page
+- [x] comments page
+- [x] users page
+- [x] cover drivers page
+- [x] cover jobs page
+- [x] drivers page
+- [x] planet fitness page
+
+### Whip It In and Whip It Out Page
+
+- [ ] can't unlike comment
 
 ### SLIC Lookup
 
 - [ ] improve the UI/UX for better user experience
 - [ ] add ability for driver to add gps coordinates or pin to comment
-- [ ] add ability for driver to add photos or attachments to comments (must reduce file size)
+- [ ] add ability for driver to add photos or attachments to comments (must reduce file size, use vercel blob storage)
 - [ ] add ability to cycle through tips on empty state display...
 - [x] add ability for driver to edit their own comments
 

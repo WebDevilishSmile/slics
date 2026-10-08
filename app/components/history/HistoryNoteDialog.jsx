@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 
 import { apiRequest } from '@/utils/apiRequest';
+import { softContainedSx, softInputSx } from '../utility/soft';
 import BottomSheetDialog, {
   BottomSheetActions,
 } from '../utility/BottomSheetDialog';
@@ -71,7 +72,7 @@ export default function HistoryNoteDialog({ view, onClose, onSaved }) {
           onChange={(event) => setText(event.target.value.slice(0, NOTE_MAX))}
           helperText={`${text.length}/${NOTE_MAX}`}
           disabled={saving}
-          sx={{ mt: 1 }}
+          sx={[softInputSx, { mt: 1 }]}
         />
         {error && (
           <Alert severity='error' sx={{ mt: 2 }}>
@@ -84,6 +85,7 @@ export default function HistoryNoteDialog({ view, onClose, onSaved }) {
           variant='contained'
           onClick={() => save(text)}
           disabled={saving || text.trim() === (view?.note || '')}
+          sx={softContainedSx}
           startIcon={saving ? <CircularProgress size={16} color='inherit' /> : null}
         >
           Save note

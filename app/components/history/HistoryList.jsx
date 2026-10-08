@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { MoreVert } from '@mui/icons-material';
 import {
   Box,
+  Divider,
   IconButton,
   List,
   ListItem,
@@ -12,6 +13,8 @@ import {
   ListItemText,
   ListSubheader,
 } from '@mui/material';
+
+import { softInset } from '../utility/soft';
 
 // "Today", "Yesterday", "Mon, Sep 29" (UI-SUGGESTIONS.md #46), in the phone's
 // own time zone, which is why the page renders this behind a HydrationGuard.
@@ -44,15 +47,21 @@ const belowToolbar = (mixin) =>
 
 // Each day's header sticks under the fixed app header while that day's rows
 // scroll past, then the next day pushes it out (it's sticky within its own
-// <ul>). It needs the panel's opaque surface, including the dark-mode
-// elevation tint the HistoryView Paper gets, so rows don't show through.
+// <ul>). It needs the panel's opaque surface (the page's own color, the
+// panel being seamless) so rows don't show through.
 const stickyDaySx = (theme) => ({
   ...belowToolbar(theme.mixins.toolbar),
-  bgcolor: 'background.paper',
-  backgroundImage: theme.vars.overlays[theme.layout.elevation],
+  bgcolor: 'background.default',
+  backgroundImage: 'none',
   typography: 'subtitle2',
   lineHeight: 2.5,
+  px: 1,
 });
+
+// A day's rows sit in a well pressed into the panel (utility/soft.js), flat
+// rows with dividers rather than a card per lookup. It clips the rows'
+// hover and ripple to its corners; the sticky header is outside it.
+const dayWellSx = [softInset, { borderRadius: 4, overflow: 'hidden', mb: 2 }];
 
 function groupByDay(views) {
   const groups = [];
@@ -73,68 +82,75 @@ export default function HistoryList({ views, onOpenMenu }) {
       {groupByDay(views).map(({ label, views: dayViews }) => (
         <li key={label}>
           <Box component='ul' sx={{ p: 0 }}>
-            <ListSubheader sx={stickyDaySx}>
-              {label}
-            </ListSubheader>
-            {dayViews.map((view) => {
-              const title = headline(view);
-              const subline = [
-                view.slic ? `SLIC ${view.numSlic}` : null,
-                dayjs(view.viewedAt).format('h:mm A'),
-              ]
-                .filter(Boolean)
-                .join(' · ');
-              return (
-                <ListItem
-                  key={view.id}
-                  disablePadding
-                  secondaryAction={
-                    <IconButton
-                      edge='end'
-                      aria-label={`Options for ${title}`}
-                      aria-haspopup='menu'
-                      onClick={(event) => onOpenMenu(event.currentTarget, view)}
-                      sx={{ width: '3rem', height: '3rem' }}
-                    >
-                      <MoreVert />
-                    </IconButton>
-                  }
-                >
-                  <ListItemButton
-                    component={Link}
-                    href={`/home?slic=${encodeURIComponent(view.numSlic)}`}
-                    sx={{ minHeight: '3.5rem', pr: 7 }}
-                  >
-                    <ListItemText
-                      primary={title}
-                      slotProps={{
-                        primary: { sx: { fontWeight: 700 } },
-                        secondary: { component: 'div' },
-                      }}
-                      secondary={
-                        <>
-                          {subline}
-                          {view.note && (
-                            <Box
-                              component='span'
-                              sx={{
-                                display: 'block',
-                                fontStyle: 'italic',
-                                color: 'text.primary',
-                                overflowWrap: 'anywhere',
-                                mt: 0.5,
-                              }}
-                            >
-                              {view.note}
-                            </Box>
-                          )}
-                        </>
+            <ListSubheader sx={stickyDaySx}>{label}</ListSubheader>
+            <li>
+              <List disablePadding sx={dayWellSx}>
+                {dayViews.map((view, index) => {
+                  const title = headline(view);
+                  const subline = [
+                    view.slic ? `SLIC ${view.numSlic}` : null,
+                    dayjs(view.viewedAt).format('h:mm A'),
+                  ]
+                    .filter(Boolean)
+                    .join(' · ');
+                  return [
+                    index > 0 && (
+                      <Divider key={`${view.id}-divider`} component='li' />
+                    ),
+                    <ListItem
+                      key={view.id}
+                      disablePadding
+                      secondaryAction={
+                        <IconButton
+                          edge='end'
+                          aria-label={`Options for ${title}`}
+                          aria-haspopup='menu'
+                          onClick={(event) =>
+                            onOpenMenu(event.currentTarget, view)
+                          }
+                          sx={{ width: '3rem', height: '3rem' }}
+                        >
+                          <MoreVert />
+                        </IconButton>
                       }
-                    />
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
+                    >
+                      <ListItemButton
+                        component={Link}
+                        href={`/home?slic=${encodeURIComponent(view.numSlic)}`}
+                        sx={{ minHeight: '3.5rem', pr: 7 }}
+                      >
+                        <ListItemText
+                          primary={title}
+                          slotProps={{
+                            primary: { sx: { fontWeight: 700 } },
+                            secondary: { component: 'div' },
+                          }}
+                          secondary={
+                            <>
+                              {subline}
+                              {view.note && (
+                                <Box
+                                  component='span'
+                                  sx={{
+                                    display: 'block',
+                                    fontStyle: 'italic',
+                                    color: 'text.primary',
+                                    overflowWrap: 'anywhere',
+                                    mt: 0.5,
+                                  }}
+                                >
+                                  {view.note}
+                                </Box>
+                              )}
+                            </>
+                          }
+                        />
+                      </ListItemButton>
+                    </ListItem>,
+                  ];
+                })}
+              </List>
+            </li>
           </Box>
         </li>
       ))}

@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
+import { softInputSx, softPressSx, softToggleSx } from '../utility/soft';
+
 // Date ranges, all computed in the browser so "Today" is the driver's day.
 // `from`/`to` go to the API as ISO instants; `to` is exclusive.
 const RANGES = [
@@ -76,6 +78,7 @@ export default function HistoryFilters({ params, onChange }) {
         onChange={(event) => setQuery(event.target.value)}
         placeholder='SLIC, name, address or note'
         aria-label='Search your history'
+        sx={softInputSx}
         slotProps={{
           input: {
             startAdornment: (
@@ -104,7 +107,7 @@ export default function HistoryFilters({ params, onChange }) {
       <Box
         role='group'
         aria-label='Date range'
-        sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}
+        sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}
       >
         {RANGES.map(({ key, label }) => (
           <Chip
@@ -112,16 +115,15 @@ export default function HistoryFilters({ params, onChange }) {
             size='medium'
             label={label}
             clickable
-            color={range === key ? 'primary' : 'default'}
-            variant={range === key ? 'filled' : 'outlined'}
             aria-pressed={range === key}
+            sx={softToggleSx}
             onClick={() => chooseRange(key)}
           />
         ))}
       </Box>
 
       {range === 'custom' && (
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1.5 }}>
           <DatePicker
             label='From'
             value={customFrom}
@@ -131,7 +133,9 @@ export default function HistoryFilters({ params, onChange }) {
               value?.isValid() &&
               onChange({ from: value.startOf('day').toISOString() })
             }
-            slotProps={{ textField: { size: 'small', fullWidth: true } }}
+            slotProps={{
+              textField: { size: 'small', fullWidth: true, sx: softInputSx },
+            }}
           />
           <DatePicker
             label='To'
@@ -142,7 +146,9 @@ export default function HistoryFilters({ params, onChange }) {
               value?.isValid() &&
               onChange({ to: value.add(1, 'day').startOf('day').toISOString() })
             }
-            slotProps={{ textField: { size: 'small', fullWidth: true } }}
+            slotProps={{
+              textField: { size: 'small', fullWidth: true, sx: softInputSx },
+            }}
           />
         </Box>
       )}
@@ -152,7 +158,7 @@ export default function HistoryFilters({ params, onChange }) {
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
-          gap: 1,
+          gap: 1.5,
         }}
       >
         {TYPES.map(({ key, label }) => (
@@ -161,9 +167,8 @@ export default function HistoryFilters({ params, onChange }) {
             size='medium'
             label={label}
             clickable
-            color={params.type === key ? 'primary' : 'default'}
-            variant={params.type === key ? 'filled' : 'outlined'}
             aria-pressed={params.type === key}
+            sx={softToggleSx}
             onClick={() => onChange({ type: params.type === key ? null : key })}
           />
         ))}
@@ -171,9 +176,8 @@ export default function HistoryFilters({ params, onChange }) {
           size='medium'
           label='With notes'
           clickable
-          color={params.notes ? 'primary' : 'default'}
-          variant={params.notes ? 'filled' : 'outlined'}
           aria-pressed={Boolean(params.notes)}
+          sx={softToggleSx}
           onClick={() => onChange({ notes: params.notes ? null : '1' })}
         />
         <Button
@@ -182,7 +186,7 @@ export default function HistoryFilters({ params, onChange }) {
           onClick={() =>
             onChange({ sort: params.sort === 'oldest' ? null : 'oldest' })
           }
-          sx={{ ml: 'auto' }}
+          sx={[softPressSx, { ml: 'auto', px: 1.5, minHeight: '2.5rem' }]}
         >
           {params.sort === 'oldest' ? 'Oldest first' : 'Newest first'}
         </Button>

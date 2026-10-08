@@ -15,9 +15,14 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 
-import theme from '@/utils/theme';
 import { apiRequest } from '@/utils/apiRequest';
 
+import {
+  softContainedSx,
+  softPressSx,
+  softRaised,
+  softRaisedSmall,
+} from '../utility/soft';
 import HistoryFilters from './HistoryFilters';
 import HistoryList from './HistoryList';
 import HistoryNoteDialog from './HistoryNoteDialog';
@@ -157,21 +162,30 @@ export default function HistoryView({ initialPage, initialParams }) {
   const count = `${page.total} ${filtered ? 'matching ' : ''}lookup${page.total === 1 ? '' : 's'}`;
 
   return (
+    // The seamless soft panel (CLAUDE.md "Visual style"). Not overflow:
+    // hidden, which would stop the day headers sticking.
     <Paper
-      elevation={theme.layout.elevation}
+      variant='panel'
       sx={{
-        width: '100%',
-        maxWidth: theme.layout.width.panel,
         mt: 3,
+        minHeight: 0,
         px: { xs: 2, sm: 3 },
         py: 3,
+        alignItems: 'stretch',
         position: 'relative',
       }}
     >
       {loading && (
+        // A thin pill inside the panel's rounded top edge.
         <LinearProgress
           aria-label='Loading history'
-          sx={{ position: 'absolute', top: 0, left: 0, right: 0 }}
+          sx={{
+            position: 'absolute',
+            top: '0.625rem',
+            left: '1.5rem',
+            right: '1.5rem',
+            borderRadius: 999,
+          }}
         />
       )}
 
@@ -201,7 +215,7 @@ export default function HistoryView({ initialPage, initialParams }) {
       ) : filtered ? (
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Typography sx={{ mb: 2 }}>Nothing matches these filters.</Typography>
-          <Button variant='outlined' onClick={clearFilters}>
+          <Button onClick={clearFilters} sx={[softRaisedSmall, softPressSx, { px: 2 }]}>
             Clear filters
           </Button>
         </Box>
@@ -210,7 +224,12 @@ export default function HistoryView({ initialPage, initialParams }) {
           <Typography sx={{ mb: 2 }}>
             No lookups yet. Look up a SLIC and it shows up here.
           </Typography>
-          <Button variant='contained' component={Link} href='/home'>
+          <Button
+            variant='contained'
+            component={Link}
+            href='/home'
+            sx={softContainedSx}
+          >
             Look up a SLIC
           </Button>
         </Box>
@@ -219,13 +238,12 @@ export default function HistoryView({ initialPage, initialParams }) {
       {page.nextCursor && (
         <Button
           fullWidth
-          variant='outlined'
           onClick={loadMore}
           disabled={loadingMore}
           startIcon={
             loadingMore ? <CircularProgress size={16} color='inherit' /> : null
           }
-          sx={{ mt: 2, minHeight: '3rem' }}
+          sx={[softRaised, softPressSx, { mt: 1, minHeight: '3rem' }]}
         >
           Load more
         </Button>

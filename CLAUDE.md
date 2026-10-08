@@ -38,6 +38,13 @@ Environment variables: `.env.example` lists every key the code reads, with a one
   - Account deletion calls `deleteUserPlaceData`. Places stay, unattributed.
   - The header-menu link is admin-only until launch (`header/UserMenu.jsx`).
   - Shared with gyms: `form/SlicTagsField.jsx`, `utility/PlaceLinks.jsx`, `utils/apiRequest.js`.
+- SLIC comments ("Driver tips", `utils/commentsApi.js`, `app/components/comments/`) mirror the places rules:
+  - Threads are one level deep. A reply has `parentId` (its top-level comment) and keeps `numSlic`, so per-SLIC counts and profile lists include replies.
+  - Since 2026-10-07 tips are **plain text** (`format: 'text'`). Older comments are Tiptap HTML with no `format`, and `comments/CommentContent.jsx` renders both. Render comment bodies through it, never `html-react-parser` directly. Editing an old HTML comment saves it as plain text.
+  - A top-level comment deleted while it has replies becomes a `deleted: true` placeholder. Every read except `getSlicThread` filters `deleted: { $ne: true }`.
+  - `GET /api/comments?slic=` returns the shaped thread: first name + avatar, counts, `myVote`, `isMine`. User ids don't leave the server.
+  - Votes toggle: `voteType: null` takes your vote back.
+  - The Tips button gets live and "new since last visit" counts from `utils/tipsStore.js`.
 - `slicViews` (one row per lookup, `{ userId: ObjectId, numSlic, viewedAt: Date }`) backs both the /home lookup counter and the member `/history` page (`utils/slicViewsApi.js`, `app/components/history/`, `/api/user/history*`). Rows can carry a private `note` and `hidden: true`. "Remove from history" only hides a row, so history reads filter `hidden: { $ne: true }` while the counter (`/api/user/views`, `track-view`) deliberately counts every row. Account deletion deletes them all.
 - Timestamps are `new Date().toISOString()` on write in most newer code (`created_at`, `updated_at`); some older code stored `MM/DD/YY` strings instead, so don't assume the field is always a parseable ISO string without checking the source.
 
@@ -77,7 +84,7 @@ Rate limiting (`utils/rateLimit.js`) is a MongoDB-backed fixed-window limiter, d
 - The main content panel is `<Paper variant='panel'>` (defined in `utils/theme.js`, `docs/UI-SUGGESTIONS.md` #17); call sites add only their delta (`justifyContent: 'center'`, `px: 2`). Don't re-inline the width/min-height/flex block.
 - Page and section titles are `<Typography variant='sectionHeading'>` (`docs/UI-SUGGESTIONS.md` #18) — h2, centered and capped at prose width, defined as a `MuiTypography` variant in `utils/theme.js` and rendered as an `<h2>`. It no longer uppercases (#38), so write each title in the casing it should show ("SLICs", "SLIC History"). There is no heading wrapper component anymore; the app name on `/` and `/home` is a plain `variant='h1'`.
 - Custom hooks live in `utils/clientFunctions.js` (`'use client'` module) — e.g. `useGeolocation`, `useAppleDevice`, `useInstallPrompt`. For "is this a phone", use `useMediaQuery(theme.breakpoints.down('sm'))` against the theme's breakpoints; the old `useIsMobile` hook (a private 768px cutoff) was removed in `docs/UI-SUGGESTIONS.md` #29. Prefer adding new cross-component browser-state hooks here over duplicating logic in a component.
-- `app/context/CommentRefreshContext.js` is the refresh lock for the *server-rendered* comment lists (profile page, admin user page): `CommentDelete` calls its `refresh()` (a `useTransition` around `router.refresh()`) and every delete button in the list disables while `isRefreshing`. The home-page `components/comments/*` feature is client-fetched and refreshes through its own `refetchComments` prop instead — the two don't share state.
+- `app/context/CommentRefreshContext.js` is the refresh lock for the *server-rendered* comment lists (profile page, admin user page): `CommentDelete` calls its `refresh()` (a `useTransition` around `router.refresh()`) and every delete button in the list disables while `isRefreshing`. The home-page "Driver tips" section (`components/comments/Comments.jsx`) is client-fetched and refetches its own thread instead — the two don't share state.
 
 ### External integrations
 

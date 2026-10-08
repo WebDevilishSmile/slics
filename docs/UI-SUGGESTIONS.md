@@ -1075,7 +1075,7 @@ Pick one:
 
 - [x] **File:** `layout/PageContainer.jsx:16`
 
-*Done 2026-10-07:* `px: { xs: 2, md: 4, lg: 6 }`. On the sign-in page at 390px the fields and
+_Done 2026-10-07:_ `px: { xs: 2, md: 4, lg: 6 }`. On the sign-in page at 390px the fields and
 the Sign In button now sit 16px from each edge (they were 4px).
 
 `px: { xs: 0.5, … }` is 4px. On the sign-in page at 390px, the email and password fields
@@ -1087,14 +1087,14 @@ and the Sign In button run edge to edge. Use `xs: 2` (16px), the standard phone 
       `footer/FooterContainer.jsx:11`, `footer/Footer.jsx`, `layout/HomeButton.jsx`,
       `layout/BackButton.jsx`
 
-*Done 2026-10-07:* measured at 390×844.
+_Done 2026-10-07:_ measured at 390×844.
 
-| | before | after |
-|---|---|---|
-| landing: heading top | 128px | 80px |
-| landing: footer height | 544px | 249px |
-| landing: page height | 1277px | 844px (one screen) |
-| privacy: page height | 7481px | 7188px |
+|                        | before | after              |
+| ---------------------- | ------ | ------------------ |
+| landing: heading top   | 128px  | 80px               |
+| landing: footer height | 544px  | 249px              |
+| landing: page height   | 1277px | 844px (one screen) |
+| privacy: page height   | 7481px | 7188px             |
 
 The 1644px "before" below predates #24, which had already dropped the doubled `minHeight`.
 
@@ -1137,7 +1137,7 @@ row above the title), or replace both with a back arrow in the header (#52).
 
 - [x] **File:** `utils/theme.js:84-110`, `layout/Container.jsx:17`
 
-*Done 2026-10-07:* the suggested scale, as written. At 390px: h1 36px, h2 and
+_Done 2026-10-07:_ the suggested scale, as written. At 390px: h1 36px, h2 and
 `sectionHeading` 28px, h3 24px, h4 20.8px, h5 18.8px, h6 17.2px. "Privacy Policy" and "Terms
 of Service" each fit on one line now.
 
@@ -1174,7 +1174,7 @@ _Blast radius:_ every heading. Do it in one pass, with screenshots before and af
 
 - [x] **File:** `app/layout.jsx:13-18`
 
-*Done 2026-10-07:* `weight` is omitted. The page now declares one `100 900` face per subset,
+_Done 2026-10-07:_ `weight` is omitted. The page now declares one `100 900` face per subset,
 and it downloads a single Latin woff2 that covers every weight.
 
 Montserrat loads in 8 weights (200–900). The app renders 400, 500, 600, 700 and 800, so 200,
@@ -1336,7 +1336,34 @@ Dead code to delete while you're there:
 
 ### 45. Comments: show state, not just disabled buttons
 
-- [ ] **Files:** `comments/CommentHeader.jsx`, `comments/CommentFooter.jsx`,
+_Done 2026-10-07,_ together with an engagement pass. The section is now "Driver tips".
+
+- **Votes:** toggles with `aria-pressed`. A filled thumb in `primary` means it's your vote;
+  tap it again to take it back (`voteType: null`). They're never disabled, and the targets
+  are 40px. Votes update optimistically and don't re-sort the list under your thumb.
+- **Dates:** relative ("3 hours ago", dayjs `relativeTime`), in a `<time>` with the full
+  date as its `title`, plus "· edited" after an edit.
+- **Delete:** kept the confirm dialog, by choice, now titled "Delete this tip?". A
+  top-level tip with replies becomes a "Comment deleted" placeholder.
+- **Replies:** one level deep, like Whip It In & Out. A reply to a reply joins the thread.
+- **Editing:** owners (and admins) edit in place.
+- **Plain text:** tips are plain text now, and Tiptap is removed. Old HTML comments still
+  render, and editing one converts it to text (`comments/CommentContent.jsx`).
+- **Engagement:**
+  - An always-visible "Share a tip about BETPA" box replaces the corner + icon. The
+    disabled "coming soon" image button is gone too.
+  - Topic chips (Gate / guard, Parking, Dock / door, Hours, Contact, Heads-up) start a tip
+    with "Parking: ".
+  - A Top/Newest sort.
+  - "New" marks with a brand-colored edge on tips posted since this device last showed the
+    SLIC's tips. The Tips button's badge turns red and shows the new count until the tips
+    scroll into view.
+  - A warmer empty state, and a "Thanks! Your tip is posted." snackbar.
+- **Checked:** at 390px in light and dark, through a stubbed local preview. Read-only
+  against the real data: all 44 existing comments on 37 SLICs come through in their
+  threads, with authors.
+
+- [x] **Files:** `comments/CommentHeader.jsx`, `comments/CommentFooter.jsx`,
       `comments/Comment.jsx`
 
 - **Vote state.** After you upvote, the up button becomes _disabled_, and grey is the only
@@ -1351,6 +1378,7 @@ Dead code to delete while you're there:
 - **Delete.** Either fix the confirm dialog (#33), or drop the confirm and offer "Undo" in a
   snackbar, deleting once it closes. That is faster for the common case and just as safe.
 - **Allow replies** — show a reply button on each comment, and nest replies under their parent. Consider a collapsible thread for long discussions.
+- **Users can edit their own comments.** Show an edit button on each comment that belongs to the current user, allowing inline editing with proper save/cancel actions.
 
 ### 46. History rows should go somewhere
 

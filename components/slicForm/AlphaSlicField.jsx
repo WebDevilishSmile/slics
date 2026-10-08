@@ -11,7 +11,7 @@ function AlphaSlicField({ alphaSlic, setAlphaSlic }) {
     <FormControl sx={{ width: '100%', maxWidth: theme.layout.width.field, mt: 4 }}>
       <TextField
         required
-        label='AlphaSlic'
+        label='Alpha code'
         sx={softInputSx}
         value={alphaSlic}
         onChange={handleChange}

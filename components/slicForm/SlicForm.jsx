@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import AddressFields from './AddressFields';
 import AlphaSlicField from './AlphaSlicField';
 import FormActions from './FormActions';
@@ -9,8 +9,8 @@ import NameField from './NameField';
 import NumSlicField from './NumSlicField';
 import PhoneField from '@/components/form/PhoneField';
 import TypeRadio from './TypeRadio';
-import Warning from './Warning';
 import PdfUpload from './PdfUpload';
+import { softInputSx } from '@/components/utility/soft';
 
 export default function SlicForm({
   initialData = null,
@@ -26,9 +26,6 @@ export default function SlicForm({
     initialData?.address || { street: '', city: '', state: '', zip: '' }
   );
 
-  const [openWarning, setOpenWarning] = useState(false);
-  const [warningMessage, setWarningMessage] = useState('');
-
   const handleClear = () => {
     setType('center');
     setNumSlic('');
@@ -36,13 +33,6 @@ export default function SlicForm({
     setName('');
     setPhone('');
     setAddress({ street: '', city: '', state: '', zip: '' });
-    setOpenWarning(false);
-    setWarningMessage('');
-  };
-
-  const handleWarningClose = () => {
-    setOpenWarning(false);
-    setWarningMessage('');
   };
 
   const slicData = {
@@ -58,23 +48,16 @@ export default function SlicForm({
     // route, so a form Update never overwrites a PDF attached mid-edit.
   };
 
-  useEffect(() => {
-    const allFieldsFilled =
-      numSlic?.toString().trim() &&
-      alphaSlic?.toString().trim() &&
-      address.street?.toString().trim() &&
-      address.city?.toString().trim() &&
-      address.state?.toString().trim() &&
-      address.zip?.toString().trim();
-
-    if (!allFieldsFilled) {
-      setOpenWarning(true);
-      setWarningMessage('Please fill in all required fields.');
-    } else {
-      setOpenWarning(false);
-      setWarningMessage('');
-    }
-  }, [numSlic, alphaSlic, address]);
+  // Checked when Save is pressed (FormActions), not as the admin types: a
+  // new, empty form shouldn't open on a warning.
+  const isComplete = [
+    numSlic,
+    alphaSlic,
+    address.street,
+    address.city,
+    address.state,
+    address.zip,
+  ].every((value) => value?.toString().trim());
 
   return (
     <FormContainer>
@@ -86,7 +69,7 @@ export default function SlicForm({
       />
       <AlphaSlicField alphaSlic={alphaSlic} setAlphaSlic={setAlphaSlic} />
       <NameField name={name} setName={setName} />
-      <PhoneField phone={phone} setPhone={setPhone} />
+      <PhoneField phone={phone} setPhone={setPhone} sx={softInputSx} />
       <AddressFields address={address} setAddress={setAddress} />
       {mode === 'edit' && (
         <PdfUpload slicId={initialData?._id} pdfUrl={initialData?.pdfUrl} />
@@ -98,12 +81,7 @@ export default function SlicForm({
         slicId={initialData?._id}
         onSubmit={onSubmit}
         mode={mode}
-      />
-
-      <Warning
-        open={openWarning}
-        message={warningMessage}
-        onClose={handleWarningClose}
+        isComplete={isComplete}
       />
     </FormContainer>
   );

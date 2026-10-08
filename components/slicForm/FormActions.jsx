@@ -10,6 +10,7 @@ function FormActions({
   slicId,
   mode = 'create',
   onSubmit,
+  isComplete,
 }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
@@ -24,8 +25,8 @@ function FormActions({
   };
 
   const handleSave = async () => {
-    if (!slicData || Object.keys(slicData).length === 0) {
-      showSnackbar('No data to save', 'warning');
+    if (!isComplete) {
+      showSnackbar('Please fill in all required fields.', 'warning');
       return;
     }
 
@@ -62,8 +63,8 @@ function FormActions({
 
       showSnackbar(
         mode === 'edit'
-          ? 'Slic updated successfully!'
-          : 'Slic created successfully!',
+          ? 'SLIC updated.'
+          : 'SLIC created.',
         'success'
       );
 

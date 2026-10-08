@@ -14,7 +14,7 @@ function NumSlicField({ numSlic, setNumSlic, readOnly = false }) {
       <TextField
         required
         autoFocus
-        label='NumSlic'
+        label='SLIC number'
         sx={softInputSx}
         value={numSlic}
         onChange={handleChange}

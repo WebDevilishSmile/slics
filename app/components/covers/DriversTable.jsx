@@ -1,7 +1,8 @@
 'use client';
 
 import theme from '@/utils/theme';
-import { Paper, Table, TableBody, TableContainer } from '@mui/material';
+import { Box, Paper, Table, TableBody } from '@mui/material';
+import { softTableSx } from '../utility/soft';
 import CoverPosition from './CoverPosition';
 import DriverTableHead from './DriverTableHead';
 import { useState } from 'react';
@@ -17,25 +18,36 @@ function DriversTable({ covers }) {
   };
 
   return (
-    <TableContainer component={Paper} sx={{ marginTop: 2, maxWidth: theme.layout.width.prose }}>
-      <Table
-        size='small'
-        sx={{ minWidth: '20rem', width: '100%', tableLayout: 'fixed' }}
-      >
-        <DriverTableHead />
-        <TableBody>
-          {covers.map((cover) => (
-            <CoverPosition
-              key={cover._id}
-              cover={cover}
-              isEditing={isEditing}
-              setIsEditing={setIsEditing}
-              onSaveSuccess={handleSaveSuccess} // Pass the success handler down
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Paper
+      variant='panel'
+      sx={{
+        maxWidth: theme.layout.width.prose,
+        minHeight: 0,
+        alignItems: 'stretch',
+        px: { xs: 1, sm: 3 },
+      }}
+    >
+      {/* Scrolls sideways rather than bursting the panel on a narrow phone. */}
+      <Box sx={{ width: '100%', overflowX: 'auto' }}>
+        <Table
+          size='small'
+          sx={[softTableSx, { minWidth: '20rem', width: '100%', tableLayout: 'fixed' }]}
+        >
+          <DriverTableHead />
+          <TableBody>
+            {covers.map((cover) => (
+              <CoverPosition
+                key={cover._id}
+                cover={cover}
+                isEditing={isEditing}
+                setIsEditing={setIsEditing}
+                onSaveSuccess={handleSaveSuccess} // Pass the success handler down
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </Box>
+    </Paper>
   );
 }
 

@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import CoverSaveButton from './CoverSaveButton';
+import { softInputSx, softPressSx } from '../utility/soft';
 
 function CoverPosition({ cover, isEditing, setIsEditing, onSaveSuccess }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -41,6 +42,8 @@ function CoverPosition({ cover, isEditing, setIsEditing, onSaveSuccess }) {
             onChange={(e) => setCoverName(e.target.value)}
             fullWidth
             size='small'
+            aria-label={`Driver for position ${cover.position}`}
+            sx={softInputSx}
           />
         ) : (
           cover.driverName
@@ -49,6 +52,7 @@ function CoverPosition({ cover, isEditing, setIsEditing, onSaveSuccess }) {
       <TableCell>
         <IconButton
           size='small'
+          sx={softPressSx}
           onClick={handleClick}
           disabled={isEditing !== cover._id && isEditing !== 0}
           aria-label={`Options for position ${cover.position}`}

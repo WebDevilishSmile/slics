@@ -72,6 +72,8 @@ export function serializeComment(commentData) {
   return {
     ...commentData,
     _id: commentData._id.toString(),
+    // Replies carry their thread's ObjectId, which can't cross into a client component.
+    parentId: commentData.parentId ? commentData.parentId.toString() : null,
     // Convert Dates to ISO strings explicitly to prevent hydration drift
     created_at:
       commentData.created_at instanceof Date

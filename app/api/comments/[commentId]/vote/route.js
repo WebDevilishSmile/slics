@@ -1,40 +1,37 @@
-import { auth } from '@/auth'; // Adjust if you have a custom auth wrapper
-import client from '@/lib/db';
-import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { ObjectId } from 'mongodb';
+import { NextResponse } from 'next/server';
+import { voteComment } from '@/utils/commentsApi';
 
+// POST `{ voteType: 'up' | 'down' | null }`. Up/down sets the driver's vote
+// (moving it off the other side); null takes it back.
 export async function POST(request, { params }) {
   const session = await auth();
   if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { voteType } = await request.json(); // "up" or "down"
-  const userId = session.user.id;
   const { commentId } = await params;
+  if (!commentId || !ObjectId.isValid(commentId))
+    return NextResponse.json({ error: 'Invalid comment ID' }, { status: 400 });
 
-  if (!['up', 'down'].includes(voteType)) {
+  let voteType;
+  try {
+    ({ voteType } = await request.json());
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+  }
+  if (!['up', 'down', null].includes(voteType ?? null)) {
     return NextResponse.json({ error: 'Invalid vote type' }, { status: 400 });
   }
 
-  const db = client.db();
-  const comments = db.collection('comments');
-
-  const voteField = voteType === 'up' ? 'upVotes' : 'downVotes';
-  const oppositeField = voteType === 'up' ? 'downVotes' : 'upVotes';
-
   try {
-    await comments.updateOne(
-      { _id: new ObjectId(commentId) },
-      {
-        $addToSet: { [voteField]: userId }, // Add only if not already there
-        $pull: { [oppositeField]: userId }, // Remove from opposite if exists
-      }
-    );
-
+    const found = await voteComment(commentId, voteType ?? null, session.user.id);
+    if (!found)
+      return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Vote update error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Could not save your vote.' }, { status: 500 });
   }
 }

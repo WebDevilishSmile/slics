@@ -1,5 +1,6 @@
 import client from '@/lib/db';
 import { ObjectId } from 'mongodb';
+import { deleteUserSlicComments } from '@/utils/commentsApi';
 import { deleteUserPlaceData } from '@/utils/placesApi';
 
 export async function getUsers() {
@@ -138,7 +139,9 @@ export async function deleteUserAccount(userId) {
     const db = client.db();
     const objectId = new ObjectId(userId);
 
-    const comments = await db.collection('comments').deleteMany({ userId });
+    // Where other drivers replied, a comment becomes a "Comment deleted"
+    // placeholder so their replies keep their thread.
+    const comments = await deleteUserSlicComments(userId);
     const gymComments = await db
       .collection('gymComments')
       .deleteMany({ userId });
@@ -159,7 +162,7 @@ export async function deleteUserAccount(userId) {
     }
 
     return {
-      deletedComments: comments.deletedCount,
+      ...comments,
       deletedGymComments: gymComments.deletedCount,
       votesPulled: votes.modifiedCount,
       deletedViews: views.deletedCount,

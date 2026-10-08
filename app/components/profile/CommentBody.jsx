@@ -1,18 +1,11 @@
-import { Box, Typography } from '@mui/material';
-import parse, { domToReact } from 'html-react-parser';
+import { Box } from '@mui/material';
+import CommentContent from '../comments/CommentContent';
 
+// Plain-text tips and older HTML comments both render through CommentContent.
 function CommentBody({ comment }) {
   return (
     <Box sx={{ minHeight: '5rem', py: 2, px: 2 }}>
-      {/* COMMENT CONTENT */}
-
-      {parse(comment.content, {
-        replace: (domNode) => {
-          if (domNode.name === 'p') {
-            return <Typography>{domToReact(domNode.children)}</Typography>;
-          }
-        },
-      })}
+      <CommentContent comment={comment} />
     </Box>
   );
 }

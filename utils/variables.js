@@ -184,3 +184,7 @@ export const PLACE_COMMENT_EXAMPLE = {
   created_at: '2026-10-07T12:00:00.000Z',
   updated_at: null,
 };
+
+// SLIC comments (driver tips) are plain text since 2026-10-07; enforced in
+// the composer and in utils/commentsApi.js (validateSlicComment).
+export const SLIC_COMMENT_MAX_LENGTH = 2000;

@@ -6,7 +6,6 @@ import Title from '../../components/slicPage/Title';
 import { getSlicByNumSlic } from '@/utils/slicsApi';
 import { getCommentsBySlic } from '@/utils/commentsApi';
 import { serializeSlic } from '@/utils/functions';
-import CommentsPage from '@/app/components/slicPage/CommentsPage';
 
 export default async function SlicPage({ params }) {
   const { slic } = await params;

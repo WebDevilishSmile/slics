@@ -38,8 +38,9 @@ function CommentPrompt({ user }) {
       // The route answers some failures with a 200 + { error }.
       if (!Array.isArray(data.comments)) return;
 
+      // The thread marks the viewer's own tips and replies with `isMine`.
       const alreadyCommented = data.comments.some(
-        (c) => c.userId?.toString() === user?.id?.toString(),
+        (c) => c.isMine || c.replies?.some((reply) => reply.isMine),
       );
 
       markPrompted();
@@ -112,7 +113,7 @@ function CommentPrompt({ user }) {
           below a divider rather than next to "Not now". */}
       <BottomSheetActions>
         <Button variant='contained' size='large' onClick={handleComment}>
-          Leave a comment
+          Leave a tip
         </Button>
         <Button variant='outlined' size='large' onClick={close}>
           Not now

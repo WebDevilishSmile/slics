@@ -4,7 +4,6 @@ import { getSlicViewsByUserId } from '@/utils/slicViewsApi';
 import { getAllSlics } from '@/utils/slicsApi';
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
-import parse, { domToReact } from 'html-react-parser';
 import Comment from '@/app/components/comments/Comment';
 import {
   serializeSlicViews,

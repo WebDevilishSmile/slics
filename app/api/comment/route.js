@@ -1,8 +1,12 @@
-import client from '@/lib/db';
 import { auth } from '@/auth';
-import { createComment } from '@/utils/commentsApi';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
+import {
+  createComment,
+  deleteSlicComment,
+  getCommentById,
+  validateSlicComment,
+} from '@/utils/commentsApi';
 import { checkRateLimit } from '@/utils/rateLimit';
 
 // Keyed by user id, not IP — drivers share a building network, and one
@@ -10,6 +14,8 @@ import { checkRateLimit } from '@/utils/rateLimit';
 const COMMENT_LIMIT = 10;
 const COMMENT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 
+// POST `{ numSlic, content, parentId? }` — a plain-text tip, or a reply when
+// `parentId` is set (a reply to a reply joins the same thread).
 export async function POST(request) {
   const session = await auth();
   if (!session)
@@ -28,32 +34,46 @@ export async function POST(request) {
     );
   }
 
+  let body;
   try {
-    const { numSlic, content } = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+  }
 
-    if (!numSlic || !content) {
-      return NextResponse.json(
-        { error: 'Slic ID and content are required' },
-        { status: 400 }
-      );
-    }
+  const { numSlic, parentId } = body ?? {};
+  if (!numSlic || typeof numSlic !== 'string')
+    return NextResponse.json({ error: 'Slic ID is required' }, { status: 400 });
+  if (parentId && !ObjectId.isValid(parentId))
+    return NextResponse.json({ error: 'Invalid reply target.' }, { status: 400 });
 
-    const commentData = {
-      userId: session.user.id,
+  const { content, error } = validateSlicComment(body.content);
+  if (error) return NextResponse.json({ error }, { status: 400 });
+
+  try {
+    const result = await createComment({
       numSlic,
+      parentId: parentId || null,
       content,
-      created_at: new Date().toISOString(),
-    };
-
-    const result = await createComment(commentData);
-
-    return NextResponse.json(result);
+      userId: session.user.id,
+    });
+    if (result.notFound)
+      return NextResponse.json(
+        { error: 'That comment no longer exists.' },
+        { status: 404 },
+      );
+    return NextResponse.json({ success: true, id: result.id.toString() });
   } catch (error) {
     console.error('Error creating comment:', error);
-    return NextResponse.json({ error: 'Failed to create comment' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Could not post your comment. Please try again.' },
+      { status: 500 },
+    );
   }
 }
 
+// DELETE `{ commentId }` — the profile and admin user pages' delete button.
+// Same rules as DELETE /api/comments/[commentId].
 export async function DELETE(request) {
   const session = await auth();
   if (!session)
@@ -69,21 +89,17 @@ export async function DELETE(request) {
       );
     }
 
-    const db = client.db();
-    const comment = await db.collection('comments').findOne({ _id: new ObjectId(commentId) });
-
+    const comment = await getCommentById(commentId);
     if (!comment)
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
 
     const isOwner = comment.userId?.toString() === session.user.id?.toString();
     const isAdmin = session.user.role === 'admin';
-
     if (!isOwner && !isAdmin)
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-    const result = await db.collection('comments').deleteOne({ _id: new ObjectId(commentId) });
-
-    return NextResponse.json({ success: true, result });
+    const outcome = await deleteSlicComment(comment);
+    return NextResponse.json({ success: true, outcome });
   } catch (error) {
     console.error('Error deleting comment:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

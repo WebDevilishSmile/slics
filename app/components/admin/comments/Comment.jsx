@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import parse, { domToReact } from 'html-react-parser';
+import CommentContent from '../../comments/CommentContent';
 
 dayjs.extend(require('dayjs/plugin/localizedFormat'));
 
@@ -31,19 +31,7 @@ function Comment({ comment, slic, author }) {
         <Divider />
 
         <Box sx={{ mt: 2 }}>
-          {/* COMMENT CONTENT */}
-
-          {parse(comment.content, {
-            replace: (domNode) => {
-              if (domNode.name === 'p') {
-                return (
-                  <Typography variant='body2'>
-                    {domToReact(domNode.children)}
-                  </Typography>
-                );
-              }
-            },
-          })}
+          <CommentContent comment={comment} variant='body2' />
         </Box>
 
         <Box

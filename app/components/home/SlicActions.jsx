@@ -19,6 +19,7 @@ import {
 
 import { useAppleDevice } from '@/utils/clientFunctions';
 import { mapsHref } from '@/utils/geo';
+import { useTips } from '@/utils/tipsStore';
 import { COMMENTS_SECTION_ID, slicPdfHref } from '@/utils/variables';
 
 // Per-viewer convenience only, like the install nudge: which maps app Navigate
@@ -77,6 +78,12 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
     writeMapsApp(app);
     setMenuAnchor(null);
   };
+
+  // Live counts from the tips section once it has loaded (utils/tipsStore.js);
+  // the server's count until then.
+  const tips = useTips(slic.numSlic);
+  const tipTotal = tips?.total ?? commentsCount;
+  const newTips = tips?.newCount ?? 0;
 
   const pdfHref = slicPdfHref(slic);
   const canCall = slic.type === 'center' && slic.phone;
@@ -158,13 +165,21 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
           {showTips && (
             <ActionButton
               icon={
-                <Badge badgeContent={commentsCount} color='primary' max={99}>
+                // New tips since this device last showed them win the badge
+                // (in red); otherwise it's the total.
+                <Badge
+                  badgeContent={newTips || tipTotal}
+                  color={newTips ? 'error' : 'primary'}
+                  max={99}
+                >
                   <ChatBubbleOutline />
                 </Badge>
               }
               label='Tips'
               onClick={scrollToComments}
-              aria-label={`Tips: ${commentsCount} comment${commentsCount === 1 ? '' : 's'}`}
+              aria-label={`Tips: ${tipTotal} tip${tipTotal === 1 ? '' : 's'}${
+                newTips ? `, ${newTips} new` : ''
+              }`}
             />
           )}
         </Box>

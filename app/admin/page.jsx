@@ -3,7 +3,7 @@ import AdminLinks from '@/components/admin/AdminLinks';
 
 async function AdminPage() {
   const adminLinks = [
-    { href: '/admin/slics', label: 'Slics' },
+    { href: '/admin/slics', label: 'SLICs' },
     { href: '/admin/comments', label: 'Comments' },
     { href: '/admin/users', label: 'Users' },
     { href: '/admin/cover/drivers', label: 'Cover Drivers' },
@@ -14,7 +14,7 @@ async function AdminPage() {
 
   return (
     <>
-      <Typography variant='sectionHeading'>Admin Page</Typography>
+      <Typography variant='sectionHeading'>Admin</Typography>
 
       <Paper variant='panel'>
         <AdminLinks links={adminLinks} />

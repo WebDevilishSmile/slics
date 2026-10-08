@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material';
 import PageContainer from '@/components/layout/PageContainer';
 import { getAllBidJobs } from '@/lib/db/bidJobs';
 import { serializeBidJobs } from '@/lib/serializers';
@@ -9,6 +10,7 @@ export default async function BidsPage() {
 
   return (
     <PageContainer>
+      <Typography variant='sectionHeading'>Bids</Typography>
       <BidsTable jobs={serializedJobs} />
     </PageContainer>
   );

@@ -8,7 +8,7 @@ async function Drivers() {
 
   return (
     <>
-      <Typography variant='sectionHeading'>Drivers Page</Typography>
+      <Typography variant='sectionHeading'>Drivers</Typography>
 
       <DriversTable allDrivers={serializeDrivers(allDrivers)} />
     </>

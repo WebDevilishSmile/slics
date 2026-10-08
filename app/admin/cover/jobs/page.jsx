@@ -52,11 +52,6 @@ function CoverJobs() {
     <>
       <Typography variant='sectionHeading'>Cover Jobs</Typography>
 
-      <CoverCalendar
-        value={selectedDay}
-        setValue={setSelectedDay}
-        postedWeeks={postedWeeks}
-      />
       <Paper
         variant='panel'
         sx={{
@@ -67,6 +62,12 @@ function CoverJobs() {
           px: { xs: 1, md: 3 },
         }}
       >
+        {/* The week picker is the panel's first control, as on /cover-bid-jobs. */}
+        <CoverCalendar
+          value={selectedDay}
+          setValue={setSelectedDay}
+          postedWeeks={postedWeeks}
+        />
         <BidSheetUploader
           weekEndDate={weekEndDate}
           onSaved={() => setRefreshKey((key) => key + 1)}

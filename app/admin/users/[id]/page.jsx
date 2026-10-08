@@ -4,12 +4,7 @@ import { getSlicViewsByUserId } from '@/lib/db/slicViews';
 import { getAllSlics } from '@/lib/db/slics';
 import { Box, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
-import {
-  serializeSlicViews,
-  serializeSlics,
-  serializeComments,
-  serializeUser,
-} from '@/lib/serializers';
+import { serializeSlicViews, serializeSlics, serializeComments } from '@/lib/serializers';
 import dayjs from 'dayjs';
 import UserComments from '@/components/admin/users/UserComments';
 import UserSlics from '@/components/admin/users/UserSlics';
@@ -64,10 +59,7 @@ async function UserPage({ params }) {
         slics={serializeSlics(slics)}
       />
 
-      <UserComments
-        userComments={serializeComments(userComments)}
-        user={serializeUser(user)}
-      />
+      <UserComments userComments={serializeComments(userComments)} />
     </>
   );
 }

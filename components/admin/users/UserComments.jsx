@@ -1,36 +1,29 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 import CommentCard from '@/components/comments/CommentCard';
 import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 import { CommentRefreshProvider } from '@/app/context/CommentRefreshContext';
 import { serializeComment } from '@/lib/serializers';
-import theme from '@/theme';
 
 const pillSx = [softRaisedSmall, softPressSx, { px: 2 }];
 
 const PAGE_SIZE = 3;
 
-export default function UserComments({ userComments, user }) {
+// The driver's tips on the admin user page, in a panel like "SLICs pulled up"
+// (UserSlics) above it, three at a time.
+export default function UserComments({ userComments }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const visibleComments = userComments.slice(0, visibleCount);
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        maxWidth: theme.layout.width.panel,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        mt: 2,
-        px: 2,
-      }}
+    <Paper
+      variant='panel'
+      sx={{ minHeight: 0, alignItems: 'stretch', px: { xs: 2, sm: 3 } }}
     >
-      <Typography variant='h6' sx={{ mt: 2, mb: 1 }}>
-        Comments by {user.name}:
+      <Typography variant='h6' sx={{ mb: 1, textAlign: 'center' }}>
+        Tips ({userComments.length})
       </Typography>
 
       {userComments.length > 0 ? (
@@ -76,10 +69,10 @@ export default function UserComments({ userComments, user }) {
           </Box>
         </CommentRefreshProvider>
       ) : (
-        <Typography variant='body2'>
-          No comments found for this user.
+        <Typography variant='body2' sx={{ textAlign: 'center' }}>
+          No tips yet.
         </Typography>
       )}
-    </Box>
+    </Paper>
   );
 }

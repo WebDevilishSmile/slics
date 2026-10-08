@@ -10,7 +10,7 @@ async function UsersPage() {
 
   return (
     <>
-      <Typography variant='sectionHeading'>Users Page</Typography>
+      <Typography variant='sectionHeading'>Users</Typography>
 
       <HydrationGuard>
         <UserList users={serializeUsers(users)} viewCounts={viewCounts} />

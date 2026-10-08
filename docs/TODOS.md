@@ -6,6 +6,13 @@
 
 - [ ] consider removing home button on pages like My History, use other methods or navigation or rely on hamburger menu
 - [ ] consider asking Claude for advice on UI/UX improvements, including layout, animations, and a better overall user experience
+- [ ] use the new neumorphic design elements throughout the app
+  - [ ] apply neumorphic design to all buttons and interactive elements
+  - [ ] apply neumorphic design to all cards and containers
+  - [ ] apply neumorphic design to all input fields and forms
+  - [ ] apply neumorphic design to all modals and dialogs
+  - [ ] apply neumorphic design to all navigation elements (e.g., menus, tabs)
+  - [ ] apply neumorphic design to all typography elements (e.g., headings, paragraphs)
 
 ### Admin Page
 

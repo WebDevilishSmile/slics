@@ -10,6 +10,7 @@
 ### UI/UX Improvements
 
 - [x] change dialogs, alerts, and other UI design to match neumorphic style and remove weird glow.
+- [ ] change the heading to a neumorphic style embossed look
 
 #### Neumorphic Design
 
@@ -46,7 +47,7 @@
 
 ### Whip It In and Whip It Out Page
 
-- [ ] can't unlike comment
+- [x] can't unlike comment
 
 ### SLIC Lookup
 

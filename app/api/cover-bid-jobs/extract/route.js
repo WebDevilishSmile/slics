@@ -1,11 +1,16 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
+import { DAY_FIELDS, normalizeDayTime } from '@/lib/dayFormat';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const ALLOWED_MEDIA_TYPES = new Set(['image/jpeg', 'application/pdf']);
 
+// The model fills these in, in this order. sourceFile/sourcePage tell the
+// review which photo (and which PDF page) to show beside the row. They go
+// last: asked for ahead of the row's own columns, they made the reading worse
+// in a test on 2026-10-08 (a value slid onto the neighboring row).
 const ROW_PROPERTIES = {
   jobNumber: { type: Type.STRING },
   name: { type: Type.STRING },
@@ -19,6 +24,8 @@ const ROW_PROPERTIES = {
   fri: { type: Type.STRING },
   sat: { type: Type.STRING },
   description: { type: Type.STRING },
+  sourceFile: { type: Type.INTEGER },
+  sourcePage: { type: Type.INTEGER },
 };
 
 const ROWS_SCHEMA = {
@@ -57,6 +64,8 @@ For every job row, output:
 - coverReason: the Cover Reason column's text, or "" if blank
 - sun, mon, tue, wed, thu, fri, sat: the value printed in that day's cell for this job (a time like "06:30", or the empty string "" if that day's cell is blank or shaded for this job)
 - description: the full text of the rightmost description column for this job, exactly as printed
+- sourceFile: the number N from the "File N of M" label of the file this row is printed in
+- sourcePage: the page number inside that file the row is printed on, counting from 1 (always 1 for a photo)
 
 If you are given more than one photo, they are different physical pages of the same weekly sheet, in the order they were uploaded. Extract rows from every photo using this same fixed column layout, and combine them all into one single ordered list — first all rows from photo 1, then all rows from photo 2, and so on. If the same row appears in more than one photo because the framing overlapped slightly, include it only once.
 
@@ -129,10 +138,27 @@ export async function POST(request) {
 
     const parsed = JSON.parse(response.text);
 
-    return NextResponse.json(
-      { success: true, rows: parsed.rows },
-      { status: 200 }
-    );
+    // Day cells are stored as "HH:MM"; the review flags whatever won't tidy
+    // into one. A file or page number outside what was sent becomes null, so
+    // the review just doesn't pick a photo for that row.
+    const rows = parsed.rows.map((row) => ({
+      ...row,
+      ...Object.fromEntries(
+        DAY_FIELDS.map((day) => [day, normalizeDayTime(row[day])])
+      ),
+      sourceFile:
+        Number.isInteger(row.sourceFile) &&
+        row.sourceFile >= 1 &&
+        row.sourceFile <= images.length
+          ? row.sourceFile
+          : null,
+      sourcePage:
+        Number.isInteger(row.sourcePage) && row.sourcePage >= 1
+          ? row.sourcePage
+          : null,
+    }));
+
+    return NextResponse.json({ success: true, rows }, { status: 200 });
   } catch (error) {
     console.error('API Error extracting cover bid jobs:', error);
     return NextResponse.json(

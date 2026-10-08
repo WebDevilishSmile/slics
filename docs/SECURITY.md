@@ -184,10 +184,58 @@ The dry-run tells you which ones before anything changes.
 
 ---
 
-### [ ] 3. Next.js and Auth.js are behind on published security fixes
+### [x] 3. Next.js and Auth.js are behind on published security fixes
 
 **Files:** `package.json` (`next 15.3.6`, `next-auth ^5.0.0-beta.28`,
 `@auth/mongodb-adapter ^3.9.1`, `@tiptap/* ^2.12`), `package-lock.json`
+
+**Done 2026-10-07.** The new versions:
+
+| Package | Was | Now |
+|---|---|---|
+| `next` (exact) | 15.3.6 | 15.5.27, the latest 15.5.x and past every fixed version in the table below |
+| `eslint-config-next` | 15.1.8 | 15.5.27 |
+| `next-auth` | 5.0.0-beta.28 | 5.0.0-beta.32 |
+| `@auth/mongodb-adapter` | 3.9.1 | 3.11.3. It and next-auth both pin `@auth/core` 0.41.3, so there's one copy |
+
+- **Tiptap:** it was removed outright with the plain-text Driver tips (UI-SUGGESTIONS #45),
+  so its line needs no v3 upgrade.
+- **Audit:** `npm audit fix` (non-breaking) cleaned the transitive build tools.
+  `npm audit --omit=dev` went from 35 (4 critical) at the time of writing, to 9 (4 critical)
+  after the Tiptap removal, to **2: 0 critical, 1 high, 1 moderate**.
+  - Both are the `postcss@8.4.31` that `next` 15.x pins internally. It's used at build time
+    on our own CSS, never on request input.
+  - The only fix is Next 16. Revisit it with the Next 16 migration (Part 3,
+    "Dependencies").
+- **Lint:** `npm run lint` now runs clean. Two parts made it real, not just non-failing:
+  - The eslint-config-next bump fixed the "Cannot serialize key 'parse'" crash.
+  - `eslint.config.mjs` now names `**/*.{js,jsx,mjs}`. ESLint 9's flat config had been
+    skipping every `.jsx` file, which is most of the app.
+
+  The first real run found one real bug and a few small things, all fixed:
+  - `app/admin/comments/page.jsx` rendered `RedirectMessage` without importing it, a
+    latent ReferenceError.
+  - Unescaped apostrophes.
+  - A stale hook dependency in `CommentPrompt`.
+  - An intentional `<a>` in `global-error.jsx`, now annotated.
+
+  `next lint` itself is deprecated in 15.5. Move to the ESLint CLI with Next 16.
+- **Edge warning:** the build warns that `jose`'s optional JWE compression touches
+  `CompressionStream` in the Edge runtime (the middleware). It's a static-analysis note.
+  Auth.js session tokens don't use compression, and the middleware runs fine (below).
+- **Verified on a production build (`next start`), signed out:**
+  - Public pages return 200.
+  - `/home`, `/history` and `/admin` return 307 to sign-in.
+  - Every API returns 401, and `/api/auth/session` returns `null`.
+  - Both providers are listed, and `/api/auth/csrf` issues a token.
+  - The advisory's `.rsc` URL returns 404.
+- **Verified fail-closed (GHSA-8fpg-xm3f-6cx3):** I restarted with **no `AUTH_SECRET`**.
+  Every API still returned 401 and protected pages still redirected. Only
+  `/api/auth/session` reported the configuration error (500). On beta.28 the same
+  misconfiguration made `auth()` truthy. Still do #4: centralizing the guard is right
+  regardless.
+- **Still to walk on a phone after deploy:** both sign-in paths (Google, and email and
+  password), posting a tip, PDF upload, and the admin user toggles.
 
 `npm audit --omit=dev` reports 35 vulnerable packages (4 critical, 4 high). The ones that
 matter for *this* app, with the advisory and the first fixed version:

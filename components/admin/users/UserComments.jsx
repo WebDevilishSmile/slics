@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import CommentCard from '@/components/profile/CommentCard';
+import CommentCard from '@/components/comments/CommentCard';
 import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 import { CommentRefreshProvider } from '@/app/context/CommentRefreshContext';
 import { serializeComment } from '@/lib/serializers';

@@ -528,7 +528,7 @@ styles are unchanged.
 
 ### 26. Three comment renderers → one
 
-- [ ] **Files:** `comments/Comment.jsx` + `CommentHeader.jsx` + `CommentFooter.jsx`;
+- [x] **Files:** `comments/Comment.jsx` + `CommentHeader.jsx` + `CommentFooter.jsx`;
   `profile/CommentHeader.jsx` + `CommentBody.jsx` + `CommentFoot.jsx` +
   `CommentDelete.jsx`; `admin/comments/Comment.jsx`
 
@@ -542,6 +542,16 @@ This is the largest item in the tier — do it last, after the moves, and click 
 `/home?slic=…`, `/profile/[id]` and `/admin/comments` in both modes.
 
 *Blast radius:* three screens. Real refactor, not a move.
+
+**Done 2026-10-08, differently than planned.** By then the tips rewrite had removed the
+header/footer/body files, and the profile and admin user pages already shared one
+`profile/CommentCard.jsx`. `comments/Comment.jsx` had become the interactive thread item
+on /home (votes, replies, edit, pins), so folding list cards into it would have made it
+worse. Instead the admin `Comment.jsx` went, and `/admin/comments` renders the same card,
+now `comments/CommentCard.jsx` (with `CommentDelete.jsx` beside it), with props for what
+differs: `slicName`, `author` and `canDelete`. Three renderers → two, which really are
+different. `/admin/comments` still has no delete button (`canDelete={false}`), and no
+longer crashes on a tip whose SLIC or author was deleted.
 
 ### 27. Move non-components out of component folders
 

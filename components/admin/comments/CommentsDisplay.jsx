@@ -4,8 +4,14 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import { useState, useMemo } from 'react';
 import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
-import Comment from './Comment';
+import CommentCard from '@/components/comments/CommentCard';
 import CommentsSearch from './CommentsSearch';
+
+// A center goes by its alpha code, a customer by name. Undefined when the
+// SLIC is gone, so the card shows just the number. A missing author (a
+// deleted account) is passed as {} so the card says so.
+const slicLabel = (slic) =>
+  slic ? (slic.type === 'center' ? slic.alphaSlic : slic.name) : undefined;
 
 function CommentsDisplay({ comments = [], slics = [], users = [] }) {
   const [search, setSearch] = useState('');
@@ -89,12 +95,14 @@ function CommentsDisplay({ comments = [], slics = [], users = [] }) {
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         {processedComments.length > 0 ? (
-          processedComments.map((comment) => (
-            <Comment
+          processedComments.map((comment, index) => (
+            <CommentCard
               key={comment._id}
               comment={comment}
-              slic={slicMap[comment.numSlic]}
-              author={userMap[comment.userId]}
+              slicName={slicLabel(slicMap[comment.numSlic])}
+              author={userMap[comment.userId] || {}}
+              canDelete={false}
+              index={index}
             />
           ))
         ) : (

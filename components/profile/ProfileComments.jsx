@@ -5,7 +5,7 @@ import { Box, Button, Paper, Typography } from '@mui/material';
 
 import { CommentRefreshProvider } from '@/app/context/CommentRefreshContext';
 import { softContainedSx } from '@/components/utility/soft';
-import CommentCard from './CommentCard';
+import CommentCard from '@/components/comments/CommentCard';
 
 // The driver's own tips, newest first, in a soft panel like "Driver tips" on
 // /home (CLAUDE.md "Visual style"). `comments` are serialized

@@ -7,34 +7,43 @@ import {
   ThumbDownOutlined,
   ThumbUpOutlined,
 } from '@mui/icons-material';
-import { Box, Button, Typography } from '@mui/material';
+import { Avatar, Box, Button, Typography } from '@mui/material';
 
-import CommentContent from '@/components/comments/CommentContent';
-import CommentPin from '@/components/comments/CommentPin';
 import { softPressSx, softRaised, softRaisedSmall } from '@/components/utility/soft';
+import CommentContent from './CommentContent';
 import CommentDelete from './CommentDelete';
+import CommentPin from './CommentPin';
 
-// One of a driver's tips, listed on their profile and on the admin user page:
-// a soft raised card (utility/soft.js) like a tip on /home, with the SLIC it
-// belongs to, a link back to it, the tip and its pin, its date and votes,
-// and delete.
-// `comment` is serialized (lib/serializers.js serializeComment). `index`
-// staggers the entry fade.
-function CommentCard({ comment, index = 0 }) {
+// A tip shown outside its SLIC, in a list: a driver's own tips on their
+// profile, a driver's tips on the admin user page, and every tip on
+// /admin/comments. A soft raised card (utility/soft.js) like a tip on /home,
+// with the SLIC it belongs to, a link back to it, the tip and its pin, its
+// date and votes, and delete. The interactive version, with voting and
+// replies, is Comment.jsx on /home.
+// - `comment` is serialized (lib/serializers.js serializeComment).
+// - `slicName` follows the SLIC number when given (/admin/comments).
+// - `author` ({ name, image }) shows who posted it, for lists of many drivers.
+// - `canDelete` shows the delete button, which needs a CommentRefreshProvider
+//   around the list.
+// - `index` staggers the entry fade.
+function CommentCard({ comment, slicName, author, canDelete = true, index = 0 }) {
   const posted = dayjs(comment.created_at);
   const up = comment.upVotes?.length || 0;
   const down = comment.downVotes?.length || 0;
+  // The delete button's 40px row sets the bottom edge; without it, match the sides.
+  const bottom = canDelete ? 1 : 2;
 
   return (
     <Box
       className='enter'
       style={{ '--i': index }}
-      sx={[softRaised, { borderRadius: 3, p: 2, pb: 1 }]}
+      sx={[softRaised, { borderRadius: 3, p: 2, pb: bottom }]}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Typography variant='subtitle1' component='h3' sx={{ fontWeight: 700 }}>
             SLIC {comment.numSlic}
+            {slicName ? ` · ${slicName}` : ''}
           </Typography>
           <Typography
             variant='caption'
@@ -90,9 +99,28 @@ function CommentCard({ comment, index = 0 }) {
           <ThumbDownOutlined sx={{ fontSize: '1.1rem' }} />
           <Typography variant='body2'>{down}</Typography>
         </Box>
-        <Box sx={{ ml: 'auto', mr: -1 }}>
-          <CommentDelete comment={comment} />
-        </Box>
+        {/* Who posted it sits where a driver's own card has delete. */}
+        {author && (
+          <Box
+            sx={{
+              ml: 'auto',
+              minWidth: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            <Typography variant='caption' noWrap>
+              {author.name || 'Deleted account'}
+            </Typography>
+            <Avatar src={author.image} alt='' sx={{ width: '1.75rem', height: '1.75rem' }} />
+          </Box>
+        )}
+        {canDelete && (
+          <Box sx={{ ml: author ? 0 : 'auto', mr: -1 }}>
+            <CommentDelete comment={comment} />
+          </Box>
+        )}
       </Box>
     </Box>
   );

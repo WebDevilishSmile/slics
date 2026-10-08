@@ -1,12 +1,9 @@
 'use client';
 
-import {
-  Box,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from '@mui/material';
+import { Box, Chip, TextField, Typography } from '@mui/material';
+
+import { filterBarSx } from '../coverBidJobs/jobGrid';
+import { softInputSx, softToggleSx } from '../utility/soft';
 
 const DAYS = [
   { key: 'sun', label: 'Su' },
@@ -25,6 +22,8 @@ const TIME_OPTIONS = [
   { value: 'evening', label: 'Evening' },
 ];
 
+// Soft toggle chips (utility/soft.js): raised when off, pressed in when on.
+// Days are any-of; the time of day is one-of, so one chip is always on.
 function BidsFilters({
   search,
   setSearch,
@@ -35,112 +34,87 @@ function BidsFilters({
   destinationFilter,
   setDestinationFilter,
 }) {
-  const handleDayToggle = (_, newDays) => {
-    setSelectedDays(newDays);
-  };
-
-  const handleTimeToggle = (_, newTime) => {
-    if (newTime !== null) setTimeOfDay(newTime);
-  };
+  const toggleDay = (day) =>
+    setSelectedDays((days) =>
+      days.includes(day) ? days.filter((d) => d !== day) : [...days, day],
+    );
 
   return (
-    <Box
-      sx={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 'stickyBar',
-        bgcolor: 'background.paper',
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        p: { xs: 1.5, md: 2 },
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 1.5,
-      }}
-    >
+    <Box sx={filterBarSx}>
       {/* Search + Destination */}
       <Box
         sx={{
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-          gap: 1.5,
+          gap: 2,
         }}
       >
         <TextField
-          size='small'
-          label='Search job name'
+          placeholder='Search job name'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           fullWidth
+          sx={softInputSx}
+          slotProps={{ htmlInput: { 'aria-label': 'Search job name' } }}
         />
         <TextField
-          size='small'
-          label='Destination'
+          placeholder='Destination'
           value={destinationFilter}
           onChange={(e) => setDestinationFilter(e.target.value)}
           fullWidth
+          sx={softInputSx}
+          slotProps={{ htmlInput: { 'aria-label': 'Destination' } }}
         />
       </Box>
 
       {/* Days of week */}
-      <Box>
+      <Box role='group' aria-labelledby='bids-days-label'>
         <Typography
+          id='bids-days-label'
           variant='caption'
           color='text.secondary'
-          sx={{ mb: 0.5, display: 'block' }}
+          sx={{ mb: 1, display: 'block' }}
         >
           Days
         </Typography>
-        <ToggleButtonGroup
-          value={selectedDays}
-          onChange={handleDayToggle}
-          size='small'
-          sx={{ flexWrap: 'wrap', gap: 0.5 }}
-        >
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {DAYS.map(({ key, label }) => (
-            <ToggleButton
+            <Chip
               key={key}
-              value={key}
-              sx={{
-                minWidth: { xs: 36, md: 40 },
-                px: 1,
-                py: 0.5,
-                typography: 'caption',
-                fontWeight: 600,
-              }}
-            >
-              {label}
-            </ToggleButton>
+              size='medium'
+              label={label}
+              clickable
+              aria-pressed={selectedDays.includes(key)}
+              onClick={() => toggleDay(key)}
+              sx={[softToggleSx, { minWidth: 44, fontWeight: 600 }]}
+            />
           ))}
-        </ToggleButtonGroup>
+        </Box>
       </Box>
 
       {/* Time of day */}
-      <Box>
+      <Box role='group' aria-labelledby='bids-time-label'>
         <Typography
+          id='bids-time-label'
           variant='caption'
           color='text.secondary'
-          sx={{ mb: 0.5, display: 'block' }}
+          sx={{ mb: 1, display: 'block' }}
         >
           Time of day
         </Typography>
-        <ToggleButtonGroup
-          value={timeOfDay}
-          exclusive
-          onChange={handleTimeToggle}
-          size='small'
-          sx={{ flexWrap: 'wrap' }}
-        >
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {TIME_OPTIONS.map(({ value, label }) => (
-            <ToggleButton
+            <Chip
               key={value}
-              value={value}
-              sx={{ px: { xs: 1.5, md: 2 }, typography: 'caption' }}
-            >
-              {label}
-            </ToggleButton>
+              size='medium'
+              label={label}
+              clickable
+              aria-pressed={timeOfDay === value}
+              onClick={() => setTimeOfDay(value)}
+              sx={softToggleSx}
+            />
           ))}
-        </ToggleButtonGroup>
+        </Box>
       </Box>
     </Box>
   );

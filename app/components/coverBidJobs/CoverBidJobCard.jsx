@@ -2,6 +2,7 @@
 
 import { IconButton } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { softPressSx } from '../utility/soft';
 import { DAY_FIELDS } from './dayFormat';
 import JobCard from './JobCard';
 
@@ -23,6 +24,7 @@ function CoverBidJobCard({ job, onSelect }) {
             size='small'
             onClick={() => onSelect(job)}
             aria-label='View details'
+            sx={softPressSx}
           >
             <InfoOutlinedIcon fontSize='small' />
           </IconButton>

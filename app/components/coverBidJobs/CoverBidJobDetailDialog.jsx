@@ -6,12 +6,12 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Divider,
   IconButton,
   Stack,
   Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { softInset, softPressSx } from '../utility/soft';
 import { DAY_FIELDS, DAY_LABELS, DAY_COLORS, formatDayValue } from './dayFormat';
 
 function DetailRow({ label, value }) {
@@ -40,18 +40,18 @@ export default function CoverBidJobDetailDialog({ job, open, onClose }) {
         }}
       >
         {job?.jobNumber || 'Job Details'}
-        <IconButton onClick={onClose} size='small' aria-label='Close'>
-          <CloseIcon fontSize='small' />
+        <IconButton onClick={onClose} aria-label='Close' sx={softPressSx}>
+          <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent dividers>
+      <DialogContent>
         {job && (
-          <Stack spacing={1.5}>
-            <DetailRow label='Name' value={job.name} />
-            <DetailRow label='Assigned Driver' value={job.assignedDriver} />
-            <DetailRow label='Cover Reason' value={job.coverReason} />
-
-            <Divider />
+          <Stack spacing={2.5} sx={{ pb: 1 }}>
+            <Stack spacing={1.5} sx={[softInset, { p: 2, borderRadius: 3 }]}>
+              <DetailRow label='Name' value={job.name} />
+              <DetailRow label='Assigned Driver' value={job.assignedDriver} />
+              <DetailRow label='Cover Reason' value={job.coverReason} />
+            </Stack>
 
             <Typography variant='subtitle2'>Schedule</Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -69,8 +69,6 @@ export default function CoverBidJobDetailDialog({ job, open, onClose }) {
                 </Typography>
               )}
             </Box>
-
-            <Divider />
 
             <Typography variant='subtitle2'>Description</Typography>
             <Typography

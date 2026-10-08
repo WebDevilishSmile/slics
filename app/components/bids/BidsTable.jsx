@@ -14,6 +14,7 @@ import {
   DayTimeChip,
   descriptionColumn,
   JOB_GRID_SX,
+  jobGridCardSx,
 } from '../coverBidJobs/jobGrid';
 import BidsFilters from './BidsFilters';
 import BidsJobCard from './BidsJobCard';
@@ -131,7 +132,7 @@ function BidsTable({ jobs }) {
 
       {isDesktop ? (
         /* Desktop: DataGrid */
-        <Box sx={{ px: 1 }}>
+        <Box sx={[jobGridCardSx, { mt: 3 }]}>
           <DataGrid
             rows={filteredJobs}
             columns={DESKTOP_COLUMNS}
@@ -147,8 +148,9 @@ function BidsTable({ jobs }) {
         </Box>
       ) : (
         /* Mobile: Card list */
-        <Box sx={{ px: 1.5, pb: 2 }}>
-          <Stack spacing={1.5}>
+        <Box sx={{ pt: 3, pb: 2 }}>
+          {/* Room between cards for the soft shadows. */}
+          <Stack spacing={2.5}>
             {paginatedJobs.map((job) => (
               <BidsJobCard key={job._id} job={job} />
             ))}

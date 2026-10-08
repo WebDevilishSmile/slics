@@ -3,9 +3,7 @@
 import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import {
-  Alert,
   Box,
-  MenuItem,
   Stack,
   TablePagination,
   TextField,
@@ -17,8 +15,16 @@ import { DataGrid } from '@mui/x-data-grid';
 import CoverBidJobCard from './CoverBidJobCard';
 import CoverBidJobDetailDialog from './CoverBidJobDetailDialog';
 import { DAY_FIELDS, DAY_LABELS } from './dayFormat';
-import { DayTimeChip, descriptionColumn, JOB_GRID_SX } from './jobGrid';
+import {
+  DayTimeChip,
+  descriptionColumn,
+  filterBarSx,
+  JOB_GRID_SX,
+  jobGridCardSx,
+} from './jobGrid';
 import CoverCalendar from '../covers/Calendar';
+import SoftNotice from '../utility/SoftNotice';
+import { softInputSx } from '../utility/soft';
 import { getUpcomingSaturday } from '@/utils/functions';
 
 const DAY_COLUMNS = DAY_FIELDS.map((day) => ({
@@ -93,68 +99,35 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Alert severity='info' sx={{ mb: 2 }}>
-        This is a work in progress. I&apos;m working to see if I can show the weekly
-        cover bid jobs effectively. If you have some suggestions or feedback,
-        please let me know.
-      </Alert>
-      <Box
-        sx={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 'stickyBar',
-          bgcolor: 'background.paper',
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          p: { xs: 1.5, md: 2 },
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-          gap: 1.5,
-        }}
-      >
-        <Box sx={{ gridColumn: { md: '1 / -1' } }}>
-          <CoverCalendar
-            value={selectedDay}
-            setValue={selectWeek}
-            postedWeeks={postedWeeks}
-            minDate={minDate}
-          />
-        </Box>
-
-        {/*  */}
-        {/* <TextField
-          select
-          size='small'
-          label='Week ending'
-          value={selectedWeek}
-          onChange={(e) => selectWeek(dayjs(e.target.value))}
-          fullWidth
-        >
-          {!isWeekPosted && (
-            <MenuItem value={selectedWeek}>
-              {dayjs(selectedWeek).format('MM/DD/YYYY')} — not posted
-            </MenuItem>
-          )}
-          {weeks.map((week) => (
-            <MenuItem key={week} value={week}>
-              {dayjs(week).format('MM/DD/YYYY')}
-            </MenuItem>
-          ))}
-        </TextField> */}
+      <SoftNotice sx={{ maxWidth: 'none', mt: 3, mb: 3 }}>
+        This is a work in progress. I&apos;m working to see if I can show the
+        weekly cover bid jobs effectively. If you have some suggestions or
+        feedback, please let me know.
+      </SoftNotice>
+      <Box sx={filterBarSx}>
+        <CoverCalendar
+          value={selectedDay}
+          setValue={selectWeek}
+          postedWeeks={postedWeeks}
+          minDate={minDate}
+        />
 
         <TextField
-          size='small'
-          label='Search job # or description'
+          placeholder='Search job # or description'
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
             setPage(0);
           }}
           fullWidth
+          sx={softInputSx}
+          slotProps={{
+            htmlInput: { 'aria-label': 'Search job # or description' },
+          }}
         />
       </Box>
 
-      <Box sx={{ px: 2, py: 1 }}>
+      <Box sx={{ px: 2, pt: 2, pb: 1 }}>
         <Typography variant='caption' color='text.secondary' display='block'>
           Today is {dayjs().format('MM/DD/YYYY')}
         </Typography>
@@ -167,12 +140,12 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
       </Box>
 
       {!isWeekPosted ? (
-        <Alert severity='info' sx={{ mx: 2, my: 3 }}>
+        <SoftNotice sx={{ maxWidth: 'none', my: 3 }}>
           Cover bid jobs for the week ending{' '}
           {dayjs(selectedWeek).format('MM/DD/YYYY')} have not been posted yet.
-        </Alert>
+        </SoftNotice>
       ) : isDesktop ? (
-        <Box sx={{ px: 1 }}>
+        <Box sx={jobGridCardSx}>
           <DataGrid
             rows={filteredJobs}
             columns={DESKTOP_COLUMNS}
@@ -202,8 +175,9 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
           />
         </Box>
       ) : (
-        <Box sx={{ px: 1.5, pb: 2 }}>
-          <Stack spacing={1.5}>
+        <Box sx={{ pt: 1, pb: 2 }}>
+          {/* Room between cards for the soft shadows. */}
+          <Stack spacing={2.5}>
             {paginatedJobs.map((job) => (
               <CoverBidJobCard
                 key={job._id}

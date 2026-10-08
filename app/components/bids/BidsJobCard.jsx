@@ -2,6 +2,7 @@
 
 import { Chip } from '@mui/material';
 import JobCard from '../coverBidJobs/JobCard';
+import { softRaisedSmall } from '../utility/soft';
 
 // A bid job (`job.schedule` maps day → time, null on days off) on the shared
 // JobCard.
@@ -19,9 +20,10 @@ function BidsJobCard({ job }) {
         job.bid_destination && (
           <Chip
             label={job.bid_destination}
-            color='primary'
-            variant='outlined'
-            sx={{ ml: 1, fontWeight: 600, flexShrink: 0 }}
+            sx={[
+              softRaisedSmall,
+              { ml: 1, fontWeight: 600, flexShrink: 0, color: 'primary.main' },
+            ]}
           />
         )
       }

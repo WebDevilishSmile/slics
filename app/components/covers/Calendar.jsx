@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getUpcomingSaturday } from '@/utils/functions';
+import { softInset } from '../utility/soft';
 
 const isInSameWeek = (day, referenceDay) =>
   Boolean(referenceDay) && day.isSame(referenceDay, 'week');
@@ -140,9 +141,22 @@ export default function CoverCalendar({
   };
 
   return (
+    // An inset well rather than a raised card: it sits inside the raised
+    // filter bar on /cover-bid-jobs, and one emboss level is the rule.
     <Accordion
       expanded={calendarOpen}
       onChange={() => setCalendarOpen(!calendarOpen)}
+      disableGutters
+      elevation={0}
+      square={false}
+      sx={[
+        softInset,
+        {
+          borderRadius: 3,
+          '&::before': { display: 'none' },
+          '&:first-of-type, &:last-of-type': { borderRadius: 3 },
+        },
+      ]}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>Week ending {weekEndDate.format('MM/DD/YYYY')}</Typography>

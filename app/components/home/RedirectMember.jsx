@@ -1,10 +1,14 @@
 'use client';
 
-import { CircularProgress, Typography } from '@mui/material';
+import { Box, LinearProgress, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import PageContainer from '../layout/PageContainer';
+import { softInset } from '../utility/soft';
 
+// A signed-in member on `/` is on their way to /home: a thin progress bar in
+// a soft inset track shows the wait (router.push doesn't drive the header's
+// navigation bar).
 function RedirectMember({ userName }) {
   const router = useRouter();
 
@@ -17,13 +21,18 @@ function RedirectMember({ userName }) {
 
   return (
     <PageContainer>
-      <Typography variant='h2' sx={{ textAlign: 'center', my: 4 }}>
+      <Typography variant='sectionHeading' sx={{ mt: 4 }}>
         Welcome back {userName}
       </Typography>
-      <Typography sx={{ my: 4, textAlign: 'center' }}>
-        Redirecting you to the home page...
+      <Typography sx={{ my: 3, textAlign: 'center' }} color='text.secondary'>
+        Taking you to SLIC lookup…
       </Typography>
-      <CircularProgress size='3rem' />
+      <Box
+        sx={[softInset, { width: '12rem', p: 0.75, borderRadius: 999 }]}
+        aria-hidden
+      >
+        <LinearProgress sx={{ borderRadius: 999 }} />
+      </Box>
     </PageContainer>
   );
 }

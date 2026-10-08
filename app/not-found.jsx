@@ -1,10 +1,10 @@
 'use client';
 
-import theme from '@/utils/theme';
-import { Button, Typography } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import PageContainer from './components/layout/PageContainer';
+import { softContainedSx } from './components/utility/soft';
 
 function NotFound() {
   const router = useRouter();
@@ -20,14 +20,24 @@ function NotFound() {
     <PageContainer>
       <Typography variant='sectionHeading'>Oops! Page not found.</Typography>
 
-      <Typography sx={{ maxWidth: theme.layout.width.panel, my: 4, textAlign: 'center' }}>
-        Sorry, we couldn&apos;t find the page you&apos;re looking for. Redirecting you to
-        the home page... If you are not redirected automatically, click the
-        button below.
-      </Typography>
-      <Button variant='contained' color='primary' href='/'>
-        Go to Home
-      </Button>
+      <Paper
+        variant='panel'
+        className='enter'
+        sx={{ minHeight: 0, gap: 3, textAlign: 'center' }}
+      >
+        <Typography>
+          Sorry, we couldn&apos;t find the page you&apos;re looking for.
+          Redirecting you to the home page… If you are not redirected
+          automatically, use the button below.
+        </Typography>
+        <Button
+          variant='contained'
+          href='/'
+          sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
+        >
+          Go to Home
+        </Button>
+      </Paper>
     </PageContainer>
   );
 }

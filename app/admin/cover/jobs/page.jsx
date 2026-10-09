@@ -4,8 +4,10 @@ import { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 
 import CoverCalendar from '@/components/covers/Calendar';
-import BidSheetUploader from '@/components/admin/coverBidJobs/BidSheetUploader';
 import CoverBidJobsManager from '@/components/admin/coverBidJobs/CoverBidJobsManager';
+import CoverBidPicks from '@/components/admin/coverBidJobs/CoverBidPicks';
+import SheetRefreshButton from '@/components/admin/coverBidJobs/SheetRefreshButton';
+import { useCoverBidPicks } from '@/hooks/useCoverBidPicks';
 import { getUpcomingSaturday } from '@/lib/format';
 import { Paper, Typography } from '@mui/material';
 import theme from '@/theme';
@@ -23,6 +25,14 @@ function CoverJobs() {
     () => getUpcomingSaturday(selectedDay),
     [selectedDay],
   );
+  const pickState = useCoverBidPicks({ weekEndDate, refreshKey });
+
+  // A refresh saved the week: refetch its jobs and picks, and dot it on the
+  // calendar.
+  const handleRefreshed = (weekEnding) => {
+    setRefreshKey((key) => key + 1);
+    setPostedWeeks((weeks) => new Set(weeks).add(weekEnding));
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -68,14 +78,19 @@ function CoverJobs() {
           setValue={setSelectedDay}
           postedWeeks={postedWeeks}
         />
-        <BidSheetUploader
+        {/* The week comes from the on-call sheet (docs/ON-CALL-SHEET-SYNC.md);
+            the photo upload (BidSheetUploader) is retired but kept until stage 4. */}
+        <SheetRefreshButton
+          key={weekEndDate.format('YYYY-MM-DD')}
           weekEndDate={weekEndDate}
-          onSaved={() => setRefreshKey((key) => key + 1)}
+          onRefreshed={handleRefreshed}
         />
         <CoverBidJobsManager
           weekEndDate={weekEndDate}
           refreshKey={refreshKey}
+          picks={pickState.picks}
         />
+        <CoverBidPicks {...pickState} />
       </Paper>
     </>
   );

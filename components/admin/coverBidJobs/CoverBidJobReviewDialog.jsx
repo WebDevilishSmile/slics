@@ -33,7 +33,8 @@ const squareButtonSx = [softRaisedSmall, softPressSx, { width: '3rem', height: '
 // - `index` is the open job, or null when closed;
 // - `status(row)` is a short line under the title (checked, unsaved);
 // - `onDelete(row)` drops the job, after which the next one shows;
-// - `renderPrimary(row, index)` is the one contained button (Looks right, Save).
+// - `renderPrimary(row, index)` is the one contained button (Looks right, Save);
+// - `footer(row)` is optional content under the fields (who picked the job).
 export default function CoverBidJobReviewDialog({
   rows,
   index,
@@ -44,6 +45,7 @@ export default function CoverBidJobReviewDialog({
   status,
   onDelete,
   renderPrimary,
+  footer,
   sources = [],
   viewerMemory,
 }) {
@@ -153,6 +155,7 @@ export default function CoverBidJobReviewDialog({
                 onChange={(field, value) => onFieldChange(row.key, field, value)}
                 duplicate={isDuplicateJobNumber(row, duplicates)}
               />
+              {footer?.(row)}
             </Box>
           </DialogContent>
 

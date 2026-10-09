@@ -20,6 +20,7 @@ import CoverBidJobRowActions from './CoverBidJobRowActions';
 import CoverBidJobSummaryCard from './CoverBidJobSummaryCard';
 import CoverBidJobsTable from './CoverBidJobsTable';
 import DeleteCoverBidJobsDialog from './DeleteCoverBidJobsDialog';
+import PickedByList, { pickedByJob } from './PickedByList';
 import { useCoverBidJobs } from '@/hooks/useCoverBidJobs';
 import {
   findDuplicateJobNumbers,
@@ -50,7 +51,9 @@ function UnsavedStatus({ row }) {
   );
 }
 
-export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
+// `picks` is the week's saved picks from the on-call sheet, or null; with them,
+// the job dialog lists who picked each job.
+export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = null }) {
   const theme = useTheme();
   const wide = useMediaQuery(theme.breakpoints.up('lg'));
 
@@ -75,6 +78,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
   if (rows.length === 0 && reviewIndex !== null) setReviewIndex(null);
 
   const duplicates = useMemo(() => findDuplicateJobNumbers(rows), [rows]);
+  const pickedBy = useMemo(() => pickedByJob(picks), [picks]);
 
   const requestDeleteRow = useCallback(
     (row) => {
@@ -239,6 +243,15 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey }) {
         duplicates={duplicates}
         status={(row) => <UnsavedStatus row={row} />}
         onDelete={requestDeleteRow}
+        footer={
+          picks
+            ? (row) => (
+                <PickedByList
+                  entries={pickedBy.get(row.jobNumber?.trim().toUpperCase()) ?? []}
+                />
+              )
+            : undefined
+        }
         renderPrimary={(row) => {
           const saving = savingKey === row.key;
           const dirty = isDirty(row);

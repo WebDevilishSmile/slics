@@ -21,6 +21,10 @@ async function main() {
       // Backs the six-month range scan on the cover bid jobs page and, as a
       // prefix, the single-week equality match used by the admin manager.
       { collection: 'cover-bid-jobs', spec: { weekEnding: -1, sortOrder: 1 } },
+      // A week's picks and pick changes from the on-call sheet
+      // (docs/ON-CALL-SHEET-SYNC.md).
+      { collection: 'cover-bid-picks', spec: { weekEnding: 1 }, options: { unique: true } },
+      { collection: 'cover-bid-pick-events', spec: { weekEnding: 1, seenAt: -1 } },
       // The $lookup in gymsApi.getAllGyms joins comments by gymId.
       { collection: 'gymComments', spec: { gymId: 1, created_at: -1 } },
       // A place's thread (placesApi.getPlaceThread) and the reply counts behind
@@ -29,8 +33,8 @@ async function main() {
       { collection: 'placeComments', spec: { userId: 1 } },
     ];
 
-    for (const { collection, spec } of indexes) {
-      const name = await db.collection(collection).createIndex(spec);
+    for (const { collection, spec, options } of indexes) {
+      const name = await db.collection(collection).createIndex(spec, options);
       console.log(`Created index "${name}" on "${collection}"`);
     }
   } finally {

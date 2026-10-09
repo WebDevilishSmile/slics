@@ -40,6 +40,7 @@ const PAGE_TITLES = [
   ['/admin/drivers', 'Drivers'],
   ['/admin/cover/drivers', 'Cover Drivers'],
   ['/admin/cover/jobs', 'Cover Jobs'],
+  ['/admin/jobs', 'Jobs'],
   ['/admin/planet-fitness', 'Planet Fitness'],
   ['/admin', 'Admin'],
 ];

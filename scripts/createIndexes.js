@@ -25,6 +25,10 @@ async function main() {
       // (docs/ON-CALL-SHEET-SYNC.md).
       { collection: 'cover-bid-picks', spec: { weekEnding: 1 }, options: { unique: true } },
       { collection: 'cover-bid-pick-events', spec: { weekEnding: 1, seenAt: -1 } },
+      // The sheet's Jobs tab and its change history.
+      { collection: 'sheet-jobs', spec: { jobName: 1 }, options: { unique: true } },
+      { collection: 'sheet-job-changes', spec: { seenAt: -1 } },
+      { collection: 'sheet-job-changes', spec: { jobName: 1, seenAt: -1 } },
       // The $lookup in gymsApi.getAllGyms joins comments by gymId.
       { collection: 'gymComments', spec: { gymId: 1, created_at: -1 } },
       // A place's thread (placesApi.getPlaceThread) and the reply counts behind

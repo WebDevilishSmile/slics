@@ -10,6 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   TextField,
   Typography,
   useMediaQuery,
@@ -25,6 +26,42 @@ import {
 } from '@/components/utility/soft';
 import JobChangesFeed from './JobChangesFeed';
 import SheetJobDialog from './SheetJobDialog';
+
+// "15:00" or "0:09" → minutes, for sorting start times; NaN when not a time.
+const minutes = (value) => {
+  const match = /^(\d{1,2}):(\d{2})/.exec(value ?? '');
+  return match ? Number(match[1]) * 60 + Number(match[2]) : NaN;
+};
+
+// The table's columns: what each heading sorts by. Numbers and times sort as
+// numbers, the rest as text; blank cells go last either way.
+const COLUMNS = [
+  { key: 'jobName', label: 'Job', value: (job) => job.jobName, type: 'text' },
+  { key: 'driver', label: 'Driver', value: (job) => job.driver, type: 'text' },
+  ...DAY_FIELDS.map((day) => ({
+    key: day,
+    label: DAY_LABELS[day],
+    value: (job) => minutes(job.days[day].start),
+    type: 'number',
+  })),
+  { key: 'weekHours', label: 'Week hrs', value: (job) => parseFloat(job.weekHours), type: 'number' },
+  { key: 'seniority', label: 'Seniority', value: (job) => parseFloat(job.seniority), type: 'number' },
+];
+
+function sortJobs(jobs, { key, direction }) {
+  const column = COLUMNS.find((c) => c.key === key);
+  if (!column) return jobs;
+  const sign = direction === 'asc' ? 1 : -1;
+  const blank = (v) => (column.type === 'number' ? Number.isNaN(v) : !v);
+  return [...jobs].sort((a, b) => {
+    const x = column.value(a);
+    const y = column.value(b);
+    if (blank(x) || blank(y)) return blank(x) - blank(y);
+    const order =
+      column.type === 'number' ? x - y : x.localeCompare(y, undefined, { numeric: true, sensitivity: 'base' });
+    return sign * order;
+  });
+}
 
 // One job on a phone: job, driver, the week's start times and the numbers.
 function JobCard({ job, onOpen }) {
@@ -92,17 +129,28 @@ export default function SheetJobsView({ jobs, changes, moreChanges }) {
   const wide = useMediaQuery(theme.breakpoints.up('md'));
   const [search, setSearch] = useState('');
   const [openJob, setOpenJob] = useState(null);
+  // null keeps the sheet's own order; a heading sorts by its column, a second
+  // tap reverses it.
+  const [sort, setSort] = useState(null);
 
   const byName = useMemo(() => new Map(jobs.map((job) => [job.jobName, job])), [jobs]);
+  const sorted = useMemo(() => (sort ? sortJobs(jobs, sort) : jobs), [jobs, sort]);
   const query = search.trim().toLowerCase();
   const shown = query
-    ? jobs.filter(
+    ? sorted.filter(
         (job) =>
           job.jobName.toLowerCase().includes(query) ||
           job.driver.toLowerCase().includes(query) ||
           job.description.toLowerCase().includes(query)
       )
-    : jobs;
+    : sorted;
+
+  const sortBy = (key) =>
+    setSort((current) =>
+      current?.key === key
+        ? { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
+        : { key, direction: 'asc' }
+    );
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -130,13 +178,24 @@ export default function SheetJobsView({ jobs, changes, moreChanges }) {
             <Table size='small' sx={softTableSx}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Job</TableCell>
-                  <TableCell>Driver</TableCell>
-                  {DAY_FIELDS.map((day) => (
-                    <TableCell key={day}>{DAY_LABELS[day]}</TableCell>
-                  ))}
-                  <TableCell>Week hrs</TableCell>
-                  <TableCell>Seniority</TableCell>
+                  {COLUMNS.map((column) => {
+                    const active = sort?.key === column.key;
+                    return (
+                      <TableCell
+                        key={column.key}
+                        sortDirection={active ? sort.direction : false}
+                        sx={{ whiteSpace: 'nowrap' }}
+                      >
+                        <TableSortLabel
+                          active={active}
+                          direction={active ? sort.direction : 'asc'}
+                          onClick={() => sortBy(column.key)}
+                        >
+                          {column.label}
+                        </TableSortLabel>
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               </TableHead>
               <TableBody>

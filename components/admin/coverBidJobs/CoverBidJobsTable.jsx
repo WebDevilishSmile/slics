@@ -14,8 +14,9 @@ import {
 } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
-import { isDuplicateJobNumber, rowIssues } from '@/lib/coverBidJobRow';
+import { isDuplicateJobNumber, isPicked, rowIssues } from '@/lib/coverBidJobRow';
 import { softInputSx, softTableSx } from '@/components/utility/soft';
+import { pickedSx } from '@/components/coverBidJobs/jobGrid';
 import DayTimeField from './DayTimeField';
 
 // Shown to screen readers only, the usual clip pattern (as in
@@ -111,8 +112,10 @@ const JobRows = memo(function JobRows({
   const issues = rowIssues(row, { duplicate });
   const descriptionId = `${row.key}-description`;
 
+  // A picked job's cells gray out (on the cells, which take a filter more
+  // reliably than a table row does); every field stays editable.
   return (
-    <TableBody>
+    <TableBody sx={isPicked(row) ? { '& .MuiTableCell-root': pickedSx } : undefined}>
       <TableRow>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{renderLeading(row, index)}</TableCell>
         <TableCell>

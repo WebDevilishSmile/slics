@@ -1,6 +1,7 @@
 'use client';
 
-import { Chip, Tooltip, Typography } from '@mui/material';
+import { Box, Chip, Tooltip, Typography } from '@mui/material';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 
@@ -44,6 +45,35 @@ export const filterBarSx = [
     gap: 2,
   },
 ];
+
+// A picked job (isPicked, lib/coverBidJobRow.js), grayed out but still
+// clickable, on /cover-bid-jobs and /admin/cover/jobs. The day chips lose
+// their colors too, so the whole job reads as taken.
+export const pickedSx = { opacity: 0.55, filter: 'grayscale(1)' };
+
+// The words that go with the gray, so "picked" isn't told by color alone.
+export function PickedLabel({ sx }) {
+  return (
+    <Box
+      component='span'
+      sx={[
+        {
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 0.5,
+          typography: 'caption',
+          fontWeight: 600,
+          color: 'text.secondary',
+          whiteSpace: 'nowrap',
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
+    >
+      <CheckCircleOutlineIcon sx={{ fontSize: '1rem' }} />
+      Picked
+    </Box>
+  );
+}
 
 // One day's time as a colored chip. `showDay` prefixes the day name, for a
 // single "Days & Times" column; per-day columns already have it as a header.

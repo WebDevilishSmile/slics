@@ -3,8 +3,9 @@
 import { Box, ButtonBase, Typography } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
-import { rowIssues } from '@/lib/coverBidJobRow';
+import { isPicked, rowIssues } from '@/lib/coverBidJobRow';
 import { softPressSx, softRaised } from '@/components/utility/soft';
+import { PickedLabel, pickedSx } from '@/components/coverBidJobs/jobGrid';
 
 // Route codes ("BETPA>VVSPA>…") have no spaces, so let lines break after
 // each ">" rather than mid-code.
@@ -42,15 +43,19 @@ export default function CoverBidJobSummaryCard({ row, index, duplicate, status, 
           // The day strip sizes its text to the card, not the window.
           containerType: 'inline-size',
         },
+        isPicked(row) && pickedSx,
       ]}
     >
       <Box
         component='span'
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}
       >
-        <Typography component='span' variant='h6' sx={{ fontWeight: 700 }}>
-          {row.jobNumber || 'No job #'}
-        </Typography>
+        <Box component='span' sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Typography component='span' variant='h6' sx={{ fontWeight: 700 }}>
+            {row.jobNumber || 'No job #'}
+          </Typography>
+          {isPicked(row) && <PickedLabel />}
+        </Box>
         {status}
       </Box>
 

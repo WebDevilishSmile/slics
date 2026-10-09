@@ -21,7 +21,10 @@ import {
   filterBarSx,
   JOB_GRID_SX,
   jobGridCardSx,
+  PickedLabel,
+  pickedSx,
 } from './jobGrid';
+import { isPicked } from '@/lib/coverBidJobRow';
 import CoverCalendar from '@/components/covers/Calendar';
 import SoftNotice from '@/components/utility/SoftNotice';
 import { softInputSx } from '@/components/utility/soft';
@@ -37,7 +40,18 @@ const DAY_COLUMNS = DAY_FIELDS.map((day) => ({
 }));
 
 const DESKTOP_COLUMNS = [
-  { field: 'jobNumber', headerName: 'Job #', width: 100, sortable: true },
+  {
+    field: 'jobNumber',
+    headerName: 'Job #',
+    width: 100,
+    sortable: true,
+    renderCell: ({ row, value }) => (
+      <Box>
+        {value}
+        {isPicked(row) && <PickedLabel sx={{ display: 'flex' }} />}
+      </Box>
+    ),
+  },
   ...DAY_COLUMNS,
   descriptionColumn,
 ];
@@ -157,6 +171,7 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
             autoHeight
             getRowHeight={() => 'auto'}
             onRowClick={(params) => setSelectedJob(params.row)}
+            getRowClassName={({ row }) => (isPicked(row) ? 'picked' : '')}
             slots={{
               noRowsOverlay: () => (
                 <Typography
@@ -171,6 +186,7 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
             sx={{
               ...JOB_GRID_SX,
               '& .MuiDataGrid-row': { cursor: 'pointer' },
+              '& .MuiDataGrid-row.picked': pickedSx,
             }}
           />
         </Box>

@@ -4,6 +4,7 @@ import { IconButton } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { softPressSx } from '@/components/utility/soft';
 import { DAY_FIELDS } from '@/lib/dayFormat';
+import { isPicked } from '@/lib/coverBidJobRow';
 import JobCard from './JobCard';
 
 // A cover bid job (flat day fields: job.sun … job.sat) on the shared JobCard.
@@ -18,6 +19,7 @@ function CoverBidJobCard({ job, onSelect }) {
       title={job.jobNumber}
       days={days}
       description={job.description}
+      picked={isPicked(job)}
       action={
         onSelect && (
           <IconButton

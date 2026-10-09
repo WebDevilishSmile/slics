@@ -11,6 +11,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
+import { PickedLabel, pickedSx } from './jobGrid';
 
 // The phone card for one bid job, shared by /bids (bids/BidsJobCard.jsx) and
 // /cover-bid-jobs (coverBidJobs/CoverBidJobCard.jsx); each maps its own job
@@ -18,11 +19,15 @@ import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 // - `days`: the job's working days in display order, `[{ day: 'mon', value }]`
 //   with `value` as stored (formatted here with formatDayValue).
 // - `action`: optional element at the top right (a chip, a details button).
+// - `picked`: a cover job someone has picked, grayed out with a "Picked"
+//   label; its action still works.
 // A soft raised card (CLAUDE.md "Visual style"); the day chips keep their
 // colors, which tell the days apart.
-function JobCard({ title, action, days, description }) {
+function JobCard({ title, action, days, description, picked = false }) {
   return (
-    <Box sx={[softRaised, { width: '100%', borderRadius: 3, p: 2, pb: 1 }]}>
+    <Box
+      sx={[softRaised, { width: '100%', borderRadius: 3, p: 2, pb: 1 }, picked && pickedSx]}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -31,9 +36,12 @@ function JobCard({ title, action, days, description }) {
           mb: 1.5,
         }}
       >
-        <Typography variant='h6' fontWeight={700} lineHeight={1.2}>
-          {title}
-        </Typography>
+        <Box>
+          <Typography variant='h6' fontWeight={700} lineHeight={1.2}>
+            {title}
+          </Typography>
+          {picked && <PickedLabel sx={{ mt: 0.5 }} />}
+        </Box>
         {action}
       </Box>
 

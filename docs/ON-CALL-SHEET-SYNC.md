@@ -7,23 +7,22 @@ into the app. Built in stages; check items off as they ship.
 `npm run build` (in a scratch copy, never while `next dev` runs) before shipping any item.
 The app is used daily in production.
 
-## Status (2026-10-09)
+## Status (2026-10-10)
 
-- **Stages 1 and 2:** built and committed on `admin-review`. Not pushed or deployed: that
-  waits for the API key setup below and a first real refresh.
-- **Stage 3:** next, 2026-10-10. Its design is written out below. Today's code already
-  exposes what it needs: `refreshCoverWeek` and `refreshJobsTab` in
-  `lib/onCallSheetSync.js`, and `countJobChangesSince` and `latestJobChange` in
-  `lib/db/sheetJobs.js`.
-- **Before deploying:**
-  - [ ] **API key:** in Google Cloud, enable the Google Sheets API on the project and create
-    an API key restricted to it.
-  - [ ] **Env:** put `GOOGLE_SHEETS_API_KEY` and `ON_CALL_SHEET_ID` in `.env` and on Vercel.
-  - [ ] **Indexes:** run `npm run db:indexes` once.
-  - [ ] **Preview:** run `npm run sheet:preview -- 2026-10-17 --tabs` and
-    `npm run sheet:preview -- --jobs`, and compare them with the sheet.
-  - [ ] **First refreshes:** refresh a week on `/admin/cover/jobs` and the Jobs tab on
-    `/admin/jobs`, and check both.
+- **Stages 1 and 2:** deployed (2026-10-09; redeployed 2026-10-10 with the sheet id fixed).
+  - The first production refresh failed with Google's `404: Requested entity was not
+    found` because `ON_CALL_SHEET_ID` on Vercel was wrong. A bad key would answer 400 and
+    an IP-restricted key 403, so a 404 from the tab list always means the sheet id.
+- **Stage 3:** in progress. The webhook and the sync lock are built and were tested
+  against a scratch database (below). Next: the daily cron, then the alerts, then the
+  health line.
+- **Setup for stages 1–2:**
+  - [x] **API key:** the Google Sheets API is enabled, with an API key restricted to it.
+  - [x] **Env:** `GOOGLE_SHEETS_API_KEY` and `ON_CALL_SHEET_ID` are in `.env` and on Vercel.
+  - [x] **Indexes:** `npm run db:indexes` run 2026-10-10, after stage 2's were added.
+  - [x] **First reads:** the Jobs baseline (213 jobs) and the first cover weeks were read
+    from a local server. They still need one refresh each on the live site to check the
+    deployment.
 
 ---
 
@@ -201,7 +200,7 @@ Replaces the photo upload with a **Refresh** button for the week picked on the c
 - [x] **Navigation.** `['/admin/jobs', 'Jobs']` in `PAGE_TITLES`; `/admin` already links
   to it.
 
-## Stage 3 — Your script, automatic sync and job-change alerts (next: 2026-10-10)
+## Stage 3 — Your script, automatic sync and job-change alerts (in progress)
 
 The admin runs the Apps Script from their own Google account; the guide is
 `docs/on-call-sheet-apps-script.md`. When the `Jobs` tab or a dated tab is edited, the
@@ -218,25 +217,35 @@ alert; cover weeks update quietly.
     - answers 200 when done, 202 when queued behind a running sync, 401/403 for a missing
       or wrong secret.
   - Until the webhook ships, `testPing` gets 404.
-- [ ] **Webhook.** `app/api/webhooks/on-call-sheet/route.js` (POST):
+- [x] **Webhook.** `app/api/webhooks/on-call-sheet/route.js` (POST, `maxDuration` 60):
   - Checks the secret against `ON_CALL_SHEET_WEBHOOK_SECRET` with `crypto.timingSafeEqual`
-    (401 when missing, 403 when wrong).
-  - Has a global `checkRateLimit` (about 120/min) and records `lastPingAt` in
-    `sync-state`.
-  - The body is only a hint about what to re-read. Data always comes from the sheet:
+    on SHA-256 hashes (401 when missing, 403 when wrong).
+  - Has a global `checkRateLimit` (120/min) and records `lastPingAt` and the ping's body in
+    `sync-state` `{ _id: 'ping' }` (`recordSheetPing`).
+  - `{ changeType: 'TEST' }` (the script's `testPing`) reads nothing and answers 200.
+  - Otherwise it calls `syncFromSheet(hint)` (`lib/onCallSheetSync.js`). The body is only a
+    hint about what to re-read. Data always comes from the sheet:
     - `{ tab: 'Jobs' }` → `refreshJobsTab({ source: 'ping' })`.
     - `{ tab: '<date>' }` → `refreshCoverWeek` for that week, only if its Saturday is today
       or later (America/New_York). Older weeks are ignored.
-    - Anything else → Jobs plus every dated tab from this week on.
-  - Automatic cover refreshes pass `replaceUploaded: false` and treat `'uploaded'` as
-    "skip this week". They're noted in `sync-state`, with no alert.
-- [ ] **Sync lock.** A wrapper in `lib/onCallSheetSync.js`:
-  - Each target (`jobs`, `week:YYYY-MM-DD`) gets a lease lock in `sync-state`
-    (`findOneAndUpdate`, about 60 s).
-  - A ping that finds it locked sets `pending: true` and gets 202.
-  - The holder re-reads once more when `pending` was set, so the last edit in a burst of
-    picks is never missed.
-  - Records `lastSyncedAt` / `lastError` per target.
+    - Any other tab → nothing.
+    - No tab → Jobs plus every dated tab from this week on (one tab list for all).
+  - Automatic cover refreshes pass `replaceUploaded: false` and no user. `'uploaded'` means
+    "skip this week": it's recorded as the outcome, not as an error, with no alert.
+  - Answers 202 only when every target was already being read.
+- [x] **Sync lock.** `lib/db/syncState.js`, used by `syncTarget` in `lib/onCallSheetSync.js`:
+  - Each target (`jobs`, `week:YYYY-MM-DD`) has a 60 s lease in its `sync-state` doc
+    (`acquireSyncLock`: an upsert whose duplicate-key error means "held").
+  - A ping that finds it held sets `pending: true` and gets 202. If the holder let go in
+    between, it tries once more to take it.
+  - `releaseSyncLock` only lets go when `pending` is unset; otherwise it renews the lease
+    and the holder reads again. At most 3 passes; after that the flag stays set for the
+    next ping or the cron.
+  - Records `lastRunAt`, `lastOutcome` and `lastError` (`{ message, at }` or null) per
+    target. The Jobs doc keeps its `lastSyncedAt` / `lastSource` from stage 2.
+  - Tested 2026-10-10 on a scratch build against a throwaway database: 401/403, SHIFTERS
+    and a past week read nothing, `TEST` reads nothing, a full ping read Jobs and three
+    weeks in 2.8 s, and two Jobs pings at once gave one 202 and one 200 with 2 passes.
 - [ ] **Daily backstop.** `vercel.json` cron (once a day on Hobby) →
   `GET /api/cron/on-call-sheet-sync`.
   - It checks `Authorization: Bearer ${CRON_SECRET}` and does the same full refresh as a
@@ -265,9 +274,10 @@ alert; cover weeks update quietly.
 - [ ] **Health on `/admin/jobs`:** "Sheet last pinged … · last synced …", `lastError` as an
   inline Alert, and a warning after 2 days with no ping ("your sheet script may be off").
 - [ ] **Env** (`.env.example`):
-  - `ON_CALL_SHEET_WEBHOOK_SECRET`: `openssl rand -hex 32`; the same value goes in the
-    script's `APP_SECRET`.
-  - `CRON_SECRET`.
+  - [x] `ON_CALL_SHEET_WEBHOOK_SECRET` is in `.env.example`: `openssl rand -hex 32`; the
+    same value goes in the script's `APP_SECRET`. It still has to be set on Vercel. Until
+    then the webhook answers 500.
+  - [ ] `CRON_SECRET`.
 - [ ] **Install.** The admin follows the guide, runs `testPing` (200), and gives their
   superior a heads-up.
 

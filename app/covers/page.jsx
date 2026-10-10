@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import { getDriverById } from '@/lib/db/drivers';
 import { serializeDriver, serializeUser } from '@/lib/serializers';
 import { getUserById } from '@/lib/db/users';
@@ -11,7 +11,7 @@ import RedirectMessage from '@/components/layout/RedirectMessage';
 import HydrationGuard from '@/components/utility/HydrationGuard';
 
 async function CoversPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session) {
     return (
       <RedirectMessage

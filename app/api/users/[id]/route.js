@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import {
   deleteUserAccount,
   getPublicUserById,
@@ -11,9 +11,8 @@ import { NextResponse } from 'next/server';
 // Signed-in only, and projected to { _id, name, image } — never the full
 // user document, which holds the password hash and email.
 export async function GET(_request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { denied } = await requireUser();
+  if (denied) return denied;
 
   const { id: userId } = await params;
 
@@ -43,9 +42,8 @@ export async function GET(_request, { params }) {
 // the body must echo the typed confirmation so a stray DELETE can't wipe an
 // account. The caller signs out afterwards; the JWT itself is not touched here.
 export async function DELETE(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const { id: userId } = await params;
 

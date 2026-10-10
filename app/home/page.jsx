@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import { Typography } from '@mui/material';
 
 import { getAllSlics } from '@/lib/db/slics';
@@ -9,7 +9,7 @@ import RedirectMessage from '@/components/layout/RedirectMessage';
 import SlicLookupPage from '@/components/slic/SlicLookupPage';
 
 export default async function Home({ searchParams }) {
-  const session = await auth();
+  const session = await getSession();
 
   if (!session) {
     return (

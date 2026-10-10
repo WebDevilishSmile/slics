@@ -9,7 +9,9 @@ const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const url = req.nextUrl.clone();
-  const isLoggedIn = !!req.auth;
+  // Same rule as getSession() in lib/authz.js: a session only counts if it
+  // names a user (docs/SECURITY.md #4).
+  const isLoggedIn = !!req.auth?.user?.id;
 
   // There's no /signin page: sign-in lives on `/`. Old links and bookmarks to
   // /signin (this middleware used to send signed-out drivers there) go to `/`

@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -14,9 +14,8 @@ const COMMENT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 
 // GET ?placeId= — the place's thread, shaped for the signed-in viewer.
 export async function GET(request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const placeId = request.nextUrl.searchParams.get('placeId');
   if (!placeId || !ObjectId.isValid(placeId)) {
@@ -38,9 +37,8 @@ export async function GET(request) {
 // POST `{ placeId, parentId?, content }` — a comment, or a reply when
 // `parentId` is set.
 export async function POST(request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const rate = await checkRateLimit({
     key: `place-comment:${session.user.id}`,

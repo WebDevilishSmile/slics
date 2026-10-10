@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { createGym, validateGym } from '@/lib/db/gyms';
 
@@ -7,14 +7,8 @@ import { createGym, validateGym } from '@/lib/db/gyms';
 
 // POST a new gym
 export async function POST(request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (session.user.role !== 'admin')
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 },
-    );
+  const { session, denied } = await requireAdmin();
+  if (denied) return denied;
 
   let body;
   try {

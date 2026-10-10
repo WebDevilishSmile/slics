@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -12,14 +12,8 @@ import {
 
 // PATCH a comment's text: `{ content }`
 export async function PATCH(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (session.user.role !== 'admin')
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 },
-    );
+  const { denied } = await requireAdmin();
+  if (denied) return denied;
 
   const { id } = await params;
   if (!id || !ObjectId.isValid(id)) {
@@ -52,14 +46,8 @@ export async function PATCH(request, { params }) {
 
 // DELETE a comment
 export async function DELETE(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (session.user.role !== 'admin')
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 },
-    );
+  const { denied } = await requireAdmin();
+  if (denied) return denied;
 
   const { id } = await params;
   if (!id || !ObjectId.isValid(id)) {

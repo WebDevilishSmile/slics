@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import theme from '@/theme';
 import { getPlaces } from '@/lib/db/places';
 import { getAllSlics } from '@/lib/db/slics';
@@ -11,7 +11,7 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // a comment thread on each. Sign-in is enforced by middleware.js; the data
 // lives in lib/db/places.js and the UI in components/places/.
 export default async function WhipItInAndOutPage() {
-  const session = await auth();
+  const session = await getSession();
   const user = session?.user
     ? { id: session.user.id, role: session.user.role ?? 'user' }
     : null;

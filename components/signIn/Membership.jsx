@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import theme from '@/theme';
 import Link from 'next/link';
@@ -14,7 +14,7 @@ import { softContainedSx } from '@/components/utility/soft';
 async function Membership({ next = '/home' }) {
   // Ensure the auth function is called to get the session
   // This is necessary to check if the user is logged in
-  const session = await auth();
+  const session = await getSession();
   const user = session?.user;
 
   // Check if the user is using a mobile device

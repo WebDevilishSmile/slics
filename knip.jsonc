@@ -1,4 +1,4 @@
-// Dead-code check: `npm run lint:dead` (docs/STRUCTURE.md #14).
+// Dead-code check: `npm run lint:dead` (docs/archive/STRUCTURE.md #14).
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   // knip reads aliases from tsconfig.json only; this repo has jsconfig.json.

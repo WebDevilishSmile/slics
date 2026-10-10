@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireAdmin, requireUser } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { createSlic, getAllSlics } from '@/lib/db/slics';
 
@@ -7,9 +7,8 @@ import { createSlic, getAllSlics } from '@/lib/db/slics';
 // tooling and external clients — which is exactly why it must not be open:
 // this is the whole address/phone dataset the sign-in gate protects.
 export async function GET() {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { denied } = await requireUser();
+  if (denied) return denied;
 
   try {
     const slics = await getAllSlics();
@@ -26,17 +25,8 @@ export async function GET() {
 // POST — create a slic (admin only). Was /api/newSlic until 2026-10-08.
 export async function POST(request) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const { session, denied } = await requireAdmin();
+    if (denied) return denied;
 
     const body = await request.json();
     const newSlic = await createSlic(body, session.user);

@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from '@google/genai';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { DAY_FIELDS, normalizeDayTime } from '@/lib/dayFormat';
 
@@ -73,17 +73,8 @@ Return every job row extracted, across all photos, in the order they appear.`;
 
 export async function POST(request) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const { denied } = await requireAdmin();
+    if (denied) return denied;
 
     const { images } = await request.json();
 

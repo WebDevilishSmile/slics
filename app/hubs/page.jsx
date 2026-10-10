@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import { Typography } from '@mui/material';
 
 import { getAllHubs } from '@/lib/db/slics';
@@ -9,7 +9,7 @@ import SlicLookupPage from '@/components/slic/SlicLookupPage';
 // The lookup screen with only the UPS hubs in its list. It was /all until
 // 2026-10-08; next.config.mjs redirects old links here.
 export default async function Hubs({ searchParams }) {
-  const session = await auth();
+  const session = await getSession();
 
   if (!session) {
     return (

@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { createPlace, validatePlace } from '@/lib/db/places';
 import { checkRateLimit } from '@/lib/rateLimit';
@@ -10,9 +10,8 @@ const PLACE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
 // POST a new place
 export async function POST(request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const rate = await checkRateLimit({
     key: `place:${session.user.id}`,

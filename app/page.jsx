@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import { getUserByEmail } from '@/lib/db/users';
 import { safeCallbackUrl } from '@/lib/callbackUrl';
 
@@ -16,7 +16,7 @@ export default async function Main({ searchParams }) {
   const next = callbackUrl ?? '/home';
 
   // Check if the user is logged in
-  const session = await auth();
+  const session = await getSession();
 
   let isLoggedIn = false;
   let isMember = false;

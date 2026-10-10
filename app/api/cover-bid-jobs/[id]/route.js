@@ -1,16 +1,10 @@
 import { updateCoverBidJob, deleteCoverBidJob } from '@/lib/db/coverBidJobs';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 
 export async function PATCH(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (session.user.role !== 'admin')
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 }
-    );
+  const { session, denied } = await requireAdmin();
+  if (denied) return denied;
 
   const { id } = await params;
 
@@ -31,14 +25,8 @@ export async function PATCH(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (session.user.role !== 'admin')
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 }
-    );
+  const { denied } = await requireAdmin();
+  if (denied) return denied;
 
   const { id } = await params;
 

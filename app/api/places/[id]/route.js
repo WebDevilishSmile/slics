@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -18,9 +18,8 @@ function canManage(place, user) {
 
 // PATCH (replace the editable fields of) a place
 export async function PATCH(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const { id } = await params;
   if (!id || !ObjectId.isValid(id)) {
@@ -61,9 +60,8 @@ export async function PATCH(request, { params }) {
 // DELETE a place and its comments. The driver who added it can only do this
 // while nobody else has commented; after that it's an admin call.
 export async function DELETE(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const { id } = await params;
   if (!id || !ObjectId.isValid(id)) {

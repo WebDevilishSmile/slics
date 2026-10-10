@@ -1,30 +1,17 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import client from '@/lib/db/client';
 
 export const runtime = 'nodejs';
 
 export async function PATCH(req, { params }) {
   try {
-    const session = await auth();
-
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const { denied } = await requireAdmin();
+    if (denied) return denied;
 
     const db = client.db();
     const usersCollection = db.collection('users');
-    const loggedInUser = await usersCollection.findOne({
-      email: session.user.email,
-    });
-
-    if (!loggedInUser || loggedInUser.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
 
     const { id: userId } = await params;
 

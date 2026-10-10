@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { addGymComment, validateGymComment } from '@/lib/db/gyms';
@@ -6,14 +6,8 @@ import { addGymComment, validateGymComment } from '@/lib/db/gyms';
 // POST a comment on a gym: `{ gymId, content }`. Admin-only, like every
 // /api/gym-comments* route — the Planet Fitness page is the admin's own list.
 export async function POST(request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (session.user.role !== 'admin')
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 },
-    );
+  const { session, denied } = await requireAdmin();
+  if (denied) return denied;
 
   let body;
   try {

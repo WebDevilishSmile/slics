@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { voteComment } from '@/lib/db/comments';
@@ -6,10 +6,8 @@ import { voteComment } from '@/lib/db/comments';
 // POST `{ voteType: 'up' | 'down' | null }`. Up/down sets the driver's vote
 // (moving it off the other side); null takes it back.
 export async function POST(request, { params }) {
-  const session = await auth();
-  if (!session || !session.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const { id: commentId } = await params;
   if (!commentId || !ObjectId.isValid(commentId))

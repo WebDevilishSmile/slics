@@ -4,22 +4,13 @@ import {
   getCoverBidJobsByWeek,
   serializeCoverBidJobs,
 } from '@/lib/db/coverBidJobs';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const { denied } = await requireAdmin();
+    if (denied) return denied;
 
     const { searchParams } = new URL(request.url);
     const weekEnding = searchParams.get('weekEnding');
@@ -48,17 +39,8 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const { session, denied } = await requireAdmin();
+    if (denied) return denied;
 
     const { weekEnding, rows } = await request.json();
     const created = await createCoverBidJobs(rows, weekEnding, session.user);
@@ -82,17 +64,8 @@ export async function POST(request) {
 
 export async function DELETE(request) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 }
-      );
-    }
+    const { denied } = await requireAdmin();
+    if (denied) return denied;
 
     const { searchParams } = new URL(request.url);
     const weekEnding = searchParams.get('weekEnding');

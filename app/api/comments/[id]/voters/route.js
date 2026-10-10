@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { getCommentVoters } from '@/lib/db/comments';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
@@ -6,9 +6,8 @@ import { NextResponse } from 'next/server';
 // Who upvoted / downvoted a comment. Members-only (or admin) — the response
 // names other drivers, and viewing that is a membership perk.
 export async function GET(_request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   if (!session.user.bmcMember && session.user.role !== 'admin')
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

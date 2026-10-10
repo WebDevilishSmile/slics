@@ -1,5 +1,11 @@
 # UI-SUGGESTIONS.md
 
+> **Archived 2026-10-10.** Parts 1 and 2 are done except #54 (pinned SLICs), #55 (manifest
+> shortcuts), the bottom-navigation decision left open in #52, and the smaller leftovers
+> listed under #57. Those moved to [`../TODOS.md`](../TODOS.md). The rules this list
+> produced are in `CLAUDE.md` → "Visual style" and "Known issues / conventions". Code
+> comments cite these item numbers (`UI-SUGGESTIONS.md #17`), so don't renumber.
+
 The punch list for the app's look, feel and front-end UX. It sits alongside
 `SUGGESTIONS.md` (security/perf/quality) and `STRUCTURE.md` (where things live). This
 file was called `THEME.md` until 2026-10-03. Item numbers are unchanged because code

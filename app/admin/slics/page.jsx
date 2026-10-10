@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import { serializeSlics } from '@/lib/serializers';
 import { getAllSlics } from '@/lib/db/slics';
 
@@ -7,7 +7,7 @@ import { Typography } from '@mui/material';
 import SlicsTable from '@/components/admin/slics/SlicsTable';
 
 async function SlicsTablePage() {
-  const session = await auth();
+  const session = await getSession();
 
   if (!session) {
     // If the user is not authenticated, redirect them to the sign-in page

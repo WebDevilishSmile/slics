@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { deleteGym, updateGym, validateGym } from '@/lib/db/gyms';
@@ -7,14 +7,8 @@ import { deleteGym, updateGym, validateGym } from '@/lib/db/gyms';
 
 // PATCH (replace the editable fields of) a gym
 export async function PATCH(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (session.user.role !== 'admin')
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 },
-    );
+  const { session, denied } = await requireAdmin();
+  if (denied) return denied;
 
   const { id } = await params;
   if (!id || !ObjectId.isValid(id)) {
@@ -47,14 +41,8 @@ export async function PATCH(request, { params }) {
 
 // DELETE a gym and its comments
 export async function DELETE(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (session.user.role !== 'admin')
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 },
-    );
+  const { denied } = await requireAdmin();
+  if (denied) return denied;
 
   const { id } = await params;
   if (!id || !ObjectId.isValid(id)) {

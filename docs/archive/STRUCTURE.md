@@ -1,5 +1,11 @@
 # STRUCTURE.md
 
+> **Archived 2026-10-10.** Items 1–3 and 5–33 are done. What was still open moved to
+> [`../TODOS.md`](../TODOS.md) → "Housekeeping": #4 (scrub git history, tracked as
+> `SECURITY.md` #1), the API alias deletion (#29 follow-up), #34, #35 and #36. #32 resolved
+> itself: `lib/db.ts` is gone and the repo is plain JS. #33 is this folder. Code comments
+> cite these item numbers (`STRUCTURE.md #21`), so don't renumber.
+
 A punch list for the repo's file and folder layout. Companion to `SUGGESTIONS.md`
 (security/perf/quality) and `UI-SUGGESTIONS.md` (styling and UI) — this one tracks *where things live*,
 what's dead, and what's named inconsistently. Where an item overlaps one of those lists it
@@ -79,7 +85,11 @@ disk. Delete the folder.
 
 ### 4. Scrub git history if the repo is (or was ever) public
 
-- [ ] **Decision, then possibly:** `git filter-repo` + force-push
+- [x] **Decision, then possibly:** `git filter-repo` + force-push
+
+*Done 2026-10-10:* the repo is public, so history was rewritten and force-pushed, dropping
+the three files plus four more paths. The details and what's left are under
+`SECURITY.md` #1. The SHAs below are from the old history.
 
 The remote is `github.com/WebDevilishSmile/slics` and `README.md` reads as a portfolio
 piece. Items 1–2 were added in commits `1e1c42e` (2025-05-30), `72f113f` (2025-05-31) and
@@ -688,7 +698,7 @@ REST idiom but only when it's spelled `me`. As is, `user` vs `users` looks like 
 
 ### 32. Decide on TypeScript
 
-- [ ] **File:** `lib/db.ts` — the only `.ts` file in the repo; there is no
+- [x] **File:** `lib/db.ts` — the only `.ts` file in the repo; there is no
   `tsconfig.json`
 
 It compiles because SWC transpiles `.ts` regardless, but nothing type-checks it.
@@ -705,16 +715,24 @@ Two honest options:
 
 *Blast radius:* option 1, none. Option 2, ongoing.
 
+**Resolved by 2026-10-10:** `lib/db.ts` no longer exists (the data layer is `lib/db/*.js`)
+and there is no `tsconfig.json`, so the repo is plain JS. `@types/node` is still a
+devDependency; it's harmless (editor hints) and can go whenever `package.json` is next
+touched (#35).
+
 ### 33. Move the punch lists into `docs/`
 
-- [ ] `SUGGESTIONS.md`, `THEME.md` (now `UI-SUGGESTIONS.md`) → `docs/` (this file is already there)
-- [ ] Update the two references in `CLAUDE.md` ("Known issues / conventions")
-- [ ] Add a line to `CLAUDE.md` pointing at `docs/STRUCTURE.md`
+- [x] `SUGGESTIONS.md`, `THEME.md` (now `UI-SUGGESTIONS.md`) → `docs/` (this file is already there)
+- [x] Update the two references in `CLAUDE.md` ("Known issues / conventions")
+- [x] Add a line to `CLAUDE.md` pointing at `docs/STRUCTURE.md`
 
 `README.md` and `CLAUDE.md` stay at the root — tooling and GitHub look for them there.
 Everything else that's prose goes in `docs/`.
 
 *Blast radius:* none.
+
+**Done 2026-10-10** as part of the docs reorganization: finished punch lists live in
+`docs/archive/` (this file included), and `docs/README.md` indexes the folder.
 
 ### 34. Lint for unused imports and exports
 

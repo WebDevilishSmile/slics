@@ -1,15 +1,12 @@
 // app/api/cover/[position]/route.js
 
 import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import client from '@/lib/db/client';
 
 export async function PATCH(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (session.user.role !== 'admin')
-    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+  const { denied } = await requireAdmin();
+  if (denied) return denied;
 
   // In Next.js 15, params is a Promise, so we await it
   const { position } = await params;

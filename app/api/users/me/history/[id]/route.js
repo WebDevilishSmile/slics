@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rateLimit';
@@ -19,9 +19,8 @@ const EDIT_WINDOW_MS = 60 * 1000;
 // removes the row from the History page; false is the Undo). The row stays in
 // the collection either way, so the /home lookup counter is unaffected.
 export async function PATCH(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
   if (!session.user.bmcMember)
     return NextResponse.json(
       { error: 'History is available to members only.' },

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { recordSlicView } from '@/lib/db/slicViews';
 
 export const runtime = 'nodejs';
@@ -9,11 +9,8 @@ export const runtime = 'nodejs';
 // recordSlicView). Responds `{ slicViews }`, the lifetime lookup count.
 export async function POST(req) {
   try {
-    const session = await auth();
-
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const { session, denied } = await requireUser();
+    if (denied) return denied;
 
     const { numSlic } = await req.json();
 

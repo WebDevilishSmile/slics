@@ -1,6 +1,6 @@
 import { Box, Paper, Typography } from '@mui/material';
 
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import HydrationGuard from '@/components/utility/HydrationGuard';
 import JobsRefreshButton from '@/components/admin/sheetJobs/JobsRefreshButton';
 import SheetJobsView from '@/components/admin/sheetJobs/SheetJobsView';
@@ -25,7 +25,7 @@ const CHANGES_PAGE = 100;
 // the automatic reads are working (stage 3). app/admin/layout.jsx limits it to
 // admins.
 async function Jobs() {
-  const session = await auth();
+  const session = await getSession();
   const [jobs, changes, syncState, health, seenAt] = await Promise.all([
     getSheetJobs(),
     getJobChanges({ limit: CHANGES_PAGE }),

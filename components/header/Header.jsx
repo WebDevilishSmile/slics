@@ -1,11 +1,12 @@
-import { auth, signOut } from '@/auth';
+import { signOut } from '@/auth';
+import { getSession } from '@/lib/authz';
 
 import { Toolbar } from '@mui/material';
 
 import HeaderBar from './HeaderBar';
 
 export default async function Header() {
-  const session = await auth();
+  const session = await getSession();
 
   // Passed down to the client-side menu, which posts its Sign out form here.
   async function signOutAction() {

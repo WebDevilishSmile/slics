@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import clientPromise from '@/lib/db/client'; // Use clientPromise for consistency and safety
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
@@ -6,14 +6,8 @@ import { NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 
 export async function PATCH(req, { params }) {
-  const session = await auth();
-
-  if (!session) {
-    console.warn(
-      'API PATCH /users/[id]/add-phone: Unauthorized attempt - No session.',
-    );
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const { id: userId } = await params;
 
@@ -97,27 +91,14 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    // Authorization Check (as per our previous conversation)
-    const loggedInUserFromDb = await usersCollection.findOne({
-      email: session.user.email,
-    });
-
-    if (!loggedInUserFromDb) {
-      console.warn(
-        `API PATCH /users/[id]/add-phone: Logged-in user email (${session.user.email}) not found in DB for authorization.`,
-      );
-      return NextResponse.json(
-        { error: 'Forbidden: Your user account could not be verified' },
-        { status: 403 }
-      );
-    }
-
-    const isAdmin = loggedInUserFromDb.role === 'admin';
-    const isUpdatingOwnProfile = loggedInUserFromDb._id.toString() === userId;
+    // The session's id and role are fresh (auth.js re-reads the user row on
+    // every request), so there's no second lookup by email.
+    const isAdmin = session.user.role === 'admin';
+    const isUpdatingOwnProfile = session.user.id === userId;
 
     if (!isAdmin && !isUpdatingOwnProfile) {
       console.warn(
-        `API PATCH /users/[id]/add-phone: Forbidden - User ${loggedInUserFromDb.email} (ID: ${loggedInUserFromDb._id}) attempted to update user ${userId} without admin rights.`,
+        `API PATCH /users/[id]/add-phone: Forbidden - user ${session.user.id} attempted to update user ${userId} without admin rights.`,
       );
       return NextResponse.json(
         { error: 'Forbidden: You can only update your own profile unless you are an admin' },

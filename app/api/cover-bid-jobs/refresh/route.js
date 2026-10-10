@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { isSaturday } from '@/lib/onCallSheet';
 import { refreshCoverWeek } from '@/lib/onCallSheetSync';
@@ -15,13 +15,8 @@ const STATUS = { 'no-tab': 404, uploaded: 409, format: 422 };
 // isn't set (the message is the question to ask) · 422 the tab isn't laid out
 // as expected · 502 Google couldn't be read.
 export async function POST(request) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  if (session.user.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-  }
+  const { session, denied } = await requireAdmin();
+  if (denied) return denied;
 
   const limit = await checkRateLimit({
     key: `sheet-refresh:${session.user.id}`,

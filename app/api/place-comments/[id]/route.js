@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -17,9 +17,8 @@ function canManage(comment, user) {
 
 // PATCH a comment's text: `{ content }`
 export async function PATCH(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const { id } = await params;
   if (!id || !ObjectId.isValid(id)) {
@@ -59,9 +58,8 @@ export async function PATCH(request, { params }) {
 
 // DELETE a comment (a "Comment deleted" placeholder if it still has replies)
 export async function DELETE(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const { id } = await params;
   if (!id || !ObjectId.isValid(id)) {

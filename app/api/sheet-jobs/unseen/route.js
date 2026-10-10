@@ -1,18 +1,13 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { getUnseenJobChanges } from '@/lib/db/sheetJobs';
 import { getJobChangesSeenAt } from '@/lib/db/users';
 
 // Jobs-tab changes the signed-in admin hasn't seen yet, for the menu badge
 // (lib/jobChangesStore.js): { count, jobs, latest }. Reads MongoDB only.
 export async function GET() {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  if (session.user.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-  }
+  const { session, denied } = await requireAdmin();
+  if (denied) return denied;
 
   try {
     const since = await getJobChangesSeenAt(session.user.id);

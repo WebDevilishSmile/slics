@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -31,9 +31,8 @@ async function loadManageable(params, session) {
 // `{ lat, lng }` sets the pin, null removes it, leaving it out keeps it. The
 // text may be empty while the comment keeps a pin.
 export async function PATCH(request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   let body;
   try {
@@ -68,9 +67,8 @@ export async function PATCH(request, { params }) {
 // DELETE — a top-level comment with replies becomes a "Comment deleted"
 // placeholder; anything else is removed.
 export async function DELETE(_request, { params }) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   try {
     const { comment, response } = await loadManageable(params, session);

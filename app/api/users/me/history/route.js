@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { getHistoryPage, parseHistoryQuery } from '@/lib/db/slicViews';
 
@@ -8,9 +8,8 @@ export const runtime = 'nodejs';
 // History page's own (see parseHistoryQuery): q, from, to, type, notes, sort,
 // cursor. Responds `{ views, nextCursor, total }`.
 export async function GET(request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
   if (!session.user.bmcMember)
     return NextResponse.json(
       { error: 'History is available to members only.' },

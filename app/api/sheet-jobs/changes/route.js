@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { getJobChanges, serializeJobChanges } from '@/lib/db/sheetJobs';
 
 const GROUPS = ['driver', 'times', 'description', 'seniority'];
@@ -10,13 +10,8 @@ const PAGE = 100;
 // ?before=<ISO>&beforeId=<id> (the last change shown) pages back ·
 // ?job=<jobName> · ?group=driver|times|description|seniority
 export async function GET(request) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  if (session.user.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-  }
+  const { denied } = await requireAdmin();
+  if (denied) return denied;
 
   const params = new URL(request.url).searchParams;
   const beforeSeenAt = params.get('before');

@@ -1,9 +1,10 @@
 # SECURITY.md
 
-A security punch list and a set of standing rules for this repo. Companion to
-`SUGGESTIONS.md` (general quality — its #1–#6 and #22 were the first security pass),
-`STRUCTURE.md` (layout; its Tier 0 covers sensitive data *in the repo*) and `UI-SUGGESTIONS.md`.
-Where an item overlaps one of those it says so and defers, so nothing is tracked twice.
+A security punch list and a set of standing rules for this repo. Companion to the archived
+`archive/SUGGESTIONS.md` (general quality — its #1–#6 and #22 were the first security pass)
+and `archive/STRUCTURE.md` (layout; its Tier 0 covers sensitive data *in the repo*). Where
+an item overlaps one of those it says so and defers, so nothing is tracked twice. The
+short version of what's open is in `TODOS.md` → "Security"; this file has the detail.
 
 **How to use this:** Part 1 is a threat model in one screen — read it once. Part 2 is the
 findings, tiered by urgency; every item is self-contained (files, what's wrong, evidence,
@@ -28,6 +29,51 @@ before pushing. Prefer additive, reversible changes with a dry-run — the patte
 
 ---
 
+## Status (re-checked against the code 2026-10-10)
+
+The findings below were written on 2026-09-20. A lot of the code has moved since (the
+`utils/` → `lib/` and `components/` moves, the API renames, plain-text tips), so some
+file paths in Part 2 are the old ones. This table is the current state. Each "partly"
+names what's left.
+
+| # | Status | What's true now |
+|---|---|---|
+| 1 | Partly | **History rewritten 2026-10-10** (see #1): seven paths dropped, `main` and `admin-review` force-pushed, PR #1 and its branch gone. **Left:** the GitHub Support purge, requested 2026-10-10 as ticket #4844294 (old commits stay reachable by SHA, and `refs/pull/1/head` still has the SLIC dataset), and whether to tell the drivers. Secret Protection + push protection turned on 2026-10-10. |
+| 2 | Partly | **Writes are closed:** since 2026-10-07 every new or edited tip is saved as plain text (`format: 'text'`, set server-side in `lib/db/comments.js`). **Left:** older Tiptap HTML comments still render through `html-react-parser` with no sanitizer (`components/comments/CommentContent.jsx`). Convert them to text with a dry-run script (the flattening logic is already in `commentToText`), then drop `html-react-parser`. |
+| 3 | Done | 2026-10-07 (Next 15.5.27, Auth.js beta.32). |
+| 4 | Done | 2026-10-10. `lib/authz.js` (`getSession`, `requireUser`, `requireAdmin`) is the only caller of `auth()`. All 43 guarded API routes, 13 pages, the admin layout and 2 server components go through it. `middleware.js` checks `req.auth?.user?.id`. `toggle-role`, `toggle-member`, `add-phone` and the admin layout read the session's role instead of looking the user up by email. No `route()` wrapper: see the note under #4. |
+| 5 | Done | `lib/db/comments.js` has no `'use server'`. The only two uses left are the inline sign-in/out actions. |
+| 6 | Open | `serializeUser(s)` still spread the whole document; `add-phone` still logs and returns the full updated user. |
+| 7 | Partly | The `/signin` redirect is fixed (it goes to `/`). Admin pages still rely on `app/admin/layout.jsx` (an email lookup), and `app/bids/page.jsx` has no `auth()` call. |
+| 8 | Open | Access-model decision still to make. |
+| 9 | Open | `authorize()` in `auth.js` has no rate limit. |
+| 10 | Open | `cover/[position]` and `drivers/[id]` still `$set` the request body. |
+| 11 | Partly | Newer routes (tips, places, place comments, history notes, the sheet routes) validate their bodies. The older routes listed in #11 weren't re-checked one by one. |
+| 12 | Open | `next.config.mjs` has no `headers()`. |
+| 13 | Open | Blob uploads are `access: 'public'`, and the Supabase fallback is still live (migration in progress, per `CLAUDE.md`). |
+| 14 | Open | The BMC webhook still compares with `!==`. `lib/secretsMatch.js`, added for the sheet webhook, is the drop-in fix. |
+| 15 | Partly | The new sheet collections have unique indexes (`cover-bid-picks.weekEnding`, `sheet-jobs.jobName`). `users.email`, `slics.numSlic` and `drivers.employeeId` still don't. |
+| 16–18 | Open | — |
+| 19 | Partly | Account self-deletion refuses admins. `toggle-role` still has no self or last-admin guard. |
+| 20 | Open | Console checklist. `.env` points at production (`ON-CALL-SHEET-SYNC.md` says so too), which makes the dev/prod split the most useful line on it. |
+| 21 | Open | No TTL on `slicViews`; only `rateLimits` self-cleans. |
+| 22 | Partly | The `console.log(session)` on `/history` is gone. `add-phone` logs the full user document; the BMC webhook logs supporter emails. |
+| 23 | Open | `cover-bid-jobs/**` and `cover/[position]` still return `error.message`. |
+| 24 | Partly | Limits added since: places, place comments, history edits, both sheet refreshes, the sheet webhook. Still none on credentials sign-in, votes, `track-view`, `add-phone` or the BMC webhook. |
+| 25 | Mostly done | `crypto` and `lib/stripe.js` are gone and eslint matches Next (#3). Left: an `engines` field (`archive/STRUCTURE.md` #35). |
+| 26 | Partly | Tips now ship vote counts and `myVote`, with no user ids. `components/signIn/RequestAccess.jsx` (unused) still holds a personal phone number. Delete it. |
+| 27 | Open | The token still carries `comments` and `created_at`. |
+| 28 | Holds | Still no CORS headers; `vercel.json` only schedules the cron. |
+| 29 | Done (writing) | The inventory and rotation runbook is in `OPERATIONS.md`, updated for the sheet, webhook and cron secrets. |
+| 30 | Partly | `/covers` no longer crashes for an unlinked driver (`archive/UI-SUGGESTIONS.md` #57), and `MapPhoneLinks.jsx` is gone. `poweredByHeader` is still unset; the rest weren't re-checked. |
+
+**New since the audit, and fine:** the on-call sheet is read with a read-only API key, and
+only the `Jobs` tab and dated tabs are fetched, so `SHIFTERS` (phone numbers) is never
+read. The webhook and cron compare secrets in constant time (`lib/secretsMatch.js`). The
+places feature never sends other drivers' user ids to the client.
+
+---
+
 ## Part 1 — Threat model
 
 **What we are protecting**
@@ -38,7 +84,7 @@ before pushing. Prefer additive, reversible changes with a dry-run — the patte
 | User accounts: name, email, phone, bcrypt hash, role, membership | `users`, `accounts` | The user (own), the admin (all) |
 | Comments and votes | `comments` | Any signed-in driver (name + avatar only) |
 | Lookup history | `slicViews` | The user (own, members only), the admin |
-| The driver roster: ~270 real people — name, employee ID, seniority date, personal phone; includes people with no account | `drivers` (and, today, **public git history** — see #1) | Admin; a driver linked to their own roster row |
+| The driver roster: ~270 real people — name, employee ID, seniority date, personal phone; includes people with no account | `drivers` (and, until 2026-10-10, **public git history** — see #1) | Admin; a driver linked to their own roster row |
 | Cover / bid sheets (driver names, schedules) | `cover`, `cover-bid-jobs`, `bid-jobs`, Gemini API | Admin (+ member) |
 | Admin capability (edit dataset, promote users, delete anything) | `users.role` | The maintainer |
 | Secrets: `AUTH_SECRET`, Google OAuth, Atlas URI, Blob token, Gemini key, BMC secret | Vercel env, local `.env` | Nobody |
@@ -114,6 +160,31 @@ ID, seniority date and personal mobile number in a public repository.
    security) so a future paste of a connection string is blocked at push time.
 
 *Blast radius:* every existing clone must be re-cloned. Fine for a solo repo.
+
+*Step 1 done 2026-10-10.* A scan of every blob in history for phone and email shapes found
+two more files than the list above: `utils/allHubs.js` (385 phones) and `utils/centers.js`
+(95), the SLIC dataset with facility addresses and phones, which the privacy policy limits
+to signed-in drivers. The rewrite ran on a fresh mirror clone and dropped all seven paths
+(the five above plus those two):
+
+```
+git filter-repo --invert-paths --path utils/random.js --path utils/random2.js
+  --path utils/comments.js --path utils/allHubs.js --path utils/centers.js
+  --path app/components/drivers/EditDriversData.jsx --path public/data
+```
+
+HEAD's tree came out byte-identical (`1fb6fac`), so production redeployed the same app,
+and the re-scan of the rewritten history found nothing but the maintainer's public contact email and the
+example shapes in `constants.js`. `main` and `admin-review` were force-pushed (old tip
+`75a6de1`, new `5274bd8`). Vercel's 2025-12 PR #1 was superseded by #3; deleting its branch
+closed it. It never had the roster, but it did have `comments.js`, `allHubs.js` and
+`centers.js`. Every commit from 2025-05-26 (`9929a37`) on has a new SHA, so **SHAs cited in
+these docs before 2026-10-10 name the old history**. They're only right if a commit
+predates that date. filter-repo rewrote SHAs inside commit messages but not in file text.
+
+Left: step 2 (GitHub Support: old commits are still reachable on github.com by SHA, and
+`refs/pull/1/head` = `2424c13` can't be force-pushed; requested 2026-10-10, ticket
+#4844294) and step 3. Step 4 done 2026-10-10 (Secret Protection + push protection on).
 
 ---
 
@@ -338,9 +409,24 @@ some routes and via a fresh `getUserByEmail` in others). That is how `SUGGESTION
 
 *Blast radius:* none visible. Every route keeps its status codes and `{ error }` bodies.
 
+*Done 2026-10-10, with one change to the plan.* The guards return instead of throwing:
+`const { session, denied } = await requireAdmin(); if (denied) return denied;` (the idiom
+`slics/[id]/pdf` already used locally). That kept each route's own `try/catch`, messages
+and status codes untouched. A `route()` wrapper would have rewritten the error handling
+of 40 files in a repo with no tests. It's still the natural home for #23 and #28's check
+if those ever want one. There's no `requireMember()`, because the three member checks
+differ: `voters` lets admins in, the two history routes don't. They stay inline after
+`requireUser()`. Pages use `getSession()`, a drop-in for `auth()` with the same shape.
+`app/page.jsx` still looks the user up by email, for a fresh display name: `name` isn't
+refreshed in the token. Checked on a production build with minted cookies: no cookie,
+or a token without a user id, gets 401 on every guarded route and a redirect from the
+middleware. A non-admin gets 403 on admin routes and the admin layout's message.
+
 ---
 
-### [ ] 5. `lib/db/comments.js` is a set of unauthenticated public endpoints
+### [x] 5. `lib/db/comments.js` is a set of unauthenticated public endpoints
+
+**Done:** checked 2026-10-10. The module has no `'use server'` directive.
 
 **Files:** `lib/db/comments.js:1` (`'use server'`)
 
@@ -1082,7 +1168,11 @@ cross-origin clients.**
 
 ---
 
-### [ ] 29. Secrets: inventory, rotation, and an incident runbook
+### [x] 29. Secrets: inventory, rotation, and an incident runbook
+
+**Done 2026-10-10:** the current table, with the four keys added since (the sheet API key
+and id, the sheet webhook secret, `CRON_SECRET`), is in `OPERATIONS.md` → "Secrets".
+That's the copy to keep up to date. The original is below.
 
 **Files:** `.env.example` (accurate today — good; `NEXT_PUBLIC_APP_URL`,
 `BLOB_STORE_ID`, `BLOB_WEBHOOK_PUBLIC_KEY` exist in `.env` but nothing reads them),
@@ -1136,8 +1226,9 @@ PR checklist.
 
 ### Every route handler and page
 
-1. First statement is `await requireUser()` / `requireAdmin()` / `requireMember()` from
-   `lib/authz.js`. No handler calls `auth()` directly. A `GET` is not exempt — the
+1. First statement is `const { session, denied } = await requireUser()` (or
+   `requireAdmin()`) from `lib/authz.js`, then `if (denied) return denied;`. Pages and
+   server components use `getSession()`. Nothing calls `auth()` directly. A `GET` is not exempt — the
    middleware never covers `/api/*`, and `SUGGESTIONS.md` #22 is what "it's only a read"
    looks like in production.
 2. The body goes through `parseBody(request, Schema)`; route params go through
@@ -1218,8 +1309,8 @@ Extend it when a route is added; it is the list of routes.
 
 ### Before shipping a security change
 
-- `npm run build` (lint currently fails on its own config — fix it in #25; until then
-  build is the gate).
+- `npm run build` is the gate (in a scratch copy, never while `next dev` runs). `npm run
+  lint` works again since #3; run it too.
 - Both sign-in paths on a phone, in the installed PWA if the change touches sessions
   or headers (#12).
 - The change is reversible: additive fields, a script with `--dry-run` and a

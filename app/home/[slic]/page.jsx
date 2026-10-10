@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import PageContainer from '@/components/layout/PageContainer';
 import RedirectMessage from '@/components/layout/RedirectMessage';
 import Title from '@/components/slic/Title';
@@ -9,7 +9,7 @@ import { serializeSlic } from '@/lib/serializers';
 
 export default async function SlicPage({ params }) {
   const { slic } = await params;
-  const session = await auth();
+  const session = await getSession();
 
   if (!session) {
     return (

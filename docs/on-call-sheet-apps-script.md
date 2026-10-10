@@ -53,22 +53,22 @@ account so the app updates when the sheet changes. It doesn't touch the sheet."
 
 ## Install
 
-1. Go to **https://script.google.com** → **New project**. Rename it
-   **SLICs sheet notifier**.
-2. Replace everything in `Code.gs` with the script below. Put the sheet ID on the first
-   line, then save (Ctrl+S).
-3. **Project Settings** (⚙) → **Script properties** → **Add script property**.
-   **Property:** `APP_SECRET`. **Value:** the webhook secret. Save.
-4. Back in the **Editor** (< >), choose **install** in the dropdown next to **Run**, then
-   click **Run**.
+1. [x] Go to **https://script.google.com** → **New project**. Rename it
+       **SLICs sheet notifier**.
+2. [x] Replace everything in `Code.gs` with the script below. Put the sheet ID on the first
+       line, then save (Ctrl+S).
+3. [x] **Project Settings** (⚙) → **Script properties** → **Add script property**.
+       **Property:** `APP_SECRET`. **Value:** the webhook secret. Save.
+4. [x] Back in the **Editor** (< >), choose **install** in the dropdown next to **Run**, then
+       click **Run**.
    - **First time:** **Review permissions** → your account. On "Google hasn't verified
      this app", click **Advanced** → **Go to SLICs sheet notifier (unsafe)**. That's normal
      for your own script. Then **Allow**.
    - Google asks for Sheets access because watching a sheet requires it. The script only
      reads the edited tab's name.
    - The log should say `Watching the sheet…`.
-5. Choose **testPing** → **Run**. Once stage 3 is deployed, the log says
-   `Success: the SLICs app received the test.`
+5. [x] Choose **testPing** → **Run**. Once stage 3 is deployed, the log says
+       `Success: the SLICs app received the test.`
 
 ```javascript
 // SLICs sheet notifier
@@ -84,9 +84,17 @@ const DATE_TAB = /^\s*\d{1,2}[\/.]\d{1,2}[\/.](\d{2}|\d{4})\s*$/;
 // Run once to start watching. Safe to run again: it replaces the old triggers.
 function install() {
   removeTriggers_();
-  ScriptApp.newTrigger('onSheetEdit').forSpreadsheet(SHEET_ID).onEdit().create();
-  ScriptApp.newTrigger('onSheetChange').forSpreadsheet(SHEET_ID).onChange().create();
-  Logger.log('Watching the sheet. Edits to Jobs and the dated tabs will notify the SLICs app.');
+  ScriptApp.newTrigger('onSheetEdit')
+    .forSpreadsheet(SHEET_ID)
+    .onEdit()
+    .create();
+  ScriptApp.newTrigger('onSheetChange')
+    .forSpreadsheet(SHEET_ID)
+    .onChange()
+    .create();
+  Logger.log(
+    'Watching the sheet. Edits to Jobs and the dated tabs will notify the SLICs app.',
+  );
 }
 
 // Run to stop watching. Nothing else to undo.
@@ -98,15 +106,20 @@ function uninstall() {
 // Run to check the app gets the message. Changes nothing anywhere.
 function testPing() {
   const code = send_({ changeType: 'TEST' });
-  Logger.log(code === 200 || code === 202
-    ? 'Success: the SLICs app received the test.'
-    : 'The app answered ' + code + ' (401/403: APP_SECRET is wrong; 404: the app side is not deployed yet).');
+  Logger.log(
+    code === 200 || code === 202
+      ? 'Success: the SLICs app received the test.'
+      : 'The app answered ' +
+          code +
+          ' (401/403: APP_SECRET is wrong; 404: the app side is not deployed yet).',
+  );
 }
 
 // A cell was edited: say which tab, only if the app reads it.
 function onSheetEdit(e) {
   const tab = e.range.getSheet().getName();
-  if (tab.trim().toLowerCase() === 'jobs' || DATE_TAB.test(tab)) send_({ tab: tab });
+  if (tab.trim().toLowerCase() === 'jobs' || DATE_TAB.test(tab))
+    send_({ tab: tab });
 }
 
 // Rows, columns or tabs were added or removed. Google doesn't say where, so
@@ -116,8 +129,12 @@ function onSheetChange(e) {
 }
 
 function send_(body) {
-  const secret = PropertiesService.getScriptProperties().getProperty('APP_SECRET');
-  if (!secret) throw new Error('APP_SECRET is missing: Project Settings → Script properties.');
+  const secret =
+    PropertiesService.getScriptProperties().getProperty('APP_SECRET');
+  if (!secret)
+    throw new Error(
+      'APP_SECRET is missing: Project Settings → Script properties.',
+    );
   const response = UrlFetchApp.fetch(APP_URL, {
     method: 'post',
     contentType: 'application/json',
@@ -131,9 +148,15 @@ function send_(body) {
 function removeTriggers_() {
   ScriptApp.getProjectTriggers()
     .filter(function (trigger) {
-      return ['onSheetEdit', 'onSheetChange', 'ping'].indexOf(trigger.getHandlerFunction()) !== -1;
+      return (
+        ['onSheetEdit', 'onSheetChange', 'ping'].indexOf(
+          trigger.getHandlerFunction(),
+        ) !== -1
+      );
     })
-    .forEach(function (trigger) { ScriptApp.deleteTrigger(trigger); });
+    .forEach(function (trigger) {
+      ScriptApp.deleteTrigger(trigger);
+    });
 }
 ```
 

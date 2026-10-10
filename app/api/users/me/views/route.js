@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import client from '@/lib/db/client';
 
 export const runtime = 'nodejs';
 
 export async function GET() {
   try {
-    const session = await auth();
-
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const { session, denied } = await requireUser();
+    if (denied) return denied;
 
     const db = client.db();
 

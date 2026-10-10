@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { isSaturday } from '@/lib/onCallSheet';
 import {
   getCoverBidPickEvents,
@@ -11,13 +11,8 @@ import {
 // A week's saved picks and their recent changes. Reads MongoDB only; the sheet
 // is read by POST /api/cover-bid-jobs/refresh.
 export async function GET(request) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  if (session.user.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-  }
+  const { denied } = await requireAdmin();
+  if (denied) return denied;
 
   const weekEnding = new URL(request.url).searchParams.get('weekEnding');
   if (!isSaturday(weekEnding)) {

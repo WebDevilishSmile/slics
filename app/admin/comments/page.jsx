@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import { getAllSlics } from '@/lib/db/slics';
 
 import CommentsSection from '@/components/admin/comments/CommentsSection';
@@ -12,7 +12,7 @@ import { Suspense } from 'react';
 import HydrationGuard from '@/components/utility/HydrationGuard';
 
 async function CommentsPage() {
-  const session = await auth();
+  const session = await getSession();
 
   if (!session) {
     // If the user is not authenticated, redirect them to the sign-in page

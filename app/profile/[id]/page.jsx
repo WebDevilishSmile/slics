@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import { getCommentsByUserId } from '@/lib/db/comments';
 import { getUserById } from '@/lib/db/users';
 import { serializeComments, serializeUser } from '@/lib/serializers';
@@ -25,7 +25,7 @@ async function ProfilePage({ params }) {
     );
   }
 
-  const session = await auth();
+  const session = await getSession();
   if (!session) {
     return (
       <RedirectMessage

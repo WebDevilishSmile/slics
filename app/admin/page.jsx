@@ -1,5 +1,5 @@
 import { Typography, Paper } from '@mui/material';
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import AdminLinks from '@/components/admin/AdminLinks';
 import JobChangesNotice from '@/components/admin/sheetJobs/JobChangesNotice';
 import { getUnseenJobChanges } from '@/lib/db/sheetJobs';
@@ -17,7 +17,7 @@ async function unseenJobChanges(userId) {
 }
 
 async function AdminPage() {
-  const session = await auth();
+  const session = await getSession();
   const jobChanges = await unseenJobChanges(session?.user?.id);
 
   const adminLinks = [

@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireAdmin } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { getSlicById, updateSlic } from '@/lib/db/slics';
@@ -6,24 +6,6 @@ import { deleteSlicPdf, putSlicPdf } from '@/lib/blob';
 import { SLIC_PDF_MAX_BYTES } from '@/constants';
 
 // `[id]` is the slic's MongoDB _id, same as the parent route's methods.
-
-async function requireAdmin() {
-  const session = await auth();
-  if (!session) {
-    return {
-      error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
-    };
-  }
-  if (session.user.role !== 'admin') {
-    return {
-      error: NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 },
-      ),
-    };
-  }
-  return { session };
-}
 
 function isPdfFile(file) {
   // Browsers occasionally send an empty type for PDFs, so accept the
@@ -36,8 +18,8 @@ function isPdfFile(file) {
 
 // POST: upload (or replace) the PDF for a slic
 export async function POST(request, { params }) {
-  const { session, error } = await requireAdmin();
-  if (error) return error;
+  const { session, denied } = await requireAdmin();
+  if (denied) return denied;
 
   const { id } = await params;
 
@@ -107,8 +89,8 @@ export async function POST(request, { params }) {
 
 // DELETE: remove the PDF from a slic
 export async function DELETE(request, { params }) {
-  const { session, error } = await requireAdmin();
-  if (error) return error;
+  const { session, denied } = await requireAdmin();
+  if (denied) return denied;
 
   const { id } = await params;
 

@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import { getHistoryPage, parseHistoryQuery } from '@/lib/db/slicViews';
 
 import HistoryView from '@/components/history/HistoryView';
@@ -10,7 +10,7 @@ import { Typography } from '@mui/material';
 const FILTER_KEYS = ['q', 'range', 'from', 'to', 'type', 'notes', 'sort'];
 
 export default async function HistoryPage({ searchParams }) {
-  const session = await auth();
+  const session = await getSession();
 
   if (!session) {
     return (

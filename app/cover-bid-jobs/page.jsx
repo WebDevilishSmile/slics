@@ -7,7 +7,7 @@ import {
 } from '@/lib/db/coverBidJobs';
 import CoverBidJobsTable from '@/components/coverBidJobs/CoverBidJobsTable';
 import { Typography } from '@mui/material';
-import { auth } from '@/auth';
+import { getSession } from '@/lib/authz';
 import NotMember from '@/components/coverBidJobs/NotMember';
 import { getUpcomingSaturday } from '@/lib/format';
 import { COVER_BID_MONTHS_BACK } from '@/constants';
@@ -23,7 +23,7 @@ export default async function CoverBidJobsPage() {
   const serializedJobs = serializeCoverBidJobs(jobs);
 
   // Check if user is a BMC member
-  const session = await auth();
+  const session = await getSession();
   const user = session?.user;
 
   if (!user || !user.bmcMember || user.role !== 'admin') {

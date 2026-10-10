@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -13,9 +13,8 @@ import { checkRateLimit } from '@/lib/rateLimit';
 // GET ?slic=<numSlic> — the SLIC's tips as a thread, shaped for the signed-in
 // viewer (see getSlicThread). Responds `{ comments, slicName }`.
 export async function GET(request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const numSlic = request.nextUrl.searchParams.get('slic');
   if (!numSlic)
@@ -52,9 +51,8 @@ const COMMENT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 // an optional `{ lat, lng }`; with one, `content` may be empty. Was
 // /api/comment until 2026-10-08.
 export async function POST(request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { session, denied } = await requireUser();
+  if (denied) return denied;
 
   const rate = await checkRateLimit({
     key: `comment:${session.user.id}`,

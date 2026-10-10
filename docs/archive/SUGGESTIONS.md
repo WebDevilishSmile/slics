@@ -1,5 +1,9 @@
 # SLICS — Improvement Suggestions
 
+> **Archived (closed 2026-10-07).** Every item is done. Kept because code comments and
+> `CLAUDE.md` cite its item numbers (`SUGGESTIONS.md #10`, `#14`), and the entries explain
+> conventions that still hold. Don't renumber. Open work lives in [`../TODOS.md`](../TODOS.md).
+
 Work through these one at a time. Each item is self-contained with the exact files to touch.
 
 ---

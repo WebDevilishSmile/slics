@@ -14,7 +14,8 @@ The app is used daily in production.
     found` because `ON_CALL_SHEET_ID` on Vercel was wrong. A bad key would answer 400 and
     an IP-restricted key 403, so a 404 from the tab list always means the sheet id.
 - **Stage 3:** in progress. The webhook and the sync lock are deployed, and the admin's
-  script is installed. The daily cron is built. Next: the alerts, then the health line.
+  script is installed. The daily cron is deployed. The health line is built. Next: the
+  job-change alerts.
 - **Setup for stages 1–2:**
   - [x] **API key:** the Google Sheets API is enabled, with an API key restricted to it.
   - [x] **Env:** `GOOGLE_SHEETS_API_KEY` and `ON_CALL_SHEET_ID` are in `.env` and on Vercel.
@@ -283,8 +284,17 @@ alert; cover weeks update quietly.
   - **Clearing:** opening `/admin/jobs` POSTs `/seen` with its newest change's `seenAt`
     and zeroes the store. The feed puts a "New" label on changes after the previous
     `jobChangesSeenAt`.
-- [ ] **Health on `/admin/jobs`:** "Sheet last pinged … · last synced …", `lastError` as an
-  inline Alert, and a warning after 2 days with no ping ("your sheet script may be off").
+- [x] **Health on `/admin/jobs`:** `components/admin/sheetJobs/SheetSyncHealth.jsx` under
+  the Refresh button, fed by `getSheetSyncHealth` (`lib/db/syncState.js`).
+  - "Last checked …" names what read it: Refresh, a sheet edit or the daily check
+    (`lastSource`).
+  - "Sheet notifier: last ping …".
+  - A warning Alert after 2 days with no ping (or none ever): "Your sheet script may be off".
+  - An error Alert per target whose last read failed, for the Jobs tab and weeks from today
+    on (an old week's error is dropped). It clears on the next good read of that target.
+  - `todayInNewYork` moved to `lib/onCallSheet.js` so the page can use it.
+  - Checked 2026-10-10 at 390px, light and dark, on a scratch preview page with healthy,
+    silent and failing states.
 - [ ] **Env** (`.env.example`):
   - [x] `ON_CALL_SHEET_WEBHOOK_SECRET` (`openssl rand -hex 32`; the same value is the
     script's `APP_SECRET`): in `.env` and on Vercel since 2026-10-10.

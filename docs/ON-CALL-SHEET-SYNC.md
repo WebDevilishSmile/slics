@@ -13,9 +13,8 @@ The app is used daily in production.
   - The first production refresh failed with Google's `404: Requested entity was not
     found` because `ON_CALL_SHEET_ID` on Vercel was wrong. A bad key would answer 400 and
     an IP-restricted key 403, so a 404 from the tab list always means the sheet id.
-- **Stage 3:** in progress. The webhook and the sync lock are built and were tested
-  against a scratch database (below). Next: the daily cron, then the alerts, then the
-  health line.
+- **Stage 3:** in progress. The webhook and the sync lock are deployed, and the admin's
+  script is installed. The daily cron is built. Next: the alerts, then the health line.
 - **Setup for stages 1–2:**
   - [x] **API key:** the Google Sheets API is enabled, with an API key restricted to it.
   - [x] **Env:** `GOOGLE_SHEETS_API_KEY` and `ON_CALL_SHEET_ID` are in `.env` and on Vercel.
@@ -96,6 +95,14 @@ often for that and update quietly.
 
 Parsers find headers by their text, never by fixed row or column numbers, so an inserted
 row or column doesn't break them.
+
+**Hidden rows are read on purpose (decided 2026-10-10).** The sheet's owner hides rows
+with "Hide row": on 10/17/2026, the picked jobs SH16, WA09 and SH12, and pick rows for
+drivers with no picks. The 10/10 and 10/24 tabs hide pick rows the same way. The
+Sheets API returns hidden rows like any other, and the app keeps them, so a week can list
+jobs drivers don't see in the sheet. Picked ones show grayed as "Picked". Skipping them
+would take one more request per tab for `rowMetadata.hiddenByUser`, which carries no cell
+data.
 
 ---
 
@@ -246,10 +253,15 @@ alert; cover weeks update quietly.
   - Tested 2026-10-10 on a scratch build against a throwaway database: 401/403, SHIFTERS
     and a past week read nothing, `TEST` reads nothing, a full ping read Jobs and three
     weeks in 2.8 s, and two Jobs pings at once gave one 202 and one 200 with 2 passes.
-- [ ] **Daily backstop.** `vercel.json` cron (once a day on Hobby) →
-  `GET /api/cron/on-call-sheet-sync`.
-  - It checks `Authorization: Bearer ${CRON_SECRET}` and does the same full refresh as a
-    ping with no tab.
+- [x] **Daily backstop.** `vercel.json` cron → `GET /api/cron/on-call-sheet-sync`, at
+  10:00 UTC (6 AM Eastern in summer, 5 AM in winter). Hobby runs crons once a day, at
+  some point within the scheduled hour, and only on the production deployment.
+  - It checks `Authorization: Bearer ${CRON_SECRET}` (`secretsMatch`, `lib/secretsMatch.js`,
+    shared with the webhook) and does the same full refresh as a ping with no tab
+    (`syncFromSheet({}, { source: 'cron' })`).
+  - Tested 2026-10-10 on a scratch build against a throwaway database: no token, a wrong
+    token or the bare secret → 401, POST → 405, the right token read Jobs and three weeks
+    in 3.1 s with `lastSource: 'cron'`.
 - [ ] **Alerts (Jobs tab only):**
   - **Seen marker:** `jobChangesSeenAt` on the admin's `users` doc (server-side, so phone
     and desktop agree), set through `lib/db/users.js`. `null` means everything since the
@@ -274,12 +286,12 @@ alert; cover weeks update quietly.
 - [ ] **Health on `/admin/jobs`:** "Sheet last pinged … · last synced …", `lastError` as an
   inline Alert, and a warning after 2 days with no ping ("your sheet script may be off").
 - [ ] **Env** (`.env.example`):
-  - [x] `ON_CALL_SHEET_WEBHOOK_SECRET` is in `.env.example`: `openssl rand -hex 32`; the
-    same value goes in the script's `APP_SECRET`. It still has to be set on Vercel. Until
-    then the webhook answers 500.
-  - [ ] `CRON_SECRET`.
-- [ ] **Install.** The admin follows the guide, runs `testPing` (200), and gives their
-  superior a heads-up.
+  - [x] `ON_CALL_SHEET_WEBHOOK_SECRET` (`openssl rand -hex 32`; the same value is the
+    script's `APP_SECRET`): in `.env` and on Vercel since 2026-10-10.
+  - [ ] `CRON_SECRET`: in `.env.example` and `.env`; still to be set on Vercel. Until then
+    the cron route answers 500.
+- [x] **Install.** The admin installed the script on 2026-10-10; `testPing` answered 200.
+  - [ ] A heads-up to their superior.
 
 ## Stage 4 — Cleanup (after stage 1 has run for a few weeks)
 

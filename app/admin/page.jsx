@@ -1,6 +1,7 @@
 import { Typography, Paper } from '@mui/material';
 import { getSession, isSuperAdmin } from '@/lib/authz';
 import AdminLinks from '@/components/admin/AdminLinks';
+import ThankYouPreview from '@/components/admin/ThankYouPreview';
 import JobChangesNotice from '@/components/admin/sheetJobs/JobChangesNotice';
 import { getUnseenJobChanges } from '@/lib/db/sheetJobs';
 import { getJobChangesSeenAt } from '@/lib/db/users';
@@ -40,6 +41,7 @@ async function AdminPage() {
       <Paper variant='panel' sx={{ gap: 3 }}>
         <JobChangesNotice {...jobChanges} />
         <AdminLinks links={adminLinks} />
+        <ThankYouPreview firstName={session?.user?.name?.split(' ')[0]} />
       </Paper>
     </>
   );

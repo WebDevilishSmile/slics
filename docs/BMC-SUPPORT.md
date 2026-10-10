@@ -112,10 +112,18 @@ to remove it).
 - [x] `/home` shows `support/SupportThanks.jsx` when the driver has support not yet
       thanked (`getUnthankedSupport`).
   - It counts a coffee or a new membership, never a cancellation.
-  - The text is "Thanks for the coffee, John." or "Thanks for becoming a member, John.",
-    then "Support like yours keeps SLICs running for every driver."
-- [ ] I'm thinking the thank you should be a beautifully crafted note. With animation. Click the envelope and it opens with confetti can balloons flying across the screen. The animation should be smooth and delightful, making the user feel genuinely appreciated for their support. I would like to add a button on the admin page to test this animation as well.
-- [x] Dismissing it calls `POST /api/users/me/thanks` (`markSupportThanked`), which
+  - The card reads "A note for you, John"; the note's words are `noteCopy` in
+    `support/ThankYouNote.jsx`.
+- [x] The note (built 2026-10-10): the /home card holds a sealed envelope
+      (`support/Envelope.jsx`). Tapping it opens `support/ThankYouNote.jsx`: the seal
+      pops, the flap swings up, the letter slides out and morphs into the full note (a
+      View Transition), and confetti fires from the bottom corners while balloons float up
+      (`support/Celebration.jsx`: a canvas plus transform-only balloons, theme colors,
+      `zIndex: 'celebration'`). The note is signed "Tiago" in Caveat, with wording for a
+      coffee, a membership and monthly support. Under reduced motion it opens straight to
+      the letter with no celebration. `/admin` has a preview (`admin/ThankYouPreview.jsx`)
+      that stamps nothing.
+- [x] Closing the note or dismissing the card calls `POST /api/users/me/thanks` (`markSupportThanked`), which
       stamps `thankedAt` on every waiting event. It's once per visit's worth of support, not
       once per event.
 - [x] Only events saved since stage 1 count, so nobody gets a backdated thank-you.

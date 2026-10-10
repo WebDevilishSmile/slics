@@ -89,6 +89,9 @@ let theme = createTheme({
     // A sticky filter bar over its own scrolling table (bids, cover bid jobs);
     // below every MUI layer so menus, dialogs and the app bar still cover it.
     stickyBar: 10,
+    // The thank-you note's confetti and balloons (support/Celebration.jsx): over
+    // everything, dialogs included, and never taking a tap.
+    celebration: 1600,
   },
   // App-level layout tokens. Not MUI keys — read them as `theme.layout.*`
   // (import the theme directly; that works in server components too because

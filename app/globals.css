@@ -177,3 +177,22 @@ a {
     margin: 2rem 0;
   }
 }
+
+/* The thank-you note (support/ThankYouNote.jsx): the letter peeking out of
+   the envelope morphs into the full note, and the envelope drops away. The
+   reduced-motion floor above turns both off (the note opens straight to the
+   letter then anyway). */
+::view-transition-group(thank-letter) {
+  animation-duration: 550ms;
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-old(thank-envelope) {
+  animation: thank-envelope-away 450ms var(--ease-out) both;
+}
+@keyframes thank-envelope-away {
+  to {
+    opacity: 0;
+    translate: 0 35%;
+    scale: 0.9;
+  }
+}

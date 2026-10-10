@@ -115,10 +115,11 @@ places feature never sends other drivers' user ids to the client.
 - `middleware.js` is advisory. It skips `/api/*`, skips any path containing a `.`, and
   the installed Next.js has two published middleware-bypass advisories (#3). Treat it as
   UX (send people to sign-in), never as authorization.
-- The real boundary is `await auth()` inside each route handler and page. That check
-  is present in every route today (good) — but it is written `if (!session)`, which the
-  installed Auth.js can fail open on (#4), and pages under `app/admin/` rely on the
-  layout for it (#7).
+- The real boundary is the session check inside each route handler and page. At audit
+  time it was `await auth()` written `if (!session)`, which the installed Auth.js could
+  fail open on (#4). Since 2026-10-10 every guarded route calls `requireUser()` /
+  `requireAdmin()` and pages call `getSession()` (`lib/authz.js`), which only count a
+  session with a `user.id`. Pages under `app/admin/` still rely on the layout for it (#7).
 - There is **no boundary at the data layer.** `lib/db/*.js` trust their callers
   completely, return whole documents (password hashes included), and one of them is
   itself exposed as a set of public endpoints (#5).
@@ -350,7 +351,7 @@ Going forward this is a practice, not a task — see Part 3, "Dependencies".
 
 ---
 
-### [ ] 4. `if (!session)` fails open on the installed Auth.js; centralize the guard
+### [x] 4. `if (!session)` fails open on the installed Auth.js; centralize the guard
 
 **Files:** every `app/api/**/route.js`, `app/admin/layout.jsx`, every page that calls
 `auth()` (`app/home/page.jsx`, `app/history/page.jsx`, `app/profile/[id]/page.jsx`,

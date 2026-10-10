@@ -11,6 +11,7 @@ function FormActions({
   mode = 'create',
   onSubmit,
   isComplete,
+  reportId,
 }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
@@ -61,15 +62,29 @@ function FormActions({
         handleClear();
       }
 
+      // Opened from a driver report's Fix: the save resolves it, and the
+      // admin goes back to the queue. The SLIC is saved either way.
+      let reportStillOpen = false;
+      if (reportId) {
+        const report = await fetch(`/api/slic-reports/${reportId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'resolved' }),
+        }).catch(() => null);
+        reportStillOpen = !report?.ok;
+      }
+
       showSnackbar(
-        mode === 'edit'
-          ? 'SLIC updated.'
-          : 'SLIC created.',
-        'success'
+        reportStillOpen
+          ? "SLIC updated, but the report couldn't be closed. Dismiss it from the queue."
+          : mode === 'edit'
+            ? 'SLIC updated.'
+            : 'SLIC created.',
+        reportStillOpen ? 'warning' : 'success'
       );
 
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      router.push('/admin/slics');
+      router.push(reportId ? '/admin/reports' : '/admin/slics');
     } catch (error) {
       console.error('Error:', error);
 

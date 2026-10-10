@@ -39,6 +39,7 @@ import {
 
 import { BMC_URL } from '@/constants';
 import { refreshJobChangesCount, useJobChangesCount } from '@/lib/jobChangesStore';
+import { refreshOpenReportsCount, useOpenReportsCount } from '@/lib/slicReportsStore';
 
 import InstallMenuItem from '@/components/install/InstallMenuItem';
 import ModeSwitch from '@/components/layout/ModeSwitch';
@@ -115,13 +116,24 @@ function UserMenu({ user, signOutAction }) {
   const pathname = usePathname();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
-  // Admins: Jobs-tab changes they haven't seen, rechecked on every route
-  // change (stage 3 alerts, docs/ON-CALL-SHEET-SYNC.md). /admin/jobs clears it.
+  // Admins: Jobs-tab changes they haven't seen (stage 3 alerts,
+  // docs/ON-CALL-SHEET-SYNC.md; /admin/jobs clears them) and open SLIC reports
+  // (RECOMMENDATIONS.md #5; they count until closed on /admin/reports), both
+  // rechecked on every route change.
   const isAdmin = user?.role === 'admin';
   const jobChanges = useJobChangesCount();
-  const jobChangesText = `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`;
+  const openReports = useOpenReportsCount();
+  const alerts = jobChanges + openReports;
+  const alertsText = [
+    jobChanges && `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`,
+    openReports && `${openReports} SLIC report${openReports === 1 ? '' : 's'}`,
+  ]
+    .filter(Boolean)
+    .join(', ');
   useEffect(() => {
-    if (isAdmin) refreshJobChangesCount();
+    if (!isAdmin) return;
+    refreshJobChangesCount();
+    refreshOpenReportsCount();
   }, [isAdmin, pathname]);
 
   const handleOpen = () => setOpen(true);
@@ -146,11 +158,11 @@ function UserMenu({ user, signOutAction }) {
         // On the blue header the focus outline takes the icon's color.
         sx={{ color: 'text.light', '&.Mui-focusVisible': { outlineColor: 'currentColor' } }}
         onClick={handleOpen}
-        aria-label={isAdmin && jobChanges ? `Open menu, ${jobChangesText}` : 'Open menu'}
+        aria-label={isAdmin && alerts ? `Open menu, ${alertsText}` : 'Open menu'}
         aria-expanded={open}
         aria-controls={MENU_ID}
       >
-        <Badge variant='dot' color='error' invisible={!isAdmin || !jobChanges}>
+        <Badge variant='dot' color='error' invisible={!isAdmin || !alerts}>
           <MenuOutlined />
         </Badge>
       </IconButton>
@@ -289,9 +301,9 @@ function UserMenu({ user, signOutAction }) {
               onClick={handleClose}
               href='/admin'
               label='Admin'
-              secondary={jobChanges ? jobChangesText : 'Admin only'}
+              secondary={alerts ? alertsText : 'Admin only'}
               icon={
-                <Badge badgeContent={jobChanges} color='error' max={99}>
+                <Badge badgeContent={alerts} color='error' max={99}>
                   <AdminPanelSettingsOutlined />
                 </Badge>
               }

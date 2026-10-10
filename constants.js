@@ -189,3 +189,14 @@ export const PLACE_COMMENT_EXAMPLE = {
 // SLIC comments (driver tips) are plain text since 2026-10-07; enforced in
 // the composer and in lib/db/comments.js (validateSlicComment).
 export const SLIC_COMMENT_MAX_LENGTH = 2000;
+
+// "Something wrong?" reports on a SLIC (RECOMMENDATIONS.md #5): what a driver
+// can say is wrong, in the order the form shows them. `needsNote`: "other"
+// says nothing on its own.
+export const SLIC_REPORT_KINDS = [
+  { value: 'phone', label: 'Wrong phone number' },
+  { value: 'address', label: 'Wrong address' },
+  { value: 'closed', label: 'Closed or moved' },
+  { value: 'other', label: 'Something else', needsNote: true },
+];
+export const SLIC_REPORT_NOTE_MAX_LENGTH = 500;

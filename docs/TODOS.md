@@ -20,6 +20,12 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
       clear when `/admin/jobs` opens
 - [ ] one Refresh each (Jobs and a cover week) on the live site to confirm the deployment
 
+### SLIC reports (`RECOMMENDATIONS.md` #5)
+
+- [ ] send a test report from a phone, then Fix it from `/admin/reports` and check the
+      banner, the menu badge and the SLIC's history
+- [ ] `npm run db:indexes` for the two `slic-reports` indexes
+
 ### After a trial period
 
 - [ ] **on or after 2026-10-22:** delete the 13 old-path API alias files
@@ -198,6 +204,8 @@ order that file suggests, minus what's done:
 
 ### SLIC Lookup
 
+- [x] "Something wrong with this SLIC?" reports, with an admin queue at `/admin/reports`
+      (2026-10-10, `RECOMMENDATIONS.md` #5)
 - [x] add ability for driver to add gps coordinates or pin to comment ("Add pin" in the tip and reply boxes and when editing, with or without text; "Pinned spot" opens it in the driver's maps app)
 - [x] add ability to cycle through tips on empty state display (a "next tip" arrow; each visit starts at the tip after the last one seen)
 - [x] add ability for driver to edit their own comments

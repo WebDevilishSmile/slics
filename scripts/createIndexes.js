@@ -37,6 +37,10 @@ async function main() {
       { collection: 'placeComments', spec: { userId: 1 } },
       // Buy Me a Coffee deliveries (docs/BMC-SUPPORT.md). The unique key (a hash
       // of the body) makes a retried or replayed delivery a no-op.
+      // Driver reports on SLICs (lib/db/slicReports.js): the open queue and
+      // the closed list, and the account-deletion unlink.
+      { collection: 'slic-reports', spec: { status: 1, created_at: 1 } },
+      { collection: 'slic-reports', spec: { userId: 1 } },
       { collection: 'bmc-events', spec: { key: 1 }, options: { unique: true } },
       { collection: 'bmc-events', spec: { receivedAt: -1 } },
       { collection: 'bmc-events', spec: { userId: 1, receivedAt: -1 } },

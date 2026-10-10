@@ -59,6 +59,12 @@ export default function PrivacyPage() {
               comments.
             </>,
             <>
+              <strong>Reports about a SLIC.</strong> If you use &quot;Something
+              wrong with this SLIC?&quot;, what you pick and any note you write
+              are stored with your account and the SLIC, so the administrator
+              can check and fix it. Other drivers never see reports.
+            </>,
+            <>
               <strong>Messages you send us.</strong> If you email us, we keep
               the email so we can reply.
             </>,
@@ -144,8 +150,8 @@ export default function PrivacyPage() {
             <>
               <strong>The administrator.</strong> As the person running the app,
               Tiago Davila can see account details (including your email and
-              phone number if you added one), comments and lookup history in
-              order to keep the app working and moderate comments, and the
+              phone number if you added one), comments, reports about SLICs and lookup
+              history in order to keep the app working and moderate comments, and the
               support you send through Buy Me a Coffee.
             </>,
             <>
@@ -187,6 +193,7 @@ export default function PrivacyPage() {
             'Account and profile details are kept for as long as your account exists.',
             'Comments are kept until you delete them, or until your account is deleted. Delete SLIC comments from your profile page and comments on a place from the place itself.',
             'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
+            'Reports about a SLIC are kept after they are dealt with, as a record of what was fixed. If you delete your account they stay, no longer linked to you.',
             'Lookup history is kept while your account exists, and the History page shows all of it. Removing an entry hides it from that page; it is still counted in your lookup total, and it is deleted with your account.',
             "A record of each support or membership change you make through Buy Me a Coffee is kept as the app's record of support. If you delete your account it stays, no longer linked to you; ask us to remove it.",
             'Sign-up rate-limit records expire automatically within about an hour.',

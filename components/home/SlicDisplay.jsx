@@ -1,6 +1,7 @@
 'use client';
 
 import EmptySlic from './EmptySlic';
+import ReportSlic from './ReportSlic';
 import SlicActions from './SlicActions';
 import SlicCardSkeleton from './SlicCardSkeleton';
 import SlicDetailsContainer from './SlicDetailsContainer';
@@ -16,6 +17,7 @@ function SlicDisplay({ commentsCount, loading, slic, user }) {
     <SlicDetailsContainer>
       <TitleAddress slic={slic} />
       <SlicActions slic={slic} commentsCount={commentsCount} showTips />
+      <ReportSlic key={slic.numSlic} slic={slic} />
     </SlicDetailsContainer>
   );
 }

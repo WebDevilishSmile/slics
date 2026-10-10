@@ -16,6 +16,7 @@ export default function SlicForm({
   initialData = null,
   mode = 'create', // 'create' or 'edit'
   onSubmit,
+  reportId, // a driver report this edit fixes (app/admin/edit/[slic]/page.jsx)
 }) {
   const [type, setType] = useState(initialData?.type || 'center');
   const [numSlic, setNumSlic] = useState(initialData?.numSlic || '');
@@ -82,6 +83,7 @@ export default function SlicForm({
         onSubmit={onSubmit}
         mode={mode}
         isComplete={isComplete}
+        reportId={reportId}
       />
     </FormContainer>
   );

@@ -16,7 +16,7 @@ about this folder.
 | 2   | Buy Me a Coffee: track support, thank people, show impact             | Everyone        | S–M    | The BMC webhook, `SECURITY.md` #14                          |
 | 3   | Cover drivers and call-in times from the sheet (**built 2026-10-10**) | Admin           | S–M    | `cover-bid-picks`, the sheet sync                           |
 | 4   | Embossed headings                                                     | Everyone        | S      | `sectionHeading`, `theme.soft`                              |
-| 5   | "Something's wrong?" reports on a SLIC                                | Drivers → admin | S–M    | The job-change alert pattern                                |
+| 5   | "Something's wrong?" reports on a SLIC (**built 2026-10-10**)        | Drivers → admin | S–M    | The job-change alert pattern                                |
 | 6   | Safety notes at the top of the card                                   | Drivers         | S–M    | Tips, votes                                                 |
 | 7   | Tip freshness                                                         | Drivers         | S      | Tips, votes                                                 |
 | 8   | Pinned SLICs, filled from your job                                    | Drivers         | S      | `archive/UI-SUGGESTIONS.md` #54, idea 1                     |
@@ -234,6 +234,17 @@ know when one changes.
   (`JobChangesNotice`, `lib/jobChangesStore.js`). Resolving one opens the edit form, so
   the fix lands in `slic_history`.
 - Rate-limit it per driver.
+
+*Built 2026-10-10.* "Something wrong with this SLIC?" sits under the /home card
+(`home/ReportSlic.jsx`) and opens a form: the four kinds (`SLIC_REPORT_KINDS` in
+`constants.js`) and a note, required for "Something else". Reports go to `slic-reports`
+(`lib/db/slicReports.js`, `POST /api/slic-reports`, 5 an hour per driver). A driver who
+reports the same thing again while it's open updates their report instead of adding one.
+The queue is `/admin/reports`: Fix opens the edit form with the report above it
+(`?report=`), and saving resolves it; Dismiss closes one that needs no change; closed
+ones can be reopened. Open reports raise a banner on `/admin` and count toward the menu
+badge with job changes (`lib/slicReportsStore.js`). Unlike job changes they count until
+closed, not until seen. The privacy page lists them.
 
 ### 6. Safety notes at the top of the card
 

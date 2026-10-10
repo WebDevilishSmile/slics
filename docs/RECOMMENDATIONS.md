@@ -128,7 +128,7 @@ Write it up as `DAILY-LOG.md` when you start.
 
 ### 2. Buy Me a Coffee: track support, thank people, show impact
 
-**In progress:** the plan is `BMC-SUPPORT.md`, and stage 1 (record every event) was built on 2026-10-10.
+**Mostly built 2026-10-10:** recording, the Supporters page, the thank-you and the impact line. The plan and what's left are in `BMC-SUPPORT.md`.
 
 **Today** the webhook (`app/api/webhooks/buymeacoffee`) handles only membership
 started/cancelled, flips `users.bmcMember` by exact email, and keeps nothing else.

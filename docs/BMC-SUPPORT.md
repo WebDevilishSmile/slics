@@ -8,7 +8,9 @@ plan and the checklist.
 
 - **Stage 1 built:** every webhook delivery is saved, and the webhook is hardened.
 - **Stage 2 built:** the admin Supporters page.
-- **Stages 3–4 not started.**
+- **Stage 3 built:** the thank-you notice.
+- **Stage 4 mostly built:** the impact line. Left: the "what it takes" card, which
+  needs the real monthly costs.
 - **SuperAdmin role:** deferred until there's a second admin (`TODOS.md`).
 
 ## Why
@@ -76,18 +78,35 @@ Not done from `SECURITY.md` #14:
 - [ ] Later, maybe: a "link to account" action on an unmatched email. Today the fix is to
   switch membership on by hand in Users.
 
-## Stage 3 — Thank-you notice
+## Stage 3 — Thank-you notice (built)
 
-- On a supporter's next visit, a one-time `SoftNotice`: "Thanks for the coffee, Tiago."
-- Dismissing it stamps `thankedAt` on the event.
-- Optional and opt-in: "Supporter since …" on their profile.
+- [x] `/home` shows `support/SupportThanks.jsx` when the driver has support not yet
+  thanked (`getUnthankedSupport`).
+  - It counts a coffee or a new membership, never a cancellation.
+  - The text is "Thanks for the coffee, John." or "Thanks for becoming a member, John.",
+    then "Support like yours keeps SLICs running for every driver."
+- [x] Dismissing it calls `POST /api/users/me/thanks` (`markSupportThanked`), which
+  stamps `thankedAt` on every waiting event. It's once per visit's worth of support, not
+  once per event.
+- [x] Only events saved since stage 1 count, so nobody gets a backdated thank-you.
+- [ ] Optional and opt-in: "Supporter since …" on their profile.
 
-## Stage 4 — Show what the app does
+## Stage 4 — Show what the app does (mostly built)
 
-- Live numbers on `/about` and the membership page: "Drivers looked up N SLICs this month
-  and shared M tips" (one aggregate over `slicViews` and `comments`).
-- The "what it takes" card, and one dismissible ask after a driver's 50th lookup, never on
-  the lookup path.
+- [x] `support/ImpactLine.jsx`: "In the last 30 days, drivers looked up 2,482 SLICs and
+  shared 12 tips."
+  - **Where:** under The Community on `/about`, and above the Buy Me a Coffee button in
+    the membership prompt.
+  - **How it counts:** `getImpactNumbers` (`lib/impact.js`) counts `slicViews` rows (hidden
+    ones included) and non-deleted `comments` (by `_id` time, because `created_at` formats
+    vary). It's cached for an hour.
+  - **When it hides:** under 50 lookups, or if the counts fail.
+  - It reads the last 30 days, not "this month", so the 1st of the month doesn't show a
+    tiny number.
+- [x] The ask after value already exists. The search shows a support notice tied to the
+  driver's lookup count, snoozed for 30 days (`home/SlicsSearch.jsx`).
+- [ ] The "what it takes" card: what hosting costs a month, that one driver builds the app
+  in their own time, and what support goes toward next. It needs the real numbers from you.
 
 ## Verifying
 

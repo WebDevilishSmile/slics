@@ -39,7 +39,7 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 ### User
 
-I need to establish a way to authenticate users. We should have a way to link the driver on the jobs list and cover and on-call list, to the user of the app. Email address will link to the driver. Sometimes the user's name and email does not match exactly with the driver roster, so additional verification may be needed. Find a way to have the user claim their driver identity. This has to be verified by admin. A verification process like X does with the check mark or badge for verified users could be implemented. Eventually, I would like the cover bid weekly bidding process to be done on this app. The verified user logs in, sees what jobs are available and their pick time (call in time), and can take his bid when his time comes. We need to maintain anynimity
+I need to establish a way to authenticate users. We should have a way to link the driver on the jobs list and cover and on-call list, to the user of the app. Email address will link to the driver. Sometimes the user's name and email does not match exactly with the driver roster, so additional verification may be needed. Find a way to have the user claim their driver identity. This has to be verified by admin. A verification process like X does with the check mark or badge for verified users could be implemented. Eventually, I would like the cover bid weekly bidding process to be done on this app. The verified user logs in, sees what jobs are available and their pick time (call in time), and can take his bid when his time comes. We need to maintain anonymity, so other drivers can't see what bids have been made by whom, only admins. I'm thinking a cover page where users can see available bids without revealing who has made them. Once a job is picked it is grayed out but doesn't say who took it. On the cover page there will be the name of the user and his pick time. There can be a way to create a list of bids they want in order of preference. As the jobs are picked those jobs come off of the preferred list for each user. Once the users is on the clock their auto pick will be submitted and the next driver can pick. First thing will be building the cover page for all drivers. Upon entering page, am alert that only verified drivers can see that cover list. They can submit for verification by claiming their name and employee email (employee_id@ups.com). Admins will review and approve these claims to ensure the integrity of the verification process. Once verified, the user will have access to the cover bidding features.
 
 ### Privacy and Terms page
 
@@ -66,9 +66,10 @@ Plan and checklist: `BMC-SUPPORT.md` (design in `RECOMMENDATIONS.md` #2).
 
 - [x] keep track of donations (when and how much): every webhook delivery is saved to
       `bmc-events` (stage 1, 2026-10-10). Run `npm run db:indexes` once for its unique index
-- [x] see them: the admin Supporters page, `/admin/supporters` (stage 2, 2026-10-10)
-- [ ] thank you messages or acknowledgments for donations
-- [ ] don't want to beg for donations aggressively but want to imply the efforts and work put into the project and the significance of supporting it
+- [ ] see them: the admin Supporters page (stage 2)
+- [x] thank you messages or acknowledgments for donations: a one-time notice on /home (stage 3, 2026-10-10)
+- [x] don't want to beg for donations aggressively but want to imply the efforts and work put into the project and the significance of supporting it: the 30-day impact line on /about and the membership prompt (stage 4, 2026-10-10)
+- [ ] the "what it takes" card (hosting cost a month, built in my own time, what support goes toward next): needs the real numbers (`BMC-SUPPORT.md` stage 4)
 - [ ] SuperAdmin role (manages admins, sees the BMC dashboard): deferred until there's a
       second admin; pairs with `SECURITY.md` #19's last-admin guard
 

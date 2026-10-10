@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import crypto from 'crypto';
+import { secretsMatch } from '@/lib/secretsMatch';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { recordSheetPing } from '@/lib/db/syncState';
 import { syncFromSheet } from '@/lib/onCallSheetSync';
@@ -26,7 +26,7 @@ export async function POST(request) {
   if (!secret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  if (!sameSecret(secret, expected)) {
+  if (!secretsMatch(secret, expected)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -62,11 +62,4 @@ export async function POST(request) {
     console.error('Error syncing from an on-call sheet ping:', error);
     return NextResponse.json({ error: "Couldn't read the sheet." }, { status: 502 });
   }
-}
-
-// Constant-time comparison. Hashing first gives both sides the same length,
-// which timingSafeEqual needs.
-function sameSecret(given, expected) {
-  const hash = (value) => crypto.createHash('sha256').update(value).digest();
-  return crypto.timingSafeEqual(hash(given), hash(expected));
 }

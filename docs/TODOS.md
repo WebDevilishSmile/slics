@@ -28,6 +28,8 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 - [ ] **once the sheet has run for a few weeks:** stage 4 cleanup. Delete the bid-sheet photo
       upload, the `extract` route, `@google/genai` and `GEMINI_API_KEY`
       (`ON-CALL-SHEET-SYNC.md` → "Stage 4")
+- [ ] **once the sheet's cover list has proven itself:** drop the unused `cover` collection
+      (its code went 2026-10-10; the rows are kept until then in case the old list is wanted)
 - [ ] **when every SLIC has `pdfUrl`:** retire the Supabase bucket and the `slic.pdf`
       fallback (`CLAUDE.md` → "External integrations"; also closes part of `SECURITY.md` #13)
 
@@ -63,8 +65,8 @@ Design notes: `RECOMMENDATIONS.md` → "2. Buy Me a Coffee".
 
 Design notes: `RECOMMENDATIONS.md` → "3. Cover drivers from the sheet".
 
-- [ ] cover drivers page should be populated from most recent cover-bid list from google sheets. The yellow cells are the cover drivers, 1-20 the remainder are on-call
-- [ ] display the call-in times and availability of cover drivers
+- [ ] available days of cover drivers: find where the sheet shows them, if anywhere (call-in
+      times are done)
 
 ### UI/UX Improvements
 
@@ -95,7 +97,7 @@ order that file suggests, minus what's done:
 - [ ] **#6** user serializers pick fields instead of spreading; `add-phone` stops returning and logging the whole user
 - [ ] **#7** admin pages check admin themselves with `getSession()` (not only the layout); `/bids` checks the session
 - [ ] **#12** security headers in `next.config.mjs` (step 1 is safe to ship on its own)
-- [ ] **#10** allowlist PATCH bodies (`cover/[position]`, `drivers/[id]`, `updateSlic`)
+- [ ] **#10** allowlist PATCH bodies (`drivers/[id]`, `updateSlic`; `cover/[position]` was deleted 2026-10-10)
 - [ ] **#8** decide the access model (open / invite code / approval) and write it in the README
 - [ ] **#9** rate-limit password sign-in
 - [ ] **#14** BMC webhook: `secretsMatch`, normalized email, idempotent events (pairs with the BMC feature above)
@@ -162,6 +164,9 @@ order that file suggests, minus what's done:
 - [x] cover weeks and the Jobs tab read straight from the ON CALL SHEET, with a change
       history, automatic sync and job-change alerts (2026-10-09/10, `ON-CALL-SHEET-SYNC.md`
       stages 1–3)
+- [x] cover drivers page filled from the sheet: pick order 1–20 on the week's tab are cover,
+      everyone after driver 20 is on call, each with their call-in time. The hand-edited
+      list and its route are gone (2026-10-10, `lib/coverDrivers.js`, `RECOMMENDATIONS.md` #3)
 
 ### Whip It In and Whip It Out Page
 

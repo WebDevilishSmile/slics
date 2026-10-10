@@ -76,6 +76,14 @@ often for that and update quietly.
   - The unlabeled column just before PICK #1 holds the driver's own job, or a status like
     `VACATION`, `FMLA`, `COVERING ER#####` or `on call`. The app calls it "Job / status".
   - A driver can be listed twice, so picks are keyed by name plus occurrence (`sheetDiff.js`).
+  - **Pick order 1–20 are the cover drivers** (the owner's rule, 2026-10-10). A cover driver
+    who's out that week keeps their row, grayed, with no time and no number, so the numbers
+    skip (4, blank, 6). Older tabs (10/3, 10/10) list them unnumbered without skipping.
+    Everyone after driver 20 is on call. The column A time is the driver's call-in time. The yellow fill on
+    the names isn't kept up (15 yellow rows some weeks), so the app goes by the numbers:
+    `coverDriversFromPicks` in `lib/coverDrivers.js`, shown on `/admin/cover/drivers`.
+  - Unnumbered rows with red names (right after 20, and a few further down) aren't cover
+    drivers.
 
 **Tab names:**
 

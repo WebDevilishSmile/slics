@@ -1,20 +1,15 @@
-import { Suspense } from 'react';
-
-import CoverDriversTable from '@/components/covers/CoverDriversTable';
-import LoadingFallback from '@/components/layout/LoadingFallback';
+import CoverDriversFromSheet from '@/components/covers/CoverDriversFromSheet';
 import { Typography } from '@mui/material';
-import { getCovers } from '@/lib/db/covers';
-import { serializeCovers } from '@/lib/serializers';
 
-async function CoverDrivers() {
-  const covers = await getCovers();
-
+// The week's cover and on-call drivers, from the on-call sheet's pick section
+// (docs/RECOMMENDATIONS.md #3). Replaced the hand-edited `cover` list on
+// 2026-10-10.
+function CoverDrivers() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
+    <>
       <Typography variant='sectionHeading'>Cover Drivers</Typography>
-
-      <CoverDriversTable covers={serializeCovers(covers)} />
-    </Suspense>
+      <CoverDriversFromSheet />
+    </>
   );
 }
 

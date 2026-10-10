@@ -47,7 +47,7 @@ names what's left.
 | 7 | Partly | The `/signin` redirect is fixed (it goes to `/`). Admin pages still rely on `app/admin/layout.jsx` (an email lookup), and `app/bids/page.jsx` has no `auth()` call. |
 | 8 | Open | Access-model decision still to make. |
 | 9 | Open | `authorize()` in `auth.js` has no rate limit. |
-| 10 | Open | `cover/[position]` and `drivers/[id]` still `$set` the request body. |
+| 10 | Open | `drivers/[id]` still `$set`s the request body. (`cover/[position]` was deleted 2026-10-10 with the manual cover list.) |
 | 11 | Partly | Newer routes (tips, places, place comments, history notes, the sheet routes) validate their bodies. The older routes listed in #11 weren't re-checked one by one. |
 | 12 | Open | `next.config.mjs` has no `headers()`. |
 | 13 | Open | Blob uploads are `access: 'public'`, and the Supabase fallback is still live (migration in progress, per `CLAUDE.md`). |
@@ -58,7 +58,7 @@ names what's left.
 | 20 | Open | Console checklist. `.env` points at production (`ON-CALL-SHEET-SYNC.md` says so too), which makes the dev/prod split the most useful line on it. |
 | 21 | Open | No TTL on `slicViews`; only `rateLimits` self-cleans. |
 | 22 | Partly | The `console.log(session)` on `/history` is gone. `add-phone` logs the full user document; the BMC webhook logs supporter emails. |
-| 23 | Open | `cover-bid-jobs/**` and `cover/[position]` still return `error.message`. |
+| 23 | Open | `cover-bid-jobs/**` still returns `error.message`. (`cover/[position]` is deleted.) |
 | 24 | Partly | Limits added since: places, place comments, history edits, both sheet refreshes, the sheet webhook. Still none on credentials sign-in, votes, `track-view`, `add-phone` or the BMC webhook. |
 | 25 | Mostly done | `crypto` and `lib/stripe.js` are gone and eslint matches Next (#3). Left: an `engines` field (`archive/STRUCTURE.md` #35). |
 | 26 | Partly | Tips now ship vote counts and `myVote`, with no user ids. `components/signIn/RequestAccess.jsx` (unused) still holds a personal phone number. Delete it. |

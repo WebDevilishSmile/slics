@@ -14,7 +14,7 @@ about this folder.
 |---|---|---|---|---|
 | 1 | My Daily Log | Drivers | L | `sheet-jobs`, `slics.alphaSlic`, `DayTimeField`, `/history` |
 | 2 | Buy Me a Coffee: track support, thank people, show impact | Everyone | S–M | The BMC webhook, `SECURITY.md` #14 |
-| 3 | Cover drivers and call-in times from the sheet | Admin | S–M | `cover-bid-picks`, the sheet sync |
+| 3 | Cover drivers and call-in times from the sheet (**built 2026-10-10**) | Admin | S–M | `cover-bid-picks`, the sheet sync |
 | 4 | Embossed headings | Everyone | S | `sectionHeading`, `theme.soft` |
 | 5 | "Something's wrong?" reports on a SLIC | Drivers → admin | S–M | The job-change alert pattern |
 | 6 | Safety notes at the top of the card | Drivers | S–M | Tips, votes |
@@ -162,7 +162,23 @@ line ("we keep a record of support you send through Buy Me a Coffee").
 
 ### 3. Cover drivers and call-in times from the sheet
 
-**Today** `/admin/cover/drivers` reads the hand-edited `cover` collection.
+**Built 2026-10-10**, from the pick order, with no new sheet read. What the check found:
+- The yellow fill isn't reliable. On 10/3 and 10/10 only 15 rows were yellow, though the
+  sheet's owner counts 1–20 as cover drivers every week.
+- The numbers are the rule. A cover driver who's out keeps their row, grayed, without a
+  number, so the numbers skip.
+- The column A time in the pick section is the call-in time.
+- One week (10/24) skips 20 with three non-cover rows in the gap, so the page shows that
+  position as empty instead of guessing.
+
+The rule is in `lib/coverDrivers.js`, the page in `components/covers/CoverDriversFromSheet.jsx`.
+The page also lists the on-call drivers, everyone after driver 20. The hand-edited list
+and its route were deleted the same day; its rows stay in the `cover` collection for now.
+Older tabs (10/3, 10/10) list out drivers unnumbered without skipping a number, so they
+show in the cover table without a position. Available days weren't found in the sheet;
+`TODOS.md` has the follow-up. The rest of this section is the original note.
+
+**Before** `/admin/cover/drivers` read the hand-edited `cover` collection.
 
 **Try the pick order before the colors.** The dated tab's pick section already gives
 every driver a pick order, and it's saved in `cover-bid-picks`. If "yellow = cover drivers

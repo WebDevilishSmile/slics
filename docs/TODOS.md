@@ -74,7 +74,10 @@ Design notes: `RECOMMENDATIONS.md` → "3. Cover drivers from the sheet".
       empty state. Start in localStorage (`archive/UI-SUGGESTIONS.md` #54)
 - [ ] manifest shortcuts: "Look up a SLIC" and "My history" on a long-press of the
       home-screen icon (`app/manifest.js`, `archive/UI-SUGGESTIONS.md` #55)
-- [ ] decide on bottom navigation (left open in `archive/UI-SUGGESTIONS.md` #52)
+- [ ] decide on bottom navigation (left open in `archive/UI-SUGGESTIONS.md` #52). On hold
+      (2026-10-10). A working prototype (Look up · History/Hubs · Profile · Menu, phones
+      only) is on the local branch `bottom-nav-preview`. Open points: hide the header's
+      hamburger on phones, drop the back arrow on tab pages, a stronger top edge in light mode
 - [ ] admin leftovers from the 2026-10-08 review (`archive/UI-SUGGESTIONS.md` #57):
   - [ ] `/admin/users`: the lookup count and the member icon have no visible label
   - [ ] Edit SLIC's "Back" button repeats the header's back arrow

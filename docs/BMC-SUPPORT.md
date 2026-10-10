@@ -83,6 +83,10 @@ to remove it).
   - `source: 'import'`, dated when the support happened.
   - `key` is `import:<kind>:<BMC id>`, so a re-run inserts nothing.
   - `thankedAt` is pre-set, so nobody got a backdated thank-you.
+  - **Except from July 14, 2026 on** (decided 2026-10-10, once the note shipped): those 11
+    supports, from 9 drivers with accounts, had `thankedAt` removed and `thanksRequeuedAt` set,
+    so each driver gets the note once. To undo for anyone who hasn't opened it: set
+    `thankedAt` where `thanksRequeuedAt` exists and `thankedAt` doesn't.
   - `users.bmcMember` wasn't touched.
 - **Not included:** renewals. BMC returns a subscription's start, not each payment, so
   the by-month totals undercount recurring support.

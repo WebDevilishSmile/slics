@@ -13,6 +13,7 @@
     "pdfs:migrate": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/migratePdfsToBlob.mjs",
     "pdfs:rollback": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/rollbackPdfUrls.mjs",
     "bmc:import": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/importBmcHistory.mjs",
+    "comments:to-text": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/convertHtmlComments.mjs",
     "admin:super": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/setSuperAdmin.mjs",
     "sheet:preview": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/previewSheetWeek.mjs"
   },
@@ -31,7 +32,6 @@
     "@vercel/speed-insights": "^2.0.0",
     "bcryptjs": "^3.0.3",
     "dayjs": "^1.11.23",
-    "html-react-parser": "^5.2.5",
     "mongodb": "^6.16.0",
     "next": "15.5.27",
     "next-auth": "^5.0.0-beta.32",

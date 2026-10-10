@@ -137,47 +137,6 @@ a {
   text-decoration: none;
 }
 
-/* Styles for older SLIC comments, which are Tiptap HTML (comments/CommentContent.jsx
-   renders them; tips posted since 2026-10-07 are plain text). Tiptap's
-   StarterKit made these elements from markdown-style shortcuts (`code`, ```,
-   >, ---). Colors are translucent MUI palette overlays, so they sit correctly
-   on any surface in both schemes. Text color is inherited. */
-.comment-content {
-  :first-child {
-    margin-top: 0;
-  }
-
-  code {
-    background-color: var(--mui-palette-action-selected);
-    border-radius: 0.4rem;
-    padding: 0.25em 0.3em;
-  }
-
-  pre {
-    background-color: var(--mui-palette-action-selected);
-    border-radius: 0.5rem;
-    margin: 1.5rem 0;
-    padding: 0.75rem 1rem;
-
-    code {
-      background: none;
-      padding: 0;
-    }
-  }
-
-  blockquote {
-    border-left: 3px solid var(--mui-palette-divider);
-    margin: 1.5rem 0;
-    padding-left: 1rem;
-  }
-
-  hr {
-    border: none;
-    border-top: 1px solid var(--mui-palette-divider);
-    margin: 2rem 0;
-  }
-}
-
 /* The thank-you note (support/ThankYouNote.jsx): the letter peeking out of
    the envelope morphs into the full note, and the envelope drops away. The
    reduced-motion floor above turns both off (the note opens straight to the

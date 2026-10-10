@@ -39,7 +39,7 @@ names what's left.
 | # | Status | What's true now |
 |---|---|---|
 | 1 | Partly | **History rewritten 2026-10-10** (see #1): seven paths dropped, `main` and `admin-review` force-pushed, PR #1 and its branch gone. **Left:** the GitHub Support purge, requested 2026-10-10 as ticket #4844294 (old commits stay reachable by SHA, and `refs/pull/1/head` still has the SLIC dataset), and whether to tell the drivers. Secret Protection + push protection turned on 2026-10-10. |
-| 2 | Partly | **Writes are closed:** since 2026-10-07 every new or edited tip is saved as plain text (`format: 'text'`, set server-side in `lib/db/comments.js`). **Left:** older Tiptap HTML comments still render through `html-react-parser` with no sanitizer (`components/comments/CommentContent.jsx`). Convert them to text with a dry-run script (the flattening logic is already in `commentToText`), then drop `html-react-parser`. |
+| 2 | Done | 2026-10-10. Nothing renders a comment as HTML anymore: `CommentContent.jsx` flattens any old Tiptap HTML to text (`htmlToText`, `lib/commentText.js`, no DOM) and renders text only, and `html-react-parser` is uninstalled. New and edited tips have been plain text since 2026-10-07. **Left:** run `npm run comments:to-text` so the 43 old HTML rows are stored as text too (dry run checked: all plain `<p>` paragraphs). It keeps the HTML in `content_html`, and `--undo` restores it. |
 | 3 | Done | 2026-10-07 (Next 15.5.27, Auth.js beta.32). |
 | 4 | Done | 2026-10-10. `lib/authz.js` (`getSession`, `requireUser`, `requireAdmin`) is the only caller of `auth()`. All 43 guarded API routes, 13 pages, the admin layout and 2 server components go through it. `middleware.js` checks `req.auth?.user?.id`. `toggle-role`, `toggle-member`, `add-phone` and the admin layout read the session's role instead of looking the user up by email. No `route()` wrapper: see the note under #4. |
 | 5 | Done | `lib/db/comments.js` has no `'use server'`. The only two uses left are the inline sign-in/out actions. |
@@ -190,7 +190,7 @@ Left: step 2 (GitHub Support: old commits are still reachable on github.com by S
 
 ---
 
-### [ ] 2. Stored XSS through comments
+### [x] 2. Stored XSS through comments
 
 **Files:** `app/components/comments/CommentEditor.jsx:118` (`editor.getHTML()`),
 `app/api/comments/route.js` (POST — stores `content` as-is), `lib/db/comments.js`
@@ -254,6 +254,18 @@ Then a CSP (#12) turns "we missed a tag" into "the browser refused to run it".
 
 *Blast radius:* comments that used a tag outside the allowlist lose that formatting.
 The dry-run tells you which ones before anything changes.
+
+*Done 2026-10-10, without a sanitizer.* Plain-text tips (2026-10-07) closed the writes:
+the server saves every new or edited tip as `format: 'text'`, and it renders as text. The
+old Tiptap HTML was the last thing parsed, so instead of sanitizing it, it's flattened to
+text: `htmlToText` in `lib/commentText.js` turns paragraphs, line breaks and list items
+into line breaks, drops every tag and decodes entities, with no DOM. `CommentContent.jsx`
+renders its result as text, and the edit box starts from it, so no comment body is ever
+parsed as HTML. `html-react-parser` is uninstalled and the `.comment-content` CSS is gone.
+`scripts/convertHtmlComments.mjs` (`npm run comments:to-text`, `--dry-run`, `--undo`)
+stores the old rows as text too. It keeps the original in `content_html` with
+`htmlConvertedAt`, and `--undo` puts it back except on a comment edited since. The dry run
+found 43 rows, all `<p>` paragraphs with no other tags or entities, so nothing is lost.
 
 ---
 
@@ -1277,7 +1289,7 @@ PR checklist.
 ### Dependencies
 
 - `npm audit --omit=dev` before every deploy; anything `high`/`critical` in `next`,
-  `next-auth`, `@auth/*`, `mongodb`, `bcryptjs`, `html-react-parser`, `sanitize-html` is
+  `next-auth`, `@auth/*`, `mongodb`, `bcryptjs` is
   fixed before the deploy.
 - Turn on Dependabot security updates for the repo (Settings → Code security). Merge
   patch releases of `next` and `next-auth` within a week of publication; they ship

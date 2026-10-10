@@ -42,7 +42,7 @@ Environment variables: `.env.example` lists every key the code reads, with a one
   - Shared with gyms: `form/SlicTagsField.jsx`, `utility/PlaceLinks.jsx`, `lib/apiRequest.js`.
 - SLIC comments ("Driver tips", `lib/db/comments.js`, `components/comments/`) mirror the places rules:
   - Threads are one level deep. A reply has `parentId` (its top-level comment) and keeps `numSlic`, so per-SLIC counts and profile lists include replies.
-  - Since 2026-10-07 tips are **plain text** (`format: 'text'`). Older comments are Tiptap HTML with no `format`, and `comments/CommentContent.jsx` renders both. Render comment bodies through it, never `html-react-parser` directly. Editing an old HTML comment saves it as plain text.
+  - Since 2026-10-07 tips are **plain text** (`format: 'text'`). Older comments were Tiptap HTML with no `format`; `npm run comments:to-text` (`scripts/convertHtmlComments.mjs`) converts them, keeping the original in `content_html`. Render comment bodies through `comments/CommentContent.jsx`, which renders text only and flattens any leftover HTML with `htmlToText` (`lib/commentText.js`). Never parse a comment as HTML (`docs/SECURITY.md` #2). Editing an old HTML comment saves it as plain text.
   - A top-level comment deleted while it has replies becomes a `deleted: true` placeholder. Every read except `getSlicThread` filters `deleted: { $ne: true }`.
   - `GET /api/comments?slic=` returns the shaped thread: first name + avatar, counts, `myVote`, `isMine`. User ids don't leave the server.
   - Votes toggle: `voteType: null` takes your vote back.

@@ -20,6 +20,9 @@ const TYPE_LABELS = {
   'membership.started': 'Became a member',
   'membership.cancelled': 'Cancelled membership',
   'membership.canceled': 'Cancelled membership',
+  'donation.created': 'Bought coffee',
+  'recurring_donation.started': 'Started monthly support',
+  'recurring_donation.cancelled': 'Cancelled monthly support',
 };
 // Anything else is shown as BMC named it, so a new event type is visible
 // before it gets a label here.

@@ -59,6 +59,7 @@ production.
 |---|---|---|
 | `npm run db:indexes` | Creates the indexes in `scripts/createIndexes.js` | Safe to re-run. Run it after adding an index there |
 | `npm run sheet:preview -- YYYY-MM-DD [--tabs]` / `-- --jobs` | Prints what a sheet refresh would save | Never writes |
+| `npm run bmc:import -- <file> --dry-run` / `-- --undo` | Imports Buy Me a Coffee history pulled with the `buymeacoffee` MCP tools into `bmc-events` (`BMC-SUPPORT.md`) | Drop `--dry-run` to write; re-runs insert nothing; `--undo` deletes only imported rows |
 | `npm run pdfs:migrate -- --dry-run` | Copies legacy Supabase PDFs to Vercel Blob and sets `pdfUrl` | Drop `--dry-run` to write |
 | `npm run pdfs:rollback -- --dry-run` | Reverses the migration's `pdfUrl` writes | The undo for the above |
 | `npm run icons:generate` | Rebuilds the home-screen icons from the logo | Never hand-edit the icons |

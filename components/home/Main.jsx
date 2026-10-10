@@ -31,11 +31,16 @@ function Main({ slics, commentsCount, user }) {
       .catch((err) => console.error('Error fetching view count:', err));
   }, []);
 
+  // By number; `alpha` picks between entries that share one (three pairs in
+  // the All Hubs list, see SlicsSearch.jsx), and is null everywhere else.
   const findSlic = useCallback(
-    (numSlic) =>
-      numSlic
-        ? (slics.find((s) => s.numSlic.toString() === String(numSlic)) ?? null)
-        : null,
+    (numSlic, alpha = null) => {
+      if (!numSlic) return null;
+      const matches = slics.filter((s) => s.numSlic.toString() === String(numSlic));
+      return (
+        (alpha && matches.find((s) => String(s.alphaSlic) === alpha)) || matches[0] || null
+      );
+    },
     [slics],
   );
 
@@ -60,7 +65,7 @@ function Main({ slics, commentsCount, user }) {
 
   // The URL is the source of truth: a recent chip, Back/Forward, a shared link.
   useEffect(() => {
-    changeSlic(findSlic(searchParams.get('slic')));
+    changeSlic(findSlic(searchParams.get('slic'), searchParams.get('alpha')));
   }, [searchParams, findSlic, changeSlic]);
 
   // A pick in the search shows its SLIC at once from the in-memory list
@@ -68,7 +73,7 @@ function Main({ slics, commentsCount, user }) {
   // wait for. The URL catches up through the search's router.push, and the
   // effect above then lands on the same SLIC, a no-op.
   const showSlic = useCallback(
-    (numSlic) => changeSlic(findSlic(numSlic)),
+    (numSlic, alpha) => changeSlic(findSlic(numSlic, alpha)),
     [changeSlic, findSlic],
   );
 

@@ -44,7 +44,7 @@ All collections live in one database: the driver's default (`test`), because
 | `slic_history` | Audit trail: `{ slicId, numSlic, action, changes: [{ field, from, to }], user, timestamp }` | `slicId`, `numSlic` | `lib/db/slicHistory.js`, only through `createSlic`/`updateSlic` | Admin stamp | Never; deletes aren't recorded (`SECURITY.md` #17) |
 | `comments` | Driver tips and replies: `content`, `format` (`'text'`, or missing for old Tiptap HTML), `numSlic`, `userId`, `parentId`, vote arrays, optional `pin`, `deleted` placeholder | `numSlic` + `upVotes` index | `lib/db/comments.js` | Author id, voter ids (never sent to other drivers) | Author deletes it (a placeholder stays while it has replies); account deletion |
 | `slicViews` | One row per lookup: `{ userId, numSlic, viewedAt }`, plus optional `note`/`noteUpdatedAt` and `hidden`/`hiddenAt` | `userId` + `viewedAt` index | `lib/db/slicViews.js` (`recordSlicView` skips a repeat within 30 min) | Who looked up what, and when | Account deletion. No TTL (`SECURITY.md` #21). "Remove from history" only hides a row |
-| `allHubs` | The hubs list behind `/hubs` | `_id` | Not written by the app (read in `lib/db/slics.js`) | None | — |
+| `allHubs` | The hubs list behind `/hubs`. `numSlic` isn't unique here: 0269 (PRORI, YARMA), 7752 (BAYTX, FTW1) and 9079 (LGBAP, SNAAP) are each on two hubs, so the lookup tells them apart with `&alpha=` (`home/SlicsSearch.jsx`). Possibly a data error, unconfirmed (`TODOS.md`) | `_id` | Not written by the app (read in `lib/db/slics.js`) | None | — |
 
 ## People
 

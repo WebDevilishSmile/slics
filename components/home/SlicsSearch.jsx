@@ -84,10 +84,17 @@ const listSx = (theme) => ({
 // soon as the list opened.
 const text = (value) => (value === null || value === undefined ? '' : String(value));
 
-const toOption = (slic) => {
+// `shared` is true when another entry in the list has the same SLIC number.
+// The All Hubs list has three such pairs (0269 is PRORI and YARMA, 7752 BAYTX
+// and FTW1, 9079 LGBAP and SNAAP), maybe a data error, maybe not. A shared
+// number carries the entry's alpha code as `alpha` (and `&alpha=` in the URL)
+// so each one opens its own card; `id` keeps the list's keys unique.
+const toOption = (slic, shared = false) => {
   const isCustomer = slic.type === 'customer';
   const numSlic = text(slic.numSlic);
   return {
+    id: text(slic._id) || numSlic,
+    alpha: shared ? text(slic.alphaSlic) : '',
     numSlic,
     type: isCustomer ? 'customer' : 'center',
     title: text(isCustomer ? slic.name : slic.alphaSlic) || `SLIC ${numSlic}`,
@@ -152,11 +159,21 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const options = useMemo(() => slics.map(toOption), [slics]);
-  const byNum = useMemo(
-    () => new Map(options.map((option) => [option.numSlic, option])),
-    [options],
-  );
+  const options = useMemo(() => {
+    const counts = new Map();
+    for (const slic of slics) {
+      const num = text(slic.numSlic);
+      counts.set(num, (counts.get(num) ?? 0) + 1);
+    }
+    return slics.map((slic) => toOption(slic, counts.get(text(slic.numSlic)) > 1));
+  }, [slics]);
+  // Recent lookups are stored by number, so a shared number finds the first
+  // entry with it.
+  const byNum = useMemo(() => {
+    const map = new Map();
+    for (const option of options) if (!map.has(option.numSlic)) map.set(option.numSlic, option);
+    return map;
+  }, [options]);
   const recentOptions = recentNums
     .map((num) => byNum.get(num))
     .filter(Boolean)
@@ -177,18 +194,24 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
 
   const handleSlicChange = (event, value) => {
     setSelected(value);
-    onSelect?.(value?.numSlic ?? null);
-    router.push(value ? `${pathname}?slic=${value.numSlic}` : pathname);
+    onSelect?.(value?.numSlic ?? null, value?.alpha || null);
+    const alpha = value?.alpha ? `&alpha=${encodeURIComponent(value.alpha)}` : '';
+    router.push(value ? `${pathname}?slic=${value.numSlic}${alpha}` : pathname);
   };
 
   useEffect(() => {
     const initialSlic = searchParams.get('slic');
     if (!initialSlic) return setSelected(null);
-    const slic = slics.find(
-      (s) => s.numSlic === initialSlic || s.alphaSlic === initialSlic,
-    );
-    if (slic) setSelected(byNum.get(String(slic.numSlic)) ?? null);
-  }, [searchParams, slics, byNum]);
+    const alpha = searchParams.get('alpha');
+    const option =
+      (alpha && options.find((o) => o.numSlic === initialSlic && o.alpha === alpha)) ||
+      byNum.get(initialSlic) ||
+      options.find((o) => o.alpha === initialSlic) ||
+      byNum.get(
+        text(slics.find((s) => text(s.alphaSlic) === initialSlic)?.numSlic),
+      );
+    if (option) setSelected(option);
+  }, [searchParams, slics, options, byNum]);
 
   // Before any typing: recents first, then everything. While typing: matches
   // only, ungrouped, so a recent SLIC isn't listed twice.
@@ -252,8 +275,8 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
         }
         groupBy={showRecent ? (option) => option.group : undefined}
         getOptionLabel={(option) => option.label}
-        getOptionKey={(option) => `${option.group}-${option.numSlic}`}
-        isOptionEqualToValue={(option, value) => option.numSlic === value.numSlic}
+        getOptionKey={(option) => `${option.group}-${option.id}`}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         renderGroup={(params) => (
           <li key={params.key}>
             <Typography

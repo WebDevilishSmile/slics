@@ -110,6 +110,10 @@ order that file suggests, minus what's done:
 
 ## Housekeeping
 
+- [ ] check the three SLIC numbers that are on two hubs in `allHubs`: 0269 (PRORI Warwick,
+      YARMA W. Yarmouth), 7752 (BAYTX Baytown, FTW1 Dallas), 9079 (LGBAP Long Beach Airport,
+      SNAAP Santa Ana). If one of each pair is wrong, fix the data; the lookup copes either
+      way since 2026-10-10 (`&alpha=`), but both hubs share one set of tips
 - [ ] lint for unused imports (`eslint.config.mjs`; `archive/STRUCTURE.md` #34)
 - [ ] `package.json`: `"engines": { "node": ">=20.6" }`, a `"description"`, a version off
       `0.1.0`, and drop `@types/node` (`archive/STRUCTURE.md` #32, #35)

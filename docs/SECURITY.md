@@ -87,9 +87,9 @@ places feature never sends other drivers' user ids to the client.
 | Comments and votes | `comments` | Any signed-in driver (name + avatar only) |
 | Lookup history | `slicViews` | The user (own, members only), the admin |
 | The driver roster: ~270 real people — name, employee ID, seniority date, personal phone; includes people with no account | `drivers` (and, until 2026-10-10, **public git history** — see #1) | Admin; a driver linked to their own roster row |
-| Cover / bid sheets (driver names, schedules) | `cover`, `cover-bid-jobs`, `bid-jobs`, Gemini API | Admin (+ member) |
+| Cover / bid sheets (driver names, schedules) | `cover`, `cover-bid-jobs`, `bid-jobs` (and the Gemini API until its upload was deleted 2026-10-10) | Admin (+ member) |
 | Admin capability (edit dataset, promote users, delete anything) | `users.role` | The maintainer |
-| Secrets: `AUTH_SECRET`, Google OAuth, Atlas URI, Blob token, Gemini key, BMC secret | Vercel env, local `.env` | Nobody |
+| Secrets: `AUTH_SECRET`, Google OAuth, Atlas URI, Blob token, BMC secret | Vercel env, local `.env` | Nobody |
 
 **Who we are protecting it from**
 
@@ -103,7 +103,7 @@ places feature never sends other drivers' user ids to the client.
 3. **A compromised admin account.** Email/password with an 8-character minimum, no MFA,
    no password reset, no lockout (#9). An admin session is full control of the dataset
    and of every other account.
-4. **Third parties we hand data to:** Google (sign-in, Gemini), Vercel (hosting, Blob,
+4. **Third parties we hand data to:** Google (sign-in; Gemini until 2026-10-10), Vercel (hosting, Blob,
    analytics, logs), MongoDB Atlas, Buy Me a Coffee (webhook). Each is a place data can
    leak *from* if its configuration is wrong.
 5. **Readers of the public GitHub repo.** `github.com/WebDevilishSmile/slics` is public
@@ -694,7 +694,7 @@ existence check, no rate limit), `app/api/users/[userId]/add-phone/route.js` (`p
 any string, any length), `app/api/drivers/route.js` (`name`/`seniorityDate` not
 type-checked before `.trim()`), `app/api/drivers/[id]/route.js` (no `ObjectId.isValid`
 → 500 instead of 400), `app/api/cover-bid-jobs/extract/route.js` (`images[].data`
-unbounded base64 → Gemini, cost is the admin's), `app/api/comments/route.js` (error
+unbounded base64 → Gemini, cost is the admin's; route deleted 2026-10-10), `app/api/comments/route.js` (error
 responses with status 200)
 
 None of these are injection bugs — the Mongo driver is used with object filters, ids go
@@ -990,9 +990,9 @@ Confirm, and note the answer in this file:
 - [ ] Google Cloud: the OAuth client's authorized redirect URIs are exactly the
   production and preview origins, nothing wildcarded; the consent screen is
   "In production", not "Testing" (Testing tokens expire and users get re-prompted).
-- [ ] The Gemini key is on a **paid** API tier or you have confirmed the data-use terms
-  for the tier you use — bid sheets contain driver names and the privacy policy promises
-  they go to Gemini "to read the job rows", not to train a model.
+- [x] ~~The Gemini key is on a **paid** API tier or you have confirmed the data-use terms~~
+  Moot since 2026-10-10: the upload, `@google/genai` and `GEMINI_API_KEY` are gone, and the
+  privacy page no longer mentions Gemini. Revoke the key in Google AI Studio.
 - [ ] Vercel Firewall: turn on rate limiting for `/api/auth/*` and `/api/auth/register`
   (available on Pro) as a platform-level backstop to the in-app limiter, which
   fails open by design.
@@ -1076,7 +1076,7 @@ documented fail-open), `app/api/auth/register` (IP, 10/h ✓), `app/api/comments
 (user, 10/10min ✓). Not limited: credentials sign-in (#9), `comments/[id]/vote`,
 `user/track-view`, `users/[id]/add-phone`, `users/[userId]` GET (id → name/avatar; ids
 are ObjectIds — time-ordered, not random), `webhooks/buymeacoffee`, `slic/[id]/pdf`
-POST and `cover-bid-jobs/extract` (admin; the cost is yours), `comments` GET.
+POST and `cover-bid-jobs/extract` (admin; the cost is yours; deleted 2026-10-10), `comments` GET.
 
 **Fix:** a table of keys and ceilings in `lib/rateLimit.js` so every route imports a
 named policy instead of inventing numbers:
@@ -1190,7 +1190,6 @@ section once so it is not invented at 2 a.m.:
 | `MONGODB_URI` | Full DB read/write | Atlas → Database Access → edit user password; update Vercel | None if done in one deploy |
 | `AUTH_GOOGLE_SECRET` | Phishable OAuth flow | GCP → create new client secret, update, then delete old | None |
 | `BLOB_READ_WRITE_TOKEN` | Upload/delete any PDF | Vercel → Storage → regenerate | None |
-| `GEMINI_API_KEY` | Your bill | Google AI Studio → regenerate | None |
 | `BMC_WEBHOOK_SECRET` | Anyone can grant membership | BMC dashboard → new secret, update Vercel | None |
 
 Add: rotate all six on any suspected laptop compromise; rotate `AUTH_SECRET` and

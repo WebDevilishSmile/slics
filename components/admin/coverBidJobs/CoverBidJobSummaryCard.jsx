@@ -19,7 +19,7 @@ const withRouteBreaks = (text) =>
 // One job on a phone or a narrow window: the whole row, read-only, at a size
 // that can be read (all seven days and the full description). Tapping it opens
 // the job in the review dialog, where it's edited. `status` is a short line
-// at the top right (checked, unsaved changes). Inside a button, so every
+// at the top right (unsaved changes). Inside a button, so every
 // element is a span.
 export default function CoverBidJobSummaryCard({ row, index, duplicate, status, onOpen }) {
   const issues = rowIssues(row, { duplicate });

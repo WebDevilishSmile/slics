@@ -25,9 +25,9 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 - [ ] **on or after 2026-10-22:** delete the 13 old-path API alias files
       (`grep -rln "Old path, renamed on 2026-10-08" app/api`) and their mention in
       `CLAUDE.md` → "API routes" (`archive/STRUCTURE.md` #29 follow-up)
-- [ ] **once the sheet has run for a few weeks:** stage 4 cleanup. Delete the bid-sheet photo
-      upload, the `extract` route, `@google/genai` and `GEMINI_API_KEY`
-      (`ON-CALL-SHEET-SYNC.md` → "Stage 4")
+- [x] ~~stage 4 cleanup~~: the bid-sheet photo upload, the `extract` route, `@google/genai`
+      and `GEMINI_API_KEY` were deleted 2026-10-10 (`ON-CALL-SHEET-SYNC.md` → "Stage 4").
+      Left: remove the key from Vercel and `.env`, and revoke it in Google AI Studio
 - [ ] **once the sheet's cover list has proven itself:** drop the unused `cover` collection
       (its code went 2026-10-10; the rows are kept until then in case the old list is wanted)
 - [ ] **when every SLIC has `pdfUrl`:** retire the Supabase bucket and the `slic.pdf`
@@ -43,7 +43,8 @@ I need to establish a way to authenticate users. We should have a way to link th
 
 ### Privacy and Terms page
 
-- [ ] remove Gemini from app now that we don't need it
+- [x] remove Gemini from app now that we don't need it (2026-10-10; the privacy page no longer
+      mentions it)
 
 ### Forum Page
 
@@ -134,8 +135,7 @@ order that file suggests, minus what's done:
       `0.1.0`, and drop `@types/node` (`archive/STRUCTURE.md` #32, #35)
 - [ ] README: fill in or remove `[Live demo link coming soon]`, add screenshots, refresh the
       usage numbers (`archive/STRUCTURE.md` #36)
-- [ ] `.env.example` names the old `app/api/coverBidJobs/extract` path; it's
-      `cover-bid-jobs/extract` now (or delete the line in stage 4)
+- [x] `.env.example` named the old `extract` path: the line went with Gemini (2026-10-10)
 - [ ] `createDriver` (`lib/db/drivers.js`) refuses a new driver whose _seniority date_
       matches an existing one. Drivers hired in the same class share a date, so check only
       `employeeId`

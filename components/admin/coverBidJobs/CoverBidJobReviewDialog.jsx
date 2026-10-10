@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import {
   Box,
   Button,
@@ -17,23 +17,19 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import { isDuplicateJobNumber } from '@/lib/coverBidJobRow';
 import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
-import BidSheetSourceViewer from './BidSheetSourceViewer';
 import CoverBidJobFields from './CoverBidJobFields';
 
 const squareButtonSx = [softRaisedSmall, softPressSx, { width: '3rem', height: '3rem' }];
 
 // Reviews and edits the week's jobs one at a time, at full size, stepping
-// through them in sheet order. With uploaded files (`sources`), the sheet
-// sits beside the fields on a wide screen, opened at the row's own photo or
-// PDF page, and behind a "Show sheet" button on a phone, where the dialog
-// fills the screen. Shared by the upload drafts and the saved week:
+// through them in sheet order. Full screen on a phone. Used by the saved week
+// (CoverBidJobsManager):
 // - `index` is the open job, or null when closed;
-// - `status(row)` is a short line under the title (checked, unsaved);
+// - `status(row)` is a short line under the title (unsaved changes);
 // - `onDelete(row)` drops the job, after which the next one shows;
-// - `renderPrimary(row, index)` is the one contained button (Looks right, Save);
+// - `renderPrimary(row, index)` is the one contained button (Save);
 // - `footer(row)` is optional content under the fields (who picked the job).
 export default function CoverBidJobReviewDialog({
   rows,
@@ -46,8 +42,6 @@ export default function CoverBidJobReviewDialog({
   onDelete,
   renderPrimary,
   footer,
-  sources = [],
-  viewerMemory,
 }) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -58,17 +52,6 @@ export default function CoverBidJobReviewDialog({
     index == null || rows.length === 0 ? null : Math.min(index, rows.length - 1);
   const row = current == null ? null : rows[current];
 
-  // Show the row's own file when the job changes; the admin can still switch.
-  const [sourceIndex, setSourceIndex] = useState(row?.sourceIndex ?? 0);
-  const [rowKey, setRowKey] = useState(row?.key);
-  if (row && row.key !== rowKey) {
-    setRowKey(row.key);
-    if (row.sourceIndex != null) setSourceIndex(row.sourceIndex);
-  }
-  const [showSheet, setShowSheet] = useState(false);
-
-  const hasSources = sources.length > 0;
-  const sideBySide = hasSources && !fullScreen;
   const jobLabel = row?.jobNumber ? `job ${row.jobNumber}` : 'this job';
 
   return (
@@ -77,15 +60,9 @@ export default function CoverBidJobReviewDialog({
       onClose={onClose}
       fullScreen={fullScreen}
       fullWidth
-      maxWidth={sideBySide ? 'lg' : 'sm'}
+      maxWidth='sm'
       aria-labelledby={titleId}
-      sx={{
-        '& .MuiDialog-paper': fullScreen
-          ? { borderRadius: 0 }
-          : sideBySide
-            ? { height: 'calc(100% - 4rem)' }
-            : {},
-      }}
+      sx={{ '& .MuiDialog-paper': fullScreen ? { borderRadius: 0 } : {} }}
     >
       {row && (
         <>
@@ -108,47 +85,9 @@ export default function CoverBidJobReviewDialog({
             <CloseIcon />
           </IconButton>
 
-          <DialogContent
-            sx={
-              sideBySide
-                ? {
-                    display: 'grid',
-                    gridTemplateColumns: 'minmax(0, 7fr) minmax(0, 5fr)',
-                    gap: 3,
-                    overflow: 'hidden',
-                    pb: 1,
-                  }
-                : undefined
-            }
-          >
-            {hasSources && !sideBySide && (
-              <Button
-                startIcon={<ImageOutlinedIcon />}
-                aria-expanded={showSheet}
-                onClick={() => setShowSheet((shown) => !shown)}
-                sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem', mt: 1, mb: 2 }]}
-              >
-                {showSheet ? 'Hide sheet' : 'Show sheet'}
-              </Button>
-            )}
-            {hasSources && (sideBySide || showSheet) && (
-              <BidSheetSourceViewer
-                sources={sources}
-                index={sourceIndex}
-                onIndexChange={setSourceIndex}
-                page={row.sourcePage}
-                memory={viewerMemory}
-                sx={sideBySide ? { pt: 1 } : { height: '60dvh', mb: 3 }}
-              />
-            )}
+          <DialogContent>
             {/* Room around the fields so their wells' shadows aren't clipped. */}
-            <Box
-              sx={
-                sideBySide
-                  ? { overflowY: 'auto', minHeight: 0, px: 1, pt: 1, pb: 2 }
-                  : { pt: 1 }
-              }
-            >
+            <Box sx={{ pt: 1 }}>
               <CoverBidJobFields
                 key={row.key}
                 row={row}

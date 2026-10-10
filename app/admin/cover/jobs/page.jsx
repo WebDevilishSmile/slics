@@ -78,8 +78,7 @@ function CoverJobs() {
           setValue={setSelectedDay}
           postedWeeks={postedWeeks}
         />
-        {/* The week comes from the on-call sheet (docs/ON-CALL-SHEET-SYNC.md);
-            the photo upload (BidSheetUploader) is retired but kept until stage 4. */}
+        {/* The week comes from the on-call sheet (docs/ON-CALL-SHEET-SYNC.md). */}
         <SheetRefreshButton
           key={weekEndDate.format('YYYY-MM-DD')}
           weekEndDate={weekEndDate}

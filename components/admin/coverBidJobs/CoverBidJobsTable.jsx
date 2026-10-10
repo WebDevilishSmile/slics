@@ -195,10 +195,9 @@ const JobRows = memo(function JobRows({
   );
 });
 
-// The week's jobs on a wide screen, every field editable in place. Shared by
-// the upload drafts and the saved week, which differ only in the first column
-// (`renderLeading`: checked box and review button, or just review) and the
-// last (`renderActions`). Those two, and `onFieldChange`, must be stable
+// The week's jobs on a wide screen, every field editable in place
+// (CoverBidJobsManager). The first column is `renderLeading` (the review
+// button) and the last `renderActions`. Those two, and `onFieldChange`, must be stable
 // (useCallback): each job's rows only re-render when that job changes.
 export default function CoverBidJobsTable({
   rows,

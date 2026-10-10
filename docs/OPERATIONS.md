@@ -82,7 +82,6 @@ sync. All live in Vercel's project settings (mark them **Sensitive**) and in the
 | `MONGODB_URI` | Full read/write of the database | Atlas → Database Access → new password; update Vercel and `.env` in one go | None if done in one deploy |
 | `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | A phishable copy of the sign-in flow | Google Cloud → the OAuth client → add a new secret, deploy it, delete the old one | None |
 | `BLOB_READ_WRITE_TOKEN` | Upload or delete any PDF | Vercel → Storage → the store → regenerate | None |
-| `GEMINI_API_KEY` | Charges to the account | Google AI Studio → new key | None (goes away in sheet stage 4) |
 | `GOOGLE_SHEETS_API_KEY` | Reads of the sheet; quota use | Google Cloud → Credentials → regenerate. Keep it restricted to the Sheets API | None |
 | `ON_CALL_SHEET_ID` | **It's an edit key:** the sheet is shared "anyone with the link can edit" | Can't be rotated by the app. Tell the sheet's owner; only they can change its sharing | The owner's call |
 | `ON_CALL_SHEET_WEBHOOK_SECRET` | Anyone can trigger sheet re-reads (rate-limited; data still only comes from the sheet) | `openssl rand -hex 32` → Vercel, then the script's `APP_SECRET` property; run `testPing` | Pings get 403 until both match |

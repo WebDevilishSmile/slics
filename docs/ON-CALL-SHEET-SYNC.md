@@ -175,7 +175,7 @@ Replaces the photo upload with a **Refresh** button for the week picked on the c
   - It still opens on a tap or click.
   - This applies on `/cover-bid-jobs` and `/admin/cover/jobs`, as tables and cards.
   - "cut" in NAME counts as picked too.
-- [x] **Keep the old upload code for now:**
+- [x] **Keep the old upload code for now** (deleted in stage 4, 2026-10-10):
   - `BidSheetUploader.jsx`, `BidSheetSourceViewer.jsx`, the `extract` route and
     `GEMINI_API_KEY` stay, unused by the page, until stage 4.
   - Putting the button back is one line if the sheet route fails.
@@ -324,12 +324,15 @@ alert; cover weeks update quietly.
 
 ## Stage 4 — Cleanup (after stage 1 has run for a few weeks)
 
-- [ ] **Delete the photo upload.**
+- [x] **Delete the photo upload** (2026-10-10, early: the app had no other use for Gemini).
   - `BidSheetUploader.jsx` and `BidSheetSourceViewer.jsx`, plus the uploaded-page branch in
     `CoverBidJobReviewDialog.jsx`.
   - `app/api/cover-bid-jobs/extract` and its `coverBidJobs/extract` alias.
   - `@google/genai` and `GEMINI_API_KEY`.
-- [ ] **Docs.** Update `CLAUDE.md`'s cover bid jobs section and `.env.example`.
+- [x] **Docs.** `CLAUDE.md`'s cover bid jobs section, `.env.example`, the privacy page,
+  `OPERATIONS.md` and `SECURITY.md`.
+- [ ] **Outside the repo:** remove `GEMINI_API_KEY` from Vercel and local `.env`, and revoke
+  the key in Google AI Studio.
 
 ---
 

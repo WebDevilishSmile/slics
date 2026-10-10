@@ -15,7 +15,8 @@ const toDayjs = (value) =>
 // The field works on a dayjs value and the row holds the string. A half-typed
 // time ("06:mm") stays in the field without reaching the row, and goes back to
 // the row's value when focus leaves, so what shows is always what saves. A
-// value that isn't a time at all (a misread the extraction couldn't tidy)
+// value that isn't a time at all (a sheet cell, or a misread from the old
+// photo upload)
 // shows as an error, with what was read, until a time replaces it.
 export default function DayTimeField({ value = '', onChange, sx, helperText, ...props }) {
   const [draft, setDraft] = useState(() => toDayjs(value));

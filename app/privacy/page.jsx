@@ -158,12 +158,6 @@ export default function PrivacyPage() {
               payment details.
             </>,
             <>
-              <strong>Google Gemini.</strong> The cover-bid tool lets the
-              administrator upload photos or PDFs of the weekly dispatch bid
-              sheet, which are sent to Google&apos;s Gemini API to read the job
-              rows. Those sheets can include driver names.
-            </>,
-            <>
               <strong>When the law requires it.</strong> We may disclose
               information if we are legally required to.
             </>,

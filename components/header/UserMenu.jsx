@@ -23,6 +23,7 @@ import {
   SignpostOutlined,
 } from '@mui/icons-material';
 import {
+  Badge,
   Box,
   IconButton,
   List,
@@ -37,6 +38,7 @@ import {
 } from '@mui/material';
 
 import { BMC_URL } from '@/constants';
+import { refreshJobChangesCount, useJobChangesCount } from '@/lib/jobChangesStore';
 
 import InstallMenuItem from '@/components/install/InstallMenuItem';
 import ModeSwitch from '@/components/layout/ModeSwitch';
@@ -113,6 +115,15 @@ function UserMenu({ user, signOutAction }) {
   const pathname = usePathname();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
+  // Admins: Jobs-tab changes they haven't seen, rechecked on every route
+  // change (stage 3 alerts, docs/ON-CALL-SHEET-SYNC.md). /admin/jobs clears it.
+  const isAdmin = user?.role === 'admin';
+  const jobChanges = useJobChangesCount();
+  const jobChangesText = `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`;
+  useEffect(() => {
+    if (isAdmin) refreshJobChangesCount();
+  }, [isAdmin, pathname]);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -135,11 +146,13 @@ function UserMenu({ user, signOutAction }) {
         // On the blue header the focus outline takes the icon's color.
         sx={{ color: 'text.light', '&.Mui-focusVisible': { outlineColor: 'currentColor' } }}
         onClick={handleOpen}
-        aria-label='Open menu'
+        aria-label={isAdmin && jobChanges ? `Open menu, ${jobChangesText}` : 'Open menu'}
         aria-expanded={open}
         aria-controls={MENU_ID}
       >
-        <MenuOutlined />
+        <Badge variant='dot' color='error' invisible={!isAdmin || !jobChanges}>
+          <MenuOutlined />
+        </Badge>
       </IconButton>
 
       <SwipeableDrawer
@@ -276,8 +289,12 @@ function UserMenu({ user, signOutAction }) {
               onClick={handleClose}
               href='/admin'
               label='Admin'
-              secondary='Admin only'
-              icon={<AdminPanelSettingsOutlined />}
+              secondary={jobChanges ? jobChangesText : 'Admin only'}
+              icon={
+                <Badge badgeContent={jobChanges} color='error' max={99}>
+                  <AdminPanelSettingsOutlined />
+                </Badge>
+              }
               current={isCurrent('/admin', true)}
             />
           )}

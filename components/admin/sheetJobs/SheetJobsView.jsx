@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   ButtonBase,
@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 
 import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
+import { markJobChangesSeen } from '@/lib/jobChangesStore';
 import {
   softInputSx,
   softPressSx,
@@ -124,7 +125,16 @@ function JobCard({ job, onOpen }) {
 
 // The saved Jobs tab: a searchable list of jobs (a table when wide, cards on a
 // phone), each opening its details and history, and the Changes feed.
-export default function SheetJobsView({ jobs, changes, moreChanges }) {
+// `seenAt` is the admin's mark from before this visit (null: all new), so the
+// changes after it keep their "New" label until the page is left; showing
+// them moves the mark (and clears the /admin banner and the menu badge).
+export default function SheetJobsView({ jobs, changes, moreChanges, seenAt }) {
+  const [newSince] = useState(seenAt);
+  const newest = changes[0]?.seenAt ?? null;
+  useEffect(() => {
+    if (newest && (!newSince || newest > newSince)) markJobChangesSeen(newest);
+  }, [newest, newSince]);
+
   const theme = useTheme();
   const wide = useMediaQuery(theme.breakpoints.up('md'));
   const [search, setSearch] = useState('');
@@ -154,7 +164,12 @@ export default function SheetJobsView({ jobs, changes, moreChanges }) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <JobChangesFeed initial={changes} initialMore={moreChanges} onOpenJob={setOpenJob} />
+      <JobChangesFeed
+        initial={changes}
+        initialMore={moreChanges}
+        newSince={newSince}
+        onOpenJob={setOpenJob}
+      />
 
       <Box component='section' aria-labelledby='sheet-jobs-heading'>
         <Typography id='sheet-jobs-heading' variant='h6' component='h3'>

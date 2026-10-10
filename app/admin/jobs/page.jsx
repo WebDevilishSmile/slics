@@ -1,5 +1,6 @@
 import { Box, Paper, Typography } from '@mui/material';
 
+import { auth } from '@/auth';
 import HydrationGuard from '@/components/utility/HydrationGuard';
 import JobsRefreshButton from '@/components/admin/sheetJobs/JobsRefreshButton';
 import SheetJobsView from '@/components/admin/sheetJobs/SheetJobsView';
@@ -12,6 +13,7 @@ import {
   serializeSheetJobs,
 } from '@/lib/db/sheetJobs';
 import { getSheetSyncHealth } from '@/lib/db/syncState';
+import { getJobChangesSeenAt } from '@/lib/db/users';
 import { todayInNewYork } from '@/lib/onCallSheet';
 import theme from '@/theme';
 
@@ -23,11 +25,13 @@ const CHANGES_PAGE = 100;
 // the automatic reads are working (stage 3). app/admin/layout.jsx limits it to
 // admins.
 async function Jobs() {
-  const [jobs, changes, syncState, health] = await Promise.all([
+  const session = await auth();
+  const [jobs, changes, syncState, health, seenAt] = await Promise.all([
     getSheetJobs(),
     getJobChanges({ limit: CHANGES_PAGE }),
     getJobsSyncState(),
     getSheetSyncHealth({ today: todayInNewYork() }),
+    getJobChangesSeenAt(session?.user?.id),
   ]);
 
   return (
@@ -60,6 +64,7 @@ async function Jobs() {
             jobs={serializeSheetJobs(jobs)}
             changes={serializeJobChanges(changes)}
             moreChanges={changes.length === CHANGES_PAGE}
+            seenAt={seenAt}
           />
         </HydrationGuard>
       </Paper>

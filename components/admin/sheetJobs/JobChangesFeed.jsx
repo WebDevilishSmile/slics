@@ -23,8 +23,10 @@ async function fetchChanges({ group, last }) {
 // Changes to the Jobs tab, newest first and grouped by day, with filter chips.
 // The "All" first page (`initial`, `initialMore`) comes from the server page,
 // so a refresh shows up at once; filters and older pages come from
-// GET /api/sheet-jobs/changes. `onOpenJob(jobName)` opens that job.
-export default function JobChangesFeed({ initial, initialMore, onOpenJob }) {
+// GET /api/sheet-jobs/changes. `onOpenJob(jobName)` opens that job. Changes
+// after `newSince` (ISO, or null for all) get a "New" label.
+export default function JobChangesFeed({ initial, initialMore, newSince, onOpenJob }) {
+  const isNew = (change) => !newSince || change.seenAt > newSince;
   const [group, setGroup] = useState(null);
   // What was fetched on top of the server's page: older "All" pages, or a
   // filter's own list. Reset whenever the server sends a new first page.
@@ -153,6 +155,9 @@ export default function JobChangesFeed({ initial, initialMore, onOpenJob }) {
                       {dayjs(change.seenAt).format('h:mm A')} ·{' '}
                     </Box>
                     <strong>{change.jobName}</strong> · {describeJobChange(change)}
+                    {isNew(change) && (
+                      <Chip label='New' color='primary' size='small' component='span' sx={{ ml: 1, verticalAlign: 'middle' }} />
+                    )}
                   </Button>
                 </Box>
               ))}

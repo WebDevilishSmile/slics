@@ -21,12 +21,16 @@ function summary({ jobs, baseline, changes, added, removed, changedJobs }) {
   return `Updated at ${time}: ${parts.join(', ')}`;
 }
 
+// What did the last read, as `lastSource` in sync-state records it.
+const SOURCES = { refresh: 'Refresh', ping: 'a sheet edit', cron: 'the daily check' };
+
 // Pulls the sheet's Jobs tab (POST /api/sheet-jobs/refresh) and re-renders the
 // server page with what was saved. `lastSyncedAt` (ISO or null) is when the
-// tab was last read, by this button or (stage 3) the sheet's ping.
-export default function JobsRefreshButton({ lastSyncedAt }) {
+// tab was last read, and `lastSource` by what: this button, the sheet's ping
+// or the daily cron.
+export default function JobsRefreshButton({ lastSyncedAt, lastSource }) {
   const lastSynced = lastSyncedAt
-    ? `Last checked ${dayjs(lastSyncedAt).format('MMM D, h:mm A')}`
+    ? `Last checked ${dayjs(lastSyncedAt).format('MMM D, h:mm A')}${SOURCES[lastSource] ? ` by ${SOURCES[lastSource]}` : ''}`
     : 'Not pulled from the sheet yet.';
   const router = useRouter();
   const [busy, setBusy] = useState(false);

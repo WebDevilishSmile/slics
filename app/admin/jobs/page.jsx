@@ -1,8 +1,9 @@
-import { Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 
 import HydrationGuard from '@/components/utility/HydrationGuard';
 import JobsRefreshButton from '@/components/admin/sheetJobs/JobsRefreshButton';
 import SheetJobsView from '@/components/admin/sheetJobs/SheetJobsView';
+import SheetSyncHealth from '@/components/admin/sheetJobs/SheetSyncHealth';
 import {
   getJobChanges,
   getJobsSyncState,
@@ -10,18 +11,23 @@ import {
   serializeJobChanges,
   serializeSheetJobs,
 } from '@/lib/db/sheetJobs';
+import { getSheetSyncHealth } from '@/lib/db/syncState';
+import { todayInNewYork } from '@/lib/onCallSheet';
 import theme from '@/theme';
 
 const CHANGES_PAGE = 100;
 
 // Every job on the on-call sheet's Jobs tab and what changed between
 // refreshes (docs/ON-CALL-SHEET-SYNC.md, stage 2). Reads MongoDB only; the
-// Refresh button reads the sheet. app/admin/layout.jsx limits it to admins.
+// Refresh button reads the sheet. Under it, whether the sheet's notifier and
+// the automatic reads are working (stage 3). app/admin/layout.jsx limits it to
+// admins.
 async function Jobs() {
-  const [jobs, changes, syncState] = await Promise.all([
+  const [jobs, changes, syncState, health] = await Promise.all([
     getSheetJobs(),
     getJobChanges({ limit: CHANGES_PAGE }),
     getJobsSyncState(),
+    getSheetSyncHealth({ today: todayInNewYork() }),
   ]);
 
   return (
@@ -43,7 +49,13 @@ async function Jobs() {
         {/* Times show in the browser's time zone, so this renders client-side
             only (the server runs in UTC). */}
         <HydrationGuard>
-          <JobsRefreshButton lastSyncedAt={syncState?.lastSyncedAt ?? null} />
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <JobsRefreshButton
+              lastSyncedAt={syncState?.lastSyncedAt ?? null}
+              lastSource={syncState?.lastSource ?? null}
+            />
+            <SheetSyncHealth lastPingAt={health.lastPingAt} errors={health.errors} />
+          </Box>
           <SheetJobsView
             jobs={serializeSheetJobs(jobs)}
             changes={serializeJobChanges(changes)}

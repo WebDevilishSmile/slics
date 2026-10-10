@@ -13,9 +13,10 @@ The app is used daily in production.
   - The first production refresh failed with Google's `404: Requested entity was not
     found` because `ON_CALL_SHEET_ID` on Vercel was wrong. A bad key would answer 400 and
     an IP-restricted key 403, so a 404 from the tab list always means the sheet id.
-- **Stage 3:** in progress. The webhook and the sync lock are deployed, and the admin's
-  script is installed. The daily cron is deployed. The health line is built. Next: the
-  job-change alerts.
+- **Stage 3:** built. The webhook, the sync lock, the daily cron and the health line are
+  deployed, and the admin's script is installed. The job-change alerts are built and
+  tested on a scratch build. Left: a heads-up to the admin's superior, and watching the
+  first real Jobs edit raise an alert.
 - **Setup for stages 1–2:**
   - [x] **API key:** the Google Sheets API is enabled, with an API key restricted to it.
   - [x] **Env:** `GOOGLE_SHEETS_API_KEY` and `ON_CALL_SHEET_ID` are in `.env` and on Vercel.
@@ -263,12 +264,15 @@ alert; cover weeks update quietly.
   - Tested 2026-10-10 on a scratch build against a throwaway database: no token, a wrong
     token or the bare secret → 401, POST → 405, the right token read Jobs and three weeks
     in 3.1 s with `lastSource: 'cron'`.
-- [ ] **Alerts (Jobs tab only):**
+- [x] **Alerts (Jobs tab only):**
   - **Seen marker:** `jobChangesSeenAt` on the admin's `users` doc (server-side, so phone
-    and desktop agree), set through `lib/db/users.js`. `null` means everything since the
-    baseline is new.
+    and desktop agree), through `getJobChangesSeenAt` / `markJobChangesSeen` in
+    `lib/db/users.js`. `null` means everything since the baseline is new. The mark only
+    moves forward (`$max` on the ISO string), so a page posting late can't undo a newer
+    one.
   - **`GET /api/sheet-jobs/unseen`** (admin-only) → `{ count, jobs, latest: [3] }`, from
-    `countJobChangesSince`.
+    `getUnseenJobChanges` (`lib/db/sheetJobs.js`). `jobs` is the distinct job names,
+    newest first, at most 20. `/admin` calls the same function on the server.
   - **`POST /api/sheet-jobs/seen` `{ upTo }`:** marks seen up to the newest change the page
     *rendered*, not "now", so a change arriving at the same moment isn't cleared unseen.
   - **Banner on `/admin`:** `components/admin/sheetJobs/JobChangesNotice.jsx`, a
@@ -282,8 +286,15 @@ alert; cover weeks update quietly.
     - The count lives in `lib/jobChangesStore.js` (the `lib/tipsStore.js` pattern),
       fetched from `/unseen` when the path changes.
   - **Clearing:** opening `/admin/jobs` POSTs `/seen` with its newest change's `seenAt`
-    and zeroes the store. The feed puts a "New" label on changes after the previous
-    `jobChangesSeenAt`.
+    (only when that's newer than the mark) and zeroes the store (`markJobChangesSeen` in
+    `lib/jobChangesStore.js`). A version counter drops any count fetched before the POST
+    lands. The feed puts a "New" label on changes after the mark the page opened with,
+    for the whole visit.
+  - Tested 2026-10-10 on a scratch build with a seeded throwaway database:
+    - `/unseen` and `/seen` answer 401 signed out.
+    - With the mark a day back, 4 of 5 changes counted (SH03, BE11, LV56).
+    - The banner, the feed's "New" labels, the Admin row's badge and the menu button's
+      dot ("Open menu, 3 job changes") were checked at 390px, light and dark.
 - [x] **Health on `/admin/jobs`:** `components/admin/sheetJobs/SheetSyncHealth.jsx` under
   the Refresh button, fed by `getSheetSyncHealth` (`lib/db/syncState.js`).
   - "Last checked …" names what read it: Refresh, a sheet edit or the daily check

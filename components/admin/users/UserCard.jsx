@@ -53,7 +53,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
       if (!response.ok)
         throw new Error(data.error || 'Failed to toggle membership.');
       if (data.bmcMember !== undefined) {
-        setUser(data);
+        setUser((current) => ({ ...current, bmcMember: data.bmcMember }));
         router.refresh();
       }
     } catch (error) {
@@ -72,7 +72,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
       if (!response.ok)
         throw new Error(data.error || 'Failed to toggle role.');
       if (data.role) {
-        setUser(data);
+        setUser((current) => ({ ...current, role: data.role }));
         router.refresh();
       }
     } catch (error) {

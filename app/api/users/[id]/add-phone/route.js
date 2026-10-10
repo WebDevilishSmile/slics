@@ -106,10 +106,15 @@ export async function PATCH(req, { params }) {
       );
     }
 
+    // Only the fields this route edits come back, never the whole user (its
+    // password hash) — in the response or the logs (SECURITY.md #6, #22).
     const updatedUserResult = await usersCollection.findOneAndUpdate(
       filter,
       updateDoc,
-      { returnDocument: 'after' }, // Return the document after the update
+      {
+        returnDocument: 'after',
+        projection: { name: 1, firstName: 1, lastName: 1, phone: 1 },
+      },
     );
 
     // CHANGE THIS BLOCK:
@@ -126,13 +131,7 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    // Now, updatedUserResult *is* the updated document.
-    // Use it directly.
-    console.log(
-      `API PATCH /users/[id]/add-phone: Successfully updated user ${userId}. New data:`,
-      updatedUserResult,
-    );
-    return NextResponse.json(updatedUserResult, { status: 200 }); // Return the document directly
+    return NextResponse.json(updatedUserResult, { status: 200 });
   } catch (error) {
     console.error(`API Error: Error updating user ${userId}:`, error);
     if (error.name === 'BSONTypeError' || error.message.includes('ObjectId')) {

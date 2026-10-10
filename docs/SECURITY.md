@@ -43,7 +43,7 @@ names what's left.
 | 3 | Done | 2026-10-07 (Next 15.5.27, Auth.js beta.32). |
 | 4 | Done | 2026-10-10. `lib/authz.js` (`getSession`, `requireUser`, `requireAdmin`) is the only caller of `auth()`. All 43 guarded API routes, 13 pages, the admin layout and 2 server components go through it. `middleware.js` checks `req.auth?.user?.id`. `toggle-role`, `toggle-member`, `add-phone` and the admin layout read the session's role instead of looking the user up by email. No `route()` wrapper: see the note under #4. |
 | 5 | Done | `lib/db/comments.js` has no `'use server'`. The only two uses left are the inline sign-in/out actions. |
-| 6 | Partly | `serializeUsers` drops the password hash (2026-10-10, /admin/users); `serializeUser` still spreads the whole document; `add-phone` still logs and returns the full updated user. |
+| 6 | Done | 2026-10-10. Users reach the browser through allowlist serializers (`toPublicUser`, `toSelfUser`, `toAdminUser` in `lib/serializers.js`) that pick fields instead of spreading. `getUsers`/`getUserById`/`getUserByEmail` leave out the hash by default. `add-phone` returns only the fields it edits and doesn't log the user; the role and membership toggles return `{ _id, role }` / `{ _id, bmcMember }`. |
 | 7 | Partly | The `/signin` redirect is fixed (it goes to `/`). Admin pages still rely on `app/admin/layout.jsx` (an email lookup), and `app/bids/page.jsx` has no `auth()` call. |
 | 8 | Open | Access-model decision still to make. |
 | 9 | Open | `authorize()` in `auth.js` has no rate limit. |
@@ -59,7 +59,7 @@ names what's left.
 | 19 | Mostly done | Account self-deletion refuses admins. Since 2026-10-10 only a super admin changes roles (`setAdminRole`, `lib/db/admins.js`): never their own, never a super admin's, so there's always an admin left. **Left:** the email lookups. |
 | 20 | Open | Console checklist. `.env` points at production (`ON-CALL-SHEET-SYNC.md` says so too), which makes the dev/prod split the most useful line on it. |
 | 21 | Open | No TTL on `slicViews`; only `rateLimits` self-cleans. |
-| 22 | Partly | The `console.log(session)` on `/history` is gone. `add-phone` logs the full user document; the BMC webhook logs supporter emails. |
+| 22 | Mostly done | The `console.log(session)` on `/history` is gone, `add-phone` no longer logs the user (#6, 2026-10-10), and the BMC webhook logs ids, not emails. **Left:** the rest of the `console.*` calls weren't re-checked one by one. |
 | 23 | Open | `cover-bid-jobs/**` still returns `error.message`. (`cover/[position]` is deleted.) |
 | 24 | Partly | Limits added since: places, place comments, history edits, both sheet refreshes, the sheet webhook. Still none on credentials sign-in, votes, `track-view`, `add-phone` or the BMC webhook. |
 | 25 | Mostly done | `crypto` and `lib/stripe.js` are gone and eslint matches Next (#3). Left: an `engines` field (`archive/STRUCTURE.md` #35). |
@@ -477,7 +477,7 @@ access module.**
 
 ---
 
-### [ ] 6. Password hashes and emails are sent to the browser
+### [x] 6. Password hashes and emails are sent to the browser
 
 **Files:**
 - `app/api/users/[userId]/add-phone/route.js:152` (logs the full updated user document)
@@ -517,6 +517,20 @@ this right (projects to `{ name, image }`); it is the exception, not the rule.
    reads those) and log ids, not documents (#22).
 4. Grep for `password` in the `.next/server/app/admin/users/page.js` output after the
    change; it should not appear.
+
+*Done 2026-10-10, a little differently.* Instead of a projection per caller, the three
+general reads in `lib/db/users.js` (`getUsers`, `getUserById`, `getUserByEmail`) exclude
+`password` by default. `authorize()` in `auth.js` reads the collection directly and is
+the only code that sees the hash. `serializeUser(s)` are gone. In their place are three
+allowlist serializers in `lib/serializers.js`, each with only what its page renders:
+`toPublicUser` (`_id`, name, image: authors on `/admin/comments`, the name on `/covers`),
+`toSelfUser` (plus first/last name, email, phone, role, membership, join date:
+`/profile/[id]`) and `toAdminUser` (plus `superAdmin`: `/admin/users`). The admin comments
+page used to ship every user's email and phone just to show author names.
+`/admin/users/[id]` renders on the server and passes no user to a client component.
+`add-phone` projects the result to the fields it edits and stopped logging it. The role
+and membership toggles return `{ _id, role }` / `{ _id, bmcMember }`, and `UserCard`
+merges that into the row it already has. The unused `toggleMembershipApi` went too.
 
 ---
 

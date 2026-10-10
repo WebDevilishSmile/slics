@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/authz';
 import { getCommentsByUserId } from '@/lib/db/comments';
 import { getUserById } from '@/lib/db/users';
-import { serializeComments, serializeUser } from '@/lib/serializers';
+import { serializeComments, toSelfUser } from '@/lib/serializers';
 
 import RedirectMessage from '@/components/layout/RedirectMessage';
 import ProfileComments from '@/components/profile/ProfileComments';
@@ -57,7 +57,7 @@ async function ProfilePage({ params }) {
 
         <HydrationGuard>
           <ProfileData
-            userData={serializeUser(userData)}
+            userData={toSelfUser(userData)}
             commentCount={comments.length}
           />
           <ProfileComments comments={serializeComments(comments)} />

@@ -111,7 +111,7 @@ order that file suggests, minus what's done:
       on the roster
 - [x] **#2** 2026-10-10: no comment is parsed as HTML, `html-react-parser` is gone, and the
       43 old HTML comments are stored as text
-- [ ] **#6** user serializers pick fields instead of spreading; `add-phone` stops returning and logging the whole user
+- [x] **#6** 2026-10-10: user serializers pick fields; `add-phone` and the toggles return only what changed
 - [ ] **#7** admin pages check admin themselves with `getSession()` (not only the layout); `/bids` checks the session
 - [ ] **#12** security headers in `next.config.mjs` (step 1 is safe to ship on its own)
 - [ ] **#10** allowlist PATCH bodies (`drivers/[id]`, `updateSlic`; `cover/[position]` was deleted 2026-10-10)

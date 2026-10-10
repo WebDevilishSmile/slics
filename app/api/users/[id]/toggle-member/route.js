@@ -48,7 +48,11 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json(updatedUserDocument, { status: 200 });
+    // Only what the membership toggle reads, not the user document (SECURITY.md #6).
+    return NextResponse.json(
+      { _id: userId, bmcMember: updatedUserDocument.bmcMember === true },
+      { status: 200 },
+    );
   } catch (error) {
     console.error('API Error: Uncaught error in PATCH /toggle-member:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

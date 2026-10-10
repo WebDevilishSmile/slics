@@ -12,7 +12,6 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { serializeUser } from '@/lib/serializers';
 import { softInputSx, softToggleSx } from '@/components/utility/soft';
 import UserCard from './UserCard';
 
@@ -195,7 +194,7 @@ function UserList({ users, viewCounts = {} }) {
         {pagedUsers.map((user) => (
           <UserCard
             key={user._id}
-            user={serializeUser(user)}
+            user={user}
             viewCount={viewCounts[user._id] ?? 0}
           />
         ))}

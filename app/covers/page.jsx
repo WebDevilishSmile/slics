@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/authz';
 import { getDriverById } from '@/lib/db/drivers';
-import { serializeDriver, serializeUser } from '@/lib/serializers';
+import { serializeDriver, toPublicUser } from '@/lib/serializers';
 import { getUserById } from '@/lib/db/users';
 import { Typography } from '@mui/material';
 import { Suspense } from 'react';
@@ -62,7 +62,7 @@ async function CoversPage() {
 
         <HydrationGuard>
           <CoversDate
-            user={serializeUser(userData)}
+            user={toPublicUser(userData)}
             driver={serializeDriver(driverData)}
           />
         </HydrationGuard>

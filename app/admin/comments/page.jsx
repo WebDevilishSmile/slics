@@ -5,7 +5,7 @@ import CommentsSection from '@/components/admin/comments/CommentsSection';
 import RedirectMessage from '@/components/layout/RedirectMessage';
 import LoadingFallback from '@/components/layout/LoadingFallback';
 import { getAllComments } from '@/lib/db/comments';
-import { serializeComments, serializeSlics, serializeUsers } from '@/lib/serializers';
+import { serializeComments, serializeSlics, toPublicUser } from '@/lib/serializers';
 import { getUsers } from '@/lib/db/users';
 import { Typography } from '@mui/material';
 import { Suspense } from 'react';
@@ -53,7 +53,7 @@ async function CommentsPage() {
         <CommentsSection
           comments={serializeComments(comments)}
           slics={serializeSlics(slics)}
-          users={serializeUsers(users)}
+          users={users.map(toPublicUser)}
         />
       </HydrationGuard>
     </Suspense>

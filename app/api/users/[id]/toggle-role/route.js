@@ -23,7 +23,8 @@ export async function PATCH(req, { params }) {
     if (result.error) {
       return NextResponse.json({ error: result.error }, { status: result.status });
     }
-    return NextResponse.json(result.user, { status: 200 });
+    // Only what the role chip reads, not the user document (SECURITY.md #6).
+    return NextResponse.json({ _id: userId, role: result.user.role ?? 'user' }, { status: 200 });
   } catch (error) {
     console.error('API Error: Uncaught error in PATCH /toggle-role:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

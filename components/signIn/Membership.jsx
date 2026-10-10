@@ -4,7 +4,6 @@ import theme from '@/theme';
 import Link from 'next/link';
 import RequestAccess from './RequestAccess';
 import { isMobileDevice } from '@/lib/format';
-import { serializeUser } from '@/lib/serializers';
 import { headers } from 'next/headers';
 import BmcButton from '@/components/layout/BmcButton';
 import ImpactLine from '@/components/support/ImpactLine';

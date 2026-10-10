@@ -1,4 +1,4 @@
-import { serializeUsers } from '@/lib/serializers';
+import { toAdminUser } from '@/lib/serializers';
 import { getSlicViewCounts, getUsers } from '@/lib/db/users';
 
 import UserList from '@/components/admin/users/UserList';
@@ -13,7 +13,7 @@ async function UsersPage() {
       <Typography variant='sectionHeading'>Users</Typography>
 
       <HydrationGuard>
-        <UserList users={serializeUsers(users)} viewCounts={viewCounts} />
+        <UserList users={users.map(toAdminUser)} viewCounts={viewCounts} />
       </HydrationGuard>
     </>
   );

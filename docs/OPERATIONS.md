@@ -43,7 +43,7 @@ to `.env`. In production the same keys are set on the Vercel project.
 |---|---|---|---|
 | Daily sheet re-read (Jobs + this week on) | 10:00 UTC daily (`vercel.json`), production only, sometime within that hour | `GET /api/cron/on-call-sheet-sync` | `Authorization: Bearer $CRON_SECRET`, sent by Vercel |
 | Sheet notifier ping | When the sheet's `Jobs` tab or a dated tab is edited | `POST /api/webhooks/on-call-sheet` | `x-sheet-secret` = `ON_CALL_SHEET_WEBHOOK_SECRET` |
-| Buy Me a Coffee events | Membership started / cancelled | `POST /api/webhooks/buymeacoffee` | HMAC SHA-256 with `BMC_WEBHOOK_SECRET` |
+| Buy Me a Coffee events | Every delivery (saved to `bmc-events`); membership started / cancelled also sets `bmcMember` | `POST /api/webhooks/buymeacoffee` | HMAC SHA-256 with `BMC_WEBHOOK_SECRET`, constant-time; repeats are no-ops (`BMC-SUPPORT.md`) |
 
 The sheet notifier is an Apps Script in the admin's Google account. Install, test and
 uninstall steps are in `on-call-sheet-apps-script.md`. Whether it's working shows under the
@@ -124,5 +124,7 @@ their next request.
   at the source.
 
 **A membership didn't apply after someone joined on Buy Me a Coffee.** The webhook matches
-on email. Check that the supporter's BMC email matches their app account. Membership can be
-toggled by hand on `/admin/users`.
+on email (case doesn't matter since 2026-10-10). Look for their row in `bmc-events`. A row
+with `userId: null` means their BMC email has no app account, and its `type` shows what
+BMC sent. If there's no row at all, check the delivery log in BMC's dashboard and the
+secret. Membership can be toggled by hand on `/admin/users`.

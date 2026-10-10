@@ -10,28 +10,28 @@ about this folder.
 
 **Effort:** S = an evening or two · M = a few evenings · L = a project with stages.
 
-| # | Idea | For | Effort | Builds on |
-|---|---|---|---|---|
-| 1 | My Daily Log | Drivers | L | `sheet-jobs`, `slics.alphaSlic`, `DayTimeField`, `/history` |
-| 2 | Buy Me a Coffee: track support, thank people, show impact | Everyone | S–M | The BMC webhook, `SECURITY.md` #14 |
-| 3 | Cover drivers and call-in times from the sheet (**built 2026-10-10**) | Admin | S–M | `cover-bid-picks`, the sheet sync |
-| 4 | Embossed headings | Everyone | S | `sectionHeading`, `theme.soft` |
-| 5 | "Something's wrong?" reports on a SLIC | Drivers → admin | S–M | The job-change alert pattern |
-| 6 | Safety notes at the top of the card | Drivers | S–M | Tips, votes |
-| 7 | Tip freshness | Drivers | S | Tips, votes |
-| 8 | Pinned SLICs, filled from your job | Drivers | S | `archive/UI-SUGGESTIONS.md` #54, idea 1 |
-| 9 | Share a SLIC | Drivers | S | `/home/[slic]` |
-| 10 | "What's new" after a release | Drivers | S | `SoftNotice`, `BottomSheetDialog` |
-| 11 | Faster cards on a weak signal | Drivers | S | `lib/recentLookups.js` |
-| 12 | A data-health page | Admin | S | `slics` |
-| 13 | An in-app usage page | Admin, README | S–M | `slicViews`, `comments` |
-| 14 | An admin audit log | Admin | S | `SECURITY.md` #17 |
-| 15 | A dev database | You | S | `SECURITY.md` #20 |
-| 16 | A small test suite | You | M | The sheet parsers, `SECURITY.md` Part 3 |
-| 17 | CI on GitHub Actions | You | S | `npm run build`, lint, knip |
-| 18 | Schemas at the API boundary | You | M | `SECURITY.md` #10–#11 |
-| 19 | Next 16 | You | M | `SECURITY.md` #3 |
-| 20 | Error alerts | You | S | Vercel logs |
+| #   | Idea                                                                  | For             | Effort | Builds on                                                   |
+| --- | --------------------------------------------------------------------- | --------------- | ------ | ----------------------------------------------------------- |
+| 1   | My Daily Log                                                          | Drivers         | L      | `sheet-jobs`, `slics.alphaSlic`, `DayTimeField`, `/history` |
+| 2   | Buy Me a Coffee: track support, thank people, show impact             | Everyone        | S–M    | The BMC webhook, `SECURITY.md` #14                          |
+| 3   | Cover drivers and call-in times from the sheet (**built 2026-10-10**) | Admin           | S–M    | `cover-bid-picks`, the sheet sync                           |
+| 4   | Embossed headings                                                     | Everyone        | S      | `sectionHeading`, `theme.soft`                              |
+| 5   | "Something's wrong?" reports on a SLIC                                | Drivers → admin | S–M    | The job-change alert pattern                                |
+| 6   | Safety notes at the top of the card                                   | Drivers         | S–M    | Tips, votes                                                 |
+| 7   | Tip freshness                                                         | Drivers         | S      | Tips, votes                                                 |
+| 8   | Pinned SLICs, filled from your job                                    | Drivers         | S      | `archive/UI-SUGGESTIONS.md` #54, idea 1                     |
+| 9   | Share a SLIC                                                          | Drivers         | S      | `/home/[slic]`                                              |
+| 10  | "What's new" after a release                                          | Drivers         | S      | `SoftNotice`, `BottomSheetDialog`                           |
+| 11  | Faster cards on a weak signal                                         | Drivers         | S      | `lib/recentLookups.js`                                      |
+| 12  | A data-health page                                                    | Admin           | S      | `slics`                                                     |
+| 13  | An in-app usage page                                                  | Admin, README   | S–M    | `slicViews`, `comments`                                     |
+| 14  | An admin audit log                                                    | Admin           | S      | `SECURITY.md` #17                                           |
+| 15  | A dev database                                                        | You             | S      | `SECURITY.md` #20                                           |
+| 16  | A small test suite                                                    | You             | M      | The sheet parsers, `SECURITY.md` Part 3                     |
+| 17  | CI on GitHub Actions                                                  | You             | S      | `npm run build`, lint, knip                                 |
+| 18  | Schemas at the API boundary                                           | You             | M      | `SECURITY.md` #10–#11                                       |
+| 19  | Next 16                                                               | You             | M      | `SECURITY.md` #3                                            |
+| 20  | Error alerts                                                          | You             | S      | Vercel logs                                                 |
 
 ---
 
@@ -41,12 +41,13 @@ about this folder.
 
 **Why.** The app already knows a driver's job (the Jobs tab names each job's driver), the
 job's schedule (start, hours and miles per day) and every SLIC on its route. The job
-routes are chains of alpha codes (`BETPA>BURMD>GAIMD>…`), and `BETPA` *is* a SLIC's
+routes are chains of alpha codes (`BETPA>BURMD>GAIMD>…`), and `BETPA` _is_ a SLIC's
 `alphaSlic` (Bethlehem Center, 1809). A log that pre-fills itself from the job turns the
 app from "look up a stop" into "my shift". Every leg becomes a one-tap link to that stop's
 card, tips and phone number.
 
 **What a driver sees.**
+
 - On `/history` (or a "Log" tab beside it): "You're on **BMEL**. Tonight: BETPA › BURMD ›
   GAIMD › EZRPA › ALLPA › BETPA. **Log today**".
 - One tap creates the day, with the legs pre-filled from the job. Departure and arrival
@@ -57,6 +58,7 @@ card, tips and phone number.
 - Past days list under the same date headers `/history` already has.
 
 **Linking a driver to a job.** Ask, never assume.
+
 1. Find a candidate. Try the roster link first: `users.driverId` → `drivers.name` →
    `sheet-jobs.driver`, matching names after normalizing `LAST, FIRST` vs `First Last` and
    case. Fall back to the account name. Otherwise, let the driver pick from the job list.
@@ -93,6 +95,7 @@ card, tips and phone number.
   deletion.
 
 **Unknowns to settle first.**
+
 - The exact format of the route in the Jobs tab. Read a handful of real
   `sheet-jobs.description` values (or `npm run sheet:preview -- --jobs`). Parse leniently:
   any token that matches a known `alphaSlic` is a stop, and the rest stays free text.
@@ -102,6 +105,7 @@ card, tips and phone number.
   gives membership a clear "why" (idea 2).
 
 **Later.**
+
 - Weekly hours from the log next to the job's `weekHours` from the sheet: a record a
   driver can point to if a paycheck looks short.
 - Suggest leg times from that night's lookups (`slicViews` already timestamps every one).
@@ -114,6 +118,7 @@ Add a `deleteUserAccount` line, a retention decision and a privacy-page line in 
 change (`SECURITY.md` Part 3).
 
 **Stages.**
+
 1. Job link and confirm.
 2. Log a day: pre-fill and edit legs.
 3. The list on `/history`, plus weekly totals.
@@ -123,12 +128,15 @@ Write it up as `DAILY-LOG.md` when you start.
 
 ### 2. Buy Me a Coffee: track support, thank people, show impact
 
+**In progress:** the plan is `BMC-SUPPORT.md`, and stage 1 (record every event) was built on 2026-10-10.
+
 **Today** the webhook (`app/api/webhooks/buymeacoffee`) handles only membership
 started/cancelled, flips `users.bmcMember` by exact email, and keeps nothing else.
 
 **Record every event.** Add a `bmc-events` collection: event id, type, normalized email,
 amount and currency, the supporter's message if any, `receivedAt`, and the matched
 `userId` (or `null`).
+
 - A unique index on the event id gives replay protection for free. Swap the `!==`
   signature check for `lib/secretsMatch.js` in the same change. That's most of
   `SECURITY.md` #14.
@@ -137,17 +145,20 @@ amount and currency, the supporter's message if any, `receivedAt`, and the match
   arrives as a different event type from memberships, which is why it isn't tracked today.
 
 **An admin "Supporters" page.**
+
 - Totals by month, current members, and recent support with its messages.
 - An **unmatched** list: support from an email with no account. That's also how to fix
   "my membership didn't apply" (`OPERATIONS.md`).
 
 **Thank people, quietly.**
+
 - On a supporter's next visit, show a one-time `SoftNotice`: "Thanks for the coffee,
   Tiago." Dismissing it stamps `thankedAt` on the event, so it shows once per support.
 - Optional and opt-in: "Supporter since March 2026" on their profile, and a supporters
   line on `/about` with first names only.
 
 **Show significance without asking.**
+
 - **Live impact numbers** on `/about` and the membership page: "Drivers looked up 3,900
   SLICs this month and shared 41 tips." It's one aggregate over `slicViews` and `comments`
   (idea 13). The README quotes these numbers by hand today.
@@ -160,9 +171,16 @@ amount and currency, the supporter's message if any, `receivedAt`, and the match
 **Privacy.** Amounts and emails are personal. Make them admin-only, and add a privacy-page
 line ("we keep a record of support you send through Buy Me a Coffee").
 
+** Add a SuperAdmin role **
+
+- A SuperAdmin has all the privileges of an admin, plus the ability to manage other admins and perform high-level operations that regular admins cannot.
+- Consider adding checks in the admin pages and backend routes to enforce SuperAdmin-only actions.
+- SuperAdmin will have access to a Buy Me a Coffee dashboard to view all donations and manage acknowledgments.
+
 ### 3. Cover drivers and call-in times from the sheet
 
 **Built 2026-10-10**, from the pick order, with no new sheet read. What the check found:
+
 - The yellow fill isn't reliable. On 10/3 and 10/10 only 15 rows were yellow, though the
   sheet's owner counts 1–20 as cover drivers every week.
 - The numbers are the rule. A cover driver who's out keeps their row, grayed, without a
@@ -194,6 +212,7 @@ yellow breaks it. So prefer the number if it works.
 **Call-in times and availability.** First find where they live in the sheet. If they're
 on the `ON CALL <date>` tab, reading it is a ground-rule change (today only `Jobs` and
 whole-date tabs are read).
+
 - Write that decision into `ON-CALL-SHEET-SYNC.md` → "Ground rules" before any code.
 - Fetch only the columns needed through an A1 range, so a phone-number column never
   comes along.
@@ -202,26 +221,13 @@ whole-date tabs are read).
 days, and "From the sheet, refreshed …". Keep the manual editor as a fallback until the
 sheet version has proven itself, the same way the photo upload was kept.
 
-### 4. Embossed headings
-
-Make it one change in one place: the `sectionHeading` variant in `theme.js`.
-- Add a text-emboss value per scheme next to the shadow pairs in `theme.soft`: a light
-  highlight on one side and a soft, brand-tinted shadow on the other in light mode, and a
-  much subtler pair in dark (the dark emboss is subtler by design).
-- Every heading picks it up, and no call site changes.
-- Check it at 390px in both schemes. Keep the shadow tight (1px offsets), or large text
-  blurs on a phone in sunlight.
-- Leave the `h1` app name alone, or give it the same treatment on purpose. Don't let the
-  two drift.
-
----
-
 ## Part 2 — For drivers
 
 ### 5. "Something's wrong?" reports on a SLIC
 
 The whole product is correct addresses and phone numbers, and drivers are the first to
 know when one changes.
+
 - Add a small link on the card. It opens a sheet: wrong phone / wrong address / closed or
   moved / other, plus a note.
 - Reports go to an admin queue with the same banner and menu badge as job changes
@@ -232,6 +238,7 @@ know when one changes.
 ### 6. Safety notes at the top of the card
 
 Low bridges, no-truck roads and a closed dock belong above the fold, not in a thread.
+
 - Let the admin promote a tip to a "Heads up" line on the card, or set one directly on
   the SLIC.
 - It's the same text, shown first, and it changes through `updateSlic` so history records
@@ -259,6 +266,7 @@ driver asks "where's that customer?"
 ### 10. "What's new" after a release
 
 The app ships often, and drivers won't find pins, places or the log on their own.
+
 - After a release with something driver-facing, show a one-time sheet
   (`BottomSheetDialog`) or a `SoftNotice` with two or three lines.
 - Keep the last-seen version in localStorage.
@@ -268,6 +276,7 @@ The app ships often, and drivers won't find pins, places or the log on their own
 
 `lib/recentLookups.js` keeps the last six codes on the device. Keeping each one's address
 and phone number too would let the card render instantly while the network catches up.
+
 - This helps on a slow connection, not a dead one. Real offline needs a service worker,
   which the app avoids on purpose (`CLAUDE.md` → "PWA").
 - It's a per-device convenience, like the rest of localStorage.
@@ -279,6 +288,7 @@ and phone number too would let the card render instantly while the network catch
 ### 12. A data-health page
 
 A short list under `/admin` that turns maintenance into a checklist:
+
 - SLICs with no phone;
 - SLICs with no PDF, or only a legacy Supabase PDF (migration progress, so you know when
   the fallback can go);
@@ -315,6 +325,7 @@ scrubbed export and used by Vercel Preview too, makes every later item safer to 
 ### 16. A small test suite
 
 Two files would cover the riskiest code:
+
 - **Sheet parsers** (`lib/coverSheetParser.js`, `lib/jobsSheetParser.js`,
   `lib/onCallSheet.js`) against saved CSV fixtures with the names swapped out. They were
   tested by hand on CSV downloads; capture those. A layout change in the sheet is the

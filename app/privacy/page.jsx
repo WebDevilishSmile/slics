@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 const CONTACT_EMAIL = 'WebDevilishSmile@gmail.com';
-const EFFECTIVE_DATE = 'October 7, 2026';
+const EFFECTIVE_DATE = 'October 10, 2026';
 
 export default function PrivacyPage() {
   return (
@@ -145,14 +145,16 @@ export default function PrivacyPage() {
               <strong>The administrator.</strong> As the person running the app,
               Tiago Davila can see account details (including your email and
               phone number if you added one), comments and lookup history in
-              order to keep the app working and moderate comments.
+              order to keep the app working and moderate comments, and the
+              support you send through Buy Me a Coffee.
             </>,
             <>
               <strong>Service providers.</strong> The app runs on Vercel
               (hosting, analytics and file storage for directions PDFs) and
               stores its data in MongoDB Atlas. Google handles Google sign-in.
-              Buy Me a Coffee processes supporter payments; we receive only your
-              email address and the start or end of a membership, never your
+              Buy Me a Coffee processes supporter payments. For each one it tells
+              us your email address and name, the amount, any message you leave
+              and when a membership starts or ends. We never receive your
               payment details.
             </>,
             <>
@@ -192,6 +194,7 @@ export default function PrivacyPage() {
             'Comments are kept until you delete them, or until your account is deleted. Delete SLIC comments from your profile page and comments on a place from the place itself.',
             'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
             'Lookup history is kept while your account exists, and the History page shows all of it. Removing an entry hides it from that page; it is still counted in your lookup total, and it is deleted with your account.',
+            "A record of each support or membership change you make through Buy Me a Coffee is kept as the app's record of support. If you delete your account it stays, no longer linked to you; ask us to remove it.",
             'Sign-up rate-limit records expire automatically within about an hour.',
             'Session cookies expire after 30 days, or as soon as you sign out.',
           ]}

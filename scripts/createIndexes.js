@@ -35,6 +35,11 @@ async function main() {
       // the soft-delete rule; userId backs account deletion's cleanup.
       { collection: 'placeComments', spec: { placeId: 1, parentId: 1 } },
       { collection: 'placeComments', spec: { userId: 1 } },
+      // Buy Me a Coffee deliveries (docs/BMC-SUPPORT.md). The unique key (a hash
+      // of the body) makes a retried or replayed delivery a no-op.
+      { collection: 'bmc-events', spec: { key: 1 }, options: { unique: true } },
+      { collection: 'bmc-events', spec: { receivedAt: -1 } },
+      { collection: 'bmc-events', spec: { userId: 1, receivedAt: -1 } },
     ];
 
     for (const { collection, spec, options } of indexes) {

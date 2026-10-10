@@ -14,7 +14,7 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 ### On-call sheet sync, stage 3 wrap-up (`ON-CALL-SHEET-SYNC.md`)
 
-- [ ] set `CRON_SECRET` on Vercel (until then the daily cron route answers 500)
+- [x] set `CRON_SECRET` on Vercel (until then the daily cron route answers 500)
 - [x] give the admin's superior a heads-up about the sheet notifier
 - [ ] watch the first real Jobs-tab edit raise the `/admin` banner and menu badge, then
       clear when `/admin/jobs` opens
@@ -37,6 +37,10 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 ## Features
 
+### Privacy and Terms page
+
+- [ ] remove Gemini from app now that we don't need it
+
 ### Forum Page
 
 - [ ] implement forum page for discussions among users
@@ -46,7 +50,6 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 Design notes and a staged plan: `RECOMMENDATIONS.md` → "1. My Daily Log".
 
 - [ ] develop new feature to track daily route(s)
-- [ ] make it more of a daily log
 - [ ] user's job is pulled by the job list (Tiago Davila is on job BMEL)
 - [ ] ask if that is true and save to backend (user { job: 'BMEL' })
 - [ ] display user's job in history and ask if they want to log day based on job description for that day (Mon: BETPA>BURMD>GAIMD>EZRPA>ALLPA>BETPA)
@@ -55,11 +58,15 @@ Design notes and a staged plan: `RECOMMENDATIONS.md` → "1. My Daily Log".
 
 ### Buy Me a Coffee
 
-Design notes: `RECOMMENDATIONS.md` → "2. Buy Me a Coffee".
+Plan and checklist: `BMC-SUPPORT.md` (design in `RECOMMENDATIONS.md` #2).
 
-- [ ] keep track of donations (When and how much) (Right now it just sees who becomes or is a member)
+- [x] keep track of donations (when and how much): every webhook delivery is saved to
+      `bmc-events` (stage 1, 2026-10-10). Run `npm run db:indexes` once for its unique index
+- [ ] see them: the admin Supporters page (stage 2)
 - [ ] thank you messages or acknowledgments for donations
 - [ ] don't want to beg for donations aggressively but want to imply the efforts and work put into the project and the significance of supporting it
+- [ ] SuperAdmin role (manages admins, sees the BMC dashboard): deferred until there's a
+      second admin; pairs with `SECURITY.md` #19's last-admin guard
 
 ### Admin Page
 
@@ -74,16 +81,16 @@ Design notes: `RECOMMENDATIONS.md` → "3. Cover drivers from the sheet".
       empty state. Start in localStorage (`archive/UI-SUGGESTIONS.md` #54)
 - [ ] manifest shortcuts: "Look up a SLIC" and "My history" on a long-press of the
       home-screen icon (`app/manifest.js`, `archive/UI-SUGGESTIONS.md` #55)
-- [ ] decide on bottom navigation (left open in `archive/UI-SUGGESTIONS.md` #52). On hold
-      (2026-10-10). A working prototype (Look up · History/Hubs · Profile · Menu, phones
-      only) is on the local branch `bottom-nav-preview`. Open points: hide the header's
-      hamburger on phones, drop the back arrow on tab pages, a stronger top edge in light mode
 - [ ] admin leftovers from the 2026-10-08 review (`archive/UI-SUGGESTIONS.md` #57):
   - [ ] `/admin/users`: the lookup count and the member icon have no visible label
   - [ ] Edit SLIC's "Back" button repeats the header's back arrow
   - [ ] admin SLICs table: 5 rows a page (`SLICS_PER_PAGE`); search placeholder cut off at 390px
   - [ ] `/cover-bid-jobs` is "Cover Bid Jobs" on the page and "Cover Bids" in the header
   - [ ] screenshot `/covers` with an account linked to a driver
+- [ ] **On Hold** decide on bottom navigation (left open in `archive/UI-SUGGESTIONS.md` #52). On hold
+      (2026-10-10). A working prototype (Look up · History/Hubs · Profile · Menu, phones
+      only) is on the local branch `bottom-nav-preview`. Open points: hide the header's
+      hamburger on phones, drop the back arrow on tab pages, a stronger top edge in light mode
 
 ---
 

@@ -25,6 +25,7 @@ Everything written about SLICs that isn't code. The product overview is the root
 |---|---|
 | [`ON-CALL-SHEET-SYNC.md`](ON-CALL-SHEET-SYNC.md) | The plan, layout notes and checklist for reading the ON CALL SHEET (cover weeks, the Jobs tab, alerts). Stages 1–3 built |
 | [`on-call-sheet-apps-script.md`](on-call-sheet-apps-script.md) | The admin's guide to installing the sheet notifier (Apps Script) |
+| [`BMC-SUPPORT.md`](BMC-SUPPORT.md) | Buy Me a Coffee: recording support, the admin Supporters page, thank-yous, impact numbers. Stage 1 built |
 
 ## Archive
 

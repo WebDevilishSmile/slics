@@ -1,103 +1,95 @@
-// src/app/api/webhooks/buymeacoffee/route.js
+import crypto from 'crypto';
 import { NextResponse } from 'next/server';
-import crypto from 'crypto'; // Node.js crypto module for HMAC verification
-import clientPromise from '@/lib/db/client'; // Your MongoDB connection client
-import { ObjectId } from 'mongodb';
-import client from '@/lib/db/client';
 
-// Ensure this API route runs in a Node.js environment
-// This is default for API routes in App Router, but good to be explicit
+import {
+  findUserIdByEmail,
+  parseBmcEvent,
+  recordBmcEvent,
+  setBmcMember,
+} from '@/lib/db/bmcEvents';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { secretsMatch } from '@/lib/secretsMatch';
+
 export const runtime = 'nodejs';
 
-export async function POST(req) {
-  const BMC_WEBHOOK_SECRET = process.env.BMC_WEBHOOK_SECRET;
+// Buy Me a Coffee events (docs/BMC-SUPPORT.md, SECURITY.md #14). Every signed
+// delivery is saved to `bmc-events`; membership events also turn the matched
+// account's `bmcMember` on or off. A repeat of a body already seen (a retry,
+// or a captured request replayed later) is acknowledged and does nothing.
+const MEMBERSHIP = {
+  'membership.started': true,
+  'membership.cancelled': false,
+  'membership.canceled': false,
+};
 
-  if (!BMC_WEBHOOK_SECRET) {
-    console.error('BMC_WEBHOOK_SECRET is not set in environment variables.');
+// Pre-auth, so limited by IP. BMC sends a handful a day; this only stops a
+// flood of forged requests from reaching the HMAC and the database.
+const LIMIT = 60;
+const WINDOW_MS = 60 * 1000;
+
+export async function POST(request) {
+  const secret = process.env.BMC_WEBHOOK_SECRET;
+  if (!secret) {
+    console.error('BMC webhook: BMC_WEBHOOK_SECRET is not set.');
     return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
 
-  const signature = req.headers.get('x-signature-sha256'); // Check BMC documentation for exact header name
+  const rate = await checkRateLimit({
+    key: `bmc-webhook:${getClientIp(request)}`,
+    limit: LIMIT,
+    windowMs: WINDOW_MS,
+  });
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(rate.retryAfterSeconds) } },
+    );
+  }
 
-  // Read the raw body as text for HMAC verification
-  const rawBody = await req.text();
-
-  // 1. Verify Webhook Signature (CRITICAL SECURITY STEP)
+  // The HMAC is over the exact bytes received, so read the body as text.
+  // Header name per third-party docs and the code that has worked so far.
+  const signature = request.headers.get('x-signature-sha256');
+  const rawBody = await request.text();
   if (!signature) {
     return NextResponse.json({ error: 'No signature provided' }, { status: 401 });
   }
-
-  const hmac = crypto.createHmac('sha256', BMC_WEBHOOK_SECRET);
-  hmac.update(rawBody);
-  const digest = hmac.digest('hex');
-
-  if (digest !== signature) {
-    console.warn('Webhook signature mismatch!');
+  const expected = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+  if (!secretsMatch(signature.trim().toLowerCase(), expected)) {
+    console.warn('BMC webhook: signature mismatch.');
     return NextResponse.json({ error: 'Invalid signature' }, { status: 403 });
   }
 
-  let event;
+  let body;
   try {
-    event = JSON.parse(rawBody);
-  } catch (error) {
-    console.error('Error parsing webhook body:', error);
+    body = JSON.parse(rawBody);
+  } catch {
     return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
   }
 
-  const db = client.db();
-  const usersCollection = db.collection('users');
-
   try {
-    // --- FIX START ---
-    // The actual event type is in the top-level 'type' field.
-    const eventType = event.type;
-    // The supporter's email is nested inside the 'data' object.
-    const supporterEmail = event.data?.supporter_email; // Use optional chaining for safety
-
-    if (!supporterEmail) {
-      console.warn(
-        `BMC Webhook: Event type "${eventType}" received without supporter_email in data.`,
-      );
-      return NextResponse.json(
-        { error: 'Missing supporter_email in webhook data' },
-        { status: 400 }
-      );
+    const fields = parseBmcEvent(rawBody, body);
+    const userId = await findUserIdByEmail(fields.email);
+    const { duplicate, event } = await recordBmcEvent({ ...fields, userId });
+    if (duplicate) {
+      return NextResponse.json({ message: 'Already processed' }, { status: 200 });
     }
-    // --- FIX END ---
 
-    // Determine the type of event and update user status
-    if (eventType === 'membership.started') {
-      await usersCollection.updateOne(
-        { email: supporterEmail }, // Use the correctly extracted supporterEmail
-        { $set: { bmcMember: true } },
-        { upsert: false }, // Do not create a new user if not found
-      );
-      console.log(`BMC Webhook: User ${supporterEmail} marked as BMC member.`);
-    } else if (
-      eventType === 'membership.cancelled' ||
-      eventType === 'membership.canceled'
-    ) {
-      // Check for common cancellation event names
-      await usersCollection.updateOne(
-        { email: supporterEmail }, // Use the correctly extracted supporterEmail
-        { $set: { bmcMember: false } },
-        { upsert: false },
-      );
+    // Logs name the event and the account id, never the supporter's email.
+    const member = MEMBERSHIP[fields.type];
+    if (member !== undefined && userId) {
+      const before = await setBmcMember(userId, member);
       console.log(
-        `BMC Webhook: User ${supporterEmail} marked as NOT a BMC member.`,
+        `BMC webhook: ${fields.type} → user ${userId} bmcMember ${before} → ${member} (event ${event._id}).`,
       );
     } else {
       console.log(
-        `BMC Webhook: Unhandled event type: ${eventType}. No action taken.`,
+        `BMC webhook: ${fields.type} saved as event ${event._id}${userId ? ` for user ${userId}` : ' (no matching account)'}.`,
       );
     }
 
-    return NextResponse.json(
-      { message: 'Webhook received and processed' },
-      { status: 200 },
-    );
+    return NextResponse.json({ message: 'Webhook received and processed' }, { status: 200 });
   } catch (error) {
-    console.error('BMC Webhook: Error processing webhook event:', error);
+    console.error('BMC webhook: error processing event:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -51,7 +51,7 @@ names what's left.
 | 11 | Partly | Newer routes (tips, places, place comments, history notes, the sheet routes) validate their bodies. The older routes listed in #11 weren't re-checked one by one. |
 | 12 | Open | `next.config.mjs` has no `headers()`. |
 | 13 | Open | Blob uploads are `access: 'public'`, and the Supabase fallback is still live (migration in progress, per `CLAUDE.md`). |
-| 14 | Open | The BMC webhook still compares with `!==`. `lib/secretsMatch.js`, added for the sheet webhook, is the drop-in fix. |
+| 14 | Mostly done | 2026-10-10 (`BMC-SUPPORT.md` stage 1): constant-time compare, replay protection (unique hash of the body in `bmc-events`), case-insensitive email match then change by `_id`, IP rate limit, no emails in logs. **Left:** a freshness check (payload timestamp unknown), `emailVerified` (#8), an `admin_audit` row (#17). Run `npm run db:indexes` for the unique index. |
 | 15 | Partly | The new sheet collections have unique indexes (`cover-bid-picks.weekEnding`, `sheet-jobs.jobName`). `users.email`, `slics.numSlic` and `drivers.employeeId` still don't. |
 | 16–18 | Open | — |
 | 19 | Partly | Account self-deletion refuses admins. `toggle-role` still has no self or last-admin guard. |

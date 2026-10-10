@@ -109,8 +109,8 @@ order that file suggests, minus what's done:
 - [ ] **#1** history rewritten and force-pushed 2026-10-10. Left: the GitHub Support purge
       (old SHAs + `refs/pull/1/head`; ticket #4844294 open) and whether to tell the drivers
       on the roster
-- [ ] **#2** done in code 2026-10-10 (no HTML is parsed; `html-react-parser` is gone). Left:
-      run `npm run comments:to-text` to store the 43 old HTML comments as text
+- [x] **#2** 2026-10-10: no comment is parsed as HTML, `html-react-parser` is gone, and the
+      43 old HTML comments are stored as text
 - [ ] **#6** user serializers pick fields instead of spreading; `add-phone` stops returning and logging the whole user
 - [ ] **#7** admin pages check admin themselves with `getSession()` (not only the layout); `/bids` checks the session
 - [ ] **#12** security headers in `next.config.mjs` (step 1 is safe to ship on its own)

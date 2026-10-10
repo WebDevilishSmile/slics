@@ -39,7 +39,7 @@ names what's left.
 | # | Status | What's true now |
 |---|---|---|
 | 1 | Partly | **History rewritten 2026-10-10** (see #1): seven paths dropped, `main` and `admin-review` force-pushed, PR #1 and its branch gone. **Left:** the GitHub Support purge, requested 2026-10-10 as ticket #4844294 (old commits stay reachable by SHA, and `refs/pull/1/head` still has the SLIC dataset), and whether to tell the drivers. Secret Protection + push protection turned on 2026-10-10. |
-| 2 | Done | 2026-10-10. Nothing renders a comment as HTML anymore: `CommentContent.jsx` flattens any old Tiptap HTML to text (`htmlToText`, `lib/commentText.js`, no DOM) and renders text only, and `html-react-parser` is uninstalled. New and edited tips have been plain text since 2026-10-07. **Left:** run `npm run comments:to-text` so the 43 old HTML rows are stored as text too (dry run checked: all plain `<p>` paragraphs). It keeps the HTML in `content_html`, and `--undo` restores it. |
+| 2 | Done | 2026-10-10. Nothing renders a comment as HTML anymore: `CommentContent.jsx` flattens any old Tiptap HTML to text (`htmlToText`, `lib/commentText.js`, no DOM) and renders text only, and `html-react-parser` is uninstalled. New and edited tips have been plain text since 2026-10-07. `npm run comments:to-text` converted the 43 old HTML rows to text the same day; the originals are in `content_html`, and `--undo` restores them. |
 | 3 | Done | 2026-10-07 (Next 15.5.27, Auth.js beta.32). |
 | 4 | Done | 2026-10-10. `lib/authz.js` (`getSession`, `requireUser`, `requireAdmin`) is the only caller of `auth()`. All 43 guarded API routes, 13 pages, the admin layout and 2 server components go through it. `middleware.js` checks `req.auth?.user?.id`. `toggle-role`, `toggle-member`, `add-phone` and the admin layout read the session's role instead of looking the user up by email. No `route()` wrapper: see the note under #4. |
 | 5 | Done | `lib/db/comments.js` has no `'use server'`. The only two uses left are the inline sign-in/out actions. |
@@ -265,7 +265,8 @@ parsed as HTML. `html-react-parser` is uninstalled and the `.comment-content` CS
 `scripts/convertHtmlComments.mjs` (`npm run comments:to-text`, `--dry-run`, `--undo`)
 stores the old rows as text too. It keeps the original in `content_html` with
 `htmlConvertedAt`, and `--undo` puts it back except on a comment edited since. The dry run
-found 43 rows, all `<p>` paragraphs with no other tags or entities, so nothing is lost.
+found 43 rows, all `<p>` paragraphs with no other tags or entities, so nothing is lost;
+the real run converted all 43 the same day, and a second dry run found none left.
 
 ---
 

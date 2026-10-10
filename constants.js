@@ -200,3 +200,11 @@ export const SLIC_REPORT_KINDS = [
   { value: 'other', label: 'Something else', needsNote: true },
 ];
 export const SLIC_REPORT_NOTE_MAX_LENGTH = 500;
+
+// The hours on the "What it takes" card (/about, support/WhatItTakes.jsx), a
+// floor estimated 2026-10-10: git shows about 60 work sessions since May 2025
+// at roughly 2.5 hours each (about 150 hours; most 2025 sessions left only one
+// to three commits, so commit times alone undercount), plus entering and
+// checking 357 SLICs (about 30 hours) and 65 directions PDFs (about 11 hours).
+// Answering drivers and admin work aren't counted. Raise it as you go.
+export const SUPPORT_HOURS_ESTIMATE = 200;

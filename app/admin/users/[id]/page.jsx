@@ -1,5 +1,6 @@
 import { getCommentsByUserId } from '@/lib/db/comments';
 import { getUserById } from '@/lib/db/users';
+import { getSupporterSince } from '@/lib/db/bmcEvents';
 import { getSlicViewsByUserId } from '@/lib/db/slicViews';
 import { getAllSlics } from '@/lib/db/slics';
 import { Box, Paper, Typography } from '@mui/material';
@@ -13,9 +14,10 @@ async function UserPage({ params }) {
   const { id } = await params;
   const user = await getUserById(id); // Assuming you have a function to get user by ID
   const userComments = await getCommentsByUserId(id); // Fetch comments by user ID
-  const [userSlicViews, slics] = await Promise.all([
+  const [userSlicViews, slics, supporterSince] = await Promise.all([
     getSlicViewsByUserId(id),
     getAllSlics(),
+    user ? getSupporterSince(user._id).catch(() => null) : null,
   ]);
 
   if (!user) {
@@ -52,6 +54,11 @@ async function UserPage({ params }) {
           BuyMeACoffee:{' '}
           <strong>{user.bmcMember ? 'Member' : 'Not a member'}</strong>
         </Typography>
+        {supporterSince && (
+          <Typography variant='subtitle1'>
+            Supporter since {dayjs(supporterSince).format('MMMM YYYY')}
+          </Typography>
+        )}
       </Paper>
 
       <UserSlics

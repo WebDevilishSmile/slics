@@ -1,5 +1,6 @@
 import { VolunteerActivism } from '@mui/icons-material';
 import BuyMeACoffeeButton from '@/components/layout/BuyMeACoffeeButton';
+import WhatItTakes from '@/components/support/WhatItTakes';
 import AboutSection from './AboutSection';
 
 export default function Contributions() {
@@ -7,7 +8,12 @@ export default function Contributions() {
     <AboutSection
       title='Contributions'
       icon={VolunteerActivism}
-      action={<BuyMeACoffeeButton />}
+      action={
+        <>
+          <WhatItTakes />
+          <BuyMeACoffeeButton />
+        </>
+      }
     >
       I don&apos;t charge for the app, and I don&apos;t plan to. I built it to make my
       own life easier, and I want to share it with other drivers in my

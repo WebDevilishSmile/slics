@@ -3,6 +3,7 @@ import { Alert, Paper, Typography } from '@mui/material';
 import SupportersView from '@/components/admin/supporters/SupportersView';
 import { getSession, isSuperAdmin } from '@/lib/authz';
 import { getSupportOverview } from '@/lib/db/bmcEvents';
+import { getUsers } from '@/lib/db/users';
 import theme from '@/theme';
 
 // Buy Me a Coffee support as the webhook saved it (docs/BMC-SUPPORT.md stage
@@ -15,7 +16,12 @@ export default async function SupportersPage() {
 
   let overview = null;
   try {
-    overview = await getSupportOverview();
+    // Every account's name and email, for "Link to account".
+    const [support, users] = await Promise.all([getSupportOverview(), getUsers()]);
+    const accounts = users
+      .map((user) => ({ _id: String(user._id), name: user.name ?? '', email: user.email ?? '' }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    overview = { ...support, accounts };
   } catch (error) {
     console.error('Error loading supporters overview:', error);
   }

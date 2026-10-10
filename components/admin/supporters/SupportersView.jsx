@@ -1,9 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import {
+  Alert,
   Box,
+  Button,
+  CircularProgress,
   Link as MuiLink,
   Stack,
   Table,
@@ -14,7 +18,9 @@ import {
   Typography,
 } from '@mui/material';
 
-import { softInset, softRaised, softTableSx } from '@/components/utility/soft';
+import { apiRequest } from '@/lib/apiRequest';
+import { softInset, softPressSx, softRaised, softRaisedSmall, softTableSx } from '@/components/utility/soft';
+import LinkSupportDialog from './LinkSupportDialog';
 
 const TYPE_LABELS = {
   'membership.started': 'Became a member',
@@ -63,8 +69,28 @@ function Empty({ children }) {
 }
 
 // The admin Supporters page (docs/BMC-SUPPORT.md stage 2). Shows what the BMC
-// webhook has saved since 2026-10-10, and who's a member now.
-export default function SupportersView({ months, recent, unmatched, members }) {
+// webhook has saved since 2026-10-10, and who's a member now. Recent loads ten
+// at a time; an email with no account can be linked to one (`accounts`).
+export default function SupportersView({ months, recent: firstPage, recentHasMore, unmatched, members, accounts }) {
+  const [recent, setRecent] = useState(firstPage);
+  const [hasMore, setHasMore] = useState(recentHasMore);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadError, setLoadError] = useState('');
+  const [linking, setLinking] = useState(null);
+
+  const loadMore = async () => {
+    setLoadingMore(true);
+    setLoadError('');
+    const { data, error } = await apiRequest(
+      `/api/bmc-events?before=${encodeURIComponent(recent.at(-1)._id)}`,
+      { method: 'GET' },
+    );
+    setLoadingMore(false);
+    if (error) return setLoadError(error);
+    setRecent((current) => [...current, ...data.data.events]);
+    setHasMore(data.data.hasMore);
+  };
+
   return (
     <Stack spacing={4} sx={{ width: '100%' }}>
       <Section id='support-months' title='By month'>
@@ -94,7 +120,7 @@ export default function SupportersView({ months, recent, unmatched, members }) {
         )}
       </Section>
 
-      <Section id='support-recent' title='Recent' count={recent.length}>
+      <Section id='support-recent' title='Recent'>
         {recent.length === 0 ? (
           <Empty>
             Nothing yet. Every Buy Me a Coffee event is saved here as it arrives (since October 10,
@@ -149,6 +175,23 @@ export default function SupportersView({ months, recent, unmatched, members }) {
             ))}
           </Stack>
         )}
+        {loadError && (
+          <Alert severity='error' sx={{ mt: 2 }}>
+            {loadError}
+          </Alert>
+        )}
+        {hasMore && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2.5 }}>
+            <Button
+              onClick={loadMore}
+              disabled={loadingMore}
+              startIcon={loadingMore ? <CircularProgress size={16} color='inherit' /> : null}
+              sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+            >
+              {loadingMore ? 'Loading…' : 'Load more'}
+            </Button>
+          </Box>
+        )}
       </Section>
 
       <Section id='support-unmatched' title='No matching account' count={unmatched.length}>
@@ -158,8 +201,9 @@ export default function SupportersView({ months, recent, unmatched, members }) {
           <>
             <Typography variant='body2' color='text.secondary' sx={{ mb: 1.5 }}>
               Their Buy Me a Coffee email isn&apos;t on any account, so a membership couldn&apos;t
-              apply. Ask them to sign up with that email, or turn membership on by hand on their
-              account in Users.
+              apply. If they signed up with a different email, link their support to that account:
+              a membership that&apos;s still on turns on in the app too. Otherwise ask them to sign up
+              with this email.
             </Typography>
             <Box
               component='ul'
@@ -175,13 +219,26 @@ export default function SupportersView({ months, recent, unmatched, members }) {
               })}
             >
               {unmatched.map((row) => (
-                <Box component='li' key={row.email} sx={{ typography: 'body2', overflowWrap: 'anywhere' }}>
-                  <Box sx={{ fontWeight: 600 }}>{row.name || row.email}</Box>
-                  {row.name && <Box>{row.email}</Box>}
-                  <Box sx={{ color: 'text.secondary' }}>
-                    {row.count} event{row.count === 1 ? '' : 's'} ({row.types.map(typeLabel).join(', ')}) ·
-                    last {dayjs(row.lastAt).format('MMM D, YYYY')}
+                <Box
+                  component='li'
+                  key={row.email}
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1.5, typography: 'body2', overflowWrap: 'anywhere' }}
+                >
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Box sx={{ fontWeight: 600 }}>{row.name || row.email}</Box>
+                    {row.name && <Box>{row.email}</Box>}
+                    <Box sx={{ color: 'text.secondary' }}>
+                      {row.count} event{row.count === 1 ? '' : 's'} ({row.types.map(typeLabel).join(', ')}) ·
+                      last {dayjs(row.lastAt).format('MMM D, YYYY')}
+                    </Box>
                   </Box>
+                  <Button
+                    size='small'
+                    onClick={() => setLinking(row)}
+                    sx={[softRaisedSmall, softPressSx, { px: 1.5, minHeight: '2.5rem', flexShrink: 0 }]}
+                  >
+                    Link to account
+                  </Button>
                 </Box>
               ))}
             </Box>
@@ -222,6 +279,9 @@ export default function SupportersView({ months, recent, unmatched, members }) {
           </Box>
         )}
       </Section>
+      {linking && (
+        <LinkSupportDialog supporter={linking} accounts={accounts} onClose={() => setLinking(null)} />
+      )}
     </Stack>
   );
 }

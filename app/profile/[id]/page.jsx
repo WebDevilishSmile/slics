@@ -1,6 +1,7 @@
 import { getSession } from '@/lib/authz';
 import { getCommentsByUserId } from '@/lib/db/comments';
 import { getUserById } from '@/lib/db/users';
+import { getSupporterSince } from '@/lib/db/bmcEvents';
 import { serializeComments, toSelfUser } from '@/lib/serializers';
 
 import RedirectMessage from '@/components/layout/RedirectMessage';
@@ -48,7 +49,11 @@ async function ProfilePage({ params }) {
     );
   }
 
-  const comments = await getCommentsByUserId(id);
+  const [comments, supporterSince] = await Promise.all([
+    getCommentsByUserId(id),
+    // A failure only hides the line.
+    getSupporterSince(userData._id).catch(() => null),
+  ]);
 
   return (
     <Suspense fallback={<LoadingFallback />}>
@@ -59,6 +64,7 @@ async function ProfilePage({ params }) {
           <ProfileData
             userData={toSelfUser(userData)}
             commentCount={comments.length}
+            supporterSince={supporterSince}
           />
           <ProfileComments comments={serializeComments(comments)} />
         </HydrationGuard>

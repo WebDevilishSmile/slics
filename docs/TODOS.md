@@ -73,9 +73,14 @@ Design notes and a staged plan: `RECOMMENDATIONS.md` → "1. My Daily Log".
 
 Plan and checklist: `BMC-SUPPORT.md` (design in `RECOMMENDATIONS.md` #2).
 
-- [ ] see them: the admin Supporters page (stage 2)
-- [ ] add load more button on recent list, too much scrolling
-- [ ] the "what it takes" card (hosting cost a month, built in my own time, what support goes toward next): needs the real numbers (`BMC-SUPPORT.md` stage 4)
+- [ ] fix the membership mismatches by hand in Users, or leave them (`BMC-SUPPORT.md` →
+      "History import" has the list, re-checked 2026-10-10)
+- [ ] when the first one-time coffee arrives by webhook, check its row (`BMC-SUPPORT.md` stage 1)
+- [x] see them: the admin Supporters page (stage 2)
+- [x] add load more button on recent list, too much scrolling (ten at a time, 2026-10-10)
+- [x] the "what it takes" card: effort, not dollars: 200+ hours, the SLICs and PDFs (2026-10-10)
+- [x] "Link to account" for support from an email with no account, and "Supporter since" on
+      the profile (2026-10-10)
 - [x] keep track of donations (when and how much): every webhook delivery is saved to
       `bmc-events` (stage 1, 2026-10-10). Run `npm run db:indexes` once for its unique index
 - [x] thank you messages or acknowledgments for donations: a one-time notice on /home (stage 3, 2026-10-10)

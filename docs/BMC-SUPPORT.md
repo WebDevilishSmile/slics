@@ -9,9 +9,11 @@ plan and the checklist.
 - **Stage 1 built:** every webhook delivery is saved, and the webhook is hardened.
 - **Stage 2 built:** the admin Supporters page.
 - **Stage 3 built:** the thank-you notice.
-- **Stage 4 mostly built:** the impact line. Left: the "what it takes" card, which
-  needs the real monthly costs.
+- **Stage 4 built:** the impact line and the "what it takes" card (2026-10-10).
 - **SuperAdmin role:** built 2026-10-10. Supporters moved to `/admin/super/supporters` and is super admin only.
+- **Wrapped up 2026-10-10:** Recent loads ten at a time, "Link to account" and "Supporter
+  since" are built, and memberships were compared with BMC. Still open: the first real
+  one-time coffee by webhook (stage 1) and the membership fixes by hand (History import).
 
 ## Why
 
@@ -93,23 +95,33 @@ to remove it).
 - **The input file holds emails.** It stays out of the repo; pull it again with the MCP
   tools to re-run.
 - [ ] Membership in the app doesn't match BMC for a few accounts (found during the
-  import): an active monthly member with `bmcMember` off (their BMC email has capitals,
-  which the old exact-case webhook missed), and four accounts on with no live BMC
-  membership. Fix by hand in Users.
+  import, re-checked against BMC's live list 2026-10-10, read-only):
+  - **Active on BMC, off in the app:** two accounts. One is a yearly membership cancelled
+    from BMC that stays active until 2026-12-07; its BMC email has capitals, which the old
+    exact-case webhook missed. The other is the maintainer's second account (BMC's lifetime
+    giveaway).
+  - **On in the app, not on BMC:** four accounts, all admins, likely switched on by hand on
+    purpose.
+  - The other four BMC members match. Fix by hand in Users, or leave as decided.
 
 ## Stage 2 — Admin Supporters page (built)
 
 - [x] `/admin/super/supporters`, super admin only since 2026-10-10 (`/admin/supporters` redirects there; `components/admin/supporters/SupportersView.jsx`, data from
       `getSupportOverview`):
   - **By month:** totals per month and currency.
-  - **Recent:** the last 50 events, each with its message. A known type gets a label;
+  - **Recent:** newest first, ten at a time with **Load more** (`getRecentSupport`,
+    `GET /api/bmc-events?before=<id>`), each with its message. A known type gets a label;
     any other type shows as BMC named it.
-  - **No matching account:** grouped by email.
+  - **No matching account:** grouped by email, each with **Link to account**.
   - **Members now:** from `users.bmcMember`, so it includes members switched on by hand.
 - [x] The page checks the admin role itself, not only the layout (`SECURITY.md` #7).
 - [x] Linked from `/admin` and titled in the header.
-- [ ] Later, maybe: a "link to account" action on an unmatched email. Today the fix is to
-      switch membership on by hand in Users.
+- [x] "Link to account" on an unmatched email (2026-10-10, `LinkSupportDialog.jsx`,
+      `POST /api/bmc-events/link`, `linkSupportToUser`): the super admin picks the account
+      (one with the supporter's name is suggested), the email's events get its `userId`
+      (and `linkedAt`), and if that email's latest membership event is a start, membership
+      turns on. Both go to `admin_audit` first (`support.linked`, `membership.granted`).
+      Webhook events not yet thanked will show the driver the thank-you note.
 
 ## Stage 3 — Thank-you notice (built)
 
@@ -131,9 +143,12 @@ to remove it).
       stamps `thankedAt` on every waiting event. It's once per visit's worth of support, not
       once per event.
 - [x] Only events saved since stage 1 count, so nobody gets a backdated thank-you.
-- [ ] Optional and opt-in: "Supporter since …" on their profile.
+- [x] "Supporter since …" (2026-10-10, `getSupporterSince`): the month of a driver's first
+      support that isn't a cancellation, on their profile and on the admin's user page. It
+      isn't opt-in: the profile page is only visible to its owner, so there's no one to
+      hide it from. A public version (a badge on tips) would need the opt-in.
 
-## Stage 4 — Show what the app does (mostly built)
+## Stage 4 — Show what the app does (built)
 
 - [x] `support/ImpactLine.jsx`: "In the last 30 days, drivers looked up 2,482 SLICs and
       shared 12 tips."
@@ -147,8 +162,13 @@ to remove it).
     tiny number.
 - [x] The ask after value already exists. The search shows a support notice tied to the
       driver's lookup count, snoozed for 30 days (`home/SlicsSearch.jsx`).
-- [ ] The "what it takes" card: what hosting costs a month, that one driver builds the app
-      in their own time, and what support goes toward next. It needs the real numbers from you.
+- [x] The "what it takes" card (2026-10-10, `support/WhatItTakes.jsx`, in Contributions on
+      `/about`): an inset well with "200+ hours of my own time", the SLICs entered by hand
+      and the directions PDFs (live counts, `getEffortNumbers`, cached a day), and "Built on
+      evenings and days off, by one driver. Support helps keep it online and pays for the
+      time that goes into what's next." No dollar figures, by choice. The hours are
+      `SUPPORT_HOURS_ESTIMATE` in `constants.js`, with how it was estimated; raise it as
+      you go.
 
 ## Verifying
 

@@ -12,6 +12,7 @@ import {
   LocalCafeOutlined,
   PhoneOutlined,
   SettingsOutlined,
+  VolunteerActivismOutlined,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -50,7 +51,9 @@ function Detail({ icon, label, children }) {
 // panel with the avatar on a raised ring, the name, the details in a
 // pressed-in well, and, for a non-member, a soft notice with the Buy Me a
 // Coffee button. The gear opens EditProfileDialog (name, phone, delete).
-function ProfileData({ userData, commentCount }) {
+// `supporterSince`: when they first supported the app on Buy Me a Coffee (an
+// ISO string, or null). Only they see this page, so it needs no opt-in.
+function ProfileData({ userData, commentCount, supporterSince = null }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
   const [snackSeverity, setSnackSeverity] = useState('error');
@@ -137,6 +140,11 @@ function ProfileData({ userData, commentCount }) {
         <Detail icon={<LocalCafeOutlined />} label='Membership'>
           {userData.bmcMember ? 'Active' : 'Inactive'}
         </Detail>
+        {supporterSince && (
+          <Detail icon={<VolunteerActivismOutlined />} label='Supporter since'>
+            {dayjs(supporterSince).format('MMMM YYYY')}
+          </Detail>
+        )}
         <Detail icon={<EventOutlined />} label='Joined'>
           {dayjs(userData.created_at).format('MMM D, YYYY')}
         </Detail>

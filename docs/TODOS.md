@@ -78,6 +78,7 @@ Design notes: `RECOMMENDATIONS.md` → "3. Cover drivers from the sheet".
 
 - [x] available days of cover drivers: find where the sheet shows them, if anywhere (call-in
       times are done) This is not a feature
+- [ ] get rid of drivers page
 
 ### UI/UX Improvements
 

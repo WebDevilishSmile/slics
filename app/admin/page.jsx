@@ -24,6 +24,7 @@ async function AdminPage() {
     { href: '/admin/slics', label: 'SLICs' },
     { href: '/admin/comments', label: 'Comments' },
     { href: '/admin/users', label: 'Users' },
+    { href: '/admin/supporters', label: 'Supporters' },
     { href: '/admin/jobs', label: 'Jobs' },
     { href: '/admin/cover/drivers', label: 'Cover Drivers' },
     { href: '/admin/cover/jobs', label: 'Cover Jobs' },

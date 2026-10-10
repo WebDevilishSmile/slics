@@ -37,6 +37,10 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 ## Features
 
+### User
+
+I need to establish a way to authenticate users. We should have a way to link the driver on the jobs list and cover and on-call list, to the user of the app. Email address will link to the driver. Sometimes the user's name and email does not match exactly with the driver roster, so additional verification may be needed. Find a way to have the user claim their driver identity. This has to be verified by admin. A verification process like X does with the check mark or badge for verified users could be implemented. Eventually, I would like the cover bid weekly bidding process to be done on this app. The verified user logs in, sees what jobs are available and their pick time (call in time), and can take his bid when his time comes. We need to maintain anynimity
+
 ### Privacy and Terms page
 
 - [ ] remove Gemini from app now that we don't need it
@@ -62,7 +66,7 @@ Plan and checklist: `BMC-SUPPORT.md` (design in `RECOMMENDATIONS.md` #2).
 
 - [x] keep track of donations (when and how much): every webhook delivery is saved to
       `bmc-events` (stage 1, 2026-10-10). Run `npm run db:indexes` once for its unique index
-- [ ] see them: the admin Supporters page (stage 2)
+- [x] see them: the admin Supporters page, `/admin/supporters` (stage 2, 2026-10-10)
 - [ ] thank you messages or acknowledgments for donations
 - [ ] don't want to beg for donations aggressively but want to imply the efforts and work put into the project and the significance of supporting it
 - [ ] SuperAdmin role (manages admins, sees the BMC dashboard): deferred until there's a

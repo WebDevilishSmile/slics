@@ -7,7 +7,8 @@ plan and the checklist.
 ## Status (2026-10-10)
 
 - **Stage 1 built:** every webhook delivery is saved, and the webhook is hardened.
-- **Stages 2–4 not started.**
+- **Stage 2 built:** the admin Supporters page.
+- **Stages 3–4 not started.**
 - **SuperAdmin role:** deferred until there's a second admin (`TODOS.md`).
 
 ## Why
@@ -61,12 +62,19 @@ Not done from `SECURITY.md` #14:
 - **No `admin_audit` row.** It waits on #17. The event row and the log line record the
   change in the meantime.
 
-## Stage 2 — Admin Supporters page
+## Stage 2 — Admin Supporters page (built)
 
-- `/admin/supporters`: totals by month, current members, and recent support with its
-  messages.
-- An **unmatched** list: events whose email has no account. Linking one to an account fixes
-  "my membership didn't apply" (`OPERATIONS.md`).
+- [x] `/admin/supporters` (`components/admin/supporters/SupportersView.jsx`, data from
+  `getSupportOverview`):
+  - **By month:** totals per month and currency.
+  - **Recent:** the last 50 events, each with its message. A known type gets a label;
+    any other type shows as BMC named it.
+  - **No matching account:** grouped by email.
+  - **Members now:** from `users.bmcMember`, so it includes members switched on by hand.
+- [x] The page checks the admin role itself, not only the layout (`SECURITY.md` #7).
+- [x] Linked from `/admin` and titled in the header.
+- [ ] Later, maybe: a "link to account" action on an unmatched email. Today the fix is to
+  switch membership on by hand in Users.
 
 ## Stage 3 — Thank-you notice
 

@@ -37,6 +37,7 @@ const PAGE_TITLES = [
   ['/admin/edit', 'Edit SLIC'],
   ['/admin/comments', 'Comments'],
   ['/admin/users', 'Users'],
+  ['/admin/supporters', 'Supporters'],
   ['/admin/drivers', 'Drivers'],
   ['/admin/cover/drivers', 'Cover Drivers'],
   ['/admin/cover/jobs', 'Cover Jobs'],

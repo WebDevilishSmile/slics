@@ -70,8 +70,7 @@ Plan and checklist: `BMC-SUPPORT.md` (design in `RECOMMENDATIONS.md` #2).
 - [x] thank you messages or acknowledgments for donations: a one-time notice on /home (stage 3, 2026-10-10)
 - [x] don't want to beg for donations aggressively but want to imply the efforts and work put into the project and the significance of supporting it: the 30-day impact line on /about and the membership prompt (stage 4, 2026-10-10)
 - [ ] the "what it takes" card (hosting cost a month, built in my own time, what support goes toward next): needs the real numbers (`BMC-SUPPORT.md` stage 4)
-- [ ] SuperAdmin role (manages admins, sees the BMC dashboard): deferred until there's a
-      second admin; pairs with `SECURITY.md` #19's last-admin guard
+- [x] SuperAdmin role (manages admins, sees the BMC dashboard): built 2026-10-10. `/admin/super` with Admins (add, remove, activity) and Supporters; `superAdmin: true` on the user row, set only by `npm run admin:super`
 
 ### Admin Page
 

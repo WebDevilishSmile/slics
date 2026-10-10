@@ -43,7 +43,7 @@ names what's left.
 | 3 | Done | 2026-10-07 (Next 15.5.27, Auth.js beta.32). |
 | 4 | Done | 2026-10-10. `lib/authz.js` (`getSession`, `requireUser`, `requireAdmin`) is the only caller of `auth()`. All 43 guarded API routes, 13 pages, the admin layout and 2 server components go through it. `middleware.js` checks `req.auth?.user?.id`. `toggle-role`, `toggle-member`, `add-phone` and the admin layout read the session's role instead of looking the user up by email. No `route()` wrapper: see the note under #4. |
 | 5 | Done | `lib/db/comments.js` has no `'use server'`. The only two uses left are the inline sign-in/out actions. |
-| 6 | Open | `serializeUser(s)` still spread the whole document; `add-phone` still logs and returns the full updated user. |
+| 6 | Partly | `serializeUsers` drops the password hash (2026-10-10, /admin/users); `serializeUser` still spreads the whole document; `add-phone` still logs and returns the full updated user. |
 | 7 | Partly | The `/signin` redirect is fixed (it goes to `/`). Admin pages still rely on `app/admin/layout.jsx` (an email lookup), and `app/bids/page.jsx` has no `auth()` call. |
 | 8 | Open | Access-model decision still to make. |
 | 9 | Open | `authorize()` in `auth.js` has no rate limit. |
@@ -53,8 +53,10 @@ names what's left.
 | 13 | Open | Blob uploads are `access: 'public'`, and the Supabase fallback is still live (migration in progress, per `CLAUDE.md`). |
 | 14 | Mostly done | 2026-10-10 (`BMC-SUPPORT.md` stage 1): constant-time compare, replay protection (unique hash of the body in `bmc-events`), case-insensitive email match then change by `_id`, IP rate limit, no emails in logs. **Left:** a freshness check (payload timestamp unknown), `emailVerified` (#8), an `admin_audit` row (#17). Run `npm run db:indexes` for the unique index. |
 | 15 | Partly | The new sheet collections have unique indexes (`cover-bid-picks.weekEnding`, `sheet-jobs.jobName`). `users.email`, `slics.numSlic` and `drivers.employeeId` still don't. |
-| 16–18 | Open | — |
-| 19 | Partly | Account self-deletion refuses admins. `toggle-role` still has no self or last-admin guard. |
+| 16 | Open | — |
+| 17 | Partly | 2026-10-10: `admin_audit` (`lib/db/adminAudit.js`), written *before* the change by `toggle-role`, `toggle-member`, `/api/admins` and `scripts/setSuperAdmin.mjs`; read on the super admin's Admins page (`/admin/super/admins`). **Left:** the BMC webhook's flips, admin comment deletion, driver edits, account deletion, `deleteSlic` history, and the transaction around slic history. |
+| 18 | Open | — |
+| 19 | Mostly done | Account self-deletion refuses admins. Since 2026-10-10 only a super admin changes roles (`setAdminRole`, `lib/db/admins.js`): never their own, never a super admin's, so there's always an admin left. **Left:** the email lookups. |
 | 20 | Open | Console checklist. `.env` points at production (`ON-CALL-SHEET-SYNC.md` says so too), which makes the dev/prod split the most useful line on it. |
 | 21 | Open | No TTL on `slicViews`; only `rateLimits` self-cleans. |
 | 22 | Partly | The `console.log(session)` on `/history` is gone. `add-phone` logs the full user document; the BMC webhook logs supporter emails. |

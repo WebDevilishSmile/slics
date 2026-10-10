@@ -40,6 +40,8 @@ async function main() {
       { collection: 'bmc-events', spec: { key: 1 }, options: { unique: true } },
       { collection: 'bmc-events', spec: { receivedAt: -1 } },
       { collection: 'bmc-events', spec: { userId: 1, receivedAt: -1 } },
+      // An admin's actions on the super admin's Admins page (lib/db/adminAudit.js).
+      { collection: 'admin_audit', spec: { actorId: 1, at: -1 } },
     ];
 
     for (const { collection, spec, options } of indexes) {

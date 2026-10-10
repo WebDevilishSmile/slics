@@ -51,10 +51,11 @@ All collections live in one database: the driver's default (`test`), because
 
 | Collection | Holds | Keyed by | Written by | Personal data | Goes away when |
 |---|---|---|---|---|---|
-| `users` | Account: name, first/last, email, bcrypt `password` (email sign-up only), `image`, `role` (`user`/`admin`), `bmcMember`, `phone`, `driverId` (roster link), `jobChangesSeenAt` (admin) | `_id`; `email` (indexed, not unique) | Auth.js adapter, `app/api/auth/register`, `lib/db/users.js`, the BMC webhook | Name, email, phone, password hash | Self-service delete (`DELETE /api/users/[id]`, `deleteUserAccount`); admins can't delete themselves |
+| `users` | Account: name, first/last, email, bcrypt `password` (email sign-up only), `image`, `role` (`user`/`admin`), `superAdmin` (`true` on a super admin, set only by `scripts/setSuperAdmin.mjs`), `bmcMember`, `phone`, `driverId` (roster link), `jobChangesSeenAt` (admin) | `_id`; `email` (indexed, not unique) | Auth.js adapter, `app/api/auth/register`, `lib/db/users.js`, the BMC webhook | Name, email, phone, password hash | Self-service delete (`DELETE /api/users/[id]`, `deleteUserAccount`); admins can't delete themselves |
 | `accounts` | Auth.js OAuth links (Google) | `userId` (ObjectId) | `MongoDBAdapter` | Provider account id | Account deletion |
 | `drivers` | The building roster: name, `employeeId`, `seniorityDate`, `phone` | `_id` | `lib/db/drivers.js`, admin only | Real people, most without an account | Admin deletes a row. The privacy page promises correction or removal on request |
 | `rateLimits` | Fixed-window counters | `_id` = `<key>:<windowStart>` (keys like `register:<ip>`) | `lib/rateLimit.js` | Keys can contain a user id or IP | TTL on `expiresAt` (self-cleaning) |
+| `admin_audit` | One row per consequential admin action, written before the change: `actorId`/`actorName` (null for the script), `action` (`role.granted`/`.revoked`, `membership.granted`/`.revoked`, `superAdmin.granted`/`.revoked`), `targetType`, `targetId`, `targetName`, `from`, `to`, `at` | `actorId + at` | `lib/db/adminAudit.js` (`toggle-role`, `toggle-member`, `/api/admins`), `scripts/setSuperAdmin.mjs` | Names | Kept as the audit trail (`SECURITY.md` #17) |
 
 ## Cover bids and the on-call sheet
 

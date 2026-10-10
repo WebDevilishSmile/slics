@@ -1,5 +1,5 @@
 import { Typography, Paper } from '@mui/material';
-import { getSession } from '@/lib/authz';
+import { getSession, isSuperAdmin } from '@/lib/authz';
 import AdminLinks from '@/components/admin/AdminLinks';
 import JobChangesNotice from '@/components/admin/sheetJobs/JobChangesNotice';
 import { getUnseenJobChanges } from '@/lib/db/sheetJobs';
@@ -24,12 +24,13 @@ async function AdminPage() {
     { href: '/admin/slics', label: 'SLICs' },
     { href: '/admin/comments', label: 'Comments' },
     { href: '/admin/users', label: 'Users' },
-    { href: '/admin/supporters', label: 'Supporters' },
     { href: '/admin/jobs', label: 'Jobs' },
     { href: '/admin/cover/drivers', label: 'Cover Drivers' },
     { href: '/admin/cover/jobs', label: 'Cover Jobs' },
     { href: '/admin/drivers', label: 'Drivers' },
     { href: '/admin/planet-fitness', label: 'Planet Fitness' },
+    // Admins and Supporters live under it (lib/authz.js).
+    ...(isSuperAdmin(session) ? [{ href: '/admin/super', label: 'Super Admin' }] : []),
   ];
 
   return (

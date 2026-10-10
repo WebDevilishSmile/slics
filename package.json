@@ -13,6 +13,7 @@
     "pdfs:migrate": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/migratePdfsToBlob.mjs",
     "pdfs:rollback": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/rollbackPdfUrls.mjs",
     "bmc:import": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/importBmcHistory.mjs",
+    "admin:super": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/setSuperAdmin.mjs",
     "sheet:preview": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/previewSheetWeek.mjs"
   },
   "dependencies": {

@@ -36,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           image: user.image || null,
           role: user.role,
           bmcMember: user.bmcMember,
+          superAdmin: user.superAdmin === true,
           comments: user.comments,
           created_at: user.created_at,
         };
@@ -81,6 +82,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.role = user.role || 'user';
         token.comments = user.comments || [];
         token.bmcMember = user.bmcMember ?? false;
+        token.superAdmin = user.superAdmin === true;
         token.created_at = user.created_at || new Date();
       } else if (token.id) {
         // For subsequent requests, when 'user' is not available,
@@ -95,6 +97,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.role = dbUser.role || 'user';
             token.comments = dbUser.comments || [];
             token.bmcMember = dbUser.bmcMember ?? false;
+            token.superAdmin = dbUser.superAdmin === true;
             token.created_at = dbUser.created_at || new Date();
           } else {
             // The user row is gone (deleted account). Returning null makes
@@ -126,6 +129,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.role = token.role || 'user';
         session.user.comments = token.comments || [];
         session.user.bmcMember = token.bmcMember ?? false;
+        session.user.superAdmin = token.superAdmin === true;
         session.user.created_at = token.created_at || new Date();
       }
       // console.log('Main Auth.js Session Callback - Final Session:', session);

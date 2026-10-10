@@ -11,7 +11,7 @@ plan and the checklist.
 - **Stage 3 built:** the thank-you notice.
 - **Stage 4 mostly built:** the impact line. Left: the "what it takes" card, which
   needs the real monthly costs.
-- **SuperAdmin role:** deferred until there's a second admin (`TODOS.md`).
+- **SuperAdmin role:** built 2026-10-10. Supporters moved to `/admin/super/supporters` and is super admin only.
 
 ## Why
 
@@ -95,7 +95,7 @@ to remove it).
 
 ## Stage 2 — Admin Supporters page (built)
 
-- [x] `/admin/supporters` (`components/admin/supporters/SupportersView.jsx`, data from
+- [x] `/admin/super/supporters`, super admin only since 2026-10-10 (`/admin/supporters` redirects there; `components/admin/supporters/SupportersView.jsx`, data from
       `getSupportOverview`):
   - **By month:** totals per month and currency.
   - **Recent:** the last 50 events, each with its message. A known type gets a label;

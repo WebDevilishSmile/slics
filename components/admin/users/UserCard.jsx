@@ -30,6 +30,10 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
   const router = useRouter();
   const { data: session } = useSession();
   const isProtected = user?._id?.toString() === session?.user?.id?.toString();
+  // Only a super admin changes roles, never their own or another super admin's
+  // (lib/db/admins.js).
+  const canChangeRole =
+    session?.user?.superAdmin === true && !isProtected && user?.superAdmin !== true;
 
   if (!user) {
     return (
@@ -137,16 +141,16 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           {/* Role chip — hidden on xs, rendered as div to avoid nested <button> */}
           <Chip
             component='div'
-            label={user.role}
+            label={user.superAdmin ? 'super admin' : user.role}
             onClick={(e) => {
               e.stopPropagation();
-              if (!isProtected) handleRoleToggle();
+              if (canChangeRole) handleRoleToggle();
             }}
             sx={[
               softRaisedSmall,
               {
                 flexShrink: 0,
-                cursor: isProtected ? 'default' : 'pointer',
+                cursor: canChangeRole ? 'pointer' : 'default',
                 display: { xs: 'none', sm: 'flex' },
                 color: user.role === 'admin' ? 'primary.main' : 'text.primary',
                 fontWeight: user.role === 'admin' ? 600 : 400,
@@ -226,7 +230,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
         </Typography>
         <UserMembership user={user} onToggle={handleMemberToggle} />
-        <UserRole user={user} onToggle={handleRoleToggle} />
+        <UserRole user={user} onToggle={handleRoleToggle} canToggle={canChangeRole} />
         <UserEmail email={user.email} />
         {user.phone ? (
           <UserPhone phone={user.phone} />

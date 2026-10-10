@@ -171,7 +171,7 @@ amount and currency, the supporter's message if any, `receivedAt`, and the match
 **Privacy.** Amounts and emails are personal. Make them admin-only, and add a privacy-page
 line ("we keep a record of support you send through Buy Me a Coffee").
 
-** Add a SuperAdmin role **
+** Add a SuperAdmin role ** (built 2026-10-10: `/admin/super`, see CLAUDE.md → Auth)
 
 - A SuperAdmin has all the privileges of an admin, plus the ability to manage other admins and perform high-level operations that regular admins cannot.
 - Consider adding checks in the admin pages and backend routes to enforce SuperAdmin-only actions.

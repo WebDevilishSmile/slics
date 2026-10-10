@@ -339,15 +339,18 @@ function UserMenu({ user, signOutAction }) {
           <ModeSwitch />
           {user ? (
             <ListItem disablePadding>
+              {/* A flex row, so the button grows to fill it inside its
+                  margins. `width: 100%` plus the row's mx overflowed the
+                  drawer and made it scroll sideways on a phone. */}
               <Box
                 component='form'
                 action={signOutAction}
-                sx={{ width: '100%' }}
+                sx={{ display: 'flex', width: '100%' }}
               >
                 <ListItemButton
                   component='button'
                   type='submit'
-                  sx={[...rowSx, { width: '100%' }]}
+                  sx={rowSx}
                 >
                   <ListItemIcon>
                     <LogoutOutlined />

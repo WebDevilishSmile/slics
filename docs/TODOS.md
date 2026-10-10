@@ -65,12 +65,11 @@ Design notes: `RECOMMENDATIONS.md` → "2. Buy Me a Coffee".
 
 Design notes: `RECOMMENDATIONS.md` → "3. Cover drivers from the sheet".
 
-- [ ] available days of cover drivers: find where the sheet shows them, if anywhere (call-in
-      times are done)
+- [x] available days of cover drivers: find where the sheet shows them, if anywhere (call-in
+      times are done) This is not a feature
 
 ### UI/UX Improvements
 
-- [ ] the menu on mobile scrolls horizontally (i dont like it)
 - [ ] pinned SLICs: a star on the details card; pinned SLICs lead the search list and the
       empty state. Start in localStorage (`archive/UI-SUGGESTIONS.md` #54)
 - [ ] manifest shortcuts: "Look up a SLIC" and "My history" on a long-press of the
@@ -134,6 +133,8 @@ order that file suggests, minus what's done:
 
 ### UI/UX Improvements
 
+- [x] the menu on mobile scrolled sideways: the Sign out row's `width: 100%` plus its margins
+      overflowed the drawer by 12px (fixed 2026-10-10, `header/UserMenu.jsx`)
 - [x] change dialogs, alerts, and other UI design to match neumorphic style and remove weird glow.
 
 #### Neumorphic Design

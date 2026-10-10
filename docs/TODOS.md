@@ -65,12 +65,13 @@ Design notes and a staged plan: `RECOMMENDATIONS.md` → "1. My Daily Log".
 
 Plan and checklist: `BMC-SUPPORT.md` (design in `RECOMMENDATIONS.md` #2).
 
+- [ ] see them: the admin Supporters page (stage 2)
+- [ ] add load more button on recent list, too much scrolling
+- [ ] the "what it takes" card (hosting cost a month, built in my own time, what support goes toward next): needs the real numbers (`BMC-SUPPORT.md` stage 4)
 - [x] keep track of donations (when and how much): every webhook delivery is saved to
       `bmc-events` (stage 1, 2026-10-10). Run `npm run db:indexes` once for its unique index
-- [ ] see them: the admin Supporters page (stage 2)
 - [x] thank you messages or acknowledgments for donations: a one-time notice on /home (stage 3, 2026-10-10)
 - [x] don't want to beg for donations aggressively but want to imply the efforts and work put into the project and the significance of supporting it: the 30-day impact line on /about and the membership prompt (stage 4, 2026-10-10)
-- [ ] the "what it takes" card (hosting cost a month, built in my own time, what support goes toward next): needs the real numbers (`BMC-SUPPORT.md` stage 4)
 - [x] SuperAdmin role (manages admins, sees the BMC dashboard): built 2026-10-10. `/admin/super` with Admins (add, remove, activity) and Supporters; `superAdmin: true` on the user row, set only by `npm run admin:super`
 
 ### Admin Page

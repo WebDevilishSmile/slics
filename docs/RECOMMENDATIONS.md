@@ -289,6 +289,7 @@ and phone number too would let the card render instantly while the network catch
 
 A short list under `/admin` that turns maintenance into a checklist:
 
+- Hub SLICs with no PDF;
 - SLICs with no phone;
 - SLICs with no PDF, or only a legacy Supabase PDF (migration progress, so you know when
   the fallback can go);

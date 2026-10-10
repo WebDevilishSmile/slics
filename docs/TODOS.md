@@ -41,6 +41,8 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 I need to establish a way to authenticate users. We should have a way to link the driver on the jobs list and cover and on-call list, to the user of the app. Email address will link to the driver. Sometimes the user's name and email does not match exactly with the driver roster, so additional verification may be needed. Find a way to have the user claim their driver identity. This has to be verified by admin. A verification process like X does with the check mark or badge for verified users could be implemented. Eventually, I would like the cover bid weekly bidding process to be done on this app. The verified user logs in, sees what jobs are available and their pick time (call in time), and can take his bid when his time comes. We need to maintain anonymity, so other drivers can't see what bids have been made by whom, only admins. I'm thinking a cover page where users can see available bids without revealing who has made them. Once a job is picked it is grayed out but doesn't say who took it. On the cover page there will be the name of the user and his pick time. There can be a way to create a list of bids they want in order of preference. As the jobs are picked those jobs come off of the preferred list for each user. Once the users is on the clock their auto pick will be submitted and the next driver can pick. First thing will be building the cover page for all drivers. Upon entering page, am alert that only verified drivers can see that cover list. They can submit for verification by claiming their name and employee email (employee_id@ups.com) and seniority date. Admins will review and approve these claims to ensure the integrity of the verification process. Once verified, the user will have access to the cover bidding features.
 
+- [ ] ability to change profile image and share time they work and show phone number for those that need help. A page where drivers that need assistance can find and contact each other.
+
 ### Privacy and Terms page
 
 - [x] remove Gemini from app now that we don't need it (2026-10-10; the privacy page no longer
@@ -80,7 +82,7 @@ Design notes: `RECOMMENDATIONS.md` → "3. Cover drivers from the sheet".
 
 - [x] available days of cover drivers: find where the sheet shows them, if anywhere (call-in
       times are done) This is not a feature
-- [ ] get rid of drivers page
+- [ ] get rid of drivers page or populate it with data from Google Sheets
 
 ### UI/UX Improvements
 

@@ -62,8 +62,9 @@ export const HELP_SECTIONS = [
             Most phones stay signed in, so you may not need to.
           </>,
           <>
-            Forgot your password? There&apos;s no reset button yet. Ask the
-            SLICs admin to help you get back in.
+            Forgot your password? Ask the SLICs admin for a reset link. Open
+            it, type a new password twice and tap <Tap>Change password</Tap>.
+            Then sign in with the new one. The link works once, for 24 hours.
           </>,
         ],
       },

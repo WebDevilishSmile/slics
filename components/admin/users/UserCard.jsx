@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { ExpandMore, Person, PersonOff } from '@mui/icons-material';
+import { ExpandMore, KeyOutlined, Person, PersonOff } from '@mui/icons-material';
 import {
   Accordion,
   AccordionDetails,
@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { softPressSx, softRaised, softRaisedSmall } from '@/components/utility/soft';
+import ResetPasswordDialog from './ResetPasswordDialog';
 import UserEmail from './UserEmail';
 import UserMembership from './UserMembership';
 import UserPhone from './UserPhone';
@@ -35,6 +36,15 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
   // (lib/db/admins.js).
   const canChangeRole =
     session?.user?.superAdmin === true && !isProtected && user?.superAdmin !== true;
+  // Reset links (docs/PASSWORD-RESET.md): password accounts only, never your
+  // own; an admin's only from a super admin, and never a super admin's. The
+  // route checks the same.
+  const canResetPassword =
+    user?.hasPassword === true &&
+    !isProtected &&
+    user?.superAdmin !== true &&
+    (user?.role !== 'admin' || session?.user?.superAdmin === true);
+  const [resetOpen, setResetOpen] = useState(false);
 
   if (!user) {
     return (
@@ -240,7 +250,16 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           <Typography>Phone: Not provided</Typography>
         )}
 
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 1.5, mt: 2 }}>
+          {canResetPassword && (
+            <Button
+              onClick={() => setResetOpen(true)}
+              startIcon={<KeyOutlined />}
+              sx={[softRaisedSmall, softPressSx, { px: 3, minHeight: '3rem' }]}
+            >
+              Reset password
+            </Button>
+          )}
           <Button
             LinkComponent={Link}
             href={`/admin/users/${user._id}`}
@@ -250,6 +269,10 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           </Button>
         </Box>
       </AccordionDetails>
+
+      {canResetPassword && (
+        <ResetPasswordDialog open={resetOpen} onClose={() => setResetOpen(false)} user={user} />
+      )}
     </Accordion>
   );
 }

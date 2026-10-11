@@ -74,6 +74,11 @@ async function main() {
       // deletion.
       { collection: 'push-subscriptions', spec: { endpoint: 1 }, options: { unique: true } },
       { collection: 'push-subscriptions', spec: { userId: 1 } },
+      // Password reset links (lib/db/passwordResets.js): looked up by the
+      // token's hash; one per account; gone once expired.
+      { collection: 'password-resets', spec: { tokenHash: 1 }, options: { unique: true } },
+      { collection: 'password-resets', spec: { userId: 1 } },
+      { collection: 'password-resets', spec: { expiresAt: 1 }, options: { expireAfterSeconds: 0 } },
     ];
 
     for (const { collection, spec, options } of indexes) {

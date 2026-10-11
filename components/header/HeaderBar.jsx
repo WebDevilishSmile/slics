@@ -24,6 +24,7 @@ const PAGE_TITLES = [
   ['/home/', 'SLIC'],
   ['/about', 'About'],
   ['/help', 'Help'],
+  ['/reset-password', 'Reset Password'],
   ['/hubs', 'All Hubs'],
   ['/history', 'History'],
   ['/profile', 'Profile'],

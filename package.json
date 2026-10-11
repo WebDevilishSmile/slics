@@ -15,6 +15,7 @@
     "bmc:import": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/importBmcHistory.mjs",
     "comments:to-text": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/convertHtmlComments.mjs",
     "admin:super": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/setSuperAdmin.mjs",
+    "password:reset-link": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/passwordResetLink.mjs",
     "sheet:preview": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/previewSheetWeek.mjs"
   },
   "dependencies": {

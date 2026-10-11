@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import { hashPassword, passwordProblem } from '@/lib/password';
 import client from '@/lib/db/client';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
@@ -49,11 +49,9 @@ export async function POST(request) {
       );
     }
 
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: 'Password must be at least 8 characters.' },
-        { status: 400 }
-      );
+    const problem = passwordProblem(password);
+    if (problem) {
+      return NextResponse.json({ error: problem }, { status: 400 });
     }
 
     const db = client.db();
@@ -68,7 +66,7 @@ export async function POST(request) {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await hashPassword(password);
     const firstTrimmed = firstName.trim();
     const lastTrimmed = lastName.trim();
 

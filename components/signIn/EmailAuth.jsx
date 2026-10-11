@@ -29,6 +29,7 @@ function EmailAuth({ returnTo = '/' }) {
   const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [forgotOpen, setForgotOpen] = useState(false);
 
   const [signInFields, setSignInFields] = useState({ email: '', password: '' });
   const [signUpFields, setSignUpFields] = useState({
@@ -173,6 +174,33 @@ function EmailAuth({ returnTo = '/' }) {
           >
             {loading ? 'Signing in…' : 'Sign In'}
           </Button>
+          {/* No reset by email yet (docs/PASSWORD-RESET.md stage 3): an
+              admin makes the driver a reset link. */}
+          <Typography variant='body2' sx={{ textAlign: 'center' }}>
+            <Link
+              component='button'
+              type='button'
+              onClick={() => setForgotOpen((open) => !open)}
+              aria-expanded={forgotOpen}
+              aria-controls={forgotOpen ? 'forgot-password-note' : undefined}
+              sx={modeLinkSx}
+            >
+              Forgot your password?
+            </Link>
+          </Typography>
+          {forgotOpen && (
+            <Typography
+              id='forgot-password-note'
+              variant='body2'
+              color='text.secondary'
+              className='enter'
+              sx={{ textAlign: 'center', mt: -1 }}
+            >
+              Ask the SLICs admin for a reset link. It lets you choose a new
+              password. If you signed up with Google, you don&apos;t have a
+              password here: use Continue with Google.
+            </Typography>
+          )}
           <Typography variant='body2' sx={{ textAlign: 'center' }}>
             Don&apos;t have an account?{' '}
             <Link

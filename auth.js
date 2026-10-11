@@ -72,6 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           bmcMember: user.bmcMember,
           superAdmin: user.superAdmin === true,
           driverVerified: Boolean(user.driver?.verifiedAt),
+          sessionVersion: user.sessionVersion ?? 0,
           comments: user.comments,
           created_at: user.created_at,
         };
@@ -122,6 +123,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // adapter user is the row itself.
         token.driverVerified =
           user.driverVerified === true || Boolean(user.driver?.verifiedAt);
+        // Google's adapter user is the row itself; credentials pass it from
+        // authorize(). A missing version is 0.
+        token.sessionVersion = user.sessionVersion ?? 0;
         token.created_at = user.created_at || new Date();
       } else if (token.id) {
         // For subsequent requests, when 'user' is not available,
@@ -132,7 +136,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             .collection('users')
             .findOne({ _id: new ObjectId(token.id) });
 
-          if (dbUser) {
+          if (dbUser && (dbUser.sessionVersion ?? 0) !== (token.sessionVersion ?? 0)) {
+            // The password was reset (lib/db/passwordResets.js), which bumps
+            // the row's version: every session from before it ends here, the
+            // same way as a deleted user (docs/PASSWORD-RESET.md).
+            return null;
+          } else if (dbUser) {
             token.role = dbUser.role || 'user';
             token.comments = dbUser.comments || [];
             token.bmcMember = dbUser.bmcMember ?? false;

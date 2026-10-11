@@ -201,6 +201,10 @@ export const SLIC_REPORT_KINDS = [
 ];
 export const SLIC_REPORT_NOTE_MAX_LENGTH = 500;
 
+// A new password's length, at sign-up and on a reset (lib/password.js).
+export const PASSWORD_MIN_LENGTH = 8;
+export const PASSWORD_MAX_LENGTH = 128;
+
 // Covers and driver verification (docs/COVER-BIDDING.md) are admin-only until
 // they roll out to every driver: `canUseCovers` in lib/authz.js and the menu
 // read this. Flip it with the rollout checklist in that doc.

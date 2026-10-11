@@ -1,5 +1,5 @@
 import { toAdminUser } from '@/lib/serializers';
-import { getSlicViewCounts, getUsers } from '@/lib/db/users';
+import { getPasswordUserIds, getSlicViewCounts, getUsers } from '@/lib/db/users';
 import { getAdminSession } from '@/lib/authz';
 
 import UserList from '@/components/admin/users/UserList';
@@ -9,14 +9,24 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 async function UsersPage() {
   if (!(await getAdminSession())) return null;
 
-  const [users, viewCounts] = await Promise.all([getUsers(), getSlicViewCounts()]);
+  const [users, viewCounts, passwordIds] = await Promise.all([
+    getUsers(),
+    getSlicViewCounts(),
+    getPasswordUserIds(),
+  ]);
+  // `hasPassword` puts "Reset password" on the card (docs/PASSWORD-RESET.md);
+  // only the flag, never the hash.
+  const rows = users.map((user) => ({
+    ...toAdminUser(user),
+    hasPassword: passwordIds.has(user._id.toString()),
+  }));
 
   return (
     <>
       <Typography variant='sectionHeading'>Users</Typography>
 
       <HydrationGuard>
-        <UserList users={users.map(toAdminUser)} viewCounts={viewCounts} />
+        <UserList users={rows} viewCounts={viewCounts} />
       </HydrationGuard>
     </>
   );

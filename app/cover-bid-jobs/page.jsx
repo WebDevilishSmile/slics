@@ -37,7 +37,7 @@ export default async function CoverBidJobsPage() {
 
   return (
     <PageContainer>
-      <Typography variant='sectionHeading'>Cover Bid Jobs</Typography>
+      <Typography variant='sectionHeading'>Cover Bids</Typography>
       <CoverBidJobsTable jobs={serializedJobs} minWeekEnding={cutoffWeek} />
     </PageContainer>
   );

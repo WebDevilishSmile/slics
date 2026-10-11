@@ -10,8 +10,6 @@ import {
   Box,
   Button,
   Chip,
-  IconButton,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
@@ -19,7 +17,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import { softPressSx, softRaised, softRaisedSmall } from '@/components/utility/soft';
+import { softPressSx, softRaised, softRaisedSmall, softToggleSx } from '@/components/utility/soft';
 import ResetPasswordDialog from './ResetPasswordDialog';
 import UserEmail from './UserEmail';
 import UserMembership from './UserMembership';
@@ -170,52 +168,53 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
             ]}
           />
 
-          {/* Membership toggle — always visible, rendered as div to avoid nested <button> */}
-          <Tooltip
-            title={user.bmcMember ? 'Revoke membership' : 'Grant membership'}
-            placement='top'
-          >
-            <IconButton
-              component='div'
-              size='small'
-              onClick={(e) => {
-                e.stopPropagation();
-                handleMemberToggle();
-              }}
-              disabled={isProtected}
-              sx={[softPressSx, { flexShrink: 0 }]}
-            >
-              {user.bmcMember ? (
-                <Person fontSize='small' />
-              ) : (
-                <PersonOff fontSize='small' />
-              )}
-            </IconButton>
-          </Tooltip>
+          {/* Membership toggle, labeled (UI-SUGGESTIONS.md #57): pressed in and
+              blue for a member. A div, not a <button>, inside the summary's
+              button; its keys stay off the summary so they don't expand it. */}
+          <Chip
+            component='div'
+            size='small'
+            icon={user.bmcMember ? <Person /> : <PersonOff />}
+            label={user.bmcMember ? 'Member' : 'Non-member'}
+            aria-pressed={user.bmcMember ? 'true' : 'false'}
+            aria-label={
+              user.bmcMember
+                ? `${user.name} is a member. Revoke membership`
+                : `${user.name} is not a member. Grant membership`
+            }
+            disabled={isProtected}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleMemberToggle();
+            }}
+            onKeyDown={(e) => e.stopPropagation()}
+            onKeyUp={(e) => e.stopPropagation()}
+            sx={[softToggleSx, { flexShrink: 0 }]}
+          />
 
-          {/* Lookup count — abbreviated on xs */}
-          <Typography
-            variant='caption'
+          {/* Lookup count, with its label at every width: the number, and
+              "lookups" under it in small type so it fits on a phone. */}
+          <Box
             sx={{
               flexShrink: 0,
-              color: 'text.secondary',
               pr: 1,
-              whiteSpace: 'nowrap',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              lineHeight: 1.1,
             }}
           >
-            <Box
-              component='span'
-              sx={{ display: { xs: 'none', sm: 'inline' } }}
-            >
-              {viewCount} lookup{viewCount !== 1 ? 's' : ''}
-            </Box>
-            <Box
-              component='span'
-              sx={{ display: { xs: 'inline', sm: 'none' } }}
-            >
+            <Typography variant='body2' component='span' sx={{ fontWeight: 600, lineHeight: 'inherit' }}>
               {viewCount}
-            </Box>
-          </Typography>
+            </Typography>
+            <Typography
+              variant='caption'
+              component='span'
+              sx={{ color: 'text.secondary', lineHeight: 'inherit' }}
+            >
+              lookup{viewCount !== 1 ? 's' : ''}
+            </Typography>
+          </Box>
         </Box>
       </AccordionSummary>
 

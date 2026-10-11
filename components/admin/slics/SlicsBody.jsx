@@ -1,14 +1,12 @@
 'use client';
 
 import { SLICS_PER_PAGE } from '@/constants';
-import { TableBody, TableCell, TableRow } from '@mui/material';
+import { TableBody } from '@mui/material';
 import SlicRow from './SlicRow';
 
+// One page of the table. A short last page just ends: padding it out to a
+// full page left a long blank area once a page held 25 rows.
 function SlicsBody({ slics, page }) {
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * SLICS_PER_PAGE - slics.length) : 0;
-
   return (
     <TableBody>
       {slics
@@ -16,11 +14,6 @@ function SlicsBody({ slics, page }) {
         .map((slic) => (
           <SlicRow key={slic._id} slic={slic} />
         ))}
-      {emptyRows > 0 && (
-        <TableRow sx={{ height: 73 * emptyRows }}>
-          <TableCell colSpan={6} />
-        </TableRow>
-      )}
     </TableBody>
   );
 }

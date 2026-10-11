@@ -154,11 +154,17 @@ Design notes: `RECOMMENDATIONS.md` → "3. Cover drivers from the sheet".
 - [ ] manifest shortcuts: "Look up a SLIC" and "My history" on a long-press of the
       home-screen icon (`app/manifest.js`, `archive/UI-SUGGESTIONS.md` #55)
 - [ ] admin leftovers from the 2026-10-08 review (`archive/UI-SUGGESTIONS.md` #57):
-  - [ ] `/admin/users`: the lookup count and the member icon have no visible label
-  - [ ] Edit SLIC's "Back" button repeats the header's back arrow
-  - [ ] admin SLICs table: 5 rows a page (`SLICS_PER_PAGE`); search placeholder cut off at 390px
-  - [ ] `/cover-bid-jobs` is "Cover Bid Jobs" on the page and "Cover Bids" in the header
+  - [x] `/admin/users`: the lookup count and the member icon have no visible label
+        (2026-10-11: a "Member"/"Non-member" toggle chip and "n lookups" at every width)
+  - [x] Edit SLIC's "Back" button repeats the header's back arrow (2026-10-11: removed;
+        new SLICs keep Clear)
+  - [x] admin SLICs table: 5 rows a page (`SLICS_PER_PAGE`); search placeholder cut off at
+        390px (2026-10-11: 25 a page, placeholder "Search SLICs")
+  - [x] `/cover-bid-jobs` is "Cover Bid Jobs" on the page and "Cover Bids" in the header
+        (2026-10-11: "Cover Bids" everywhere)
   - [ ] screenshot `/covers` with an account linked to a driver
+  - [ ] check the 2026-10-11 fixes above on a phone, signed in as an admin, in both
+        schemes (they couldn't be screenshotted without an admin session)
 - [ ] **On Hold** decide on bottom navigation (left open in `archive/UI-SUGGESTIONS.md` #52). On hold
       (2026-10-10). A working prototype (Look up · History/Hubs · Profile · Menu, phones
       only) is on the local branch `bottom-nav-preview`. Open points: hide the header's

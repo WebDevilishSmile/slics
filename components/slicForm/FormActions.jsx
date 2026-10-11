@@ -129,19 +129,17 @@ function FormActions({
           ? 'Update'
           : 'Save'}
       </Button>
-      <Button
-        sx={[softRaisedSmall, softPressSx, { px: 4, minHeight: '3rem' }]}
-        onClick={() => {
-          if (mode === 'edit') {
-            router.back(); // or `router.back()` if you want to go to the previous page
-          } else {
-            handleClear();
-          }
-        }}
-        disabled={isLoading}
-      >
-        {mode === 'edit' ? 'Back' : 'Clear'}
-      </Button>
+      {/* Editing has no Back of its own: the header's back arrow is the way
+          out (UI-SUGGESTIONS.md #52, #57). */}
+      {mode === 'create' && (
+        <Button
+          sx={[softRaisedSmall, softPressSx, { px: 4, minHeight: '3rem' }]}
+          onClick={handleClear}
+          disabled={isLoading}
+        >
+          Clear
+        </Button>
+      )}
 
       <Snackbar
         open={openSnack}

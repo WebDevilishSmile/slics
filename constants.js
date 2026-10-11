@@ -1,4 +1,5 @@
-export const SLICS_PER_PAGE = 5;
+// Rows per page in the admin SLICs table (admin/slics/SlicsTable.jsx).
+export const SLICS_PER_PAGE = 25;
 
 // The supporter page (layout/BmcButton.jsx, the menu, the lookup screen).
 export const BMC_URL = 'https://buymeacoffee.com/tiagodavila';

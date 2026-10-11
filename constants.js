@@ -201,6 +201,15 @@ export const SLIC_REPORT_KINDS = [
 ];
 export const SLIC_REPORT_NOTE_MAX_LENGTH = 500;
 
+// Covers and driver verification (docs/COVER-BIDDING.md) are admin-only until
+// they roll out to every driver: `canUseCovers` in lib/authz.js and the menu
+// read this. Flip it with the rollout checklist in that doc.
+export const COVERS_OPEN = false;
+// A driver's name as they claim it, or as the on-call sheet spells it.
+export const DRIVER_NAME_MAX_LENGTH = 60;
+// The reason an admin gives for turning a claim down, shown to the driver.
+export const DRIVER_CLAIM_NOTE_MAX_LENGTH = 300;
+
 // The hours on the "What it takes" card (/about, support/WhatItTakes.jsx), a
 // floor estimated 2026-10-10: git shows about 60 work sessions since May 2025
 // at roughly 2.5 hours each (about 150 hours; most 2025 sessions left only one

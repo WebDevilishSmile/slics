@@ -1,43 +1,33 @@
-import client from '@/lib/db/client';
-import { requireAdmin } from '@/lib/authz';
 import { NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/authz';
+import { createDriver, validateDriverFields } from '@/lib/db/drivers';
 
+// POST `{ name, employeeId, seniorityDate, phone, sheetName? }`: a roster row
+// (admin only). `sheetName` links it to that driver on the on-call sheet
+// ("Add details" on /admin/drivers).
 export async function POST(request) {
   const { denied } = await requireAdmin();
   if (denied) return denied;
 
+  let body;
   try {
-    const { name, employeeId, seniorityDate, phone } = await request.json();
-
-    if (!name?.trim() || !employeeId?.toString().trim() || !seniorityDate?.trim()) {
-      return NextResponse.json(
-        { error: 'Name, Employee ID, and Seniority Date are required.' },
-        { status: 400 }
-      );
-    }
-
-    const db = client.db();
-
-    const existing = await db
-      .collection('drivers')
-      .findOne({ employeeId: employeeId.toString().trim() });
-
-    if (existing) {
-      return NextResponse.json(
-        { error: 'A driver with this Employee ID already exists.' },
-        { status: 409 }
-      );
-    }
-
-    const result = await db.collection('drivers').insertOne({
-      name: name.trim(),
-      employeeId: employeeId.toString().trim(),
-      seniorityDate: seniorityDate.trim(),
-      phone: phone?.trim() || '',
-    });
-
-    return NextResponse.json({ _id: result.insertedId }, { status: 201 });
+    body = await request.json();
   } catch {
-    return NextResponse.json({ error: 'Server error.' }, { status: 500 });
+    return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+  }
+  const { fields, error } = validateDriverFields(body);
+  if (error) return NextResponse.json({ error }, { status: 400 });
+
+  try {
+    const result = await createDriver(fields, {
+      sheetName: typeof body.sheetName === 'string' ? body.sheetName : '',
+    });
+    if (result.error) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
+    }
+    return NextResponse.json({ _id: result.driver._id.toString() }, { status: 201 });
+  } catch (error) {
+    console.error('Error adding a driver:', error);
+    return NextResponse.json({ error: "Couldn't add the driver." }, { status: 500 });
   }
 }

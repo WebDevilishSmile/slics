@@ -44,8 +44,31 @@ async function main() {
       { collection: 'bmc-events', spec: { key: 1 }, options: { unique: true } },
       { collection: 'bmc-events', spec: { receivedAt: -1 } },
       { collection: 'bmc-events', spec: { userId: 1, receivedAt: -1 } },
+      // The roster (lib/db/drivers.js): one row per employee ID, and one row per
+      // driver on the on-call sheet it's linked to (lib/driverRoster.js).
+      { collection: 'drivers', spec: { employeeId: 1 }, options: { unique: true } },
+      {
+        collection: 'drivers',
+        spec: { sheetKey: 1 },
+        options: { unique: true, partialFilterExpression: { sheetKey: { $type: 'string' } } },
+      },
       // An admin's actions on the super admin's Admins page (lib/db/adminAudit.js).
       { collection: 'admin_audit', spec: { actorId: 1, at: -1 } },
+      // Driver verification (lib/db/driverClaims.js, docs/COVER-BIDDING.md):
+      // the admin queue; a driver's latest claim and account deletion; at most
+      // one pending claim per driver; one account per name on the sheet.
+      { collection: 'driver-claims', spec: { status: 1, created_at: 1 } },
+      { collection: 'driver-claims', spec: { userId: 1, created_at: -1 } },
+      {
+        collection: 'driver-claims',
+        spec: { userId: 1 },
+        options: { unique: true, partialFilterExpression: { status: 'pending' } },
+      },
+      {
+        collection: 'users',
+        spec: { 'driver.key': 1 },
+        options: { unique: true, partialFilterExpression: { 'driver.key': { $type: 'string' } } },
+      },
     ];
 
     for (const { collection, spec, options } of indexes) {

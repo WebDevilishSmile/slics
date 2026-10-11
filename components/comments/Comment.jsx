@@ -38,6 +38,7 @@ import PinField, { formatPin, readPin } from '@/components/form/PinField';
 import CommentContent, { commentToText } from './CommentContent';
 import CommentPin from './CommentPin';
 import VotersDialog from './VotersDialog';
+import VerifiedBadge from '@/components/utility/VerifiedBadge';
 import {
   softContainedSx,
   softInputSx,
@@ -261,7 +262,10 @@ function Comment({
           sx={{ width: '2rem', height: '2rem' }}
         />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography variant='subtitle2'>{authorName}</Typography>
+          <Typography variant='subtitle2'>
+            {authorName}
+            {comment.author?.verified && <VerifiedBadge />}
+          </Typography>
           {/* Relative time says whether a gate code is still fresh; the
               exact date is a hover/long-press away. */}
           <Typography

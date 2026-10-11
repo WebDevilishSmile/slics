@@ -4,12 +4,15 @@ import { getSupporterSince } from '@/lib/db/bmcEvents';
 import { getSlicViewsByUserId } from '@/lib/db/slicViews';
 import { getAllSlics } from '@/lib/db/slics';
 import { getAdminSession } from '@/lib/authz';
+import { getClaimableDriverNames } from '@/lib/db/driverClaims';
 import { Box, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
 import { serializeSlicViews, serializeSlics, serializeComments } from '@/lib/serializers';
 import dayjs from 'dayjs';
 import UserComments from '@/components/admin/users/UserComments';
 import UserSlics from '@/components/admin/users/UserSlics';
+import UserDriver from '@/components/admin/users/UserDriver';
+import VerifiedBadge from '@/components/utility/VerifiedBadge';
 
 async function UserPage({ params }) {
   if (!(await getAdminSession())) return null;
@@ -17,10 +20,11 @@ async function UserPage({ params }) {
   const { id } = await params;
   const user = await getUserById(id); // Assuming you have a function to get user by ID
   const userComments = await getCommentsByUserId(id); // Fetch comments by user ID
-  const [userSlicViews, slics, supporterSince] = await Promise.all([
+  const [userSlicViews, slics, supporterSince, sheetNames] = await Promise.all([
     getSlicViewsByUserId(id),
     getAllSlics(),
     user ? getSupporterSince(user._id).catch(() => null) : null,
+    getClaimableDriverNames(),
   ]);
 
   if (!user) {
@@ -47,7 +51,10 @@ async function UserPage({ params }) {
           />
         </Box>
 
-        <Typography variant='h5'>{user.name}</Typography>
+        <Typography variant='h5'>
+          {user.name}
+          {user.driver?.verifiedAt && <VerifiedBadge />}
+        </Typography>
         <Typography variant='subtitle1'>Email: {user.email}</Typography>
         <Typography variant='subtitle1'>Role: {user.role}</Typography>
         <Typography variant='subtitle1'>
@@ -62,6 +69,18 @@ async function UserPage({ params }) {
             Supporter since {dayjs(supporterSince).format('MMMM YYYY')}
           </Typography>
         )}
+
+        <UserDriver
+          userId={user._id.toString()}
+          accountName={user.name ?? ''}
+          initial={{
+            driverVerified: Boolean(user.driver?.verifiedAt),
+            driverName: user.driver?.name ?? null,
+            verifiedAt: user.driver?.verifiedAt ?? null,
+            verifiedBy: user.driver?.verifiedBy?.name ?? null,
+          }}
+          names={sheetNames}
+        />
       </Paper>
 
       <UserSlics

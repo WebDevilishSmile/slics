@@ -1,4 +1,4 @@
-import { requireUser } from '@/lib/authz';
+import { canUseCovers, requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -11,7 +11,9 @@ import { getSlicByNumSlic } from '@/lib/db/slics';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // GET ?slic=<numSlic> — the SLIC's tips as a thread, shaped for the signed-in
-// viewer (see getSlicThread). Responds `{ comments, slicName }`.
+// viewer (see getSlicThread). Responds `{ comments, slicName }`. The verified
+// driver check mark shows only to those who can use Covers, so admins until it
+// rolls out (docs/COVER-BIDDING.md).
 export async function GET(request) {
   const { session, denied } = await requireUser();
   if (denied) return denied;
@@ -21,7 +23,9 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Slic ID is required' }, { status: 400 });
 
   try {
-    const comments = await getSlicThread(numSlic, session.user.id);
+    const comments = await getSlicThread(numSlic, session.user.id, {
+      showVerified: canUseCovers(session),
+    });
 
     let slicName = null;
     try {

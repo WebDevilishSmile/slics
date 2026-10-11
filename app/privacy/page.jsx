@@ -65,6 +65,14 @@ export default function PrivacyPage() {
               can check and fix it. Other drivers never see reports.
             </>,
             <>
+              <strong>Driver verification.</strong> If you ask to be verified
+              for covers, your name, the employee ID in your UPS email and your
+              seniority date are stored with your account until the
+              administrator decides your request. Nothing is sent to your UPS
+              email. Once you&apos;re verified, your account is linked to your
+              name as the on-call sheet writes it.
+            </>,
+            <>
               <strong>Messages you send us.</strong> If you email us, we keep
               the email so we can reply.
             </>,
@@ -144,15 +152,17 @@ export default function PrivacyPage() {
             <>
               <strong>Other drivers.</strong> Any signed-in user can see your
               display name, profile picture, comments, the places you add and
-              votes. Your email,
-              phone number and lookup history are never shown to other drivers.
+              votes, and a check mark next to your name if you&apos;re a
+              verified driver. Your email, phone number, lookup history and
+              verification details are never shown to other drivers.
             </>,
             <>
               <strong>The administrator.</strong> As the person running the app,
               Tiago Davila can see account details (including your email and
-              phone number if you added one), comments, reports about SLICs and lookup
-              history in order to keep the app working and moderate comments, and the
-              support you send through Buy Me a Coffee.
+              phone number if you added one), comments, reports about SLICs, lookup
+              history and driver verification requests in order to keep the app
+              working, moderate comments and verify drivers, and the support you
+              send through Buy Me a Coffee.
             </>,
             <>
               <strong>Service providers.</strong> The app runs on Vercel
@@ -181,9 +191,20 @@ export default function PrivacyPage() {
           For the cover and bid features, the administrator keeps a list of
           drivers in the building with each driver&apos;s name, employee ID,
           seniority date and phone number. This list can include drivers who
-          have never created an account. It is visible only to signed-in
-          drivers whose account has been linked to a roster entry. If you are
-          on the roster and want your entry corrected or removed, email us.
+          have never created an account. It is matched against the names and
+          seniority on the drivers&apos; on-call sheet to keep it current. Only
+          the administrator sees it, to help check verification requests. If
+          you are on the roster and want
+          your entry corrected or removed, email us.
+        </LegalText>
+      </LegalSection>
+
+      <LegalSection title='Covers'>
+        <LegalText>
+          The Covers page is for verified drivers. It shows which cover jobs
+          are still open and which are taken, never who took them, and your own
+          place and call-in time on the week&apos;s list. It never shows you
+          another driver&apos;s picks or why they are off.
         </LegalText>
       </LegalSection>
 
@@ -195,6 +216,7 @@ export default function PrivacyPage() {
             'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
             'Reports about a SLIC are kept after they are dealt with, as a record of what was fixed. If you delete your account they stay, no longer linked to you.',
             'Lookup history is kept while your account exists, and the History page shows all of it. Removing an entry hides it from that page; it is still counted in your lookup total, and it is deleted with your account.',
+            'A driver verification request keeps your employee ID and seniority date only until the administrator decides it; then they are deleted. The request is deleted with your account. Your verification lasts until your account is deleted or the administrator removes it.',
             "A record of each support or membership change you make through Buy Me a Coffee is kept as the app's record of support. If you delete your account it stays, no longer linked to you; ask us to remove it.",
             'Sign-up rate-limit records expire automatically within about an hour.',
             'Session cookies expire after 30 days, or as soon as you sign out.',

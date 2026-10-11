@@ -27,8 +27,14 @@ function DetailRow({ label, value }) {
   );
 }
 
+// Who picked a job, and why it needs cover, are on admins' rows only. A
+// driver's row (toDriverCoverJob, /covers) doesn't carry them, so the block
+// is left out rather than shown empty.
+const WHO_FIELDS = ['name', 'assignedDriver', 'coverReason'];
+
 export default function CoverBidJobDetailDialog({ job, open, onClose }) {
   const scheduledDays = job ? DAY_FIELDS.filter((day) => job[day]) : [];
+  const showWho = job ? WHO_FIELDS.some((field) => field in job) : false;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
@@ -47,11 +53,13 @@ export default function CoverBidJobDetailDialog({ job, open, onClose }) {
       <DialogContent>
         {job && (
           <Stack spacing={2.5} sx={{ pb: 1 }}>
-            <Stack spacing={1.5} sx={[softInset, { p: 2, borderRadius: 3 }]}>
-              <DetailRow label='Name' value={job.name} />
-              <DetailRow label='Assigned Driver' value={job.assignedDriver} />
-              <DetailRow label='Cover Reason' value={job.coverReason} />
-            </Stack>
+            {showWho && (
+              <Stack spacing={1.5} sx={[softInset, { p: 2, borderRadius: 3 }]}>
+                <DetailRow label='Name' value={job.name} />
+                <DetailRow label='Assigned Driver' value={job.assignedDriver} />
+                <DetailRow label='Cover Reason' value={job.coverReason} />
+              </Stack>
+            )}
 
             <Typography variant='subtitle2'>Schedule</Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>

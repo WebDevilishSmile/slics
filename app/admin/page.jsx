@@ -7,6 +7,8 @@ import { getUnseenJobChanges } from '@/lib/db/sheetJobs';
 import { getJobChangesSeenAt } from '@/lib/db/users';
 import SlicReportsNotice from '@/components/admin/slicReports/SlicReportsNotice';
 import { getOpenReportSummary } from '@/lib/db/slicReports';
+import DriverClaimsNotice from '@/components/admin/driverClaims/DriverClaimsNotice';
+import { getPendingClaimCount } from '@/lib/db/driverClaims';
 
 // Jobs-tab changes this admin hasn't seen, for the banner. A failure only
 // hides the banner: the admin index must always load.
@@ -30,18 +32,30 @@ async function openReports() {
   }
 }
 
+// Driver claims waiting for a decision, for their banner. Same rule.
+async function pendingClaims() {
+  try {
+    return await getPendingClaimCount();
+  } catch (error) {
+    console.error('Error counting driver claims for /admin:', error);
+    return 0;
+  }
+}
+
 async function AdminPage() {
   const session = await getAdminSession();
   if (!session) return null;
 
-  const [jobChanges, reports] = await Promise.all([
+  const [jobChanges, reports, claims] = await Promise.all([
     unseenJobChanges(session.user.id),
     openReports(),
+    pendingClaims(),
   ]);
 
   const adminLinks = [
     { href: '/admin/slics', label: 'SLICs' },
     { href: '/admin/reports', label: 'SLIC Reports' },
+    { href: '/admin/driver-claims', label: 'Driver Claims' },
     { href: '/admin/comments', label: 'Comments' },
     { href: '/admin/users', label: 'Users' },
     { href: '/admin/jobs', label: 'Jobs' },
@@ -59,6 +73,7 @@ async function AdminPage() {
 
       <Paper variant='panel' sx={{ gap: 3 }}>
         <SlicReportsNotice {...reports} />
+        <DriverClaimsNotice count={claims} />
         <JobChangesNotice {...jobChanges} />
         <AdminLinks links={adminLinks} />
         <ThankYouPreview firstName={session.user.name?.split(' ')[0]} />

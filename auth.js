@@ -37,6 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: user.role,
           bmcMember: user.bmcMember,
           superAdmin: user.superAdmin === true,
+          driverVerified: Boolean(user.driver?.verifiedAt),
           comments: user.comments,
           created_at: user.created_at,
         };
@@ -83,6 +84,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.comments = user.comments || [];
         token.bmcMember = user.bmcMember ?? false;
         token.superAdmin = user.superAdmin === true;
+        // Credentials sign-in passes the flag from authorize(); Google's
+        // adapter user is the row itself.
+        token.driverVerified =
+          user.driverVerified === true || Boolean(user.driver?.verifiedAt);
         token.created_at = user.created_at || new Date();
       } else if (token.id) {
         // For subsequent requests, when 'user' is not available,
@@ -98,6 +103,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.comments = dbUser.comments || [];
             token.bmcMember = dbUser.bmcMember ?? false;
             token.superAdmin = dbUser.superAdmin === true;
+            // A verified driver (lib/db/driverClaims.js): an admin linked the
+            // account to its name on the on-call sheet.
+            token.driverVerified = Boolean(dbUser.driver?.verifiedAt);
             token.created_at = dbUser.created_at || new Date();
           } else {
             // The user row is gone (deleted account). Returning null makes
@@ -130,6 +138,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.comments = token.comments || [];
         session.user.bmcMember = token.bmcMember ?? false;
         session.user.superAdmin = token.superAdmin === true;
+        session.user.driverVerified = token.driverVerified === true;
         session.user.created_at = token.created_at || new Date();
       }
       // console.log('Main Auth.js Session Callback - Final Session:', session);

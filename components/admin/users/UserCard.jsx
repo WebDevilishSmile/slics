@@ -24,6 +24,7 @@ import UserEmail from './UserEmail';
 import UserMembership from './UserMembership';
 import UserPhone from './UserPhone';
 import UserRole from './UserRole';
+import VerifiedBadge from '@/components/utility/VerifiedBadge';
 
 function UserCard({ user: initialUser, viewCount = 0 }) {
   const [user, setUser] = useState(initialUser);
@@ -118,6 +119,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
             }}
           >
             {user.name}
+            {user.driverVerified && <VerifiedBadge />}
           </Typography>
 
           {/* Cover — hidden on xs */}

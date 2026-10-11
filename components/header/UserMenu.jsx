@@ -10,6 +10,7 @@ import {
   BadgeOutlined,
   CheckroomOutlined,
   CloseOutlined,
+  EventAvailableOutlined,
   HelpOutline,
   HistoryOutlined,
   HubOutlined,
@@ -38,13 +39,15 @@ import {
   useMediaQuery,
 } from '@mui/material';
 
-import { BMC_URL } from '@/constants';
+import { BMC_URL, COVERS_OPEN } from '@/constants';
+import { refreshPendingClaimsCount, usePendingClaimsCount } from '@/lib/driverClaimsStore';
 import { refreshJobChangesCount, useJobChangesCount } from '@/lib/jobChangesStore';
 import { refreshOpenReportsCount, useOpenReportsCount } from '@/lib/slicReportsStore';
 
 import InstallMenuItem from '@/components/install/InstallMenuItem';
 import ModeSwitch from '@/components/layout/ModeSwitch';
 import { softListItemSx } from '@/components/utility/soft';
+import VerifiedBadge from '@/components/utility/VerifiedBadge';
 
 const MENU_ID = 'app-menu';
 
@@ -118,16 +121,19 @@ function UserMenu({ user, signOutAction }) {
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   // Admins: Jobs-tab changes they haven't seen (stage 3 alerts,
-  // docs/ON-CALL-SHEET-SYNC.md; /admin/jobs clears them) and open SLIC reports
-  // (RECOMMENDATIONS.md #5; they count until closed on /admin/reports), both
+  // docs/ON-CALL-SHEET-SYNC.md; /admin/jobs clears them), open SLIC reports
+  // (RECOMMENDATIONS.md #5; they count until closed on /admin/reports) and
+  // driver claims waiting for a decision (docs/COVER-BIDDING.md), all
   // rechecked on every route change.
   const isAdmin = user?.role === 'admin';
   const jobChanges = useJobChangesCount();
   const openReports = useOpenReportsCount();
-  const alerts = jobChanges + openReports;
+  const pendingClaims = usePendingClaimsCount();
+  const alerts = jobChanges + openReports + pendingClaims;
   const alertsText = [
     jobChanges && `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`,
     openReports && `${openReports} SLIC report${openReports === 1 ? '' : 's'}`,
+    pendingClaims && `${pendingClaims} driver claim${pendingClaims === 1 ? '' : 's'}`,
   ]
     .filter(Boolean)
     .join(', ');
@@ -135,7 +141,10 @@ function UserMenu({ user, signOutAction }) {
     if (!isAdmin) return;
     refreshJobChangesCount();
     refreshOpenReportsCount();
+    refreshPendingClaimsCount();
   }, [isAdmin, pathname]);
+  // Covers is admin-only until it rolls out (COVERS_OPEN, lib/authz.js).
+  const canUseCovers = Boolean(user) && (COVERS_OPEN || isAdmin);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -222,6 +231,7 @@ function UserMenu({ user, signOutAction }) {
             </Typography>
             <Typography variant='body2' noWrap>
               {firstName ? `Hi, ${firstName}` : 'Not signed in'}
+              {firstName && user.driverVerified && <VerifiedBadge color='inherit' />}
             </Typography>
           </Box>
           <IconButton
@@ -250,6 +260,16 @@ function UserMenu({ user, signOutAction }) {
                 icon={<HubOutlined />}
                 current={isCurrent('/hubs')}
               />
+              {canUseCovers && (
+                <NavItem
+                  onClick={handleClose}
+                  href='/covers'
+                  label='Covers'
+                  secondary={COVERS_OPEN ? undefined : 'Admin only for now'}
+                  icon={<EventAvailableOutlined />}
+                  current={isCurrent('/covers')}
+                />
+              )}
               {user.bmcMember && (
                 <NavItem
                   onClick={handleClose}
@@ -298,7 +318,6 @@ function UserMenu({ user, signOutAction }) {
               current={isCurrent(`/profile/${user.id}`)}
             />
           )}
-          {/* /covers is built but deliberately not linked yet. */}
           {user?.role === 'admin' && (
             <NavItem
               onClick={handleClose}

@@ -1,8 +1,10 @@
 'use client';
 
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { useState } from 'react';
 
+import { COVERS_OPEN } from '@/constants';
 import { capitalizeFirstLetter } from '@/lib/format';
 
 import {
@@ -12,12 +14,14 @@ import {
   LocalCafeOutlined,
   PhoneOutlined,
   SettingsOutlined,
+  VerifiedOutlined,
   VolunteerActivismOutlined,
 } from '@mui/icons-material';
 import {
   Alert,
   Box,
   IconButton,
+  Link as MuiLink,
   Paper,
   Snackbar,
   Tooltip,
@@ -26,6 +30,7 @@ import {
 
 import BmcButton from '@/components/layout/BmcButton';
 import SoftNotice from '@/components/utility/SoftNotice';
+import VerifiedBadge from '@/components/utility/VerifiedBadge';
 import { softInset, softPressSx } from '@/components/utility/soft';
 import EditProfileDialog from './EditProfileDialog';
 import ProfileImage from './ProfileImage';
@@ -109,6 +114,7 @@ function ProfileData({ userData, commentCount, supporterSince = null }) {
       <Box sx={{ textAlign: 'center' }}>
         <Typography variant='h5' component='p' sx={{ fontWeight: 700 }}>
           {userData.name}
+          {userData.driverVerified && <VerifiedBadge />}
         </Typography>
         <Typography variant='body2' color='text.secondary'>
           {commentCount} tip{commentCount === 1 ? '' : 's'} shared
@@ -137,6 +143,22 @@ function ProfileData({ userData, commentCount, supporterSince = null }) {
         <Detail icon={<BadgeOutlined />} label='Role'>
           {capitalizeFirstLetter(userData.role)}
         </Detail>
+        {/* Verification is only offered where Covers is (admins until it
+            rolls out, docs/COVER-BIDDING.md). */}
+        {(userData.driverVerified || COVERS_OPEN || userData.role === 'admin') && (
+          <Detail icon={<VerifiedOutlined />} label='Driver'>
+            {userData.driverVerified ? (
+              `Verified · ${userData.driverName}`
+            ) : (
+              <>
+                Not verified ·{' '}
+                <MuiLink component={Link} href='/covers'>
+                  Verify on Covers
+                </MuiLink>
+              </>
+            )}
+          </Detail>
+        )}
         <Detail icon={<LocalCafeOutlined />} label='Membership'>
           {userData.bmcMember ? 'Active' : 'Inactive'}
         </Detail>

@@ -29,7 +29,7 @@ const SORT_OPTIONS = [
 const DEFAULT_SORT = 'most-lookups';
 
 // The search, filters, sort and page live in the URL (?q=&members=1&admins=1
-// &sort=&page=), so Back from a user's page lands on the same list. This only
+// &verified=1&sort=&page=), so Back from a user's page lands on the same list. This only
 // renders on the client (HydrationGuard), so it reads the address bar itself:
 // that's right even when Back restores a cached server render.
 function readView() {
@@ -40,16 +40,18 @@ function readView() {
     q: search.get('q') ?? '',
     members: search.get('members') === '1',
     admins: search.get('admins') === '1',
+    verified: search.get('verified') === '1',
     sort: SORT_OPTIONS.some(({ value }) => value === sort) ? sort : DEFAULT_SORT,
     page: Number.isInteger(page) && page > 1 ? page - 1 : 0,
   };
 }
 
-function writeView({ q, members, admins, sort, page }) {
+function writeView({ q, members, admins, verified, sort, page }) {
   const search = new URLSearchParams();
   if (q) search.set('q', q);
   if (members) search.set('members', '1');
   if (admins) search.set('admins', '1');
+  if (verified) search.set('verified', '1');
   if (sort !== DEFAULT_SORT) search.set('sort', sort);
   if (page > 0) search.set('page', String(page + 1));
   const query = search.toString();
@@ -73,6 +75,7 @@ function UserList({ users, viewCounts = {} }) {
     (user) =>
       (view.members ? user.bmcMember : true) &&
       (view.admins ? user.role === 'admin' : true) &&
+      (view.verified ? user.driverVerified : true) &&
       user.name.toLowerCase().includes(view.q.toLowerCase()),
   );
 
@@ -154,6 +157,14 @@ function UserList({ users, viewCounts = {} }) {
             aria-pressed={view.admins}
             sx={softToggleSx}
             onClick={() => update({ admins: !view.admins })}
+          />
+          <Chip
+            size='medium'
+            label='Verified drivers'
+            clickable
+            aria-pressed={view.verified}
+            sx={softToggleSx}
+            onClick={() => update({ verified: !view.verified })}
           />
         </Box>
         <TextField

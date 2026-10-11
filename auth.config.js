@@ -35,6 +35,8 @@ export const authConfig = {
         token.comments = user.comments || [];
         token.bmcMember = user.bmcMember || false;
         token.superAdmin = user.superAdmin === true;
+        token.driverVerified =
+          user.driverVerified === true || Boolean(user.driver?.verifiedAt);
         token.created_at = user.created_at || new Date();
       }
       return token;
@@ -46,6 +48,7 @@ export const authConfig = {
         session.user.comments = token.comments || [];
         session.user.bmcMember = token.bmcMember || false;
         session.user.superAdmin = token.superAdmin === true;
+        session.user.driverVerified = token.driverVerified === true;
         session.user.created_at = token.created_at || new Date();
       }
       return session;

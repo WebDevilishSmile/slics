@@ -34,6 +34,7 @@ import VerifiedBadge from '@/components/utility/VerifiedBadge';
 import { softInset, softPressSx } from '@/components/utility/soft';
 import EditProfileDialog from './EditProfileDialog';
 import ProfileImage from './ProfileImage';
+import PushNotifications from './PushNotifications';
 
 // One line of the details well: a brand-blue icon, a quiet label, the value.
 function Detail({ icon, label, children }) {
@@ -171,6 +172,10 @@ function ProfileData({ userData, commentCount, supporterSince = null }) {
           {dayjs(userData.created_at).format('MMM D, YYYY')}
         </Detail>
       </Box>
+
+      {/* Admins only until stage 2 (docs/PUSH-NOTIFICATIONS.md); the
+          subscription routes check it too. */}
+      {userData.role === 'admin' && <PushNotifications />}
 
       {!userData.bmcMember && (
         <SoftNotice

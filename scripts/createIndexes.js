@@ -69,6 +69,11 @@ async function main() {
         spec: { 'driver.key': 1 },
         options: { unique: true, partialFilterExpression: { 'driver.key': { $type: 'string' } } },
       },
+      // Web push (lib/db/pushSubscriptions.js): one row per device, so a
+      // re-saved subscription updates its row; userId for sends and account
+      // deletion.
+      { collection: 'push-subscriptions', spec: { endpoint: 1 }, options: { unique: true } },
+      { collection: 'push-subscriptions', spec: { userId: 1 } },
     ];
 
     for (const { collection, spec, options } of indexes) {

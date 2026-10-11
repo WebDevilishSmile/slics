@@ -25,7 +25,7 @@ export async function POST() {
   }
 
   try {
-    const result = await refreshJobsTab({ source: 'refresh' });
+    const result = await refreshJobsTab({ source: 'refresh', userId: session.user.id });
     if (result.status !== 'ok') {
       return NextResponse.json({ error: result.message }, { status: STATUS[result.status] });
     }

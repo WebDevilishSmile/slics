@@ -37,6 +37,8 @@ const csp = {
     ...(isDev ? ['ws:', 'wss:'] : []),
     ...(isPreview ? ['https://vercel.live', 'wss://ws-us3.pusher.com'] : []),
   ],
+  // public/sw.js, the push-only service worker (docs/PUSH-NOTIFICATIONS.md).
+  'worker-src': ["'self'"],
   'frame-src': isPreview ? ['https://vercel.live'] : ["'none'"],
   'frame-ancestors': ["'none'"],
   'object-src': ["'none'"],
@@ -83,7 +85,12 @@ const nextConfig = {
   },
   // Security headers on every response (docs/SECURITY.md #12).
   async headers() {
-    return [{ source: '/(.*)', headers: securityHeaders }];
+    return [
+      { source: '/(.*)', headers: securityHeaders },
+      // The service worker is always re-checked, so a fix reaches every
+      // device on its next visit instead of after a cache expires.
+      { source: '/sw.js', headers: [{ key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' }] },
+    ];
   },
 };
 

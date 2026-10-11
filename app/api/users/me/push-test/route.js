@@ -1,0 +1,35 @@
+import { NextResponse } from 'next/server';
+
+import { requireAdmin } from '@/lib/authz';
+import { checkRateLimit } from '@/lib/rateLimit';
+import { sendPush } from '@/lib/push';
+
+// POST: "Send a test" on /profile. Pushes a test notification to every device
+// the caller turned notifications on for, and answers `{ sent, failed }` so the
+// button can say whether it went. Admin-only in stage 1, like the
+// subscription routes (docs/PUSH-NOTIFICATIONS.md).
+export async function POST() {
+  const { session, denied } = await requireAdmin();
+  if (denied) return denied;
+
+  const rate = await checkRateLimit({
+    key: `push-test:${session.user.id}`,
+    limit: 10,
+    windowMs: 10 * 60 * 1000,
+  });
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: `Too many tests. Try again in ${rate.retryAfterSeconds} seconds.` },
+      { status: 429, headers: { 'Retry-After': String(rate.retryAfterSeconds) } },
+    );
+  }
+
+  // sendPush never throws: a failure comes back as nothing sent.
+  const result = await sendPush([session.user.id], {
+    title: 'SLICs',
+    body: 'This is a test. Notifications are working.',
+    url: `/profile/${session.user.id}`,
+    tag: 'test',
+  });
+  return NextResponse.json({ success: true, data: result });
+}

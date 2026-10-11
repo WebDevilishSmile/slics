@@ -9,7 +9,9 @@ The app is used daily in production.
 
 ## Status (2026-10-10)
 
-**Not started.** Planned on 2026-10-10 and parked until it's needed. Nothing here is built.
+**Stage 1 built, not deployed.** The code is in (2026-10-10). Before it ships: set the three
+keys on Vercel and run `npm run db:indexes`. Then go through "Verifying" on a phone. Stages
+2 and 3 aren't started.
 
 ---
 
@@ -32,8 +34,9 @@ developer account.
 
 ## Ground rules
 
-- **Push only, never a cache.** `public/sw.js` handles `push` and `notificationclick` and
-  nothing else. It has **no `fetch` handler, ever**, so it never comes between a page and
+- **Push only, never a cache.** `public/sw.js` handles `push` and `notificationclick`, plus
+  the two lifecycle lines (`install` → `skipWaiting`, `activate` → `clients.claim`, so a
+  fix takes over at once and a tap can navigate the page that turned them on). It has **no `fetch` handler, ever**, so it never comes between a page and
   the network. That avoids the stale-cache failure that kept the app from having a
   service worker (`CLAUDE.md` → "PWA").
 - **Opt-in only.** The service worker is registered inside the tap that turns
@@ -62,58 +65,88 @@ developer account.
 Only admins see the toggle, and the routes are `requireAdmin()`. Drivers' devices are
 untouched.
 
-- [ ] **Keys:** `npx web-push generate-vapid-keys` once. Add
+- [ ] **Keys:** `npx web-push generate-vapid-keys` once. Done for `.env`, `.env.example` and
+      `OPERATIONS.md` (2026-10-10). **Vercel is still to do.** Add
       `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` and `VAPID_SUBJECT`
       (`mailto:` the admin address) to `.env`, Vercel, `.env.example` and
       `OPERATIONS.md` → Configuration and Secrets. Rotating the private key invalidates
       every subscription, so note that under Secrets.
-- [ ] **Dependency:** `npm i web-push`.
-- [ ] **`public/sw.js`:**
+- [x] **Dependency:** `npm i web-push` (3.6.7).
+- [x] **`public/sw.js`:**
   - `push` shows `{ title, body, url, tag }` with the app icon.
   - `notificationclick` focuses an open app window and navigates it to `url`, or opens
     one.
   - The middleware matcher already skips paths with a dot, so `/sw.js` isn't redirected
     to sign-in.
-- [ ] **`lib/db/pushSubscriptions.js`:** collection `push-subscriptions`, rows
+  - `next.config.mjs` serves it with `Cache-Control: no-cache` and adds `worker-src 'self'`
+    to the CSP.
+- [x] **`lib/db/pushSubscriptions.js`:** collection `push-subscriptions`, rows
       `{ userId: ObjectId, endpoint, keys: { p256dh, auth }, createdAt, lastSentAt }`.
   - Functions: `savePushSubscription`, `deletePushSubscription(endpoint, userId)`,
     `getPushSubscriptions(userIds)`, `deleteUserPushSubscriptions(userId)`.
   - Indexes in `scripts/createIndexes.js`: unique `endpoint`, and `userId`.
   - Add the collection to `DATA-MODEL.md`.
-- [ ] **`lib/push.js` (server):** `sendPush(userIds, { title, body, url, tag })` and
+  - `validatePushSubscription` only accepts endpoints on the browsers' push services
+    (FCM, Mozilla, Apple, WNS). The server POSTs to the endpoint on every send, so any
+    other URL would let a caller aim it anywhere.
+  - Saving an endpoint that's already there moves it to the caller, so a shared device
+    follows its latest account. `recordPushResults` deletes the gone ones and stamps
+    `lastSentAt`.
+- [x] **`lib/push.js` (server):** `sendPush(userIds, { title, body, url, tag })` and
       `sendPushToAdmins(payload)`.
   - Deletes rows the push service answers 404/410 for.
   - `console.error`s anything else and never throws.
-- [ ] **`/api/users/me/push-subscriptions`:**
+  - The payload can be a function of the user id, so each admin's job-change count is
+    their own. A `tag` is also sent as the push service's `Topic`, so an undelivered push
+    is replaced too. TTL is 12 hours.
+- [x] **`/api/users/me/push-subscriptions`:**
   - `POST` saves the subscription. It checks that `endpoint` is an `https:` URL and the
     keys are strings, and it's rate-limited per user.
   - `DELETE` removes one by `endpoint`, only if it's the caller's.
   - Stage 1 checks `requireAdmin()`.
-- [ ] **`hooks/usePushNotifications.js`:** reports the state (`unsupported`,
+  - "Send a test" is `POST /api/users/me/push-test`: it sends to all of the caller's
+    devices and answers `{ sent, failed }`.
+- [x] **`hooks/usePushNotifications.js`:** reports the state (`unsupported`,
       `needs-install` on an iPhone outside the home-screen app, `blocked`, `off`, `on`)
       and offers `enable()` and `disable()`.
   - `enable()` registers `sw.js`, asks for permission, subscribes with the public key,
     and POSTs.
   - `disable()` unsubscribes, DELETEs and unregisters.
-- [ ] **Toggle on `/profile`** (`components/profile/`, admins only for now): soft style,
+  - `enable()` asks for permission *first*, while the tap still counts (iOS asks only
+    inside one), then registers and subscribes. A failed save unsubscribes and
+    unregisters again, so nothing is left behind.
+  - When it finds the device on, it re-saves the subscription quietly. That restores a row
+    the server dropped, and on a shared device it moves the row to whoever is signed in.
+    A subscription made with an old public key counts as off, and `enable()` replaces it.
+- [x] **Toggle on `/profile`** (`components/profile/`, admins only for now): soft style,
       one line on what it sends, and a "Send a test" button.
   - `needs-install` opens `install/IosInstallDialog.jsx`.
   - `blocked` explains where the phone's setting is.
-- [ ] **Triggers:**
+  - Built as `profile/PushNotifications.jsx`, an inset well under the details.
+- [x] **Triggers:**
   - **Job changes:** after `refreshJobsTab` saves changes (`lib/onCallSheetSync.js`),
     push the admins "N job changes on the Jobs tab", linking `/admin/jobs`. Reuse one
     `tag` so a burst of sheet pings replaces the notification instead of stacking.
+    Built: the body is each admin's own unseen count (`countJobChangesSince` their
+    `jobChangesSeenAt`), and nobody is sent one with nothing new. The admin who pressed
+    Refresh isn't sent one.
   - **SLIC reports:** after `createSlicReport` in `app/api/slic-reports/route.js`, push
-    "New report on SLIC 1809", linking `/admin/reports`.
-- [ ] **Account deletion:** `deleteUserAccount` (`lib/db/users.js`) calls
+    "New report on SLIC 1809", linking `/admin/reports`. Built: the body is the kind
+    ("Wrong phone number"), never the driver's note. A driver re-reporting the same thing
+    (which updates their open report) sends nothing, and an admin filing one isn't sent
+    their own.
+- [x] **Account deletion:** `deleteUserAccount` (`lib/db/users.js`) calls
       `deleteUserPushSubscriptions`.
-- [ ] **`CLAUDE.md` → "PWA":** replace "no service worker" with the ground rules above
+- [x] **`CLAUDE.md` → "PWA":** replace "no service worker" with the ground rules above
       (push only, no `fetch` handler, registered on opt-in).
 
 ## Stage 2 — Drivers: replies to their tips
 
-- [ ] Show the toggle to every signed-in driver, and switch the subscription routes to
-      `requireUser()`.
+- [ ] Show the toggle to every signed-in driver, and switch the subscription routes (and
+      `push-test`) to `requireUser()`.
+- [ ] **Signing out on a shared device:** the device's row stays with the account that
+      turned it on until someone signed in opens `/profile`. In stage 1 only admins hold
+      rows. Once drivers do, decide whether signing out should unsubscribe the device.
 - [ ] **Per-type switches** on the user row (`pushPrefs: { tipReplies: true }`), shown
       under the toggle, applied to all of a driver's devices. Each later type adds a key.
 - [ ] **Tip replies:** when `createComment` (`lib/db/comments.js`) saves a reply, push

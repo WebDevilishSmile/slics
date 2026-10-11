@@ -81,13 +81,15 @@ that expire. Concerns: drivers post little now, there are no push notifications 
 
 ### Push Notifications
 
-Plan and checklist: `PUSH-NOTIFICATIONS.md`. Parked (2026-10-10) until it's needed. Web push
+Plan and checklist: `PUSH-NOTIFICATIONS.md`. Stage 1 built 2026-10-10, not deployed yet. Web push
 from the web app: no App Store or Apple developer account. On iPhone it works only from the
 home-screen app. A push-only service worker (no caching), registered only when someone turns
 notifications on, so nobody else's device is touched.
 
-- [ ] stage 1: admin-only. Notify the admin of Jobs-tab changes and new SLIC reports (the
-      toggle on `/profile`, `public/sw.js`, `push-subscriptions`, `lib/push.js`)
+- [x] stage 1: admin-only. Notify the admin of Jobs-tab changes and new SLIC reports (the
+      toggle on `/profile`, `public/sw.js`, `push-subscriptions`, `lib/push.js`; 2026-10-10)
+- [ ] ship stage 1: set the three VAPID keys on Vercel, run `npm run db:indexes`, test on
+      a phone (`PUSH-NOTIFICATIONS.md` → "Verifying")
 - [ ] stage 2: drivers opt in to replies on their tips (and on places once that page launches)
 - [ ] stage 3: "your pick is up" for cover bidding (waits on Features → User)
 

@@ -49,6 +49,11 @@ to `.env`. In production the same keys are set on the Vercel project.
 | Sheet notifier ping | When the sheet's `Jobs` tab or a dated tab is edited | `POST /api/webhooks/on-call-sheet` | `x-sheet-secret` = `ON_CALL_SHEET_WEBHOOK_SECRET` |
 | Buy Me a Coffee events | Every delivery (saved to `bmc-events`); membership started / cancelled also sets `bmcMember` | `POST /api/webhooks/buymeacoffee` | HMAC SHA-256 with `BMC_WEBHOOK_SECRET`, constant-time; repeats are no-ops (`BMC-SUPPORT.md`) |
 
+Push notifications go out from the request that caused them, after its response
+(`lib/push.js`, `PUSH-NOTIFICATIONS.md`): job changes from a sheet read, a new SLIC report.
+Nothing is scheduled. With the VAPID keys unset, sends are skipped and logged ("Push is
+off").
+
 The sheet notifier is an Apps Script in the admin's Google account. Install, test and
 uninstall steps are in `on-call-sheet-apps-script.md`. Whether it's working shows under the
 Refresh button on `/admin/jobs` ("Sheet notifier: last ping …"). After 2 days with no ping,
@@ -78,7 +83,7 @@ New data scripts follow the same pattern: `--dry-run` first, a reverse script be
 ## Secrets
 
 Supersedes the table in `SECURITY.md` #29 and adds the four keys that came with the sheet
-sync. All live in Vercel's project settings (mark them **Sensitive**) and in the local
+sync, and the push keys (`PUSH-NOTIFICATIONS.md`). All live in Vercel's project settings (mark them **Sensitive**) and in the local
 `.env`, which never goes in git or a cloud-synced folder.
 
 | Secret | If it leaks | Rotate by | Side effect |
@@ -92,6 +97,7 @@ sync. All live in Vercel's project settings (mark them **Sensitive**) and in the
 | `ON_CALL_SHEET_WEBHOOK_SECRET` | Anyone can trigger sheet re-reads (rate-limited; data still only comes from the sheet) | `openssl rand -hex 32` → Vercel, then the script's `APP_SECRET` property; run `testPing` | Pings get 403 until both match |
 | `CRON_SECRET` | Anyone can trigger the daily re-read | New value on Vercel, redeploy | None |
 | `BMC_WEBHOOK_SECRET` | Anyone can grant or revoke membership | BMC dashboard → new secret → Vercel | Events fail until both match |
+| `VAPID_PRIVATE_KEY` (with `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_SUBJECT`) | Anyone with a device's subscription could push to it as the app; the subscriptions themselves stay on the server | `npx web-push generate-vapid-keys`, set **both** keys on Vercel, redeploy (the public key is built into the client) | **Every device's subscription stops working.** Everyone turns notifications off and on again on `/profile`; the toggle notices a subscription made with the old key and replaces it |
 
 On a lost or compromised laptop, rotate all of them. Rotate `AUTH_SECRET` and
 `MONGODB_URI` about once a year anyway.

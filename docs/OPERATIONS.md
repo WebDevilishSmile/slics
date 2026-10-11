@@ -74,7 +74,7 @@ production.
 | `npm run bmc:import -- <file> --dry-run` / `-- --undo` | Imports Buy Me a Coffee history pulled with the `buymeacoffee` MCP tools into `bmc-events` (`BMC-SUPPORT.md`) | Drop `--dry-run` to write; re-runs insert nothing; `--undo` deletes only imported rows |
 | `npm run pdfs:migrate -- --dry-run` | Copies legacy Supabase PDFs to Vercel Blob and sets `pdfUrl` | Drop `--dry-run` to write |
 | `npm run pdfs:rollback -- --dry-run` | Reverses the migration's `pdfUrl` writes | The undo for the above |
-| `npm run icons:generate` | Rebuilds the home-screen icons from the logo | Never hand-edit the icons |
+| `npm run icons:generate` | Rebuilds every app icon and `app/favicon.ico` from `public/slics-icon.svg` | Never hand-edit the icons |
 | `npm run lint:dead` | knip: unused files, exports and dependencies | |
 
 New data scripts follow the same pattern: `--dry-run` first, a reverse script beside it.

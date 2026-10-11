@@ -1,7 +1,6 @@
 'use client';
 
 import { Suspense, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ArrowBack } from '@mui/icons-material';
@@ -13,6 +12,8 @@ import {
   Typography,
   useScrollTrigger,
 } from '@mui/material';
+
+import SlicsMark from '@/components/utility/SlicsMark';
 
 import NavigationProgress from './NavigationProgress';
 import UserMenu from './UserMenu';
@@ -123,20 +124,18 @@ export default function HeaderBar({ user, signOutAction }) {
           href={home}
           aria-label='SLICs home'
           sx={{
-            position: 'relative',
+            display: 'grid',
+            placeItems: 'center',
             height: '2.4rem',
             width: '2.4rem',
             ml: 'auto',
             flexShrink: 0,
+            color: 'text.light',
+            borderRadius: 2,
+            '&:focus-visible': { outline: '2px solid currentColor', outlineOffset: '2px' },
           }}
         >
-          <Image
-            src='/slics-logo-dark.png'
-            fill
-            style={{ objectFit: 'contain' }}
-            alt=''
-            sizes='2.4rem'
-          />
+          <SlicsMark sx={{ fontSize: '2rem' }} />
         </Box>
       </Toolbar>
       {/* useSearchParams needs a Suspense boundary on static pages. */}

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -46,6 +45,7 @@ import { refreshOpenReportsCount, useOpenReportsCount } from '@/lib/slicReportsS
 
 import InstallMenuItem from '@/components/install/InstallMenuItem';
 import ModeSwitch from '@/components/layout/ModeSwitch';
+import SlicsMark from '@/components/utility/SlicsMark';
 import { softListItemSx } from '@/components/utility/soft';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
 
@@ -205,22 +205,7 @@ function UserMenu({ user, signOutAction }) {
             color: 'common.white',
           }}
         >
-          <Box
-            sx={{
-              position: 'relative',
-              width: '2.4rem',
-              height: '2.4rem',
-              flexShrink: 0,
-            }}
-          >
-            <Image
-              src='/slics-logo-dark.png'
-              fill
-              style={{ objectFit: 'contain' }}
-              alt=''
-              sizes='2.4rem'
-            />
-          </Box>
+          <SlicsMark sx={{ fontSize: '2.4rem', flexShrink: 0 }} />
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
               variant='h6'

@@ -4,7 +4,7 @@ export default function App() {
   return (
     <AboutSection
       title='The App'
-      imageSrc='/slics-logo.png'
+      imageSrc='/slics-icon.svg'
       imageAlt='SLICs App'
     >
       SLICs is a web app built for UPS Feeder drivers to quickly look up

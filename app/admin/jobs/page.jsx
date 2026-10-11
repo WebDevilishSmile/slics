@@ -1,6 +1,6 @@
 import { Box, Paper, Typography } from '@mui/material';
 
-import { getSession } from '@/lib/authz';
+import { getAdminSession } from '@/lib/authz';
 import HydrationGuard from '@/components/utility/HydrationGuard';
 import JobsRefreshButton from '@/components/admin/sheetJobs/JobsRefreshButton';
 import SheetJobsView from '@/components/admin/sheetJobs/SheetJobsView';
@@ -22,16 +22,17 @@ const CHANGES_PAGE = 100;
 // Every job on the on-call sheet's Jobs tab and what changed between
 // refreshes (docs/ON-CALL-SHEET-SYNC.md, stage 2). Reads MongoDB only; the
 // Refresh button reads the sheet. Under it, whether the sheet's notifier and
-// the automatic reads are working (stage 3). app/admin/layout.jsx limits it to
-// admins.
+// the automatic reads are working (stage 3).
 async function Jobs() {
-  const session = await getSession();
+  const session = await getAdminSession();
+  if (!session) return null;
+
   const [jobs, changes, syncState, health, seenAt] = await Promise.all([
     getSheetJobs(),
     getJobChanges({ limit: CHANGES_PAGE }),
     getJobsSyncState(),
     getSheetSyncHealth({ today: todayInNewYork() }),
-    getJobChangesSeenAt(session?.user?.id),
+    getJobChangesSeenAt(session.user.id),
   ]);
 
   return (

@@ -1,5 +1,5 @@
 import { Typography, Paper } from '@mui/material';
-import { getSession, isSuperAdmin } from '@/lib/authz';
+import { getAdminSession, isSuperAdmin } from '@/lib/authz';
 import AdminLinks from '@/components/admin/AdminLinks';
 import ThankYouPreview from '@/components/admin/ThankYouPreview';
 import JobChangesNotice from '@/components/admin/sheetJobs/JobChangesNotice';
@@ -31,9 +31,11 @@ async function openReports() {
 }
 
 async function AdminPage() {
-  const session = await getSession();
+  const session = await getAdminSession();
+  if (!session) return null;
+
   const [jobChanges, reports] = await Promise.all([
-    unseenJobChanges(session?.user?.id),
+    unseenJobChanges(session.user.id),
     openReports(),
   ]);
 
@@ -59,7 +61,7 @@ async function AdminPage() {
         <SlicReportsNotice {...reports} />
         <JobChangesNotice {...jobChanges} />
         <AdminLinks links={adminLinks} />
-        <ThankYouPreview firstName={session?.user?.name?.split(' ')[0]} />
+        <ThankYouPreview firstName={session.user.name?.split(' ')[0]} />
       </Paper>
     </>
   );

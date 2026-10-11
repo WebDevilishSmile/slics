@@ -1,8 +1,7 @@
-import { getSession } from '@/lib/authz';
+import { getAdminSession } from '@/lib/authz';
 import { getAllSlics } from '@/lib/db/slics';
 
 import CommentsSection from '@/components/admin/comments/CommentsSection';
-import RedirectMessage from '@/components/layout/RedirectMessage';
 import LoadingFallback from '@/components/layout/LoadingFallback';
 import { getAllComments } from '@/lib/db/comments';
 import { serializeComments, serializeSlics, toPublicUser } from '@/lib/serializers';
@@ -12,29 +11,8 @@ import { Suspense } from 'react';
 import HydrationGuard from '@/components/utility/HydrationGuard';
 
 async function CommentsPage() {
-  const session = await getSession();
-
-  if (!session) {
-    // If the user is not authenticated, redirect them to the sign-in page
-    return (
-      <RedirectMessage
-        heading='You must be logged in to access this page.'
-        subheading='Please sign in to continue.'
-        redirect='/'
-      />
-    );
-  }
-  const user = session.user;
-  const isAdmin = user && user.role === 'admin';
-  if (!isAdmin) {
-    // If the user is not authenticated or not an admin, redirect them
-    return (
-      <RedirectMessage
-        message='You must be an admin to access this page.'
-        redirect='/home'
-      />
-    );
-  }
+  // app/admin/layout.jsx shows everyone else the redirect message.
+  if (!(await getAdminSession())) return null;
 
   const comments = await getAllComments();
 

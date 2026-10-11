@@ -5,9 +5,9 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 
-// DataGrid pieces shared by the desktop tables on /bids (bids/BidsTable.jsx)
-// and /cover-bid-jobs (coverBidJobs/CoverBidJobsTable.jsx), UI-SUGGESTIONS.md
-// #28. The column sets differ; these parts didn't.
+// DataGrid pieces for the desktop table on /cover-bid-jobs
+// (coverBidJobs/CoverBidJobsTable.jsx), UI-SUGGESTIONS.md #28. They were
+// shared with /bids until that page was deleted on 2026-10-10.
 
 // The grid sits straight on a soft card: no borders, rules or separators,
 // headers in brand blue like softTableSx.

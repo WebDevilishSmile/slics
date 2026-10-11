@@ -4,7 +4,9 @@ import { getSession } from '@/lib/authz';
 
 // Every page under /admin renders inside this check. It's the friendly
 // redirect, not the boundary: a layout doesn't re-run on client navigation,
-// so the API routes and data each check for themselves (docs/SECURITY.md #7).
+// and a page segment can be requested on its own. So every page calls
+// getAdminSession() before reading anything, and every API route calls
+// requireAdmin() (docs/SECURITY.md #7).
 export default async function AdminLayout({ children }) {
   const session = await getSession();
 

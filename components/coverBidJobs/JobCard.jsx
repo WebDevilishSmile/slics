@@ -13,9 +13,9 @@ import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 import { PickedLabel, pickedSx } from './jobGrid';
 
-// The phone card for one bid job, shared by /bids (bids/BidsJobCard.jsx) and
-// /cover-bid-jobs (coverBidJobs/CoverBidJobCard.jsx); each maps its own job
-// shape into these props (UI-SUGGESTIONS.md #28).
+// The phone card for one bid job on /cover-bid-jobs
+// (coverBidJobs/CoverBidJobCard.jsx maps a job into these props;
+// UI-SUGGESTIONS.md #28).
 // - `days`: the job's working days in display order, `[{ day: 'mon', value }]`
 //   with `value` as stored (formatted here with formatDayValue).
 // - `action`: optional element at the top right (a chip, a details button).

@@ -4,11 +4,14 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 import { getAllGyms } from '@/lib/db/gyms';
 import { getAllSlics } from '@/lib/db/slics';
 import { serializeGyms } from '@/lib/serializers';
+import { getAdminSession } from '@/lib/authz';
 
-// Admin-only (app/admin/layout.jsx gates every /admin page): truck-accessible
-// Planet Fitness gyms, found by the SLIC you're coming from / going to or by
-// distance from where you are, with your own comments on each.
+// Admin-only: truck-accessible Planet Fitness gyms, found by the SLIC you're
+// coming from / going to or by distance from where you are, with your own
+// comments on each.
 export default async function PlanetFitnessPage() {
+  if (!(await getAdminSession())) return null;
+
   const [gyms, slics] = await Promise.all([getAllGyms(), getAllSlics()]);
 
   // Only what the SLIC pickers need — not every slic field.

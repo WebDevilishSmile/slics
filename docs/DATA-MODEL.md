@@ -71,7 +71,7 @@ See `ON-CALL-SHEET-SYNC.md` for how these are filled.
 | `sheet-job-changes` | One row per changed field: `{ jobName, kind, field, group, from, to, seenAt, source }` | `seenAt`; `jobName` + `seenAt` | `lib/db/sheetJobs.js` | Driver names in `from`/`to` | Never |
 | `sync-state` | Sheet sync bookkeeping: `{ _id: 'jobs' }`, `{ _id: 'week:YYYY-MM-DD' }` leases and outcomes, `{ _id: 'ping' }` | `_id` | `lib/db/syncState.js` | None | Overwritten in place |
 | `cover` | **Unused since 2026-10-10.** The old hand-edited cover-driver positions (`position`, `driverName`). `/admin/cover/drivers` now builds the list from `cover-bid-picks`; the route and editor were deleted. The rows wait to be dropped (`TODOS.md`) | `position` | Nothing | Driver names | Drop it once the sheet list has proven itself |
-| `bid-jobs` | The bid list behind `/bids` | `_id` | Not written by the app (`lib/db/bidJobs.js` reads it) | Driver names, if present | — |
+| `bid-jobs` | An old bid list. Unused: `/bids`, its only reader, was deleted 2026-10-10 | `_id` | Not written or read by the app | Driver names, if present | — |
 
 ## Places and gyms
 

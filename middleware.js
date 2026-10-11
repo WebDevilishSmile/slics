@@ -61,7 +61,6 @@ export default auth((req) => {
     //   'Middleware: User is logged in but not a BMC member, redirecting to home.'
     // );
     // Note: This redirect is to the *root* page ('/'), which we just made public.
-    // So, if a non-BMC member tries to access /dashboard, they'll be sent to /.
     url.pathname = '/';
     return NextResponse.redirect(url);
   }
@@ -70,12 +69,14 @@ export default auth((req) => {
   return NextResponse.next();
 });
 
+// The middleware is the sign-in redirect, not the boundary: it skips /api and
+// any path with a dot, and the published bypasses (docs/SECURITY.md #3) skip
+// it too. Every page and API route checks the session itself
+// (lib/authz.js, #7).
 export const config = {
   matcher: [
     // The matcher broadly includes many paths.
     // The logic inside the middleware will handle specific redirect rules.
-    '/dashboard/:path*',
-    '/protected/:path*',
     '/home/:path*',
     '/home',
     '/hubs/:path*',

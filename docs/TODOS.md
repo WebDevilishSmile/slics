@@ -22,9 +22,9 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 ### SLIC reports (`RECOMMENDATIONS.md` #5)
 
-- [ ] send a test report from a phone, then Fix it from `/admin/reports` and check the
+- [x] send a test report from a phone, then Fix it from `/admin/reports` and check the
       banner, the menu badge and the SLIC's history
-- [ ] `npm run db:indexes` for the two `slic-reports` indexes
+- [x] `npm run db:indexes` for the two `slic-reports` indexes
 
 ### After a trial period
 
@@ -36,6 +36,8 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
       Left: remove the key from Vercel and `.env`, and revoke it in Google AI Studio
 - [ ] **once the sheet's cover list has proven itself:** drop the unused `cover` collection
       (its code went 2026-10-10; the rows are kept until then in case the old list is wanted)
+- [ ] drop the unused `bid-jobs` collection when sure nobody wants the old list (`/bids`, its
+      only reader, was deleted 2026-10-10 with `SECURITY.md` #7)
 - [ ] **when every SLIC has `pdfUrl`:** retire the Supabase bucket and the `slic.pdf`
       fallback (`CLAUDE.md` → "External integrations"; also closes part of `SECURITY.md` #13)
 
@@ -57,6 +59,24 @@ I need to establish a way to authenticate users. We should have a way to link th
 ### Forum Page
 
 - [ ] implement forum page for discussions among users
+
+On hold (decided 2026-10-10). Launch `/whip-it-in-and-out` to all drivers first and see
+whether they use its comments. If they do, build a small board on the places comment code
+(`lib/db/places.js`, `components/places/`): plain text, one-level threads, votes, maybe posts
+that expire. Concerns: drivers post little now, there are no push notifications yet
+(planned in `PUSH-NOTIFICATIONS.md`), and someone has to moderate.
+
+### Push Notifications
+
+Plan and checklist: `PUSH-NOTIFICATIONS.md`. Parked (2026-10-10) until it's needed. Web push
+from the web app: no App Store or Apple developer account. On iPhone it works only from the
+home-screen app. A push-only service worker (no caching), registered only when someone turns
+notifications on, so nobody else's device is touched.
+
+- [ ] stage 1: admin-only. Notify the admin of Jobs-tab changes and new SLIC reports (the
+      toggle on `/profile`, `public/sw.js`, `push-subscriptions`, `lib/push.js`)
+- [ ] stage 2: drivers opt in to replies on their tips (and on places once that page launches)
+- [ ] stage 3: "your pick is up" for cover bidding (waits on Features → User)
 
 ### My Daily Log
 
@@ -125,7 +145,8 @@ order that file suggests, minus what's done:
 - [x] **#2** 2026-10-10: no comment is parsed as HTML, `html-react-parser` is gone, and the
       43 old HTML comments are stored as text
 - [x] **#6** 2026-10-10: user serializers pick fields; `add-phone` and the toggles return only what changed
-- [ ] **#7** admin pages check admin themselves with `getSession()` (not only the layout); `/bids` checks the session
+- [x] **#7** 2026-10-10: every admin page checks `getAdminSession()` before reading; `/bids`
+      deleted; `/cover-bid-jobs` admins only for now
 - [ ] **#12** security headers in `next.config.mjs` (step 1 is safe to ship on its own)
 - [ ] **#10** allowlist PATCH bodies (`drivers/[id]`, `updateSlic`; `cover/[position]` was deleted 2026-10-10)
 - [ ] **#8** decide the access model (open / invite code / approval) and write it in the README

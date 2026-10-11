@@ -44,7 +44,7 @@ names what's left.
 | 4 | Done | 2026-10-10. `lib/authz.js` (`getSession`, `requireUser`, `requireAdmin`) is the only caller of `auth()`. All 43 guarded API routes, 13 pages, the admin layout and 2 server components go through it. `middleware.js` checks `req.auth?.user?.id`. `toggle-role`, `toggle-member`, `add-phone` and the admin layout read the session's role instead of looking the user up by email. No `route()` wrapper: see the note under #4. |
 | 5 | Done | `lib/db/comments.js` has no `'use server'`. The only two uses left are the inline sign-in/out actions. |
 | 6 | Done | 2026-10-10. Users reach the browser through allowlist serializers (`toPublicUser`, `toSelfUser`, `toAdminUser` in `lib/serializers.js`) that pick fields instead of spreading. `getUsers`/`getUserById`/`getUserByEmail` leave out the hash by default. `add-phone` returns only the fields it edits and doesn't log the user; the role and membership toggles return `{ _id, role }` / `{ _id, bmcMember }`. |
-| 7 | Partly | The `/signin` redirect is fixed (it goes to `/`). Admin pages still rely on `app/admin/layout.jsx` (an email lookup), and `app/bids/page.jsx` has no `auth()` call. |
+| 7 | Done | 2026-10-10. Every server page under `app/admin/` calls `getAdminSession()` (`lib/authz.js`) before reading anything and renders nothing for anyone else; the layout keeps the redirect message. `/bids` was deleted. `/cover-bid-jobs` checks admin (admins only for now) before its read. The middleware matcher lost its dead `/dashboard` and `/protected` entries. |
 | 8 | Open | Access-model decision still to make. |
 | 9 | Open | `authorize()` in `auth.js` has no rate limit. |
 | 10 | Open | `drivers/[id]` still `$set`s the request body. (`cover/[position]` was deleted 2026-10-10 with the manual cover list.) |
@@ -119,7 +119,8 @@ places feature never sends other drivers' user ids to the client.
   time it was `await auth()` written `if (!session)`, which the installed Auth.js could
   fail open on (#4). Since 2026-10-10 every guarded route calls `requireUser()` /
   `requireAdmin()` and pages call `getSession()` (`lib/authz.js`), which only count a
-  session with a `user.id`. Pages under `app/admin/` still rely on the layout for it (#7).
+  session with a `user.id`. Since #7 (2026-10-10), every server page under `app/admin/`
+  checks admin itself with `getAdminSession()`; the layout is only the redirect message.
 - There is **no boundary at the data layer.** `lib/db/*.js` trust their callers
   completely, return whole documents (password hashes included), and one of them is
   itself exposed as a set of public endpoints (#5).
@@ -540,7 +541,7 @@ Exploitable by a signed-in user, or a wall that is thinner than it looks.
 
 ---
 
-### [ ] 7. Authorization lives in the wrong layer for `app/admin/*` and `/bids`
+### [x] 7. Authorization lives in the wrong layer for `app/admin/*` and `/bids`
 
 **Files:** `app/admin/layout.jsx` (the only admin check for `admin/page.jsx`,
 `admin/slics`, `admin/new`, `admin/edit/[slic]`, `admin/users`, `admin/users/[id]`,
@@ -577,6 +578,25 @@ but it is the auth flow, so fix it while here: point the redirect at `/`.)
    step 1 is in).
 4. Middleware matcher: keep it, but stop treating it as a boundary. Remove `/dashboard`
    and `/protected` (no such routes); change the sign-in redirect to a route that exists.
+
+*Done 2026-10-10, with the checks on the pages rather than in `lib/db`.* `lib/authz.js`
+has `getAdminSession()`: the session when the caller is an admin, otherwise `null`.
+- **Every server page under `app/admin/`** calls it before its first read and returns
+  `null` for anyone else: the index, comments, cover drivers, drivers, edit, jobs, new,
+  Planet Fitness, reports, SLICs, users and a user. The super-admin pages already checked
+  `isSuperAdmin`. `/admin/cover/jobs` is a client page with no server reads; its data
+  comes from `requireAdmin()` routes. The layout still shows non-admins the redirect
+  message, so nothing changes for them.
+- **Not in `lib/db`:** the same reads serve the webhook, the cron, the scripts and API
+  routes that already check, and none of those have a session. Each caller checks instead.
+- **Step 2:** `/bids` was deleted, with `components/bids/`, `lib/db/bidJobs.js` and
+  `serializeBidJob(s)`. Nothing linked to it, and the `bid-jobs` collection is left
+  untouched. `/cover-bid-jobs` was settled as **admins only for now**. It checks before it
+  reads, and the menu shows its link to admins only; it used to show it to members, whom
+  the page then turned away. `components/coverBidJobs/NotMember.jsx` went with that.
+- **Step 3:** done when the comments page's own check was replaced by the shared one.
+- **Step 4:** the sign-in redirect was already `/`. `/dashboard` and `/protected` are gone
+  from the matcher, which now says it isn't the boundary.
 
 ---
 
@@ -1257,7 +1277,8 @@ PR checklist.
 
 1. First statement is `const { session, denied } = await requireUser()` (or
    `requireAdmin()`) from `lib/authz.js`, then `if (denied) return denied;`. Pages and
-   server components use `getSession()`. Nothing calls `auth()` directly. A `GET` is not exempt — the
+   server components use `getSession()`; admin pages use `getAdminSession()` and return
+   `null` without it, before any read. Nothing calls `auth()` directly. A `GET` is not exempt — the
    middleware never covers `/api/*`, and `SUGGESTIONS.md` #22 is what "it's only a read"
    looks like in production.
 2. The body goes through `parseBody(request, Schema)`; route params go through
@@ -1333,7 +1354,8 @@ There is no test suite. The cheapest one that would have caught every security i
 `app/api/**/route.js`, call every exported method with a request that has no session
 (mock `@/auth` to return `null`, then to return a `{ user: { role: 'user' } }`), and assert
 401 (then 403 for the admin-only list). Vitest, one file, ~60 lines, runs in seconds,
-runs in CI. Add a second file that hits `/admin/*` pages the same way once #7 is done.
+runs in CI. Add a second file that renders each `/admin/*` page with a `user` session and
+asserts it reads nothing (#7 is done, so every one should).
 Extend it when a route is added; it is the list of routes.
 
 ### Before shipping a security change
@@ -1369,7 +1391,7 @@ Extend it when a route is added; it is the list of routes.
 | 4 | `if (!session)` fails open; centralize guards | Critical | Medium (mechanical) |
 | 5 | `'use server'` exposes `commentsApi` unauthenticated | Critical | Trivial |
 | 6 | Password hashes / emails sent to the browser | High | Small |
-| 7 | Layout-only auth for `/admin/*`; `/bids` middleware-only | High | Small |
+| 7 | Layout-only auth for `/admin/*`; `/bids` middleware-only (done 2026-10-10) | High | Small |
 | 8 | Open registration, no email verification, account squatting | High | Decision + Medium |
 | 9 | No login rate limit / lockout / reset / MFA | High | Medium |
 | 10 | Mass assignment in PATCH routes | High | Small |

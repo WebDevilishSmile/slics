@@ -3,6 +3,7 @@ import { getUserById } from '@/lib/db/users';
 import { getSupporterSince } from '@/lib/db/bmcEvents';
 import { getSlicViewsByUserId } from '@/lib/db/slicViews';
 import { getAllSlics } from '@/lib/db/slics';
+import { getAdminSession } from '@/lib/authz';
 import { Box, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
 import { serializeSlicViews, serializeSlics, serializeComments } from '@/lib/serializers';
@@ -11,6 +12,8 @@ import UserComments from '@/components/admin/users/UserComments';
 import UserSlics from '@/components/admin/users/UserSlics';
 
 async function UserPage({ params }) {
+  if (!(await getAdminSession())) return null;
+
   const { id } = await params;
   const user = await getUserById(id); // Assuming you have a function to get user by ID
   const userComments = await getCommentsByUserId(id); // Fetch comments by user ID

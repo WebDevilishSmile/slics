@@ -250,36 +250,38 @@ function UserMenu({ user, signOutAction }) {
                 current={isCurrent('/hubs')}
               />
               {user.bmcMember && (
+                <NavItem
+                  onClick={handleClose}
+                  href='/history'
+                  label='My History'
+                  secondary='Member only'
+                  icon={<HistoryOutlined />}
+                  current={isCurrent('/history')}
+                />
+              )}
+              {/* Admin-only while they're tried out in production. Whip It In
+                  & Out launches to every driver by dropping the role check;
+                  Cover Bids opens to members together with the check in
+                  app/cover-bid-jobs/page.jsx. */}
+              {user.role === 'admin' && (
                 <>
-                  <NavItem
-                    onClick={handleClose}
-                    href='/history'
-                    label='My History'
-                    secondary='Member only'
-                    icon={<HistoryOutlined />}
-                    current={isCurrent('/history')}
-                  />
                   <NavItem
                     onClick={handleClose}
                     href='/cover-bid-jobs'
                     label='Cover Bids'
-                    secondary='Member only'
+                    secondary='Admin only for now'
                     icon={<AssignmentOutlined />}
                     current={isCurrent('/cover-bid-jobs')}
                   />
+                  <NavItem
+                    onClick={handleClose}
+                    href='/whip-it-in-and-out'
+                    label='Whip It In & Out'
+                    secondary='Admin only for now'
+                    icon={<SignpostOutlined />}
+                    current={isCurrent('/whip-it-in-and-out')}
+                  />
                 </>
-              )}
-              {/* Admin-only while it's tried out in production; drop the
-                  role check to launch it to every driver. */}
-              {user.role === 'admin' && (
-                <NavItem
-                  onClick={handleClose}
-                  href='/whip-it-in-and-out'
-                  label='Whip It In & Out'
-                  secondary='Admin only for now'
-                  icon={<SignpostOutlined />}
-                  current={isCurrent('/whip-it-in-and-out')}
-                />
               )}
             </List>
           </>

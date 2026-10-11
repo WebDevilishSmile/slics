@@ -29,7 +29,6 @@ const PAGE_TITLES = [
   ['/privacy', 'Privacy Policy'],
   ['/terms', 'Terms of Service'],
   ['/covers', 'Covers'],
-  ['/bids', 'Bids'],
   ['/cover-bid-jobs', 'Cover Bids'],
   ['/whip-it-in-and-out', 'Whip It In & Out'],
   ['/admin/slics', 'SLICs'],

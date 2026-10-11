@@ -27,7 +27,7 @@ Everything written about SLICs that isn't code. The product overview is the root
 | [`on-call-sheet-apps-script.md`](on-call-sheet-apps-script.md) | The admin's guide to installing the sheet notifier (Apps Script) |
 | [`COVER-BIDDING.md`](COVER-BIDDING.md) | Driver verification, the drivers' Covers page, then preference lists and picking in the app. Stage 1 built, admin-only until rollout |
 | [`BMC-SUPPORT.md`](BMC-SUPPORT.md) | Buy Me a Coffee: recording support, the admin Supporters page, thank-yous, impact numbers. Stage 1 built |
-| [`PASSWORD-RESET.md`](PASSWORD-RESET.md) | Forgot password: an admin-made reset link, then change password on the profile, then reset by email. Planned |
+| [`PASSWORD-RESET.md`](PASSWORD-RESET.md) | Forgot password: an admin-made reset link, then change password on the profile, then reset by email. Stage 1 built |
 | [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts, then tip replies, then "your pick is up". Stage 1 live (admins) |
 | [`tutorials/VIDEO-SCRIPTS.md`](tutorials/VIDEO-SCRIPTS.md) | Shot-by-shot scripts for the driver tutorial videos, one per `/help` guide (`components/help/guides.jsx`) |
 

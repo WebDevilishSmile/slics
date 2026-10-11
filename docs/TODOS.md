@@ -98,8 +98,11 @@ notifications on, so nobody else's device is touched.
 Plan and checklist: `PASSWORD-RESET.md` (planned 2026-10-11). 56 of 176 accounts use a
 password, and none has a verified email, so it starts without email.
 
-- [ ] stage 1: an admin makes a one-time reset link on `/admin/users` and texts it; the
+- [x] stage 1: an admin makes a one-time reset link on `/admin/users` and texts it; the
       `/reset-password` page; a reset signs the account out everywhere (`sessionVersion`)
+      (2026-10-11)
+- [ ] ship stage 1: `npm run db:indexes`, then make a link for a test account on the live
+      site and check it on a phone
 - [ ] stage 2: change password on `/profile`
 - [ ] stage 3: reset by email. First decide where the email comes from (a domain plus
       Resend, recommended)

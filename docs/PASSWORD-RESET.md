@@ -10,8 +10,11 @@ in production.
 
 ## Status (2026-10-11)
 
-**Planned, not started.** Stage 3 waits on one decision: where reset emails come from
-(see "Open questions").
+**Stage 1 built 2026-10-11, not deployed.** Before it ships, run `npm run db:indexes`
+for the `password-resets` indexes. The TTL index is what deletes expired links. It was
+tested end to end against the real database on a local production build, with a
+throwaway account that was deleted afterwards. Stage 3 waits on one decision: where
+reset emails come from (see "Open questions").
 
 ---
 
@@ -61,7 +64,7 @@ them a link, which works today with no email service and no unverified addresses
 No email and no new vendor. A driver tells an admin they're locked out, and the admin
 makes a link on `/admin/users` and texts it to them.
 
-- [ ] **`lib/db/passwordResets.js`:** collection `password-resets`, rows
+- [x] **`lib/db/passwordResets.js`:** collection `password-resets`, rows
       `{ userId: ObjectId, tokenHash, via: 'admin' | 'email', createdAt, expiresAt: Date,
       createdBy?: { id, name } }`.
   - `createPasswordReset(userId, { via, actor })` deletes the user's other rows, inserts
@@ -73,12 +76,16 @@ makes a link on `/admin/users` and texts it to them.
   - Indexes in `scripts/createIndexes.js`: unique `tokenHash`, `userId`, and a TTL on
     `expiresAt`.
   - `deleteUserAccount` deletes the user's rows. Add the collection to `DATA-MODEL.md`.
-- [ ] **`users.sessionVersion` in `auth.js`:** at sign-in, copy it into the token (a
+  - Built: the new-password rule is shared with sign-up in `lib/password.js`
+    (`passwordProblem`, `hashPassword`), and the lengths are `PASSWORD_MIN_LENGTH` /
+    `PASSWORD_MAX_LENGTH` in `constants.js`, so the browser gets them without bcrypt.
+    Sign-up now caps passwords at 128 characters too.
+- [x] **`users.sessionVersion` in `auth.js`:** at sign-in, copy it into the token (a
       missing value counts as 0). On each refresh, if the row's version is newer, return
       `null`, the same path as a deleted user. Keep the rule that a *failed* lookup keeps
       the token (`CLAUDE.md` → Auth). Today nobody has the field, so nobody is signed out
       when this ships.
-- [ ] **`POST /api/users/[id]/password-reset`** (admin): makes a link that lasts 24 hours
+- [x] **`POST /api/users/[id]/password-reset`** (admin): makes a link that lasts 24 hours
       and answers `{ url, expiresAt }`.
   - Refuses an account with no password (a Google account), and the caller's own
     account.
@@ -87,12 +94,14 @@ makes a link on `/admin/users` and texts it to them.
     take over another admin's account.
   - Writes `admin_audit` first (`password.resetLinkCreated`, the target, no token).
   - Rate-limited per admin.
-- [ ] **`/admin/users`:** a "Reset password" action on a password account's card
+- [x] **`/admin/users`:** a "Reset password" action on a password account's card
       (`admin/users/UserCard.jsx`). It opens a soft dialog with the link, a Copy button
       (confirmed in place, like `home/TitleAddress.jsx`), "Text it" (`sms:` with the
       link) and when it expires. The link is shown once and never saved in the page.
-- [ ] **`/reset-password`** (public: add it to `publicPaths` in `middleware.js` and to
-      `PAGE_TITLES` in `header/HeaderBar.jsx`):
+- [x] **`/reset-password`** (public: add it to `publicPaths` in `middleware.js` and to
+      `PAGE_TITLES` in `header/HeaderBar.jsx`). Built as
+      `resetPassword/ResetPasswordForm.jsx`. It also listens for `hashchange`, so a
+      second link opened in a tab that already has the page open is picked up.
   - Reads the token from the fragment, then clears it.
   - Soft panel: new password and confirm, with show/hide (`softInputSx` fields, one
     contained button).
@@ -100,17 +109,17 @@ makes a link on `/admin/users` and texts it to them.
     It doesn't sign them in, so the email sign-in form stays the only place a password
     is checked.
   - With no token or a bad one: the error, and "Ask an admin for a new link."
-- [ ] **`POST /api/auth/reset-password`** `{ token, password }`, next to
+- [x] **`POST /api/auth/reset-password`** `{ token, password }`, next to
       `/api/auth/register`: validates, calls `redeemPasswordReset`, and is rate-limited
       by IP (10 per 15 minutes). Answers the same error for a wrong, used or expired token.
-- [ ] **"Forgot password?"** under the email sign-in form (`signIn/EmailAuth.jsx`). It
+- [x] **"Forgot password?"** under the email sign-in form (`signIn/EmailAuth.jsx`). It
       opens a short note: "Ask an admin for a reset link. If you sign in with Google, use
       the Google button." Stage 3 replaces it with the email form.
-- [ ] **For the super admin's own account:** `npm run password:reset-link -- <email>
+- [x] **For the super admin's own account:** `npm run password:reset-link -- <email>
       --dry-run` (`scripts/passwordResetLink.mjs`) prints a link for any password
       account, logged in `admin_audit` with no actor, like `scripts/setSuperAdmin.mjs`.
       It runs locally against `.env`, so only someone with the database can use it.
-- [ ] **Docs:** `/help` (the sign-in guide: "Forgot your password?"), `DATA-MODEL.md`,
+- [x] **Docs:** `/help` (the sign-in guide: "Forgot your password?"), `DATA-MODEL.md`,
       `OPERATIONS.md` (the script), `SECURITY.md` #9 and #27, `CLAUDE.md` → Auth.
 
 ## Stage 2: change your password on `/profile`

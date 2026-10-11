@@ -37,9 +37,9 @@ async function ProfilePage({ params }) {
     );
   }
 
-  const user = session.user;
-  const userData = await getUserById(id);
-  if (!userData || userData.email !== user.email) {
+  // Only your own profile, matched by id, not email (docs/SECURITY.md #19).
+  const userData = id === session.user.id ? await getUserById(id) : null;
+  if (!userData) {
     return (
       <RedirectMessage
         heading='You do not have permission to view this profile.'

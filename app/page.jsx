@@ -1,5 +1,5 @@
 import { getSession } from '@/lib/authz';
-import { getUserByEmail } from '@/lib/db/users';
+import { getUserById } from '@/lib/db/users';
 import { safeCallbackUrl } from '@/lib/callbackUrl';
 
 import PageContainer from '@/components/layout/PageContainer';
@@ -24,7 +24,8 @@ export default async function Main({ searchParams }) {
   // If the session exists, we check if the user is a member
   // and redirect them if they are already a member
   if (session) {
-    const user = await getUserByEmail(session?.user?.email);
+    // By id, never by email (docs/SECURITY.md #19).
+    const user = await getUserById(session.user.id);
     isLoggedIn = !!user; // Check if user is logged in
     isMember = user?.bmcMember;
 

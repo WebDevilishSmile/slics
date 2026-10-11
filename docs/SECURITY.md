@@ -56,7 +56,7 @@ names what's left.
 | 16 | Open | — |
 | 17 | Partly | 2026-10-10: `admin_audit` (`lib/db/adminAudit.js`), written *before* the change by `toggle-role`, `toggle-member`, `/api/admins` and `scripts/setSuperAdmin.mjs`; read on the super admin's Admins page (`/admin/super/admins`). **Left:** the BMC webhook's flips, admin comment deletion, driver edits, account deletion, `deleteSlic` history, and the transaction around slic history. |
 | 18 | Open | — |
-| 19 | Mostly done | Account self-deletion refuses admins. Since 2026-10-10 only a super admin changes roles (`setAdminRole`, `lib/db/admins.js`): never their own, never a super admin's, so there's always an admin left. **Left:** the email lookups. |
+| 19 | Done | Account self-deletion refuses admins. Since 2026-10-10 only a super admin changes roles (`setAdminRole`, `lib/db/admins.js`): never their own, never a super admin's, so there's always an admin left. Since 2026-10-11 nothing finds the caller by email: `/` reads the user by `session.user.id` (`getUserByEmail` is gone), `/profile/[id]` compares ids, and the membership toggle is disabled for a super admin instead of for a hard-coded address. |
 | 20 | Open | Console checklist. `.env` points at production (`ON-CALL-SHEET-SYNC.md` says so too), which makes the dev/prod split the most useful line on it. |
 | 21 | Open | No TTL on `slicViews`; only `rateLimits` self-cleans. |
 | 22 | Mostly done | The `console.log(session)` on `/history` is gone, `add-phone` no longer logs the user (#6, 2026-10-10), and the BMC webhook logs ids, not emails. **Left:** the rest of the `console.*` calls weren't re-checked one by one. |

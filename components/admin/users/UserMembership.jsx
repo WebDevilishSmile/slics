@@ -15,7 +15,8 @@ function UserMembership({ user, onToggle }) {
       </Typography>
       <IconButton
         onClick={onToggle}
-        disabled={user.email === 'webdevilishsmile@gmail.com'}
+        // A super admin's membership isn't toggled from here.
+        disabled={user.superAdmin}
         aria-label={user.bmcMember ? 'Revoke membership' : 'Grant membership'}
       >
         {user.bmcMember ? <Person /> : <PersonOff />}

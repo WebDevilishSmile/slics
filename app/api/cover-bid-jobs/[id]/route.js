@@ -1,6 +1,7 @@
 import { updateCoverBidJob, deleteCoverBidJob } from '@/lib/db/coverBidJobs';
 import { requireAdmin } from '@/lib/authz';
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/httpError';
 
 export async function PATCH(request, { params }) {
   const { session, denied } = await requireAdmin();
@@ -15,12 +16,7 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ message: 'Cover bid job updated successfully' });
   } catch (error) {
     console.error('Error updating cover bid job:', error);
-
-    if (error.message?.includes('not found')) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
-    }
-
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return errorResponse(error, "Couldn't save the job.");
   }
 }
 
@@ -35,11 +31,6 @@ export async function DELETE(request, { params }) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error deleting cover bid job:', error);
-
-    if (error.message?.includes('not found')) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
-    }
-
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return errorResponse(error, "Couldn't delete the job.");
   }
 }

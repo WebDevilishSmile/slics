@@ -6,6 +6,7 @@ import {
 } from '@/lib/db/coverBidJobs';
 import { requireAdmin } from '@/lib/authz';
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/httpError';
 
 export async function GET(request) {
   try {
@@ -30,10 +31,7 @@ export async function GET(request) {
     );
   } catch (error) {
     console.error('API Error fetching cover bid jobs:', error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 400 }
-    );
+    return errorResponse(error, "Couldn't load the cover bid jobs.");
   }
 }
 
@@ -55,10 +53,7 @@ export async function POST(request) {
     );
   } catch (error) {
     console.error('API Error creating cover bid jobs:', error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 400 }
-    );
+    return errorResponse(error, "Couldn't save the cover bid jobs.");
   }
 }
 
@@ -85,9 +80,6 @@ export async function DELETE(request) {
     );
   } catch (error) {
     console.error('API Error deleting cover bid jobs:', error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 400 }
-    );
+    return errorResponse(error, "Couldn't delete the cover bid jobs.");
   }
 }

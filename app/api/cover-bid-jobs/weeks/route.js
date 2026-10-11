@@ -1,6 +1,7 @@
 import { getCoverBidJobWeeks } from '@/lib/db/coverBidJobs';
 import { requireAdmin } from '@/lib/authz';
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/httpError';
 
 export async function GET() {
   try {
@@ -12,9 +13,6 @@ export async function GET() {
     return NextResponse.json({ success: true, data: weeks }, { status: 200 });
   } catch (error) {
     console.error('API Error fetching cover bid job weeks:', error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 400 }
-    );
+    return errorResponse(error, "Couldn't load the weeks.");
   }
 }

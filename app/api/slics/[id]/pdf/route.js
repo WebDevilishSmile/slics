@@ -1,6 +1,7 @@
 import { requireAdmin } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/httpError';
 import { getSlicById, updateSlic } from '@/lib/db/slics';
 import { deleteSlicPdf, putSlicPdf } from '@/lib/blob';
 import { SLIC_PDF_MAX_BYTES } from '@/constants';
@@ -75,15 +76,7 @@ export async function POST(request, { params }) {
     return NextResponse.json({ pdfUrl: url });
   } catch (error) {
     console.error('Error uploading slic PDF:', error);
-
-    if (error.message?.includes('not found')) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
-    }
-
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    );
+    return errorResponse(error, "Couldn't upload the PDF. Please try again.");
   }
 }
 
@@ -108,14 +101,6 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({ message: 'Slic PDF removed successfully' });
   } catch (error) {
     console.error('Error removing slic PDF:', error);
-
-    if (error.message?.includes('not found')) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
-    }
-
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    );
+    return errorResponse(error, "Couldn't remove the PDF. Please try again.");
   }
 }

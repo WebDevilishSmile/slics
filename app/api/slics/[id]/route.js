@@ -1,6 +1,7 @@
 import { requireAdmin, requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/httpError';
 import { deleteSlic, getSlicById, updateSlic } from '@/lib/db/slics';
 
 // `[id]` is the slic's MongoDB _id for every method here and in ./pdf.
@@ -52,19 +53,7 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ message: 'Slic updated successfully' });
   } catch (error) {
     console.error('Error updating slic:', error);
-
-    if (error.message?.includes('not found')) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
-    }
-
-    if (error.message?.includes('numSlic cannot be changed')) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    );
+    return errorResponse(error, "Couldn't save the SLIC. Please try again.");
   }
 }
 
@@ -84,6 +73,6 @@ export async function DELETE(request, { params }) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error deleting slic:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, "Couldn't delete the SLIC. Please try again.");
   }
 }

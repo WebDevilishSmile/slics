@@ -1,5 +1,6 @@
 import { requireAdmin, requireUser } from '@/lib/authz';
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/httpError';
 import { createSlic, getAllSlics } from '@/lib/db/slics';
 
 // GET every slic. Any signed-in user may read. Nothing in the app calls this
@@ -41,12 +42,6 @@ export async function POST(request) {
     );
   } catch (error) {
     console.error('API Error creating slic:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
-      { status: 400 }
-    );
+    return errorResponse(error, "Couldn't create the SLIC. Please try again.");
   }
 }

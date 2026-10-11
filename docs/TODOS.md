@@ -47,7 +47,20 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 ### User
 
-I need to establish a way to authenticate users. We should have a way to link the driver on the jobs list and cover and on-call list, to the user of the app. Email address will link to the driver. Sometimes the user's name and email does not match exactly with the driver roster, so additional verification may be needed. Find a way to have the user claim their driver identity. This has to be verified by admin. A verification process like X does with the check mark or badge for verified users could be implemented. Eventually, I would like the cover bid weekly bidding process to be done on this app. The verified user logs in, sees what jobs are available and their pick time (call in time), and can take his bid when his time comes. We need to maintain anonymity, so other drivers can't see what bids have been made by whom, only admins. I'm thinking a cover page where users can see available bids without revealing who has made them. Once a job is picked it is grayed out but doesn't say who took it. On the cover page there will be the name of the user and his pick time. There can be a way to create a list of bids they want in order of preference. As the jobs are picked those jobs come off of the preferred list for each user. Once the users is on the clock their auto pick will be submitted and the next driver can pick. First thing will be building the cover page for all drivers. Upon entering page, am alert that only verified drivers can see that cover list. They can submit for verification by claiming their name and employee email (employee_id@ups.com) and seniority date. Admins will review and approve these claims to ensure the integrity of the verification process. Once verified, the user will have access to the cover bidding features.
+I need to establish a way to authenticate users. We should have a way to link the driver on the jobs list and cover and on-call list, to the user of the app. Email address will link to the driver. Sometimes the user's name and email does not match exactly with the driver roster, so additional verification may be needed. Find a way to have the user claim their driver identity. This has to be verified by admin. A verification process like X does with the check mark or badge for verified users could be implemented. Eventually, I would like the cover bid weekly bidding process to be done on this app. The verified user logs in, sees what jobs are available and their pick time (call in time), and can take his bid when his time comes. We need to maintain anonymity, so other drivers can't see what bids have been made by whom, only admins. I'm thinking a cover page where users can see available bids without revealing who has made them. Once a job is picked it is grayed out but doesn't say who took it. On the cover page there will be the name of the user and his pick time. There can be a way to create a list of bids they want in order of preference. As the jobs are picked those jobs come off of the preferred list for each user. Once the users is on the clock their auto pick will be submitted and the next driver can pick. First thing will be building the cover page for all drivers. Upon entering page, am alert that only verified drivers can see that cover list. They can submit for verification by claiming their name and employee email (employee_id@ups.com) and seniority date. Admins will review and approve these claims to ensure the integrity of the verification process. Once verified, the user will have access to the cover bidding features. I don't want to hinder drivers from accessing the SLICs app if they are not interested in this. So, this has to be cover-specific. If a driver wants to participate in the covers feature, then he must be verified.
+
+Plan, rules and open questions: `COVER-BIDDING.md`.
+
+- [x] stage 1: driver verification and the drivers' Covers page (2026-10-10). Claims, the
+      `/admin/driver-claims` queue, the check mark, `/covers` with the driver's own cover
+      number and call-in time and the job list without names. Admin-only (`COVERS_OPEN`)
+- [ ] roll stage 1 out to every driver (the checklist in `COVER-BIDDING.md`), including a
+      "Verify you're a driver" guide on `/help`
+- [ ] stage 2: preference lists that lose jobs as they're picked, button with option to call dispatch
+- [ ] stage 3: picking in the app on the clock, with auto-pick. Settle the open questions
+      first, starting with what the source of truth is once the app can't write the sheet
+- [ ] drop `users.driverId`, the old roster link (nothing writes or reads it since 2026-10-10)
+- [ ] fold `/cover-bid-jobs` into `/covers` once Covers rolls out
 
 - [ ] ability to change profile image and share time they work and show phone number for those that need help. A page where drivers that need assistance can find and contact each other.
 
@@ -113,7 +126,10 @@ Design notes: `RECOMMENDATIONS.md` → "3. Cover drivers from the sheet".
 
 - [x] available days of cover drivers: find where the sheet shows them, if anywhere (call-in
       times are done) This is not a feature
-- [ ] get rid of drivers page or populate it with data from Google Sheets
+- [x] get rid of drivers page or populate it with data from Google Sheets (2026-10-10:
+      `/admin/drivers` is the sheet's drivers, by seniority date, with the roster merged in;
+      `lib/driverRoster.js`. Next: link the 20 suggested matches, add details for the new
+      hires, and delete the roster rows of drivers who left)
 
 ### UI/UX Improvements
 
@@ -147,15 +163,17 @@ order that file suggests, minus what's done:
 - [x] **#6** 2026-10-10: user serializers pick fields; `add-phone` and the toggles return only what changed
 - [x] **#7** 2026-10-10: every admin page checks `getAdminSession()` before reading; `/bids`
       deleted; `/cover-bid-jobs` admins only for now
-- [ ] **#12** security headers in `next.config.mjs` (step 1 is safe to ship on its own)
-- [ ] **#10** allowlist PATCH bodies (`drivers/[id]`, `updateSlic`; `cover/[position]` was deleted 2026-10-10)
+- [ ] **#12** step 1 done 2026-10-10 (CSP and the other headers in `next.config.mjs`). Left:
+      check signed-in pages, Google sign-in and the installed iPhone app on the live site for
+      blocked loads; then step 2, nonces instead of `'unsafe-inline'` scripts
+- [ ] **#10** allowlist PATCH bodies (`updateSlic`; `drivers/[id]` done 2026-10-10; `cover/[position]` was deleted 2026-10-10)
 - [ ] **#8** decide the access model (open / invite code / approval) and write it in the README
 - [ ] **#9** rate-limit password sign-in
 - [ ] **#14** BMC webhook: `secretsMatch`, normalized email, idempotent events (pairs with the BMC feature above)
 - [ ] **#20** dev database for local work and previews (`.env` points at production today)
 - [ ] quick ones: **#19** toggle-role self/last-admin guard · **#22** stop logging emails and
       user documents · **#23** no `error.message` in responses · **#26** delete
-      `RequestAccess.jsx` (it holds a personal phone number) · **#30** `poweredByHeader: false`
+      `RequestAccess.jsx` (it holds a personal phone number)
 - [ ] then Tier 2 (#15–#18, #21, #24, #27) in any order
 
 ---
@@ -172,9 +190,9 @@ order that file suggests, minus what's done:
 - [ ] README: fill in or remove `[Live demo link coming soon]`, add screenshots, refresh the
       usage numbers (`archive/STRUCTURE.md` #36)
 - [x] `.env.example` named the old `extract` path: the line went with Gemini (2026-10-10)
-- [ ] `createDriver` (`lib/db/drivers.js`) refuses a new driver whose _seniority date_
+- [x] `createDriver` (`lib/db/drivers.js`) refuses a new driver whose _seniority date_
       matches an existing one. Drivers hired in the same class share a date, so check only
-      `employeeId`
+      `employeeId` (2026-10-10: it checks only `employeeId`, which is now uniquely indexed)
 
 ---
 

@@ -47,12 +47,12 @@ names what's left.
 | 7 | Done | 2026-10-10. Every server page under `app/admin/` calls `getAdminSession()` (`lib/authz.js`) before reading anything and renders nothing for anyone else; the layout keeps the redirect message. `/bids` was deleted. `/cover-bid-jobs` checks admin (admins only for now) before its read. The middleware matcher lost its dead `/dashboard` and `/protected` entries. |
 | 8 | Open | Access-model decision still to make. |
 | 9 | Open | `authorize()` in `auth.js` has no rate limit. |
-| 10 | Open | `drivers/[id]` still `$set`s the request body. (`cover/[position]` was deleted 2026-10-10 with the manual cover list.) |
+| 10 | Partly | `drivers/[id]` writes only name, employee ID, seniority date and phone, validated (`validateDriverFields`, 2026-10-10). `updateSlic` is left. (`cover/[position]` was deleted 2026-10-10 with the manual cover list.) |
 | 11 | Partly | Newer routes (tips, places, place comments, history notes, the sheet routes) validate their bodies. The older routes listed in #11 weren't re-checked one by one. |
-| 12 | Open | `next.config.mjs` has no `headers()`. |
+| 12 | Partly | Step 1 shipped 2026-10-10: `next.config.mjs` sends a CSP (scripts still `'unsafe-inline'`), `nosniff`, `Referrer-Policy`, `Permissions-Policy` and `X-Frame-Options: DENY` on every response. **Left:** step 2, nonces instead of `'unsafe-inline'` in `script-src`. |
 | 13 | Open | Blob uploads are `access: 'public'`, and the Supabase fallback is still live (migration in progress, per `CLAUDE.md`). |
 | 14 | Mostly done | 2026-10-10 (`BMC-SUPPORT.md` stage 1): constant-time compare, replay protection (unique hash of the body in `bmc-events`), case-insensitive email match then change by `_id`, IP rate limit, no emails in logs. **Left:** a freshness check (payload timestamp unknown), `emailVerified` (#8), an `admin_audit` row (#17). Run `npm run db:indexes` for the unique index. |
-| 15 | Partly | The new sheet collections have unique indexes (`cover-bid-picks.weekEnding`, `sheet-jobs.jobName`). `users.email`, `slics.numSlic` and `drivers.employeeId` still don't. |
+| 15 | Partly | The new sheet collections have unique indexes (`cover-bid-picks.weekEnding`, `sheet-jobs.jobName`). `drivers.employeeId` and `drivers.sheetKey` do since 2026-10-10. `users.email` and `slics.numSlic` still don't. |
 | 16 | Open | — |
 | 17 | Partly | 2026-10-10: `admin_audit` (`lib/db/adminAudit.js`), written *before* the change by `toggle-role`, `toggle-member`, `/api/admins` and `scripts/setSuperAdmin.mjs`; read on the super admin's Admins page (`/admin/super/admins`). **Left:** the BMC webhook's flips, admin comment deletion, driver edits, account deletion, `deleteSlic` history, and the transaction around slic history. |
 | 18 | Open | — |
@@ -60,14 +60,14 @@ names what's left.
 | 20 | Open | Console checklist. `.env` points at production (`ON-CALL-SHEET-SYNC.md` says so too), which makes the dev/prod split the most useful line on it. |
 | 21 | Open | No TTL on `slicViews`; only `rateLimits` self-cleans. |
 | 22 | Mostly done | The `console.log(session)` on `/history` is gone, `add-phone` no longer logs the user (#6, 2026-10-10), and the BMC webhook logs ids, not emails. **Left:** the rest of the `console.*` calls weren't re-checked one by one. |
-| 23 | Open | `cover-bid-jobs/**` still returns `error.message`. (`cover/[position]` is deleted.) |
+| 23 | Open | `cover-bid-jobs/**` still returns `error.message`. (`cover/[position]` is deleted; `drivers/[id]` DELETE stopped 2026-10-10.) |
 | 24 | Partly | Limits added since: places, place comments, history edits, both sheet refreshes, the sheet webhook. Still none on credentials sign-in, votes, `track-view`, `add-phone` or the BMC webhook. |
 | 25 | Mostly done | `crypto` and `lib/stripe.js` are gone and eslint matches Next (#3). Left: an `engines` field (`archive/STRUCTURE.md` #35). |
 | 26 | Partly | Tips now ship vote counts and `myVote`, with no user ids. `components/signIn/RequestAccess.jsx` (unused) still holds a personal phone number. Delete it. |
 | 27 | Open | The token still carries `comments` and `created_at`. |
 | 28 | Holds | Still no CORS headers; `vercel.json` only schedules the cron. |
 | 29 | Done (writing) | The inventory and rotation runbook is in `OPERATIONS.md`, updated for the sheet, webhook and cron secrets. |
-| 30 | Partly | `/covers` no longer crashes for an unlinked driver (`archive/UI-SUGGESTIONS.md` #57), and `MapPhoneLinks.jsx` is gone. `poweredByHeader` is still unset; the rest weren't re-checked. |
+| 30 | Partly | `/covers` no longer crashes for an unlinked driver (`archive/UI-SUGGESTIONS.md` #57), and `MapPhoneLinks.jsx` is gone. `poweredByHeader: false` and the `/cover-bid-jobs` check-first are done (2026-10-10, with #12 and #7); the rest weren't re-checked. |
 
 **New since the audit, and fine:** the on-call sheet is read with a read-only API key, and
 only the `Jobs` tab and dated tabs are fetched, so `SHIFTERS` (phone numbers) is never
@@ -86,8 +86,9 @@ places feature never sends other drivers' user ids to the client.
 | User accounts: name, email, phone, bcrypt hash, role, membership | `users`, `accounts` | The user (own), the admin (all) |
 | Comments and votes | `comments` | Any signed-in driver (name + avatar only) |
 | Lookup history | `slicViews` | The user (own, members only), the admin |
-| The driver roster: ~270 real people — name, employee ID, seniority date, personal phone; includes people with no account | `drivers` (and, until 2026-10-10, **public git history** — see #1) | Admin; a driver linked to their own roster row |
-| Cover / bid sheets (driver names, schedules) | `cover`, `cover-bid-jobs`, `bid-jobs` (and the Gemini API until its upload was deleted 2026-10-10) | Admin (+ member) |
+| The driver roster: ~270 real people — name, employee ID, seniority date, personal phone; includes people with no account | `drivers` (and, until 2026-10-10, **public git history** — see #1) | Admin (since 2026-10-10 no driver-facing page reads it) |
+| Driver verification claims: name, employee ID, seniority date | `driver-claims` (the ID and date only until an admin decides; `COVER-BIDDING.md`) | Admin; the driver (own, while pending) |
+| Cover / bid sheets (driver names, leave statuses, schedules) | `cover`, `cover-bid-jobs`, `cover-bid-picks`, `bid-jobs` (and the Gemini API until its upload was deleted 2026-10-10) | Admin. A verified driver sees the job list with no names (`toDriverCoverJob`) and only their own pick row (`myCoverSpot`) |
 | Admin capability (edit dataset, promote users, delete anything) | `users.role` | The maintainer |
 | Secrets: `AUTH_SECRET`, Google OAuth, Atlas URI, Blob token, BMC secret | Vercel env, local `.env` | Nobody |
 
@@ -816,6 +817,27 @@ move the two inline scripts to nonces (a `middleware.js` nonce + `headers()` per
 per the Next.js CSP guide) and drop `'unsafe-inline'` from `script-src`. Test on iOS
 Safari in standalone (installed) mode — the PWA path is the one nobody checks.
 
+*Step 1 done 2026-10-10, adjusted to what the app loads.* The policy is built in
+`next.config.mjs` (`csp`), and these parts differ from the draft above:
+- `Permissions-Policy` has `geolocation=(self)`, not `()`. "Use my location", pins and gym
+  distance need it.
+- `img-src` adds `yt3.ggpht.com` (an allowed `next/image` host), and keeps `data:` for the
+  SVG avatars made at registration.
+- `connect-src` is `'self'` alone. On Vercel, Analytics and Speed Insights load from and
+  report to `/_vercel/*` on the site itself.
+- **Dev only:** `'unsafe-eval'` (React's dev build), `va.vercel-scripts.com` (Analytics'
+  dev script), `ws:`/`wss:` for hot reload, and no `upgrade-insecure-requests`, which would
+  break a phone testing over the LAN.
+- **Preview deployments only:** the Vercel toolbar's origins (`vercel.live` and friends).
+- `poweredByHeader: false` went in with it (#30).
+
+Checked on a production build on `localhost`: the headers are on every response,
+including the middleware's redirects. `/`, `/privacy`, `/terms` and `/about` load in
+Chrome with no CSP violation. Signed-in pages, Google sign-in and an installed iPhone
+still need a look on the live site.
+
+Step 2 is still open, so this item stays unchecked.
+
 ---
 
 ### [ ] 13. Directions PDFs are reachable without signing in
@@ -1256,10 +1278,11 @@ by someone other than you, rotate everything after they are done.
 - `app/api/auth/register/route.js`: escape `<>&"` in the initials before the SVG;
   reject whitespace-only names; cap lengths.
 - `app/cover-bid-jobs/page.jsx`: fetches the jobs *before* checking the session — move the
-  check first (no leak, just wasted queries for anonymous hits).
+  check first (no leak, just wasted queries for anonymous hits). *Done 2026-10-10 (#7).*
 - `app/covers/page.jsx`: `getDriverById(userData.driverId)` throws for a user with no
-  `driverId` → error page instead of the "not linked" message.
-- `next.config.mjs`: `poweredByHeader: false`.
+  `driverId` → error page instead of the "not linked" message. *Moot 2026-10-10: `/covers`
+  no longer reads the roster (`COVER-BIDDING.md`).*
+- `next.config.mjs`: `poweredByHeader: false`. *Done 2026-10-10 (#12).*
 - `app/components/home/MapPhoneLinks.jsx`: `rel="noopener"` on the `target="_blank"`
   links (modern browsers imply it; older WebViews don't).
 - `lib/format.js` `isMobileDevice`: fine, but it is a UA sniff used for nothing
@@ -1396,7 +1419,7 @@ Extend it when a route is added; it is the list of routes.
 | 9 | No login rate limit / lockout / reset / MFA | High | Medium |
 | 10 | Mass assignment in PATCH routes | High | Small |
 | 11 | Ad hoc input validation | Medium | Medium |
-| 12 | No security headers / CSP | High | Small (step 1), Medium (nonces) |
+| 12 | No security headers / CSP (step 1 done 2026-10-10) | High | Small (step 1), Medium (nonces) |
 | 13 | PDFs reachable without sign-in | Medium | Small–Medium |
 | 14 | Webhook compare / replay / email-keyed | Medium | Small |
 | 15 | No unique indexes | Medium | Small |

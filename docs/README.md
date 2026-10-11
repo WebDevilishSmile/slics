@@ -25,8 +25,10 @@ Everything written about SLICs that isn't code. The product overview is the root
 |---|---|
 | [`ON-CALL-SHEET-SYNC.md`](ON-CALL-SHEET-SYNC.md) | The plan, layout notes and checklist for reading the ON CALL SHEET (cover weeks, the Jobs tab, alerts). Stages 1–3 built |
 | [`on-call-sheet-apps-script.md`](on-call-sheet-apps-script.md) | The admin's guide to installing the sheet notifier (Apps Script) |
+| [`COVER-BIDDING.md`](COVER-BIDDING.md) | Driver verification, the drivers' Covers page, then preference lists and picking in the app. Stage 1 built, admin-only until rollout |
 | [`BMC-SUPPORT.md`](BMC-SUPPORT.md) | Buy Me a Coffee: recording support, the admin Supporters page, thank-yous, impact numbers. Stage 1 built |
 | [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts, then tip replies, then "your pick is up". Not started |
+| [`tutorials/VIDEO-SCRIPTS.md`](tutorials/VIDEO-SCRIPTS.md) | Shot-by-shot scripts for the driver tutorial videos, one per `/help` guide (`components/help/guides.jsx`) |
 
 ## Archive
 

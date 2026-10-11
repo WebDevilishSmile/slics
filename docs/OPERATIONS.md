@@ -25,6 +25,10 @@ script with `--dry-run` and a reverse twin, one commit per step.
 - **Commit messages** start with the date and time from `date`, as `M/D/YYYY HH:MM`,
   followed by one change ("10/10/2026 13:31 Jobs: alert the admin to …"). Docs get their own
   commit ("… Docs: …").
+- **New indexes** in `scripts/createIndexes.js` need `npm run db:indexes` once the change
+  is deployed. The 2026-10-10 changes added four unique ones: one pending claim per driver,
+  one account per sheet name (`users.driver.key`), and on the roster one row per employee
+  ID and per linked sheet name (`drivers.sheetKey`).
 - **Rolling back:** in the Vercel dashboard, promote the previous deployment (Instant
   Rollback). It's faster than a revert commit, and it doesn't touch the data.
 
@@ -111,6 +115,10 @@ the sheet and whether it failed.
 - A layout change in the sheet (a renamed header) makes a refresh stop with a format
   error instead of saving bad data. Fix the parser (`lib/coverSheetParser.js`,
   `lib/jobsSheetParser.js`) and check it with `npm run sheet:preview`.
+
+**An image, script or embed doesn't load, and the browser console says "Refused to load…
+Content Security Policy".** The origin isn't in the CSP in `next.config.mjs` (`csp`, see
+`SECURITY.md` #12). Add it to the matching directive and redeploy.
 
 **A session may have leaked.** Rotate `AUTH_SECRET` (it signs everyone out). There's no
 per-user sign-out yet (`SECURITY.md` #27). Deleting a user's row signs that one user out on

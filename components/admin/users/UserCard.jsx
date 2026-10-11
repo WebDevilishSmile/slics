@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { ExpandMore, KeyOutlined, Person, PersonOff } from '@mui/icons-material';
+import { ExpandMore, KeyOutlined, Person } from '@mui/icons-material';
 import {
   Accordion,
   AccordionDetails,
@@ -17,7 +17,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import { softPressSx, softRaised, softRaisedSmall, softToggleSx } from '@/components/utility/soft';
+import { softPressSx, softRaised, softRaisedSmall } from '@/components/utility/soft';
 import ResetPasswordDialog from './ResetPasswordDialog';
 import UserEmail from './UserEmail';
 import UserMembership from './UserMembership';
@@ -106,7 +106,12 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
         },
       ]}
     >
-      <AccordionSummary expandIcon={<ExpandMore />}>
+      <AccordionSummary
+        expandIcon={<ExpandMore />}
+        // Lets the row shrink to the card, so a long name ends in "…"
+        // instead of pushing the row past both edges.
+        sx={{ '& .MuiAccordionSummary-content': { minWidth: 0 } }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -168,29 +173,25 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
             ]}
           />
 
-          {/* Membership toggle, labeled (UI-SUGGESTIONS.md #57): pressed in and
-              blue for a member. A div, not a <button>, inside the summary's
-              button; its keys stay off the summary so they don't expand it. */}
-          <Chip
-            component='div'
-            size='small'
-            icon={user.bmcMember ? <Person /> : <PersonOff />}
-            label={user.bmcMember ? 'Member' : 'Non-member'}
-            aria-pressed={user.bmcMember ? 'true' : 'false'}
-            aria-label={
-              user.bmcMember
-                ? `${user.name} is a member. Revoke membership`
-                : `${user.name} is not a member. Grant membership`
-            }
-            disabled={isProtected}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleMemberToggle();
-            }}
-            onKeyDown={(e) => e.stopPropagation()}
-            onKeyUp={(e) => e.stopPropagation()}
-            sx={[softToggleSx, { flexShrink: 0 }]}
-          />
+          {/* Members get a labeled badge (UI-SUGGESTIONS.md #57); most users
+              aren't, so non-members show nothing. Granting and revoking is in
+              the details below, so a tap while scrolling can't change it. */}
+          {user.bmcMember && (
+            <Chip
+              size='small'
+              icon={<Person />}
+              label='Member'
+              sx={[
+                softRaisedSmall,
+                {
+                  flexShrink: 0,
+                  color: 'primary.main',
+                  fontWeight: 600,
+                  '& .MuiChip-icon': { color: 'primary.main' },
+                },
+              ]}
+            />
+          )}
 
           {/* Lookup count, with its label at every width: the number, and
               "lookups" under it in small type so it fits on a phone. */}
@@ -240,7 +241,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
         <Typography>
           Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
         </Typography>
-        <UserMembership user={user} onToggle={handleMemberToggle} />
+        <UserMembership user={user} onToggle={handleMemberToggle} disabled={isProtected} />
         <UserRole user={user} onToggle={handleRoleToggle} canToggle={canChangeRole} />
         <UserEmail email={user.email} />
         {user.phone ? (

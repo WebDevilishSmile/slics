@@ -87,7 +87,10 @@ export async function POST(request) {
     });
 
     return NextResponse.json({ success: true }, { status: 201 });
-  } catch {
+  } catch (error) {
+    // The error's class and code only: a MongoDB error's message can quote
+    // the email it failed on (docs/SECURITY.md #22).
+    console.error('Registration failed:', error?.name, error?.code ?? '');
     return NextResponse.json(
       { error: 'Something went wrong. Please try again.' },
       { status: 500 }

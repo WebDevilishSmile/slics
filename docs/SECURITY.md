@@ -63,7 +63,7 @@ names what's left.
 | 23 | Open | `cover-bid-jobs/**` still returns `error.message`. (`cover/[position]` is deleted; `drivers/[id]` DELETE stopped 2026-10-10.) |
 | 24 | Partly | Limits added since: places, place comments, history edits, both sheet refreshes, the sheet webhook. Still none on credentials sign-in, votes, `track-view`, `add-phone` or the BMC webhook. |
 | 25 | Mostly done | `crypto` and `lib/stripe.js` are gone and eslint matches Next (#3). Left: an `engines` field (`archive/STRUCTURE.md` #35). |
-| 26 | Partly | Tips now ship vote counts and `myVote`, with no user ids. `components/signIn/RequestAccess.jsx` (unused) still holds a personal phone number. Delete it. |
+| 26 | Done | Tips ship vote counts and `myVote`, with no user ids. `RequestAccess.jsx`, with the personal phone number, was deleted 2026-10-11 (the number is still in old commits). The privacy page's "who can register" line waits on #8. |
 | 27 | Open | The token still carries `comments` and `created_at`. |
 | 28 | Holds | Still no CORS headers; `vercel.json` only schedules the cron. |
 | 29 | Done (writing) | The inventory and rotation runbook is in `OPERATIONS.md`, updated for the sheet, webhook and cron secrets. |

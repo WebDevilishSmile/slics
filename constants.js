@@ -221,3 +221,10 @@ export const DRIVER_CLAIM_NOTE_MAX_LENGTH = 300;
 // checking 357 SLICs (about 30 hours) and 65 directions PDFs (about 11 hours).
 // Answering drivers and admin work aren't counted. Raise it as you go.
 export const SUPPORT_HOURS_ESTIMATE = 200;
+
+// When the app icon last changed (the Waypoint icon, public/slics-icon.svg).
+// An iPhone keeps the icon a driver installed with, so /home asks drivers in
+// the installed iPhone app to add it again (install/NewIconNotice.jsx) until
+// they dismiss that notice after this moment (`users.iconNoticeDismissedAt`).
+// Move it forward with the next icon change.
+export const ICON_CHANGED_AT = '2026-10-11T00:00:00.000Z';

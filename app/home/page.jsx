@@ -5,9 +5,11 @@ import { ObjectId } from 'mongodb';
 
 import { getUnthankedSupport } from '@/lib/db/bmcEvents';
 import { getAllSlics } from '@/lib/db/slics';
+import { isIconNoticeDue } from '@/lib/db/users';
 
 import CommentPrompt from '@/components/comments/CommentPrompt';
 import InstallNudge from '@/components/install/InstallNudge';
+import NewIconNotice from '@/components/install/NewIconNotice';
 import RedirectMessage from '@/components/layout/RedirectMessage';
 import SlicLookupPage from '@/components/slic/SlicLookupPage';
 import SupportThanks from '@/components/support/SupportThanks';
@@ -20,6 +22,17 @@ async function unthankedSupport(userId) {
   } catch (error) {
     console.error('Error loading thank-you for /home:', error);
     return null;
+  }
+}
+
+// Whether the "new app icon" notice is still due (install/NewIconNotice.jsx).
+// Never worth failing the lookup page over either.
+async function iconNoticeDue(userId) {
+  try {
+    return await isIconNoticeDue(userId);
+  } catch (error) {
+    console.error('Error loading icon notice for /home:', error);
+    return false;
   }
 }
 
@@ -36,7 +49,11 @@ export default async function Home({ searchParams }) {
   }
 
   const user = session.user;
-  const [slics, support] = await Promise.all([getAllSlics(), unthankedSupport(user.id)]);
+  const [slics, support, iconDue] = await Promise.all([
+    getAllSlics(),
+    unthankedSupport(user.id),
+    iconNoticeDue(user.id),
+  ]);
 
   return (
     <SlicLookupPage
@@ -47,6 +64,7 @@ export default async function Home({ searchParams }) {
     >
       {support && <SupportThanks support={support} firstName={user.name?.split(' ')[0]} />}
       <InstallNudge />
+      <NewIconNotice due={iconDue} />
       <CommentPrompt user={user} />
     </SlicLookupPage>
   );

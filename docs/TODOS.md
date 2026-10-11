@@ -81,14 +81,14 @@ that expire. Concerns: drivers post little now, there are no push notifications 
 
 ### Push Notifications
 
-Plan and checklist: `PUSH-NOTIFICATIONS.md`. Stage 1 built 2026-10-10, not deployed yet. Web push
+Plan and checklist: `PUSH-NOTIFICATIONS.md`. Stage 1 live since 2026-10-11 (admins). Web push
 from the web app: no App Store or Apple developer account. On iPhone it works only from the
 home-screen app. A push-only service worker (no caching), registered only when someone turns
 notifications on, so nobody else's device is touched.
 
 - [x] stage 1: admin-only. Notify the admin of Jobs-tab changes and new SLIC reports (the
       toggle on `/profile`, `public/sw.js`, `push-subscriptions`, `lib/push.js`; 2026-10-10)
-- [ ] ship stage 1: set the three VAPID keys on Vercel, run `npm run db:indexes`, test on
+- [x] ship stage 1: set the three VAPID keys on Vercel, run `npm run db:indexes`, test on
       a phone (`PUSH-NOTIFICATIONS.md` → "Verifying")
 - [ ] stage 2: drivers opt in to replies on their tips (and on places once that page launches)
 - [ ] stage 3: "your pick is up" for cover bidding (waits on Features → User)
@@ -170,12 +170,13 @@ order that file suggests, minus what's done:
       blocked loads; then step 2, nonces instead of `'unsafe-inline'` scripts
 - [ ] **#10** allowlist PATCH bodies (`updateSlic`; `drivers/[id]` done 2026-10-10; `cover/[position]` was deleted 2026-10-10)
 - [ ] **#8** decide the access model (open / invite code / approval) and write it in the README
-- [ ] **#9** rate-limit password sign-in
+- [x] **#9** rate-limit password sign-in (2026-10-11: per email and per IP, constant-time for
+      unknown emails). Left in #9: reset flow, admin second factor, breached-password check
 - [ ] **#14** BMC webhook: `secretsMatch`, normalized email, idempotent events (pairs with the BMC feature above)
 - [ ] **#20** dev database for local work and previews (`.env` points at production today)
-- [ ] quick ones: **#19** toggle-role self/last-admin guard · **#22** stop logging emails and
-      user documents · **#23** no `error.message` in responses · **#26** delete
-      `RequestAccess.jsx` (it holds a personal phone number)
+- [x] quick ones (2026-10-11): **#19** caller found by id, not email · **#22** logging
+      audit · **#23** no `error.message` in responses (`lib/httpError.js`) · **#26**
+      `RequestAccess.jsx` deleted
 - [ ] then Tier 2 (#15–#18, #21, #24, #27) in any order
 
 ---

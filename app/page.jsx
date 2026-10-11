@@ -3,7 +3,7 @@ import { getUserByEmail } from '@/lib/db/users';
 import { safeCallbackUrl } from '@/lib/callbackUrl';
 
 import PageContainer from '@/components/layout/PageContainer';
-import { Typography } from '@mui/material';
+import { Link, Typography } from '@mui/material';
 import Membership from '@/components/signIn/Membership';
 import SignIn from '@/components/signIn/SignIn';
 import RedirectMember from '@/components/signIn/RedirectMember';
@@ -38,7 +38,14 @@ export default async function Main({ searchParams }) {
   return (
     <PageContainer>
       <Typography variant='h1'>SLICs</Typography>
-      {!isLoggedIn && !isMember && <SignIn callbackUrl={callbackUrl} />}
+      {!isLoggedIn && !isMember && (
+        <>
+          <SignIn callbackUrl={callbackUrl} />
+          <Typography variant='body2' sx={{ mt: 3, textAlign: 'center' }}>
+            New to SLICs? <Link href='/help#sign-in'>See how to sign in</Link>
+          </Typography>
+        </>
+      )}
       {isLoggedIn && !isMember && <Membership next={next} />}
     </PageContainer>
   );

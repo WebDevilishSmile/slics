@@ -10,6 +10,7 @@ import {
   BadgeOutlined,
   CheckroomOutlined,
   CloseOutlined,
+  HelpOutline,
   HistoryOutlined,
   HubOutlined,
   InfoOutlined,
@@ -318,6 +319,13 @@ function UserMenu({ user, signOutAction }) {
             label='About'
             icon={<InfoOutlined />}
             current={isCurrent('/about')}
+          />
+          <NavItem
+            onClick={handleClose}
+            href='/help'
+            label='Help'
+            icon={<HelpOutline />}
+            current={isCurrent('/help')}
           />
           <InstallMenuItem />
         </List>

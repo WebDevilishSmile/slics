@@ -46,7 +46,7 @@ names what's left.
 | 6 | Done | 2026-10-10. Users reach the browser through allowlist serializers (`toPublicUser`, `toSelfUser`, `toAdminUser` in `lib/serializers.js`) that pick fields instead of spreading. `getUsers`/`getUserById`/`getUserByEmail` leave out the hash by default. `add-phone` returns only the fields it edits and doesn't log the user; the role and membership toggles return `{ _id, role }` / `{ _id, bmcMember }`. |
 | 7 | Done | 2026-10-10. Every server page under `app/admin/` calls `getAdminSession()` (`lib/authz.js`) before reading anything and renders nothing for anyone else; the layout keeps the redirect message. `/bids` was deleted. `/cover-bid-jobs` checks admin (admins only for now) before its read. The middleware matcher lost its dead `/dashboard` and `/protected` entries. |
 | 8 | Open | Access-model decision still to make. |
-| 9 | Open | `authorize()` in `auth.js` has no rate limit. |
+| 9 | Partly | 2026-10-11: `authorize()` limits password sign-in to 10 tries per email and 50 per IP every 15 minutes (the form says "Too many sign-in attempts"), and an unknown email runs bcrypt against a dummy hash, so the timing no longer says which emails have accounts. **Left:** a reset flow (needs email, #8), Google-only or a second factor for admins, the breached-password check, and the register route's 409. |
 | 10 | Partly | `drivers/[id]` writes only name, employee ID, seniority date and phone, validated (`validateDriverFields`, 2026-10-10). `updateSlic` is left. (`cover/[position]` was deleted 2026-10-10 with the manual cover list.) |
 | 11 | Partly | Newer routes (tips, places, place comments, history notes, the sheet routes) validate their bodies. The older routes listed in #11 weren't re-checked one by one. |
 | 12 | Partly | Step 1 shipped 2026-10-10: `next.config.mjs` sends a CSP (scripts still `'unsafe-inline'`), `nosniff`, `Referrer-Policy`, `Permissions-Policy` and `X-Frame-Options: DENY` on every response. **Left:** step 2, nonces instead of `'unsafe-inline'` in `script-src`. |
@@ -61,7 +61,7 @@ names what's left.
 | 21 | Open | No TTL on `slicViews`; only `rateLimits` self-cleans. |
 | 22 | Mostly done | The `console.log(session)` on `/history` is gone, `add-phone` no longer logs the user (#6, 2026-10-10), and the BMC webhook logs ids, not emails. **Left:** the rest of the `console.*` calls weren't re-checked one by one. |
 | 23 | Open | `cover-bid-jobs/**` still returns `error.message`. (`cover/[position]` is deleted; `drivers/[id]` DELETE stopped 2026-10-10.) |
-| 24 | Partly | Limits added since: places, place comments, history edits, both sheet refreshes, the sheet webhook. Still none on credentials sign-in, votes, `track-view`, `add-phone` or the BMC webhook. |
+| 24 | Partly | Limits added since: places, place comments, history edits, both sheet refreshes, the sheet webhook. Credentials sign-in since 2026-10-11 (#9). Still none on votes, `track-view`, `add-phone` or the BMC webhook. |
 | 25 | Mostly done | `crypto` and `lib/stripe.js` are gone and eslint matches Next (#3). Left: an `engines` field (`archive/STRUCTURE.md` #35). |
 | 26 | Done | Tips ship vote counts and `myVote`, with no user ids. `RequestAccess.jsx`, with the personal phone number, was deleted 2026-10-11 (the number is still in old commits). The privacy page's "who can register" line waits on #8. |
 | 27 | Open | The token still carries `comments` and `created_at`. |

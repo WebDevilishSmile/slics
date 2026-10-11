@@ -1,11 +1,31 @@
 // auth.js (This is your main Auth.js entry point, usually at src/app/api/auth/[...nextauth]/route.js or directly at auth.js in root)
-import NextAuth from 'next-auth';
+import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import client from './lib/db/client'; // Your MongoDB connection client
 import { ObjectId } from 'mongodb'; // Assuming you use ObjectId
 import { authConfig } from './auth.config'; // Import the base config for providers/callbacks
 import bcrypt from 'bcryptjs';
+import { checkRateLimit, getClientIp } from './lib/rateLimit';
+
+// Password sign-in limits (docs/SECURITY.md #9). Per email, so guessing one
+// account's password stalls; per IP with more room, because a building of
+// drivers shares one address.
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_LIMIT_PER_EMAIL = 10;
+const LOGIN_LIMIT_PER_IP = 50;
+
+// Compared against when the email has no password account, so an unknown
+// email takes as long as a wrong password and the timing doesn't say which
+// emails have accounts. The hash of a random string nobody knows (cost 12,
+// like registration).
+const DUMMY_HASH = '$2b$12$umXnI8FsMPaDlEGzBSSlg.f0LVlEgbG1edSyfaXQ7eeuqP34yNOqe';
+
+// signIn('credentials') resolves with `code: 'rate_limited'`, so the form
+// can say so instead of "Invalid email or password".
+class RateLimited extends CredentialsSignin {
+  code = 'rate_limited';
+}
 
 // Extend the authConfig with the adapter and any server-only logic
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -17,18 +37,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: {},
         password: {},
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) return null;
+        const email = credentials.email.toString().trim().toLowerCase();
+
+        // Both limits count every attempt, and fail open (lib/rateLimit.js).
+        const [byEmail, byIp] = await Promise.all([
+          checkRateLimit({
+            key: `login:${email}`,
+            limit: LOGIN_LIMIT_PER_EMAIL,
+            windowMs: LOGIN_WINDOW_MS,
+          }),
+          checkRateLimit({
+            key: `login-ip:${request ? getClientIp(request) : 'unknown'}`,
+            limit: LOGIN_LIMIT_PER_IP,
+            windowMs: LOGIN_WINDOW_MS,
+          }),
+        ]);
+        if (!byEmail.ok || !byIp.ok) throw new RateLimited();
+
         const db = client.db();
-        const user = await db
-          .collection('users')
-          .findOne({ email: credentials.email.toString().toLowerCase() });
-        if (!user || !user.password) return null;
+        const user = await db.collection('users').findOne({ email });
         const isValid = await bcrypt.compare(
           credentials.password.toString(),
-          user.password
+          user?.password || DUMMY_HASH
         );
-        if (!isValid) return null;
+        if (!user?.password || !isValid) return null;
         return {
           id: user._id.toString(),
           email: user.email,

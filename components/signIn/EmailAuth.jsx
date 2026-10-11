@@ -54,7 +54,9 @@ function EmailAuth({ returnTo = '/' }) {
         password: signInFields.password,
         redirect: false,
       });
-      if (result?.error) {
+      if (result?.code === 'rate_limited') {
+        setError('Too many sign-in attempts. Please wait 15 minutes and try again.');
+      } else if (result?.error) {
         setError('Invalid email or password.');
       } else {
         router.push(returnTo);

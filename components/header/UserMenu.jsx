@@ -38,7 +38,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 
-import { BMC_URL, COVERS_OPEN } from '@/constants';
+import { BMC_URL, COVERS_OPEN, PLACES_NEW_UNTIL } from '@/constants';
 import { refreshPendingClaimsCount, usePendingClaimsCount } from '@/lib/driverClaimsStore';
 import { refreshJobChangesCount, useJobChangesCount } from '@/lib/jobChangesStore';
 import { refreshOpenReportsCount, useOpenReportsCount } from '@/lib/slicReportsStore';
@@ -145,6 +145,8 @@ function UserMenu({ user, signOutAction }) {
   }, [isAdmin, pathname]);
   // Covers is admin-only until it rolls out (COVERS_OPEN, lib/authz.js).
   const canUseCovers = Boolean(user) && (COVERS_OPEN || isAdmin);
+  // Places opened to everyone on 2026-10-12; its row says "New" for a month.
+  const placesIsNew = new Date().toISOString() < PLACES_NEW_UNTIL;
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -245,6 +247,17 @@ function UserMenu({ user, signOutAction }) {
                 icon={<HubOutlined />}
                 current={isCurrent('/hubs')}
               />
+              {/* Its name doesn't say what's there, so the row does. */}
+              <NavItem
+                onClick={handleClose}
+                href='/places'
+                label='Places'
+                secondary={
+                  placesIsNew ? 'New · Fuel, food, restrooms' : 'Fuel, food, restrooms'
+                }
+                icon={<SignpostOutlined />}
+                current={isCurrent('/places')}
+              />
               {canUseCovers && (
                 <NavItem
                   onClick={handleClose}
@@ -265,29 +278,18 @@ function UserMenu({ user, signOutAction }) {
                   current={isCurrent('/history')}
                 />
               )}
-              {/* Admin-only while they're tried out in production. Places
-                  launches to every driver by dropping the role check;
-                  Cover Bids opens to members together with the check in
+              {/* Admin-only while it's tried out in production. Cover Bids
+                  opens to members together with the check in
                   app/cover-bid-jobs/page.jsx. */}
               {user.role === 'admin' && (
-                <>
-                  <NavItem
-                    onClick={handleClose}
-                    href='/cover-bid-jobs'
-                    label='Cover Bids'
-                    secondary='Admin only for now'
-                    icon={<AssignmentOutlined />}
-                    current={isCurrent('/cover-bid-jobs')}
-                  />
-                  <NavItem
-                    onClick={handleClose}
-                    href='/places'
-                    label='Places'
-                    secondary='Admin only for now'
-                    icon={<SignpostOutlined />}
-                    current={isCurrent('/places')}
-                  />
-                </>
+                <NavItem
+                  onClick={handleClose}
+                  href='/cover-bid-jobs'
+                  label='Cover Bids'
+                  secondary='Admin only for now'
+                  icon={<AssignmentOutlined />}
+                  current={isCurrent('/cover-bid-jobs')}
+                />
               )}
             </List>
           </>

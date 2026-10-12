@@ -36,10 +36,10 @@ export default function AboutSignIn() {
         Why you sign in
       </Typography>
       <Typography variant='body1'>
-        Accounts keep SLICs limited to drivers and let you post tips under
-        your name. If you sign in with Google, SLICs receives only your name, email
+        Accounts keep SLICs limited to drivers and let you post tips and add
+        places under your name. If you sign in with Google, SLICs receives only your name, email
         address and profile picture. They’re used to create your account and
-        to show your first name and picture on the tips you post. SLICs never
+        to show your first name and picture on the tips and comments you post. SLICs never
         sells them and doesn’t access anything else in your Google account.
       </Typography>
       <Typography variant='body1' sx={{ mt: 2 }}>

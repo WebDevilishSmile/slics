@@ -132,6 +132,11 @@ export const GYM_COMMENT_EXAMPLE = {
   updated_at: null,
 };
 
+// Places opened to every driver on 2026-10-12. Its header-menu row says "New"
+// until this moment (header/UserMenu.jsx; ISO strings compare in time order).
+// Remove it, and the check, once it has passed.
+export const PLACES_NEW_UNTIL = '2026-11-12T00:00:00.000Z';
+
 // Categories a place on /places can have; a place picks one or more. Adding a
 // category is a one-line change here; give it an icon in
 // places/PlaceCategoryIcon.jsx (it falls back to a map pin).

@@ -31,6 +31,7 @@ import {
 // device showed, so they all come around; the arrow steps to the next.
 const TIPS = [
   'Tap the copy button beside an address to paste it into a text or another app.',
+  'Need fuel, food or a restroom on a run? Places in the menu has the spots drivers have found.',
   'Tips from other drivers live under each SLIC. Add one when you learn something.',
   'Search by city too, not just the SLIC number, code or customer name.',
   'Add SLICs to your home screen from the menu, and it opens like an app.',

@@ -4,19 +4,26 @@ import {
   FlagOutlined,
   ForumOutlined,
   PictureAsPdfOutlined,
+  SignpostOutlined,
 } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { softInset } from '@/components/utility/soft';
 
 // What the example card in the Hero doesn't already show. Admin-only and
-// not-yet-launched features (covers, places) stay off this public page until
-// they open to everyone. A plain list on the page surface, not a card each:
-// the Hero's card is the raised moment, and the two sections below are cards.
+// not-yet-launched features (covers) stay off this public page until they
+// open to everyone. A plain list on the page surface, not a card each: the
+// Hero's card is the raised moment, and the two sections below are cards.
 const FEATURES = [
   {
     icon: ForumOutlined,
     title: 'Tips from drivers',
     text: 'Read and share what drivers know about a location: where to park, which door, what to watch for. A tip can pin the exact spot on the map.',
+  },
+  {
+    // The menu's icon for Places (header/UserMenu.jsx).
+    icon: SignpostOutlined,
+    title: 'Places on your run',
+    text: 'Fuel, food, restrooms and truck parking that drivers have found, and whether a trailer fits. Add the spots you know.',
   },
   {
     icon: DirectionsOutlined,

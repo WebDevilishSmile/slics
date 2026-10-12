@@ -4,6 +4,7 @@ import { Box, Chip, Typography } from '@mui/material';
 import HelpGuide from '@/components/help/HelpGuide';
 import { HELP_SECTIONS } from '@/components/help/guides';
 import PageContainer from '@/components/layout/PageContainer';
+import AnimatedSlicsMark from '@/components/utility/AnimatedSlicsMark';
 import { softPressSx, softRaised, softRaisedSmall } from '@/components/utility/soft';
 
 export const metadata = {
@@ -16,6 +17,7 @@ export const metadata = {
 export default function HelpPage() {
   return (
     <PageContainer>
+      <AnimatedSlicsMark loop sx={{ fontSize: '4rem', mb: 1 }} />
       <Typography variant='sectionHeading' component='h1'>
         How to use SLICs
       </Typography>

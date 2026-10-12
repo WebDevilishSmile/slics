@@ -18,6 +18,7 @@ import {
   softPressSx,
   softRaisedSmall,
 } from '@/components/utility/soft';
+import ChangePasswordDialog from './ChangePasswordDialog';
 import DeleteAccountDialog from './DeleteAccountDialog';
 
 // Credentials users are registered with firstName/lastName; OAuth users only
@@ -46,6 +47,7 @@ function EditProfileDialog({
   const [phone, setPhone] = useState(userData.phone || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [passwordOpen, setPasswordOpen] = useState(false);
   const router = useRouter();
 
   const handleClose = () => {
@@ -108,11 +110,29 @@ function EditProfileDialog({
           sx={[softInputSx, { mt: 2.5, maxWidth: 'none' }]}
         />
 
+        {/* Password accounts only: a Google account's password is Google's. */}
+        {userData.hasPassword && (
+          <Box sx={[softInset, { mt: 4, p: 2, borderRadius: 4 }]}>
+            <Typography variant='subtitle2'>Password</Typography>
+            <Typography variant='body2' color='text.secondary' sx={{ mb: 1.5 }}>
+              Choose a new one. You&apos;ll sign in again on every device.
+            </Typography>
+            <Button
+              size='small'
+              onClick={() => setPasswordOpen(true)}
+              disabled={isSubmitting}
+              sx={[softRaisedSmall, softPressSx, { px: 1.5 }]}
+            >
+              Change password
+            </Button>
+          </Box>
+        )}
+
         {/* Admins can't delete themselves here (the route refuses too), so
             the last admin can't lock everyone out. */}
         {userData.role !== 'admin' && (
           // Set apart in a pressed-in well rather than behind a divider.
-          <Box sx={[softInset, { mt: 4, p: 2, borderRadius: 4 }]}>
+          <Box sx={[softInset, { mt: userData.hasPassword ? 2.5 : 4, p: 2, borderRadius: 4 }]}>
             <Typography variant='subtitle2'>Delete account</Typography>
             <Typography variant='body2' color='text.secondary' sx={{ mb: 1.5 }}>
               Removes your profile, comments, votes and lookup history. This
@@ -145,7 +165,13 @@ function EditProfileDialog({
       </DialogActions>
 
       {/* Stacked on top of this dialog: cancelling returns here, confirming
-          signs the user out and leaves the page. */}
+          signs the user out (a password change stays on its "Password
+          changed" message; a delete leaves the page). */}
+      <ChangePasswordDialog
+        open={passwordOpen}
+        onClose={() => setPasswordOpen(false)}
+        email={userData.email}
+      />
       <DeleteAccountDialog
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}

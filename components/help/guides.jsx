@@ -71,6 +71,11 @@ export const HELP_SECTIONS = [
             with the new one. The link works once, for 30 minutes. No email?
             Ask the SLICs admin for a reset link instead.
           </>,
+          <>
+            Want a new password? On your profile, tap the gear, then{' '}
+            <Tap>Change password</Tap>. It signs you out everywhere, so sign
+            in again with the new one.
+          </>,
         ],
       },
       {

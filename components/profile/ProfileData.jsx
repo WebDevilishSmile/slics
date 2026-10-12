@@ -56,7 +56,8 @@ function Detail({ icon, label, children }) {
 // The profile card in the soft style (CLAUDE.md "Visual style"): a seamless
 // panel with the avatar on a raised ring, the name, the details in a
 // pressed-in well, and, for a non-member, a soft notice with the Buy Me a
-// Coffee button. The gear opens EditProfileDialog (name, phone, delete).
+// Coffee button. The gear opens EditProfileDialog (name, phone, password,
+// delete). `userData.hasPassword` comes from the page, never the hash.
 // `supporterSince`: when they first supported the app on Buy Me a Coffee (an
 // ISO string, or null). Only they see this page, so it needs no opt-in.
 function ProfileData({ userData, commentCount, supporterSince = null }) {

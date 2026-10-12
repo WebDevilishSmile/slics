@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/authz';
 import { getCommentsByUserId } from '@/lib/db/comments';
-import { getUserById } from '@/lib/db/users';
+import { getUserById, userHasPassword } from '@/lib/db/users';
 import { getSupporterSince } from '@/lib/db/bmcEvents';
 import { serializeComments, toSelfUser } from '@/lib/serializers';
 
@@ -49,10 +49,12 @@ async function ProfilePage({ params }) {
     );
   }
 
-  const [comments, supporterSince] = await Promise.all([
+  const [comments, supporterSince, hasPassword] = await Promise.all([
     getCommentsByUserId(id),
     // A failure only hides the line.
     getSupporterSince(userData._id).catch(() => null),
+    // Puts "Change password" in Edit profile; only the flag, never the hash.
+    userHasPassword(id),
   ]);
 
   return (
@@ -62,7 +64,7 @@ async function ProfilePage({ params }) {
 
         <HydrationGuard>
           <ProfileData
-            userData={toSelfUser(userData)}
+            userData={{ ...toSelfUser(userData), hasPassword }}
             commentCount={comments.length}
             supporterSince={supporterSince}
           />

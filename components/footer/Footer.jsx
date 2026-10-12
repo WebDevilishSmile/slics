@@ -6,9 +6,8 @@ import {
   X,
 } from '@mui/icons-material';
 import { Box, Button, IconButton, Typography } from '@mui/material';
+import { CONTACT_EMAIL } from '@/constants';
 import FooterContainer from './FooterContainer';
-
-const CONTACT_EMAIL = 'WebDevilishSmile@gmail.com';
 
 const socialLinks = [
   {
@@ -32,7 +31,7 @@ const socialLinks = [
 // Footer links are 44px tall, like the header's controls.
 const linkSx = { minHeight: '2.75rem' };
 
-// One compact column (UI-SUGGESTIONS.md #37): the legal links first (the
+// One compact column (UI-SUGGESTIONS.md #37): Help and the legal links first (the
 // landing page's trust copy points at them), the contact email, then who made
 // the app with their social links, and the copyright. Everything inherits
 // text.light from FooterContainer. The second logo is gone; the header
@@ -41,6 +40,9 @@ function Footer() {
   return (
     <FooterContainer>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <Button variant='text' color='inherit' href='/help' sx={linkSx}>
+          Help
+        </Button>
         <Button variant='text' color='inherit' href='/privacy' sx={linkSx}>
           Privacy Policy
         </Button>

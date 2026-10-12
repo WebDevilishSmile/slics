@@ -265,8 +265,8 @@ function UserMenu({ user, signOutAction }) {
                   current={isCurrent('/history')}
                 />
               )}
-              {/* Admin-only while they're tried out in production. Whip It In
-                  & Out launches to every driver by dropping the role check;
+              {/* Admin-only while they're tried out in production. Places
+                  launches to every driver by dropping the role check;
                   Cover Bids opens to members together with the check in
                   app/cover-bid-jobs/page.jsx. */}
               {user.role === 'admin' && (
@@ -281,11 +281,11 @@ function UserMenu({ user, signOutAction }) {
                   />
                   <NavItem
                     onClick={handleClose}
-                    href='/whip-it-in-and-out'
-                    label='Whip It In & Out'
+                    href='/places'
+                    label='Places'
                     secondary='Admin only for now'
                     icon={<SignpostOutlined />}
-                    current={isCurrent('/whip-it-in-and-out')}
+                    current={isCurrent('/places')}
                   />
                 </>
               )}

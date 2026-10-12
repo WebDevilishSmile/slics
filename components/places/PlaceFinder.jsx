@@ -27,7 +27,7 @@ function emptyMessage({ placeCount, selectedSlics }) {
   return 'No places in those categories yet.';
 }
 
-// Whip It In & Out: every place arrives server-rendered (getPlaces), and the
+// Places: every place arrives server-rendered (getPlaces), and the
 // SLIC, category and distance filtering happens here. Place mutations call
 // the shared refresh() to re-render the list; each thread fetches itself.
 // `user` is `{ id, role }` for the signed-in driver.

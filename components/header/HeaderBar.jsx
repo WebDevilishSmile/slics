@@ -34,7 +34,7 @@ const PAGE_TITLES = [
   ['/terms', 'Terms of Service'],
   ['/covers', 'Covers'],
   ['/cover-bid-jobs', 'Cover Bids'],
-  ['/whip-it-in-and-out', 'Whip It In & Out'],
+  ['/places', 'Places'],
   ['/admin/slics', 'SLICs'],
   ['/admin/new', 'New SLIC'],
   ['/admin/edit', 'Edit SLIC'],

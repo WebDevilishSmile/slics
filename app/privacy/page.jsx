@@ -54,7 +54,7 @@ export default function PrivacyPage() {
             <>
               <strong>Comments and places.</strong> Anything you post on a SLIC
               is stored with your account and the SLIC it belongs to. Places you
-              add on Whip It In &amp; Out, including any parking pin you give
+              add on the Places page, including any parking pin you give
               them, and your comments and replies there are stored with your
               account too. So are any votes you cast on other drivers&apos;
               comments.
@@ -233,7 +233,7 @@ export default function PrivacyPage() {
         <LegalList
           items={[
             'Edit your display name and phone number, or delete any of your SLIC comments, from your profile page.',
-            'Edit or delete your comments on places, and the places you added, on Whip It In & Out.',
+            'Edit or delete your comments on places, and the places you added, on the Places page.',
             'Sign out from any device to end that session.',
             'If you signed in with Google, you can also remove SLICs from the apps connected to your Google account.',
             <>

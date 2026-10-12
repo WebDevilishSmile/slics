@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { createPlace, validatePlace } from '@/lib/db/places';
 import { checkRateLimit } from '@/lib/rateLimit';
 
-// Any signed-in driver can add a place (Whip It In & Out). Keyed by user id,
+// Any signed-in driver can add a place (Places, /places). Keyed by user id,
 // not IP — drivers share a building network (see app/api/comments/route.js).
 const PLACE_LIMIT = 10;
 const PLACE_WINDOW_MS = 60 * 60 * 1000; // 1 hour

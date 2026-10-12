@@ -10,7 +10,7 @@ import { softContainedSx, softPressSx, softRaisedSmall } from './soft';
 const secondarySx = [softRaisedSmall, softPressSx, { px: 2 }];
 
 // Map and call buttons for any `{ name, address, parking, phone }` — gyms on
-// the Planet Fitness page and places on Whip It In & Out. Maps open the
+// the Planet Fitness page and places on /places. Maps open the
 // truck-parking pin when there is one, the address otherwise. The call link
 // dials digits only and stays in the same tab (tel: needs no new window,
 // UI-SUGGESTIONS.md #33). Google Maps is the card's one brand-blue button

@@ -92,7 +92,7 @@ export default function TermsPage() {
         <LegalText>
           Comments are what turn the app from an address list into shared
           knowledge, and we want you to use them. The same goes for the places
-          you add on Whip It In &amp; Out and the comments and replies you leave
+          you add on the Places page and the comments and replies you leave
           there. A few ground rules for all of it:
         </LegalText>
         <LegalList

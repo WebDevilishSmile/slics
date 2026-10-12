@@ -7,10 +7,16 @@ import PageContainer from '@/components/layout/PageContainer';
 import PlaceFinder from '@/components/places/PlaceFinder';
 import HydrationGuard from '@/components/utility/HydrationGuard';
 
-// Driver-shared places along routes — fuel, food, restrooms, rest areas — with
-// a comment thread on each. Sign-in is enforced by middleware.js; the data
-// lives in lib/db/places.js and the UI in components/places/.
-export default async function WhipItInAndOutPage() {
+export const metadata = {
+  title: 'Places · SLICs',
+};
+
+// Places: driver-shared stops along routes — fuel, food, restrooms, rest
+// areas — with a comment thread on each. It was "Whip It In & Out" at
+// /whip-it-in-and-out until 2026-10-12 (next.config.mjs redirects the old
+// path); the tagline keeps the phrase. Sign-in is enforced by middleware.js;
+// the data lives in lib/db/places.js and the UI in components/places/.
+export default async function PlacesPage() {
   const session = await getSession();
   const user = session?.user
     ? { id: session.user.id, role: session.user.role ?? 'user' }
@@ -32,8 +38,14 @@ export default async function WhipItInAndOutPage() {
 
   return (
     <PageContainer>
-      <Typography variant='sectionHeading'>
-        Whip It In And <br /> Whip It Out
+      <Typography variant='sectionHeading'>Places</Typography>
+      <Typography
+        variant='subtitle1'
+        component='p'
+        color='primary'
+        sx={{ textAlign: 'center', fontWeight: 700, mt: 0.5, px: 2 }}
+      >
+        Whip it in and whip it out.
       </Typography>
       <Typography
         color='text.secondary'

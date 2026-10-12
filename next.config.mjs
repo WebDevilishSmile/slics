@@ -79,9 +79,14 @@ const nextConfig = {
     ],
   },
   // Renamed routes, so a bookmarked old link still lands (the query string,
-  // e.g. ?slic=, carries over).
+  // e.g. ?slic=, carries over). /whip-it-in-and-out became /places on
+  // 2026-10-12; it stays a temporary redirect for its trial period, so a
+  // revert isn't stuck behind a browser-cached 308.
   async redirects() {
-    return [{ source: '/all', destination: '/hubs', permanent: true }];
+    return [
+      { source: '/all', destination: '/hubs', permanent: true },
+      { source: '/whip-it-in-and-out', destination: '/places', permanent: false },
+    ];
   },
   // Security headers on every response (docs/SECURITY.md #12).
   async headers() {

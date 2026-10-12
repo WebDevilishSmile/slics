@@ -75,7 +75,7 @@ function GymCard({ gym, miles, slicLabels, onEdit }) {
 
   return (
     // The seamless soft panel, so PlaceLinks' soft buttons (shared with
-    // Whip It In & Out) sit on the surface they're shaded for.
+    // Places) sit on the surface they're shaded for.
     <Paper
       variant='panel'
       sx={{

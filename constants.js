@@ -132,9 +132,9 @@ export const GYM_COMMENT_EXAMPLE = {
   updated_at: null,
 };
 
-// Categories a place on Whip It In & Out (/whip-it-in-and-out) can have; a
-// place picks one or more. Adding a category is a one-line change here; give
-// it an icon in places/PlaceCategoryIcon.jsx (it falls back to a map pin).
+// Categories a place on /places can have; a place picks one or more. Adding a
+// category is a one-line change here; give it an icon in
+// places/PlaceCategoryIcon.jsx (it falls back to a map pin).
 export const PLACE_CATEGORIES = [
   { value: 'fuel', label: 'Fuel' },
   { value: 'food', label: 'Food' },

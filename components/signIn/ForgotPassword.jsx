@@ -15,26 +15,33 @@ import {
 import { apiRequest } from '@/lib/apiRequest';
 import { RESET_EMAIL_LINK_MINUTES } from '@/constants';
 import { softContainedSx, softInputSx } from '@/components/utility/soft';
+import { vt } from './signInModes';
 
-// A real button styled as a link, on the sentence's baseline (EmailAuth.jsx).
-const linkButtonSx = { verticalAlign: 'baseline' };
+// A real button styled as a link, on the sentence's baseline, with a 44px tap
+// area (SignInPanel.jsx).
+const linkButtonSx = { verticalAlign: 'baseline', py: 1.5, my: -1.5 };
 
 const formSx = { display: 'flex', flexDirection: 'column', gap: 2.5 };
 
 // For a driver with no email, or whose email never comes.
 function Fallback() {
   return (
-    <Typography variant='body2' color='text.secondary' sx={{ textAlign: 'center' }}>
+    <Typography
+      variant='body2'
+      color='text.secondary'
+      sx={[{ textAlign: 'center' }, vt('fallback')]}
+    >
       No email? Ask the SLICs admin for a reset link. If you signed up with
       Google, you don&apos;t have a password here: use Continue with Google.
     </Typography>
   );
 }
 
-// "Forgot your password?" in the email sign-in (docs/PASSWORD-RESET.md stage
-// 3): an email field, then the same "check your email" for every address,
-// since the server never says whether it has an account. The link itself
-// comes by email and opens /reset-password.
+// "Forgot your password?" on /sign-in (docs/PASSWORD-RESET.md stage 3). The
+// panel's heading takes focus when it opens (SignInPanel.jsx), so the field
+// doesn't autofocus. An email field, then the same "check your email" for
+// every address, since the server never says whether it has an account. The
+// link itself comes by email and opens /reset-password.
 export default function ForgotPassword({ initialEmail = '', onBack }) {
   const [email, setEmail] = useState(initialEmail);
   const [loading, setLoading] = useState(false);
@@ -58,7 +65,7 @@ export default function ForgotPassword({ initialEmail = '', onBack }) {
   };
 
   const back = (
-    <Typography variant='body2' sx={{ textAlign: 'center' }}>
+    <Typography variant='body2' sx={[{ textAlign: 'center' }, vt('links')]}>
       <Link component='button' type='button' onClick={onBack} sx={linkButtonSx}>
         Back to sign in
       </Link>
@@ -71,7 +78,10 @@ export default function ForgotPassword({ initialEmail = '', onBack }) {
         <Box
           role='status'
           className='enter'
-          sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, textAlign: 'center' }}
+          sx={[
+            { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, textAlign: 'center' },
+            vt('intro'),
+          ]}
         >
           <Box sx={{ color: 'primary.main', display: 'flex' }}>
             <MarkEmailReadOutlined fontSize='large' className='pop' />
@@ -95,7 +105,7 @@ export default function ForgotPassword({ initialEmail = '', onBack }) {
 
   return (
     <Box component='form' onSubmit={handleSubmit} sx={formSx}>
-      <Typography variant='body2' sx={{ textAlign: 'center' }}>
+      <Typography variant='body2' sx={[{ textAlign: 'center' }, vt('intro')]}>
         Enter the email you sign in with, and we&apos;ll send you a link to
         choose a new password.
       </Typography>
@@ -104,10 +114,10 @@ export default function ForgotPassword({ initialEmail = '', onBack }) {
         label='Email'
         type='email'
         fullWidth
-        sx={softInputSx}
+        sx={[softInputSx, vt('email')]}
         required
-        autoFocus
         autoComplete='email'
+        name='email'
         value={email}
         onChange={(event) => setEmail(event.target.value)}
       />
@@ -116,7 +126,7 @@ export default function ForgotPassword({ initialEmail = '', onBack }) {
         variant='contained'
         fullWidth
         disabled={loading}
-        sx={[softContainedSx, { minHeight: '3rem' }]}
+        sx={[softContainedSx, { minHeight: '3rem' }, vt('submit')]}
         startIcon={loading ? <CircularProgress size={16} color='inherit' /> : null}
       >
         {loading ? 'Sending…' : 'Send reset link'}

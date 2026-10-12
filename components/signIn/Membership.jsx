@@ -1,51 +1,28 @@
-import { getSession } from '@/lib/authz';
-import { Box, Button, Paper, Typography } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import theme from '@/theme';
-import Link from 'next/link';
 import BmcButton from '@/components/layout/BmcButton';
 import ImpactLine from '@/components/support/ImpactLine';
 import RefreshOnReturn from './RefreshOnReturn';
-import { softContainedSx } from '@/components/utility/soft';
+import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 
-// `next` is where "Use SLICs now" goes: the page they were headed for, or /home.
-async function Membership({ next = '/home' }) {
-  // Ensure the auth function is called to get the session
-  // This is necessary to check if the user is logged in
-  const session = await getSession();
-  const user = session?.user;
-
-  // If the user is not logged in, we return a message prompting them to sign in
-  if (!user) {
-    return (
-      <Box sx={{ textAlign: 'center', my: 4 }}>
-        <Typography
-          variant='body2'
-          sx={{
-            maxWidth: theme.layout.width.wide,
-            textAlign: 'center',
-            my: 2,
-            px: 2,
-          }}
-        >
-          You must be signed in to access your membership.
-        </Typography>
-      </Box>
-    );
-  }
-
-  // If the user is logged in, but not a member, we display the membership prompt
+// The membership prompt on /sign-in, for a signed-in non-member who opened a
+// members' page (/history; middleware.js). What membership unlocks, why it
+// matters, then the Buy Me a Coffee button as the panel's one solid button
+// and a soft way on. `next` is where "Use SLICs now" goes.
+function Membership({ firstName, next = '/home' }) {
   return (
     <Paper
       variant='panel'
       className='enter'
       sx={{ minHeight: 0, textAlign: 'center', gap: 3, px: { xs: 3, sm: 4 } }}
     >
-      <Typography variant='body2'>
-        Welcome {user.name.split(' ')[0]}! Now that you have an account, you can
-        access all the SLIC locations. I strive to maintain a database of
-        reliable resources. I have put many hours of work into creating this
-        site and maintaining the databases. Please consider donating or becoming
-        a member on Buy Me a Coffee.
+      <Typography variant='body1'>
+        Hi {firstName}. Membership on Buy Me a Coffee unlocks History: every
+        SLIC you&apos;ve looked up, with your own notes.
+      </Typography>
+      <Typography variant='body2' color='text.secondary'>
+        It also keeps SLICs going. I&apos;ve put many hours into building this
+        app and keeping its addresses reliable.
       </Typography>
 
       <ImpactLine />
@@ -54,13 +31,15 @@ async function Membership({ next = '/home' }) {
       <RefreshOnReturn />
 
       <Typography variant='body2'>
-        If you would like immediate access, click the link below but don&apos;t
-        forget to support me in the future!
+        Not now? Looking up SLICs and reading tips stay free.
       </Typography>
       <Button
-        variant='contained'
         href={next}
-        sx={[softContainedSx(theme), { px: 3, minHeight: '3rem' }]}
+        sx={[
+          softRaisedSmall(theme),
+          softPressSx(theme),
+          { px: 3, minHeight: '3rem' },
+        ]}
       >
         Use SLICs now
       </Button>

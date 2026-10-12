@@ -61,7 +61,12 @@ export async function POST(request) {
 
     if (existing) {
       return NextResponse.json(
-        { error: 'An account with this email already exists.' },
+        // Says how to get in, since a driver here may have joined with Google
+        // and forgotten. The 409 already tells the caller the account exists.
+        {
+          error:
+            'That email already has a SLICs account. Sign in, or use Continue with Google if that’s how you joined.',
+        },
         { status: 409 }
       );
     }

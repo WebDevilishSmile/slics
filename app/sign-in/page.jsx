@@ -1,21 +1,27 @@
+import { redirect } from 'next/navigation';
+import { Typography } from '@mui/material';
+
 import { getSession } from '@/lib/authz';
 import { getUserById } from '@/lib/db/users';
 import { safeCallbackUrl } from '@/lib/callbackUrl';
 
 import PageContainer from '@/components/layout/PageContainer';
-import { Link, Typography } from '@mui/material';
 import Membership from '@/components/signIn/Membership';
 import SignIn from '@/components/signIn/SignIn';
-import RedirectMember from '@/components/signIn/RedirectMember';
+import { SIGN_IN_MODES, signInMode } from '@/components/signIn/signInModes';
 
-export const metadata = {
-  title: 'Sign in · SLICs',
-};
+// The tab title follows the form showing (`?mode=`); SignInPanel.jsx keeps
+// it in step when a driver switches forms.
+export async function generateMetadata({ searchParams }) {
+  const mode = signInMode((await searchParams).mode);
+  return { title: `${SIGN_IN_MODES[mode].title} · SLICs` };
+}
 
 // The sign-in page (auth.config.js `pages.signIn`). `callbackUrl` is where a
-// signed-out driver was headed (middleware.js). Sign-in comes back here with
-// it, so a non-member still sees the membership prompt; a member goes
-// straight on, and "Use SLICs now" takes a non-member there.
+// signed-out driver was headed (middleware.js); signing in goes straight
+// there, or to /home. A signed-in non-member lands here only from a members'
+// page (/history, via middleware.js) and gets the membership prompt; a member
+// is sent on.
 export default async function SignInPage({ searchParams }) {
   const callbackUrl = safeCallbackUrl((await searchParams).callbackUrl, null);
   const next = callbackUrl ?? '/home';
@@ -24,24 +30,19 @@ export default async function SignInPage({ searchParams }) {
   // By id, never by email (docs/SECURITY.md #19).
   const user = session ? await getUserById(session.user.id) : null;
 
-  if (user?.bmcMember) {
-    return <RedirectMember userName={user.name.split(' ')[0]} to={next} />;
-  }
+  if (user?.bmcMember) redirect(next);
 
   return (
     <PageContainer>
-      <Typography variant='sectionHeading' component='h1'>
-        {user ? 'Welcome to SLICs' : 'Sign in to SLICs'}
-      </Typography>
       {user ? (
-        <Membership next={next} />
-      ) : (
         <>
-          <SignIn callbackUrl={callbackUrl} />
-          <Typography variant='body2' sx={{ mt: 3, textAlign: 'center' }}>
-            New to SLICs? <Link href='/help#sign-in'>See how to sign in</Link>
+          <Typography variant='sectionHeading' component='h1'>
+            Become a member
           </Typography>
+          <Membership firstName={user.name.split(' ')[0]} next={next} />
         </>
+      ) : (
+        <SignIn callbackUrl={callbackUrl} />
       )}
     </PageContainer>
   );

@@ -38,34 +38,34 @@ export const HELP_SECTIONS = [
         icon: LoginOutlined,
         steps: [
           <>
-            Open the SLICs link on your phone and tap <Tap>Sign in</Tap>.
+            Open the SLICs link on your phone and tap{' '}
+            <Tap>Sign in or sign up</Tap>.
           </>,
           <>
             If you use Gmail, tap <Tap>Continue with Google</Tap> and pick your
             account. That&apos;s it. Skip to step 5.
           </>,
           <>
-            No Gmail? Under &ldquo;or continue with email&rdquo;, tap{' '}
+            No Gmail? Under &ldquo;or use your email&rdquo;, tap{' '}
             <Tap>Create one</Tap>.
           </>,
           <>
             Type your first name, last name, email and a password (at least 8
-            letters or numbers). Type the password again, then tap{' '}
-            <Tap>Create Account</Tap>.
+            letters or numbers). Tap the eye to check what you typed, then
+            tap <Tap>Create account</Tap>.
           </>,
           <>
-            You&apos;ll see a welcome message. Tap <Tap>Use SLICs now</Tap> to
-            start looking up SLICs.
+            SLICs opens on the lookup page. Type a SLIC code to look one up.
           </>,
         ],
         notes: [
           <>
-            Next time, type your email and password and tap <Tap>Sign In</Tap>.
+            Next time, type your email and password and tap <Tap>Sign in</Tap>.
             Most phones stay signed in, so you may not need to.
           </>,
           <>
             Forgot your password? Tap <Tap>Forgot your password?</Tap> under{' '}
-            <Tap>Sign In</Tap>, type your email and tap{' '}
+            <Tap>Sign in</Tap>, type your email and tap{' '}
             <Tap>Send reset link</Tap>. Open the link in the email, type a new
             password twice and tap <Tap>Change password</Tap>. Then sign in
             with the new one. The link works once, for 30 minutes. No email?

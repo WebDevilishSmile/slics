@@ -270,6 +270,17 @@ let theme = createTheme({
       defaultProps: {
         component: NextLink,
       },
+      // A text link (an <a>, not a ButtonBase) got the browser's thin default
+      // ring; this matches the buttons' brand-blue one above.
+      styleOverrides: {
+        root: ({ theme }) => ({
+          '&:focus-visible': {
+            outline: `2px solid ${theme.vars.palette.primary.main}`,
+            outlineOffset: 2,
+            borderRadius: 2,
+          },
+        }),
+      },
     },
 
     // Component defaults (UI-SUGGESTIONS.md tier 2). An explicit prop at a call site

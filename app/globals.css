@@ -127,6 +127,104 @@
   object-position: top;
 }
 
+/* Sign in, sign up, reset (signIn/SignInPanel.jsx; the names come from `vt`
+   in signIn/signInModes.js). Switching forms moves what both forms have
+   (Email, Password, the blue button, the links) to its new place over 250ms
+   on --ease-out, the same time and curve as the panel's height
+   (utility/AnimatedHeight.jsx), so the card and its contents move as one.
+   Snapshots keep their own size while their box changes (no stretched text). */
+::view-transition-group(signin-heading),
+::view-transition-group(signin-google),
+::view-transition-group(signin-names),
+::view-transition-group(signin-email),
+::view-transition-group(signin-password),
+::view-transition-group(signin-notice),
+::view-transition-group(signin-submit),
+::view-transition-group(signin-links),
+::view-transition-group(signin-intro),
+::view-transition-group(signin-fallback) {
+  animation-duration: 250ms;
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-old(signin-heading),
+::view-transition-new(signin-heading),
+::view-transition-old(signin-google),
+::view-transition-new(signin-google),
+::view-transition-old(signin-names),
+::view-transition-new(signin-names),
+::view-transition-old(signin-email),
+::view-transition-new(signin-email),
+::view-transition-old(signin-password),
+::view-transition-new(signin-password),
+::view-transition-old(signin-notice),
+::view-transition-new(signin-notice),
+::view-transition-old(signin-submit),
+::view-transition-new(signin-submit),
+::view-transition-old(signin-links),
+::view-transition-new(signin-links),
+::view-transition-old(signin-intro),
+::view-transition-new(signin-intro),
+::view-transition-old(signin-fallback),
+::view-transition-new(signin-fallback) {
+  height: 100%;
+  object-fit: none;
+  object-position: top;
+  animation-duration: 250ms;
+  animation-timing-function: var(--ease-out);
+}
+/* Text that changes ("Sign in to SLICs" → "Create your account", the links
+   under the button) trades places through a slight blur. The old text is
+   gone in 100ms and the new one starts at 50ms, so the two barely overlap
+   and never read as one smeared line. */
+::view-transition-old(signin-heading),
+::view-transition-old(signin-links) {
+  animation: 100ms var(--ease-out) both signin-blur-out;
+}
+::view-transition-new(signin-heading),
+::view-transition-new(signin-links) {
+  animation: 200ms var(--ease-out) 50ms both signin-blur-in;
+}
+/* The blue button keeps the default cross-fade, whose two halves always add
+   up to a solid fill (they share one duration and curve), but quicker, so
+   "Sign in" and "Create account" overlap for only a moment while the button
+   glides. */
+::view-transition-old(signin-submit),
+::view-transition-new(signin-submit) {
+  animation-duration: 120ms;
+}
+/* A piece only one form has (the name row, Google and Password away from the
+   reset form, a notice) fades in once the shared fields have started moving,
+   and leaves faster than it came. Named, not (*), so other transitions keep
+   their own exits (the thank-you envelope). */
+::view-transition-new(signin-google):only-child,
+::view-transition-new(signin-names):only-child,
+::view-transition-new(signin-password):only-child,
+::view-transition-new(signin-notice):only-child,
+::view-transition-new(signin-intro):only-child,
+::view-transition-new(signin-fallback):only-child {
+  animation: 200ms var(--ease-out) 50ms both signin-blur-in;
+}
+::view-transition-old(signin-google):only-child,
+::view-transition-old(signin-names):only-child,
+::view-transition-old(signin-password):only-child,
+::view-transition-old(signin-notice):only-child,
+::view-transition-old(signin-intro):only-child,
+::view-transition-old(signin-fallback):only-child {
+  animation: 150ms var(--ease-out) both signin-blur-out;
+}
+@keyframes signin-blur-in {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+  }
+}
+@keyframes signin-blur-out {
+  to {
+    opacity: 0;
+    filter: blur(3px);
+  }
+}
+
 body {
   max-width: 100dvw;
   overflow-x: hidden;

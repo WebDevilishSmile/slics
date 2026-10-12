@@ -1,51 +1,31 @@
-import theme from '@/theme';
 import { signIn } from '@/auth';
-import { Google } from '@mui/icons-material';
-import { Box, Button, Paper, Typography } from '@mui/material';
-import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
-import EmailAuth from './EmailAuth';
+import { Box } from '@mui/material';
+import GoogleButton from './GoogleButton';
+import SignInPanel from './SignInPanel';
 
-// Sign-in on /sign-in for a signed-out visitor: one soft panel. The email
-// form's Sign In is the panel's one solid blue button, so Google is a raised
-// pill. Both come back to /sign-in, keeping `callbackUrl` (app/sign-in/page.jsx).
+// Sign-in on /sign-in for a signed-out visitor (SignInPanel.jsx). Google is a
+// server-action form, handed to the client panel as an element. Both Google
+// and the email forms go straight to `callbackUrl` (the page the driver was
+// headed for) or /home; the membership prompt only shows when a non-member
+// opens /history (middleware.js sends them back to /sign-in).
 function SignIn({ callbackUrl }) {
-  const returnTo = callbackUrl
-    ? `/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`
-    : '/sign-in';
+  const returnTo = callbackUrl ?? '/home';
 
   return (
-    <Paper
-      variant='panel'
-      className='enter'
-      sx={{ minHeight: 0, alignItems: 'stretch', px: { xs: 3, sm: 4 } }}
-    >
-      <Typography variant='body2' sx={{ textAlign: 'center', mb: 3 }}>
-        Sign in or create an account using Google or email and password.
-      </Typography>
-      <Box
-        component='form'
-        action={async () => {
-          'use server';
-          await signIn('google', {
-            redirectTo: returnTo,
-          });
-        }}
-      >
-        <Button
-          type='submit'
-          fullWidth
-          startIcon={<Google />}
-          sx={[
-            softRaisedSmall(theme),
-            softPressSx(theme),
-            { minHeight: '3rem' },
-          ]}
+    <SignInPanel
+      returnTo={returnTo}
+      google={
+        <Box
+          component='form'
+          action={async () => {
+            'use server';
+            await signIn('google', { redirectTo: returnTo });
+          }}
         >
-          Continue with Google
-        </Button>
-      </Box>
-      <EmailAuth returnTo={returnTo} />
-    </Paper>
+          <GoogleButton />
+        </Box>
+      }
+    />
   );
 }
 

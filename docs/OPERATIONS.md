@@ -17,6 +17,18 @@ script with `--dry-run` and a reverse twin, one commit per step.
   holds Resend's email records and Google's site verification. Links the app sends out
   use `SITE_URL` (`constants.js`) in production. There's no staging step, so work on a branch and merge when it's
   ready.
+- **Email for the domain** (since 2026-10-12), all records on Vercel DNS (`vercel dns ls
+  slics.app`):
+  - Sending is Resend: the DKIM `TXT` at `resend._domainkey` and the `send` / `rsend`
+    CNAMEs. They're subdomains, so they never touch the root.
+  - Receiving is **ImprovMX**, which forwards `tiago@slics.app` to the admin's Gmail. It
+    uses the root's `MX` records (`mx1`/`mx2.improvmx.com`) and the root SPF `TXT`
+    (`v=spf1 include:spf.improvmx.com ~all`). There's only ever one SPF record at the
+    root, so add any new sender to that one.
+  - DMARC is `_dmarc` `v=DMARC1; p=none;`: it reports nothing and blocks nothing yet.
+  - Gmail's "Send mail as" for `tiago@slics.app` sends through Resend's SMTP
+    (`smtp.resend.com:587`, user `resend`) with its own `Gmail send-as` key, so it signs
+    with slics.app's DKIM like the app's emails.
 - **The gate is `npm run build`**, run in a scratch copy of the repo, never while
   `next dev` is running in the same folder (both write `.next/`). `npm run lint` and
   `npm run lint:dead` (knip) also work. There's no test suite.
@@ -102,6 +114,7 @@ sync, and the push keys (`PUSH-NOTIFICATIONS.md`). All live in Vercel's project 
 | `CRON_SECRET` | Anyone can trigger the daily re-read | New value on Vercel, redeploy | None |
 | `BMC_WEBHOOK_SECRET` | Anyone can grant or revoke membership | BMC dashboard → new secret → Vercel | Events fail until both match |
 | `RESEND_API_KEY` | Anyone can send email as `@slics.app` (phishing your drivers from your domain) | Resend → API Keys → make a new "Sending access" key for slics.app, set it on Vercel, redeploy, delete the old key | None; resets requested mid-swap may not send |
+| Resend key `Gmail send-as` (in Gmail, not the app) | Same as above | Resend → API Keys → a new "Sending access" key for slics.app, paste it in Gmail → Settings → Accounts → "Send mail as" → edit info, delete the old key | Sending as `tiago@slics.app` fails until Gmail has the new key |
 | `VAPID_PRIVATE_KEY` (with `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_SUBJECT`) | Anyone with a device's subscription could push to it as the app; the subscriptions themselves stay on the server | `npx web-push generate-vapid-keys`, set **both** keys on Vercel, redeploy (the public key is built into the client) | **Every device's subscription stops working.** Everyone turns notifications off and on again on `/profile`; the toggle notices a subscription made with the old key and replaces it |
 
 On a lost or compromised laptop, rotate all of them. Rotate `AUTH_SECRET` and

@@ -15,10 +15,13 @@ for the `password-resets` indexes. The TTL index is what deletes expired links. 
 tested end to end against the real database on a local production build, with a
 throwaway account that was deleted afterwards.
 
-**Stage 3 built 2026-10-12, not deployed.** The app's domain is now `www.slics.app`, and
-emails go through Resend from `no-reply@slics.app`. Before it ships, finish "Setting up
-Resend" below. Without `RESEND_API_KEY` the form still answers normally but sends
-nothing. Stage 2 is still open.
+**Stage 3 live 2026-10-12.** The app's domain is now `www.slics.app`, and emails go
+through Resend from `no-reply@slics.app`. "Setting up Resend" below is done: production
+has `RESEND_API_KEY`, and a test from the live form was delivered. That test went to a
+Google account, so an emailed reset link to a password account is still unchecked.
+The emails share the app's soft look (`lib/passwordResetEmails.js`). Without
+`RESEND_API_KEY` the form still answers normally but sends nothing. Stage 2 is still
+open.
 
 ---
 
@@ -207,12 +210,15 @@ Self-service, for a driver who can't reach an admin. It waits on choosing a send
 
 ## Setting up Resend (stage 3, once)
 
+*Done 2026-10-12. The domain's mail records, ImprovMX included, are in `OPERATIONS.md` →
+"Deploying".*
+
 1. Make a Resend account and add the domain `slics.app` (Domains → Add Domain).
 2. Add the DNS records Resend lists to Vercel DNS (`vercel dns add slics.app …`, or the
    domain's page in the Vercel dashboard): the DKIM `TXT` at `resend._domainkey`, and
-   the `MX` and SPF `TXT` at `send` (the bounce address, so they don't touch the root's
-   records). Optionally a DMARC `TXT` at `_dmarc`: `v=DMARC1; p=none;`. Then Verify in
-   Resend.
+   what it lists for `send` (the bounce address, so they don't touch the root's
+   records; it listed the `send` and `rsend` CNAMEs). Optionally a DMARC `TXT` at
+   `_dmarc`: `v=DMARC1; p=none;`. Then Verify in Resend.
 3. Leave open and click tracking **off** for the domain (they're off by default). Click
    tracking would rewrite the reset link.
 4. API Keys → a "Sending access" key limited to `slics.app`. Set it as `RESEND_API_KEY` on

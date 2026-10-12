@@ -8,13 +8,17 @@ check items off as they ship.
 scratch copy, never while `next dev` runs) before shipping any item. The app is used daily
 in production.
 
-## Status (2026-10-11)
+## Status (2026-10-12)
 
 **Stage 1 built 2026-10-11, not deployed.** Before it ships, run `npm run db:indexes`
 for the `password-resets` indexes. The TTL index is what deletes expired links. It was
 tested end to end against the real database on a local production build, with a
-throwaway account that was deleted afterwards. Stage 3 waits on one decision: where
-reset emails come from (see "Open questions").
+throwaway account that was deleted afterwards.
+
+**Stage 3 built 2026-10-12, not deployed.** The app's domain is now `www.slics.app`, and
+emails go through Resend from `no-reply@slics.app`. Before it ships, finish "Setting up
+Resend" below. Without `RESEND_API_KEY` the form still answers normally but sends
+nothing. Stage 2 is still open.
 
 ---
 
@@ -143,26 +147,38 @@ somewhere else.
 Self-service, for a driver who can't reach an admin. It waits on choosing a sender (see
 "Open questions").
 
-- [ ] **`lib/email.js`**, the only module that talks to the email provider, like
+- [x] **`lib/email.js`**, the only module that talks to the email provider, like
       `lib/blob.js` for Blob. It never throws to the caller and never logs an address.
       New env vars go in `.env.example` and `OPERATIONS.md`.
-- [ ] **`POST /api/auth/forgot-password`** `{ email }`: always answers "If that email has
+  - Built: Resend's REST API through `fetch`, no SDK, one env var (`RESEND_API_KEY`),
+    sending from `SLICs <no-reply@slics.app>`.
+- [x] **`POST /api/auth/forgot-password`** `{ email }`: always answers "If that email has
       a password account, a link is on its way," whether or not it does.
   - Rate-limited per email (3 per hour) and per IP (10 per hour).
   - For a password account: a link that lasts 30 minutes (`via: 'email'`), sent after
     the response (`after()`), so the timing doesn't reveal anything.
   - For a Google account: an email saying "You sign in with Google," with no link.
   - For no account: nothing is sent.
-- [ ] **The email:** plain text plus simple HTML, from "SLICs." It says who asked (only
+  - Built: the link's origin is `SITE_URL` in production (`lib/siteOrigin.js`), never
+    the request's Host, so a forged header can't point an emailed link elsewhere. The
+    admin's links use it too. The address is matched ignoring case, and whether the
+    account has a password is worked out in the query, so the hash is never read.
+    A new emailed link replaces any live admin link for the account (one live token).
+- [x] **The email:** plain text plus simple HTML, from "SLICs." It says who asked (only
       "someone asked to reset your password"), the link, when it expires, and "If it
       wasn't you, ignore this." No tracking pixels or click-tracking redirects; turn them
       off in the provider, since they would rewrite the link.
-- [ ] **A successful email reset sets `emailVerified`.** The link proves the driver reads
+  - Built: `lib/passwordResetEmails.js`, one email with the link and one for a Google
+    account. The first name is HTML-escaped.
+- [x] **A successful email reset sets `emailVerified`.** The link proves the driver reads
       that inbox. That's step 2 of `SECURITY.md` #8 for these accounts, and the BMC webhook
       can start requiring it (#8 step 4).
-- [ ] **The form** replaces stage 1's "Forgot password?" note: an email field and Send,
+- [x] **The form** replaces stage 1's "Forgot password?" note: an email field and Send,
       then the same message for every address. "Ask an admin" stays as the fallback line.
-- [ ] **Privacy page** (`app/privacy/page.jsx`): the email provider receives a driver's
+  - Built: `signIn/ForgotPassword.jsx`, a third mode of `signIn/EmailAuth.jsx` that
+    carries over the email already typed. The reset page's dead-link states point to it,
+    and so does the `/help` sign-in guide.
+- [x] **Privacy page** (`app/privacy/page.jsx`): the email provider receives a driver's
       address when they ask for a reset, and the app keeps only the token's hash for 30
       minutes.
 
@@ -170,7 +186,8 @@ Self-service, for a driver who can't reach an admin. It waits on choosing a send
 
 ## Open questions
 
-1. **Where do reset emails come from?** (stage 3 only)
+1. **Where do reset emails come from?** (stage 3 only) *Decided 2026-10-12: `slics.app`
+   (bought through Vercel, on Vercel DNS) and Resend.*
    - **A domain the app owns,** say `slics.app`, which costs about $10–15 a year, plus
      **Resend** for sending. Resend's changelog says the free tier now allows three
      verified domains. Third-party guides put it at 3,000 emails a month and 100 a day,
@@ -187,6 +204,22 @@ Self-service, for a driver who can't reach an admin. It waits on choosing a send
 2. **How long should an admin's link last?** The plan says 24 hours, long enough to reach
    a driver mid-shift. Shorter is safer if links get forwarded.
 3. **Should the reset page sign the driver in?** The plan says no (see stage 1).
+
+## Setting up Resend (stage 3, once)
+
+1. Make a Resend account and add the domain `slics.app` (Domains → Add Domain).
+2. Add the DNS records Resend lists to Vercel DNS (`vercel dns add slics.app …`, or the
+   domain's page in the Vercel dashboard): the DKIM `TXT` at `resend._domainkey`, and
+   the `MX` and SPF `TXT` at `send` (the bounce address, so they don't touch the root's
+   records). Optionally a DMARC `TXT` at `_dmarc`: `v=DMARC1; p=none;`. Then Verify in
+   Resend.
+3. Leave open and click tracking **off** for the domain (they're off by default). Click
+   tracking would rewrite the reset link.
+4. API Keys → a "Sending access" key limited to `slics.app`. Set it as `RESEND_API_KEY` on
+   the Vercel project (Production, marked Sensitive) and in the local `.env`, then
+   redeploy.
+5. Check with "Verifying" → stage 3 below, using your own password account, then check
+   that the email isn't in spam in Gmail.
 
 ## Verifying
 

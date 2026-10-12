@@ -12,7 +12,10 @@ script with `--dry-run` and a reverse twin, one commit per step.
 ## Deploying
 
 - **Production is `main`.** Vercel builds and deploys every push to `main`
-  (`slics.vercel.app`). There's no staging step, so work on a branch and merge when it's
+  (`www.slics.app` since 2026-10-12; `slics.app` redirects there and `slics.vercel.app`
+  still answers). The domain is registered with Vercel and uses Vercel DNS, which also
+  holds Resend's email records and Google's site verification. Links the app sends out
+  use `SITE_URL` (`constants.js`) in production. There's no staging step, so work on a branch and merge when it's
   ready.
 - **The gate is `npm run build`**, run in a scratch copy of the repo, never while
   `next dev` is running in the same folder (both write `.next/`). `npm run lint` and
@@ -98,6 +101,7 @@ sync, and the push keys (`PUSH-NOTIFICATIONS.md`). All live in Vercel's project 
 | `ON_CALL_SHEET_WEBHOOK_SECRET` | Anyone can trigger sheet re-reads (rate-limited; data still only comes from the sheet) | `openssl rand -hex 32` → Vercel, then the script's `APP_SECRET` property; run `testPing` | Pings get 403 until both match |
 | `CRON_SECRET` | Anyone can trigger the daily re-read | New value on Vercel, redeploy | None |
 | `BMC_WEBHOOK_SECRET` | Anyone can grant or revoke membership | BMC dashboard → new secret → Vercel | Events fail until both match |
+| `RESEND_API_KEY` | Anyone can send email as `@slics.app` (phishing your drivers from your domain) | Resend → API Keys → make a new "Sending access" key for slics.app, set it on Vercel, redeploy, delete the old key | None; resets requested mid-swap may not send |
 | `VAPID_PRIVATE_KEY` (with `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_SUBJECT`) | Anyone with a device's subscription could push to it as the app; the subscriptions themselves stay on the server | `npx web-push generate-vapid-keys`, set **both** keys on Vercel, redeploy (the public key is built into the client) | **Every device's subscription stops working.** Everyone turns notifications off and on again on `/profile`; the toggle notices a subscription made with the old key and replaces it |
 
 On a lost or compromised laptop, rotate all of them. Rotate `AUTH_SECRET` and

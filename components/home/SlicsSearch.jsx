@@ -267,6 +267,14 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
   // only, ungrouped, so a recent SLIC isn't listed twice.
   const showRecent = !typed && recentOptions.length > 0;
 
+  // Typed text that matches nothing: the list says what to try instead of
+  // MUI's "No options", and the live region says so too, since the list
+  // isn't one. Its wording doesn't change with each keystroke, so a screen
+  // reader says it once.
+  const query = inputValue.trim();
+  const noMatch =
+    typed && query !== '' && !options.some((option) => option.searchKey.includes(fold(query)));
+
   return (
     <Box
       sx={{
@@ -306,6 +314,7 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
         openOnFocus
         autoHighlight
         blurOnSelect={touchScreen}
+        noOptionsText={`No SLIC matches “${query}”. Try the SLIC number, code, customer name or town.`}
         options={options}
         value={selected}
         inputValue={inputValue}
@@ -392,7 +401,9 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
         sx={searchSx}
       />
       <Box role='status' aria-live='polite' sx={visuallyHidden}>
-        {announcement}
+        {noMatch
+          ? 'No SLIC matches. Try the SLIC number, code, customer name or town.'
+          : announcement}
       </Box>
     </Box>
   );

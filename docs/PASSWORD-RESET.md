@@ -10,10 +10,10 @@ in production.
 
 ## Status (2026-10-12)
 
-**Stage 1 built 2026-10-11, not deployed.** Before it ships, run `npm run db:indexes`
-for the `password-resets` indexes. The TTL index is what deletes expired links. It was
-tested end to end against the real database on a local production build, with a
-throwaway account that was deleted afterwards.
+**Stage 1 live 2026-10-12.** `npm run db:indexes` has made the `password-resets` indexes;
+the TTL index is what deletes expired links. It was tested end to end against the real
+database on a local production build, with a throwaway account that was deleted
+afterwards.
 
 **Stage 3 live 2026-10-12.** The app's domain is now `www.slics.app`, and emails go
 through Resend from `no-reply@slics.app`. "Setting up Resend" below is done: production

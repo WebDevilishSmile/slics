@@ -14,6 +14,7 @@ import {
   InputAdornment,
   TextField,
   Typography,
+  useMediaQuery,
 } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -109,6 +110,19 @@ const toOption = (slic, shared = false) => {
   };
 };
 
+// Read by screen readers, never shown (the usual clip pattern).
+const visuallyHidden = {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+  padding: 0,
+  margin: '-1px',
+};
+
 const filterAll = createFilterOptions({ stringify: (option) => option.search });
 
 // Bolds the first case-insensitive match of `query` in `text` (#42).
@@ -146,7 +160,9 @@ const donationSnoozed = () => {
 // SLIC matches on number, code, name or city, with the match highlighted.
 // Enter takes the top match. `onSelect(numSlic | null)` shows the pick at
 // once (home/Main.jsx); the URL follows through router.push so Back and
-// sharing still work.
+// sharing still work. On a touch screen a pick closes the keyboard, which
+// would otherwise sit over the card's Navigate button, and every pick is
+// read out by screen readers.
 function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
   const [selected, setSelected] = useState(null);
   const [inputValue, setInputValue] = useState('');
@@ -155,6 +171,11 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
   const [recentNums, setRecentNums] = useState([]);
   // Hidden until storage is read, so a dismissed notice never flashes.
   const [donationHidden, setDonationHidden] = useState(true);
+  // What the polite live region says about the last pick.
+  const [announcement, setAnnouncement] = useState('');
+  // A phone or tablet: blur on pick to drop the on-screen keyboard. With a
+  // mouse and keyboard, focus stays in the search for the next lookup.
+  const touchScreen = useMediaQuery('(pointer: coarse)');
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -194,6 +215,7 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
 
   const handleSlicChange = (event, value) => {
     setSelected(value);
+    setAnnouncement(value ? `Showing ${value.title}, ${value.subtitle}` : '');
     onSelect?.(value?.numSlic ?? null, value?.alpha || null);
     const alpha = value?.alpha ? `&alpha=${encodeURIComponent(value.alpha)}` : '';
     router.push(value ? `${pathname}?slic=${value.numSlic}${alpha}` : pathname);
@@ -255,6 +277,7 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
         fullWidth
         openOnFocus
         autoHighlight
+        blurOnSelect={touchScreen}
         options={options}
         value={selected}
         inputValue={inputValue}
@@ -263,6 +286,7 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
           // MUI also fills the input with a picked label (reason 'reset');
           // only real typing counts as a search.
           setTyped(reason === 'input' && value !== '');
+          if (reason === 'input') setAnnouncement('');
         }}
         onOpen={() => setRecentNums(readRecentLookups().map((r) => r.numSlic))}
         onChange={handleSlicChange}
@@ -319,7 +343,12 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
             placeholder='SLIC, code or name'
             slotProps={{
               ...params.slotProps,
-              htmlInput: { ...params.inputProps, 'aria-label': 'Search SLICs' },
+              htmlInput: {
+                ...params.inputProps,
+                'aria-label': 'Search SLICs',
+                // The phone keyboard's Enter key says Search.
+                enterKeyHint: 'search',
+              },
               input: {
                 ...params.InputProps,
                 startAdornment: (
@@ -334,6 +363,9 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
         slotProps={{ paper: { sx: listSx } }}
         sx={searchSx}
       />
+      <Box role='status' aria-live='polite' sx={visuallyHidden}>
+        {announcement}
+      </Box>
     </Box>
   );
 }

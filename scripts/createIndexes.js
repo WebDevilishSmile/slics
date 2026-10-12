@@ -25,6 +25,9 @@ async function main() {
       // (docs/ON-CALL-SHEET-SYNC.md).
       { collection: 'cover-bid-picks', spec: { weekEnding: 1 }, options: { unique: true } },
       { collection: 'cover-bid-pick-events', spec: { weekEnding: 1, seenAt: -1 } },
+      // Cover jobs hidden from drivers, one per week and job number
+      // (docs/COVER-JOB-HIDING.md); /covers reads a range of weeks.
+      { collection: 'cover-bid-job-hides', spec: { weekEnding: 1, jobKey: 1 }, options: { unique: true } },
       // The sheet's Jobs tab and its change history.
       { collection: 'sheet-jobs', spec: { jobName: 1 }, options: { unique: true } },
       { collection: 'sheet-job-changes', spec: { seenAt: -1 } },

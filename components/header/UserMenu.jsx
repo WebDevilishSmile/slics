@@ -266,16 +266,6 @@ function UserMenu({ user, features, signOutAction }) {
                 icon={<SignpostOutlined />}
                 current={isCurrent('/places')}
               />
-              {canUseCovers && (
-                <NavItem
-                  onClick={handleClose}
-                  href='/covers'
-                  label='Covers'
-                  secondary={coversOpen ? undefined : 'Admin only for now'}
-                  icon={<EventAvailableOutlined />}
-                  current={isCurrent('/covers')}
-                />
-              )}
               {user.bmcMember && (
                 <NavItem
                   onClick={handleClose}
@@ -284,6 +274,16 @@ function UserMenu({ user, features, signOutAction }) {
                   secondary='Member only'
                   icon={<HistoryOutlined />}
                   current={isCurrent('/history')}
+                />
+              )}
+              {canUseCovers && (
+                <NavItem
+                  onClick={handleClose}
+                  href='/covers'
+                  label='Covers'
+                  secondary={coversOpen ? undefined : 'Admin only for now'}
+                  icon={<EventAvailableOutlined />}
+                  current={isCurrent('/covers')}
                 />
               )}
             </List>
@@ -300,20 +300,6 @@ function UserMenu({ user, features, signOutAction }) {
               current={isCurrent(`/profile/${user.id}`)}
             />
           )}
-          {user?.role === 'admin' && (
-            <NavItem
-              onClick={handleClose}
-              href='/admin'
-              label='Admin'
-              secondary={alerts ? alertsText : 'Admin only'}
-              icon={
-                <Badge badgeContent={alerts} color='error' max={99}>
-                  <AdminPanelSettingsOutlined />
-                </Badge>
-              }
-              current={isCurrent('/admin', true)}
-            />
-          )}
           <NavItem
             onClick={handleClose}
             href='/about'
@@ -328,6 +314,20 @@ function UserMenu({ user, features, signOutAction }) {
             icon={<HelpOutline />}
             current={isCurrent('/help')}
           />
+          {user?.role === 'admin' && (
+            <NavItem
+              onClick={handleClose}
+              href='/admin'
+              label='Admin'
+              secondary={alerts ? alertsText : 'Admin only'}
+              icon={
+                <Badge badgeContent={alerts} color='error' max={99}>
+                  <AdminPanelSettingsOutlined />
+                </Badge>
+              }
+              current={isCurrent('/admin', true)}
+            />
+          )}
           <InstallMenuItem />
         </List>
 

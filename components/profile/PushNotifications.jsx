@@ -15,6 +15,7 @@ import { tapHaptic } from '@/lib/haptics';
 
 import IosInstallDialog from '@/components/install/IosInstallDialog';
 import { softInset, softPressSx, softRaisedSmall } from '@/components/utility/soft';
+import PushTypeSwitches from './PushTypeSwitches';
 
 const SENT_FEEDBACK_MS = 2500;
 
@@ -40,10 +41,11 @@ const NOTES = {
 };
 
 // The notifications switch on /profile (docs/PUSH-NOTIFICATIONS.md), for admins
-// only in stage 1: job changes and new SLIC reports on this device. A
-// pressed-in well like the details above it, with "Send a test" once it's on.
-// Confirms in place (the button and a live region), not with a toast.
-export default function PushNotifications() {
+// only for now: this device on or off. A pressed-in well like the details
+// above it. Once it's on, "Send a test" and the kinds to send
+// (PushTypeSwitches, per account; `prefs` from the page, or null to hide
+// them). Confirms in place (the button and a live region), not with a toast.
+export default function PushNotifications({ prefs = null }) {
   const { state, busy, enable, disable } = usePushNotifications();
   const [error, setError] = useState(null);
   const [iosOpen, setIosOpen] = useState(false);
@@ -124,7 +126,7 @@ export default function PushNotifications() {
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography>Notifications</Typography>
           <Typography variant='body2' color='text.secondary'>
-            Job changes and new SLIC reports, on this device.
+            On this device.
           </Typography>
         </Box>
         {state === null ? (
@@ -172,6 +174,8 @@ export default function PushNotifications() {
       )}
 
       {error && <Alert severity='error'>{error}</Alert>}
+
+      {on && prefs && <PushTypeSwitches prefs={prefs} onAnnounce={setAnnouncement} />}
 
       <Box component='span' role='status' aria-live='polite' sx={visuallyHidden}>
         {announcement}

@@ -1,6 +1,6 @@
 import { canUseCovers, requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import {
   createComment,
   getSlicThread,
@@ -8,6 +8,7 @@ import {
   validateSlicComment,
 } from '@/lib/db/comments';
 import { getSlicByNumSlic } from '@/lib/db/slics';
+import { notifyTip } from '@/lib/pushEvents';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // GET ?slic=<numSlic> — the SLIC's tips as a thread, shaped for the signed-in
@@ -104,6 +105,14 @@ export async function POST(request) {
         { error: 'That comment no longer exists.' },
         { status: 404 },
       );
+    // A push to the admins who chose tips, after the response. The route takes
+    // any numSlic string, so only for a SLIC that exists, by its own number.
+    after(async () => {
+      const slic = await getSlicByNumSlic(numSlic).catch(() => null);
+      if (slic) {
+        await notifyTip({ numSlic: slic.numSlic, isReply: Boolean(parentId), except: session.user.id });
+      }
+    });
     return NextResponse.json({ success: true, id: result.id.toString() });
   } catch (error) {
     console.error('Error creating comment:', error);

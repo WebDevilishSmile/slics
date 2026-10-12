@@ -24,12 +24,17 @@ export async function POST() {
     );
   }
 
-  // sendPush never throws: a failure comes back as nothing sent.
-  const result = await sendPush([session.user.id], {
-    title: 'SLICs',
-    body: 'This is a test. Notifications are working.',
-    url: `/profile/${session.user.id}`,
-    tag: 'test',
-  });
+  // sendPush never throws: a failure comes back as nothing sent. A test goes to
+  // every device the caller turned on, whatever kinds they chose.
+  const result = await sendPush(
+    [session.user.id],
+    {
+      title: 'SLICs',
+      body: 'This is a test. Notifications are working.',
+      url: `/profile/${session.user.id}`,
+      tag: 'test',
+    },
+    { source: 'test', by: { id: session.user.id, name: session.user.name ?? null } },
+  );
   return NextResponse.json({ success: true, data: result });
 }

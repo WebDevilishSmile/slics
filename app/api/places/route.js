@@ -1,6 +1,7 @@
 import { requireUser } from '@/lib/authz';
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { createPlace, validatePlace } from '@/lib/db/places';
+import { notifyPlace } from '@/lib/pushEvents';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // Any signed-in driver can add a place (Places, /places). Keyed by user id,
@@ -37,6 +38,8 @@ export async function POST(request) {
 
   try {
     const _id = await createPlace(place, session.user);
+    // A push to the admins who chose Places, after the response.
+    after(() => notifyPlace({ isComment: false, except: session.user.id }));
     return NextResponse.json({ _id }, { status: 201 });
   } catch (error) {
     console.error('Error creating place:', error);

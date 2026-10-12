@@ -60,7 +60,8 @@ function Detail({ icon, label, children }) {
 // delete). `userData.hasPassword` comes from the page, never the hash.
 // `supporterSince`: when they first supported the app on Buy Me a Coffee (an
 // ISO string, or null). Only they see this page, so it needs no opt-in.
-function ProfileData({ userData, commentCount, supporterSince = null }) {
+// `pushPrefs`: an admin's notification kinds (`{ key: boolean }`), or null.
+function ProfileData({ userData, commentCount, supporterSince = null, pushPrefs = null }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
   const [snackSeverity, setSnackSeverity] = useState('error');
@@ -176,7 +177,7 @@ function ProfileData({ userData, commentCount, supporterSince = null }) {
 
       {/* Admins only until stage 2 (docs/PUSH-NOTIFICATIONS.md); the
           subscription routes check it too. */}
-      {userData.role === 'admin' && <PushNotifications />}
+      {userData.role === 'admin' && <PushNotifications prefs={pushPrefs} />}
 
       {!userData.bmcMember && (
         <SoftNotice

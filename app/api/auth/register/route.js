@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { hashPassword, passwordProblem } from '@/lib/password';
 import client from '@/lib/db/client';
+import { notifySignUp } from '@/lib/pushEvents';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
 // Generous on purpose: a whole building of drivers can share one egress IP,
@@ -88,6 +89,10 @@ export async function POST(request) {
       bmcMember: false,
       created_at: new Date(),
     });
+
+    // A push to the admins who chose sign-ups, after the response. No name or
+    // email on a lock screen.
+    after(() => notifySignUp());
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {

@@ -1,8 +1,9 @@
 import { requireAdmin, requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
 import { deleteSlic, getSlicById, updateSlic } from '@/lib/db/slics';
+import { notifySlicEdit } from '@/lib/pushEvents';
 
 // `[id]` is the slic's MongoDB _id for every method here and in ./pdf.
 
@@ -48,7 +49,11 @@ export async function PATCH(request, { params }) {
   try {
     const updates = await request.json();
 
-    await updateSlic(id, updates, session.user);
+    const { numSlic, changed } = await updateSlic(id, updates, session.user);
+    // A push to the other admins who chose SLIC edits, when anything changed.
+    if (changed) {
+      after(() => notifySlicEdit({ numSlic, action: 'updated', except: session.user.id }));
+    }
 
     return NextResponse.json({ message: 'Slic updated successfully' });
   } catch (error) {
@@ -59,7 +64,7 @@ export async function PATCH(request, { params }) {
 
 // DELETE a slic
 export async function DELETE(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { session, denied } = await requireAdmin();
   if (denied) return denied;
 
   const { id } = await params;
@@ -70,6 +75,10 @@ export async function DELETE(request, { params }) {
 
   try {
     const result = await deleteSlic(id);
+    const numSlic = result.deletedSlic?.numSlic;
+    if (numSlic) {
+      after(() => notifySlicEdit({ numSlic, action: 'deleted', except: session.user.id }));
+    }
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error deleting slic:', error);

@@ -1,11 +1,12 @@
 import { requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import {
   addPlaceComment,
   getPlaceThread,
   validatePlaceComment,
 } from '@/lib/db/places';
+import { notifyPlace } from '@/lib/pushEvents';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // Same limit as SLIC comments (app/api/comments/route.js), keyed by user id.
@@ -83,6 +84,9 @@ export async function POST(request) {
         { error: 'The comment you replied to no longer exists.' },
         { status: 404 },
       );
+    // A push to the admins who chose Places, after the response. Never the
+    // comment's text.
+    after(() => notifyPlace({ isComment: true, except: session.user.id }));
     return NextResponse.json({ _id: result.id }, { status: 201 });
   } catch (error) {
     console.error('Error adding place comment:', error);

@@ -1,8 +1,7 @@
 import { after, NextResponse } from 'next/server';
-import { SLIC_REPORT_KINDS } from '@/constants';
 import { requireAdmin, requireUser } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { sendPushToAdmins } from '@/lib/push';
+import { notifySlicReport } from '@/lib/pushEvents';
 import {
   createSlicReport,
   getOpenReportSummary,
@@ -45,21 +44,12 @@ export async function POST(request) {
     if (result.notFound) {
       return NextResponse.json({ error: 'That SLIC no longer exists.' }, { status: 404 });
     }
-    // A push to the admins, after the response (docs/PUSH-NOTIFICATIONS.md).
-    // Only for a new report, and never the driver's note: a lock screen isn't
-    // private.
+    // A push to the admins who chose it, after the response
+    // (docs/PUSH-NOTIFICATIONS.md). Only for a new report, and never the
+    // driver's note: a lock screen isn't private.
     if (!result.updated) {
-      const kind = SLIC_REPORT_KINDS.find((entry) => entry.value === report.kind);
       after(() =>
-        sendPushToAdmins(
-          {
-            title: `New report on SLIC ${report.numSlic}`,
-            body: kind?.label ?? 'Something is wrong with this SLIC.',
-            url: '/admin/reports',
-            tag: `slic-report-${report.numSlic}`,
-          },
-          { except: session.user.id },
-        ),
+        notifySlicReport({ numSlic: report.numSlic, kind: report.kind, except: session.user.id }),
       );
     }
     return NextResponse.json({ success: true });

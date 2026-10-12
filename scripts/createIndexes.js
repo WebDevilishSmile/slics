@@ -83,6 +83,9 @@ async function main() {
       // deletion.
       { collection: 'push-subscriptions', spec: { endpoint: 1 }, options: { unique: true } },
       { collection: 'push-subscriptions', spec: { userId: 1 } },
+      // The push send log (lib/db/pushLog.js): read newest first, and the TTL
+      // deletes a row 90 days after its send (PUSH_LOG_KEEP_DAYS).
+      { collection: 'push-log', spec: { at: 1 }, options: { expireAfterSeconds: 90 * 24 * 60 * 60 } },
       // Password reset links (lib/db/passwordResets.js): looked up by the
       // token's hash; one per account; gone once expired.
       { collection: 'password-resets', spec: { tokenHash: 1 }, options: { unique: true } },

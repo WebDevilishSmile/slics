@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { requireAdmin, requireCovers } from '@/lib/authz';
+import { notifyDriverClaim } from '@/lib/pushEvents';
 import { checkRateLimit } from '@/lib/rateLimit';
 import {
   createDriverClaim,
@@ -47,6 +48,9 @@ export async function POST(request) {
 
   try {
     const result = await createDriverClaim({ ...claim, userId: session.user.id });
+    // A push to the admins who chose it, for a new claim only (an edit of a
+    // pending one is already in the queue). Never the name or the evidence.
+    if (result.created) after(() => notifyDriverClaim({ except: session.user.id }));
     return NextResponse.json({ success: true, data: result.claim });
   } catch (error) {
     console.error('Error saving a driver claim:', error);

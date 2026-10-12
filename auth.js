@@ -6,7 +6,9 @@ import client from './lib/db/client'; // Your MongoDB connection client
 import { ObjectId } from 'mongodb'; // Assuming you use ObjectId
 import { authConfig } from './auth.config'; // Import the base config for providers/callbacks
 import bcrypt from 'bcryptjs';
+import { after } from 'next/server';
 import { checkRateLimit, getClientIp } from './lib/rateLimit';
+import { notifySignUp } from './lib/pushEvents';
 
 // Password sign-in limits (docs/SECURITY.md #9). Per email, so guessing one
 // account's password stalls; per IP with more room, because a building of
@@ -97,6 +99,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
         { upsert: true }
       );
+      // A push to the admins who chose sign-ups (lib/pushEvents.js), after the
+      // response. It never throws; the try only guards against `after` being
+      // called outside a request, so a sign-up can't fail over a notification.
+      try {
+        after(() => notifySignUp());
+      } catch (error) {
+        console.error('Could not schedule the sign-up notification:', error);
+      }
     },
   },
   callbacks: {

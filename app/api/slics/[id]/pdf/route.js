@@ -1,8 +1,9 @@
 import { requireAdmin } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
 import { getSlicById, updateSlic } from '@/lib/db/slics';
+import { notifySlicEdit } from '@/lib/pushEvents';
 import { deleteSlicPdf, putSlicPdf } from '@/lib/blob';
 import { SLIC_PDF_MAX_BYTES } from '@/constants';
 
@@ -66,6 +67,7 @@ export async function POST(request, { params }) {
     const { url } = await putSlicPdf(slic.alphaSlic, file);
 
     await updateSlic(id, { pdfUrl: url }, session.user);
+    after(() => notifySlicEdit({ numSlic: slic.numSlic, action: 'pdf', except: session.user.id }));
 
     // Only after the new URL is saved, so a failed save never orphans the slic
     // pointing at a deleted blob.
@@ -95,8 +97,11 @@ export async function DELETE(request, { params }) {
     const slic = await getSlicById(id);
     const previousUrl = slic.pdfUrl || null;
 
-    await updateSlic(id, { pdfUrl: null }, session.user);
+    const { changed } = await updateSlic(id, { pdfUrl: null }, session.user);
     await deleteSlicPdf(previousUrl);
+    if (changed) {
+      after(() => notifySlicEdit({ numSlic: slic.numSlic, action: 'pdf', except: session.user.id }));
+    }
 
     return NextResponse.json({ message: 'Slic PDF removed successfully' });
   } catch (error) {

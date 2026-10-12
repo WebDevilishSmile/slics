@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import dayjs from 'dayjs';
 
 import CoverCalendar from '@/components/covers/Calendar';
@@ -10,13 +11,19 @@ import SheetRefreshButton from '@/components/admin/coverBidJobs/SheetRefreshButt
 import { useCoverBidPicks } from '@/hooks/useCoverBidPicks';
 import { useCoverLists } from '@/hooks/useCoverLists';
 import { getUpcomingSaturday } from '@/lib/format';
+import { isSaturday } from '@/lib/onCallSheet';
 import { Paper, Typography } from '@mui/material';
 import theme from '@/theme';
 
 function CoverJobs() {
-  // Default to next week — the week being posted — to match the driver-facing
-  // cover bid jobs page.
-  const [selectedDay, setSelectedDay] = useState(() => dayjs().add(1, 'week'));
+  // `?week=YYYY-MM-DD` (a Saturday) opens on that week: a cover notification
+  // links here (lib/pushEvents.js). Otherwise next week, the week being
+  // posted, to match the driver-facing cover bid jobs page.
+  const searchParams = useSearchParams();
+  const [selectedDay, setSelectedDay] = useState(() => {
+    const week = searchParams.get('week');
+    return isSaturday(week) ? dayjs(week) : dayjs().add(1, 'week');
+  });
   const [postedWeeks, setPostedWeeks] = useState(() => new Set());
   const [refreshKey, setRefreshKey] = useState(0);
 

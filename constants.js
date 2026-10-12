@@ -255,3 +255,92 @@ export const SUPPORT_HOURS_ESTIMATE = 200;
 // they dismiss that notice after this moment (`users.iconNoticeDismissedAt`).
 // Move it forward with the next icon change.
 export const ICON_CHANGED_AT = '2026-10-11T00:00:00.000Z';
+
+// The kinds of push notification an admin can choose on /profile
+// (docs/PUSH-NOTIFICATIONS.md, stage 1b), in the order the switches show.
+// Choices are per account (`users.pushPrefs[key]`); a key the account never
+// set means `defaultOn`. `audience: 'superAdmin'` kinds are offered and sent
+// only to super admins. The wording of each notification is in
+// lib/pushEvents.js.
+export const PUSH_TYPES = [
+  {
+    key: 'jobChanges',
+    group: 'On-call sheet',
+    label: 'Job changes',
+    description: 'Changes on the Jobs tab.',
+    audience: 'admin',
+    defaultOn: true,
+  },
+  {
+    key: 'coverJobs',
+    group: 'On-call sheet',
+    label: 'Cover jobs',
+    description: "A week's cover jobs posted or changed.",
+    audience: 'admin',
+    defaultOn: false,
+  },
+  {
+    key: 'coverPicks',
+    group: 'On-call sheet',
+    label: 'Cover picks',
+    description: "Drivers' picks changed on a cover week.",
+    audience: 'admin',
+    defaultOn: false,
+  },
+  {
+    key: 'slicReports',
+    group: 'Drivers',
+    label: 'SLIC reports',
+    description: 'A driver reports something wrong with a SLIC.',
+    audience: 'admin',
+    defaultOn: true,
+  },
+  {
+    key: 'tips',
+    group: 'Drivers',
+    label: 'Tips',
+    description: 'New tips and replies on any SLIC.',
+    audience: 'admin',
+    defaultOn: false,
+  },
+  {
+    key: 'driverClaims',
+    group: 'Drivers',
+    label: 'Driver claims',
+    description: 'A driver asks to be verified for Covers.',
+    audience: 'admin',
+    defaultOn: false,
+  },
+  {
+    key: 'signUps',
+    group: 'Drivers',
+    label: 'Sign-ups',
+    description: 'Someone makes a SLICs account.',
+    audience: 'admin',
+    defaultOn: false,
+  },
+  {
+    key: 'places',
+    group: 'Drivers',
+    label: 'Places',
+    description: 'A new place, or a comment on one.',
+    audience: 'admin',
+    defaultOn: false,
+  },
+  {
+    key: 'slicEdits',
+    group: 'Admins',
+    label: 'SLIC edits',
+    description: 'Another admin adds, edits or deletes a SLIC.',
+    audience: 'admin',
+    defaultOn: false,
+  },
+  {
+    key: 'support',
+    group: 'Supporters',
+    label: 'Buy Me a Coffee',
+    description: 'Coffees, memberships, renewals and cancellations.',
+    audience: 'superAdmin',
+    defaultOn: false,
+  },
+];

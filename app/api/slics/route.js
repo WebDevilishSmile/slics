@@ -1,7 +1,8 @@
 import { requireAdmin, requireUser } from '@/lib/authz';
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
 import { createSlic, getAllSlics } from '@/lib/db/slics';
+import { notifySlicEdit } from '@/lib/pushEvents';
 
 // GET every slic. Any signed-in user may read. Nothing in the app calls this
 // today (pages load slics server-side via getAllSlics), so it exists for
@@ -31,6 +32,10 @@ export async function POST(request) {
 
     const body = await request.json();
     const newSlic = await createSlic(body, session.user);
+    // A push to the other admins who chose SLIC edits, after the response.
+    after(() =>
+      notifySlicEdit({ numSlic: newSlic.numSlic, action: 'created', except: session.user.id }),
+    );
 
     return NextResponse.json(
       {

@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 
 import {
   findUserIdByEmail,
@@ -7,6 +7,7 @@ import {
   recordBmcEvent,
   setBmcMember,
 } from '@/lib/db/bmcEvents';
+import { notifySupport } from '@/lib/pushEvents';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import { secretsMatch } from '@/lib/secretsMatch';
 
@@ -73,6 +74,13 @@ export async function POST(request) {
     if (duplicate) {
       return NextResponse.json({ message: 'Already processed' }, { status: 200 });
     }
+
+    // A push to the super admins who chose it, after the response: the kind
+    // and the amount, never the supporter's name, email or message. Every
+    // type, so a renewal reaches them whatever BMC calls it.
+    after(() =>
+      notifySupport({ type: fields.type, amount: fields.amount, currency: fields.currency }),
+    );
 
     // Logs name the event and the account id, never the supporter's email.
     const member = MEMBERSHIP[fields.type];

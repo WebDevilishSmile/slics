@@ -1,6 +1,6 @@
-import { getSession } from '@/lib/authz';
+import { getSession, isSuperAdmin } from '@/lib/authz';
 import { getCommentsByUserId } from '@/lib/db/comments';
-import { getUserById, userHasPassword } from '@/lib/db/users';
+import { getPushPrefs, getUserById, userHasPassword } from '@/lib/db/users';
 import { getSupporterSince } from '@/lib/db/bmcEvents';
 import { serializeComments, toSelfUser } from '@/lib/serializers';
 
@@ -49,12 +49,17 @@ async function ProfilePage({ params }) {
     );
   }
 
-  const [comments, supporterSince, hasPassword] = await Promise.all([
+  const [comments, supporterSince, hasPassword, pushPrefs] = await Promise.all([
     getCommentsByUserId(id),
     // A failure only hides the line.
     getSupporterSince(userData._id).catch(() => null),
     // Puts "Change password" in Edit profile; only the flag, never the hash.
     userHasPassword(id),
+    // The kinds of notification an admin gets (docs/PUSH-NOTIFICATIONS.md,
+    // stage 1b). A failure only hides the switches.
+    session.user.role === 'admin'
+      ? getPushPrefs(id, { superAdmin: isSuperAdmin(session) }).catch(() => null)
+      : null,
   ]);
 
   return (
@@ -67,6 +72,7 @@ async function ProfilePage({ params }) {
             userData={{ ...toSelfUser(userData), hasPassword }}
             commentCount={comments.length}
             supporterSince={supporterSince}
+            pushPrefs={pushPrefs}
           />
           <ProfileComments comments={serializeComments(comments)} />
         </HydrationGuard>

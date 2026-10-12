@@ -116,10 +116,12 @@ export default function PrivacyPage() {
             <>
               <strong>Notifications.</strong> If you turn on notifications on
               your profile page, we store the address your browser&apos;s push
-              service gives that device, so the app can send it alerts. Each
-              alert says only a SLIC number and what happened. Turning
-              notifications off deletes the address. Today only the
-              administrator can turn them on.
+              service gives that device, so the app can send it alerts, and
+              which kinds of alert you chose, with your account. Each alert
+              says only a SLIC number and what happened. Turning notifications
+              off deletes the address. For 90 days we keep a record of each
+              alert sent: what it said and how many devices took it, not who
+              got it. Today only administrators can turn them on.
             </>,
             <>
               <strong>Messages you send us.</strong> If you email us, we keep

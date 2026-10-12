@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { COVERS_OPEN } from '@/constants';
 import { capitalizeFirstLetter } from '@/lib/format';
 
 import {
@@ -61,13 +60,13 @@ function Detail({ icon, label, children }) {
 // `supporterSince`: when they first supported the app on Buy Me a Coffee (an
 // ISO string, or null). Only they see this page, so it needs no opt-in.
 // `pushPrefs`: an admin's notification kinds (`{ key: boolean }`), or null.
-// `coversOpen`: the super admin's Covers switch, from the session.
+// `canUseCovers`: whether this account has Covers (lib/authz.js), from the page.
 function ProfileData({
   userData,
   commentCount,
   supporterSince = null,
   pushPrefs = null,
-  coversOpen = COVERS_OPEN,
+  canUseCovers = false,
 }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
@@ -153,9 +152,9 @@ function ProfileData({
         <Detail icon={<BadgeOutlined />} label='Role'>
           {capitalizeFirstLetter(userData.role)}
         </Detail>
-        {/* Verification is only offered where Covers is (admins until it
-            rolls out, docs/COVER-BIDDING.md). */}
-        {(userData.driverVerified || coversOpen || userData.role === 'admin') && (
+        {/* Verification is only offered where Covers is (the super admin
+            while it's tested, docs/COVER-BIDDING.md). */}
+        {(userData.driverVerified || canUseCovers) && (
           <Detail icon={<VerifiedOutlined />} label='Driver'>
             {userData.driverVerified ? (
               `Verified · ${userData.driverName}`

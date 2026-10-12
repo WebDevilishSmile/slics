@@ -69,7 +69,7 @@ function cards({ notifications, activity, health, features, admins, support, mem
       title: 'Features',
       lines: features
         ? [
-            `Covers: ${features.coversOpen ? 'every driver' : 'admins only'}`,
+            `Covers: ${features.coversOpen ? 'every driver' : 'super admins only (testing)'}`,
             new Date().toISOString() < features.placesNewUntil
               ? `Places says “New” until ${formatDay(features.placesNewUntil)}`
               : 'Places “New” label ended',

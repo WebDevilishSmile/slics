@@ -95,7 +95,7 @@ export default function FeaturesView({ initial }) {
             <Typography variant='body2' color='text.secondary'>
               {features.coversOpen
                 ? 'On: every signed-in driver has Covers.'
-                : 'Off: only admins have Covers.'}
+                : 'Off: only you (super admins) have Covers while it’s tested.'}
             </Typography>
           </Box>
           <Switch
@@ -115,7 +115,7 @@ export default function FeaturesView({ initial }) {
                     }
                   : {
                       title: 'Close Covers to drivers?',
-                      body: 'Drivers lose /covers and its menu item on their next request. Their lists and claims are kept.',
+                      body: 'Drivers and admins lose /covers and its menu item on their next request; only super admins keep it. Their lists and claims are kept.',
                       action: 'Close Covers',
                       key: 'coversOpen',
                       value: false,

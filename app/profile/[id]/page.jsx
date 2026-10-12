@@ -1,4 +1,4 @@
-import { coversOpen, getSession, isSuperAdmin } from '@/lib/authz';
+import { canUseCovers, getSession, isSuperAdmin } from '@/lib/authz';
 import { getCommentsByUserId } from '@/lib/db/comments';
 import { getPushPrefs, getUserById, userHasPassword } from '@/lib/db/users';
 import { getSupporterSince } from '@/lib/db/bmcEvents';
@@ -73,7 +73,7 @@ async function ProfilePage({ params }) {
             commentCount={comments.length}
             supporterSince={supporterSince}
             pushPrefs={pushPrefs}
-            coversOpen={coversOpen(session)}
+            canUseCovers={canUseCovers(session)}
           />
           <ProfileComments comments={serializeComments(comments)} />
         </HydrationGuard>

@@ -35,14 +35,14 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // (stage 2, covers/CoverBoard.jsx), with BETPA's phone (DISPATCH_NUM_SLIC)
 // to call dispatch at their call-in time.
 //
-// Admin-only until it rolls out (canUseCovers, COVERS_OPEN), checked before
-// anything is read (docs/SECURITY.md #7).
+// Super-admin-only while it's tested, until the Covers switch opens it
+// (canUseCovers), checked before anything is read (docs/SECURITY.md #7).
 export default async function CoversPage() {
   const session = await getSession();
   if (!canUseCovers(session)) {
     return (
       <RedirectMessage
-        heading='Covers is admin-only for now.'
+        heading='Covers is in testing for now.'
         subheading='Redirecting you to the home page…'
         redirect='/home'
       />

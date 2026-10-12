@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512">
+  <!-- The SLICs logo, animated: the destination dot starts in the middle,
+       draws a question mark, erases it, draws the S, erases it, and slides
+       back to the middle, on a 9.3s loop. Generated; the glyphs are the
+       ones in public/slics-question-icon.svg and public/slics-icon.svg.
+
+       Timeline:
+       0.00s–0.40s  rest in the middle
+       0.40s–0.90s  slide to the ? start
+       0.90s–1.90s  draw the ?
+       1.90s–2.15s  hop down to the ? dot
+       2.15s–3.05s  hold the ?
+       3.05s–3.30s  hop back to the ? stem
+       3.30s–4.10s  erase the ?
+       4.10s–4.60s  slide to the S start
+       4.60s–6.00s  draw the S
+       6.00s–6.25s  hop to the S dot
+       6.25s–7.45s  hold the S (the logo)
+       7.45s–7.70s  hop back to the S tail
+       7.70s–8.80s  erase the S
+       8.80s–9.30s  slide back to the middle
+
+       SVG animation (SMIL), so it plays as an <img> too. With reduced motion,
+       or where SVG animation doesn't run, it shows the still logo. -->
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      .animated { display: none; }
+      .still { opacity: 1 !important; }
+    }
+  </style>
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#29b6f6"/>
+      <stop offset="0.55" stop-color="#0884cc"/>
+      <stop offset="1" stop-color="#01579b"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="0.22" cy="0.12" r="0.75">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="100" height="100" fill="url(#brand)"/>
+  <rect width="100" height="100" fill="url(#sheen)"/>
+
+  <!-- The still logo: shown where the animation can't run, hidden as soon as it does. -->
+  <g class="still" fill="#fff">
+    <set attributeName="opacity" to="0" begin="0s"/>
+    <path d="M60.09 25.92A12.8 12.8 0 1 0 50 46.6A14 14 0 1 1 49.51 74.59" fill="none" stroke="#fff" stroke-width="9.5" stroke-linecap="round"/>
+    <circle cx="37.64" cy="67.17" r="6.4"/>
+  </g>
+
+  <g class="animated" opacity="0" fill="none" stroke="#fff" stroke-width="9.5" stroke-linecap="round">
+    <set attributeName="opacity" to="1" begin="0s"/>
+    <path d="M38.74 28.25A13 13 0 1 1 56.5 46.01A13 13 0 0 0 50 57.27" stroke-dasharray="61.2536 61.2536" stroke-dashoffset="61.2536" opacity="0">
+      <animate attributeName="stroke-dashoffset" dur="9.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.043;0.0968;0.2043;0.2312;0.328;0.3548;0.4409;0.4946;0.6452;0.672;0.8011;0.828;0.9462;1" keySplines="0 0 1 1;0.65 0 0.35 1;0.45 0 0.4 1;0.33 0 0.2 1;0 0 1 1;0.33 0 0.2 1;0.45 0 0.4 1;0.65 0 0.35 1;0.45 0 0.4 1;0.33 0 0.2 1;0 0 1 1;0.33 0 0.2 1;0.45 0 0.4 1;0.65 0 0.35 1" values="61.2536;61.2536;61.2536;0;0;0;0;61.2536;61.2536;61.2536;61.2536;61.2536;61.2536;61.2536;61.2536"/>
+      <animate attributeName="opacity" dur="9.3s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.043;0.0968;0.2043;0.2312;0.328;0.3548;0.4409;0.4946;0.6452;0.672;0.8011;0.828;0.9462;1" values="0;0;1;1;1;1;1;0;0;0;0;0;0;0;0"/>
+    </path>
+    <path d="M60.09 25.92A12.8 12.8 0 1 0 50 46.6A14 14 0 1 1 49.51 74.59" stroke-dasharray="96.3746 96.3746" stroke-dashoffset="96.3746" opacity="0">
+      <animate attributeName="stroke-dashoffset" dur="9.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.043;0.0968;0.2043;0.2312;0.328;0.3548;0.4409;0.4946;0.6452;0.672;0.8011;0.828;0.9462;1" keySplines="0 0 1 1;0.65 0 0.35 1;0.45 0 0.4 1;0.33 0 0.2 1;0 0 1 1;0.33 0 0.2 1;0.45 0 0.4 1;0.65 0 0.35 1;0.45 0 0.4 1;0.33 0 0.2 1;0 0 1 1;0.33 0 0.2 1;0.45 0 0.4 1;0.65 0 0.35 1" values="96.3746;96.3746;96.3746;96.3746;96.3746;96.3746;96.3746;96.3746;96.3746;0;0;0;0;96.3746;96.3746"/>
+      <animate attributeName="opacity" dur="9.3s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.043;0.0968;0.2043;0.2312;0.328;0.3548;0.4409;0.4946;0.6452;0.672;0.8011;0.828;0.9462;1" values="0;0;0;0;0;0;0;0;1;1;1;1;1;0;0"/>
+    </path>
+    <circle r="6.4" fill="#fff" stroke="none">
+      <animateMotion dur="9.3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.043;0.0968;0.2043;0.2312;0.328;0.3548;0.4409;0.4946;0.6452;0.672;0.8011;0.828;0.9462;1" keyPoints="0;0;0.0547;0.1914;0.2279;0.2279;0.2643;0.401;0.449;0.6641;0.6953;0.6953;0.7266;0.9417;1" keySplines="0 0 1 1;0.65 0 0.35 1;0.45 0 0.4 1;0.33 0 0.2 1;0 0 1 1;0.33 0 0.2 1;0.45 0 0.4 1;0.65 0 0.35 1;0.45 0 0.4 1;0.33 0 0.2 1;0 0 1 1;0.33 0 0.2 1;0.45 0 0.4 1;0.65 0 0.35 1" path="M50 50L38.74 28.25A13 13 0 1 1 56.5 46.01A13 13 0 0 0 50 57.27L50 73.6L50 57.27A13 13 0 0 1 56.5 46.01A13 13 0 1 0 38.74 28.25L60.09 25.92A12.8 12.8 0 1 0 50 46.6A14 14 0 1 1 49.51 74.59L37.64 67.17L49.51 74.59A14 14 0 1 0 50 46.6A12.8 12.8 0 1 1 60.09 25.92L50 50"/>
+    </circle>
+  </g>
+</svg>

@@ -57,7 +57,7 @@ export default async function CoversPage() {
 
   const verified = isVerifiedDriver(session);
 
-  // The same window as /cover-bid-jobs, snapped to a Saturday so the oldest
+  // COVER_BID_MONTHS_BACK of weeks, snapped to a Saturday so the oldest
   // week loads whole.
   const cutoffWeek = getUpcomingSaturday(
     dayjs().subtract(COVER_BID_MONTHS_BACK, 'month'),

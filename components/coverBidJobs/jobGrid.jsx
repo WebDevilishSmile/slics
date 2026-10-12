@@ -7,7 +7,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 
-// DataGrid pieces for the desktop table on /cover-bid-jobs
+// DataGrid pieces for the desktop job table on /covers
 // (coverBidJobs/CoverBidJobsTable.jsx), UI-SUGGESTIONS.md #28. They were
 // shared with /bids until that page was deleted on 2026-10-10.
 
@@ -49,7 +49,7 @@ export const filterBarSx = [
 ];
 
 // A picked job (isPicked, lib/coverBidJobRow.js), grayed out but still
-// clickable, on /cover-bid-jobs and /admin/cover/jobs. The day chips lose
+// clickable, on /covers and /admin/cover/jobs. The day chips lose
 // their colors too, so the whole job reads as taken.
 export const pickedSx = { opacity: 0.55, filter: 'grayscale(1)' };
 

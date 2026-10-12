@@ -13,7 +13,7 @@ import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 import { HiddenLabel, hiddenSx, PickedLabel, pickedSx } from './jobGrid';
 
-// The phone card for one bid job on /cover-bid-jobs
+// The phone card for one bid job on /covers and the admin cover pages
 // (coverBidJobs/CoverBidJobCard.jsx maps a job into these props;
 // UI-SUGGESTIONS.md #28).
 // - `days`: the job's working days in display order, `[{ day: 'mon', value }]`

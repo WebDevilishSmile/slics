@@ -142,7 +142,7 @@ export default function CoverCalendar({
 
   return (
     // An inset well rather than a raised card: it sits inside the raised
-    // filter bar on /cover-bid-jobs, and one emboss level is the rule.
+    // filter bar on /covers, and one emboss level is the rule.
     <Accordion
       expanded={calendarOpen}
       onChange={() => setCalendarOpen(!calendarOpen)}

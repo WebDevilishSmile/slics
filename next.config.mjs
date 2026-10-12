@@ -86,6 +86,9 @@ const nextConfig = {
     return [
       { source: '/all', destination: '/hubs', permanent: true },
       { source: '/whip-it-in-and-out', destination: '/places', permanent: false },
+      // The admins' read-only job list, folded into /covers on 2026-10-12.
+      // Temporary while Covers is tested.
+      { source: '/cover-bid-jobs', destination: '/covers', permanent: false },
     ];
   },
   // Security headers on every response (docs/SECURITY.md #12).

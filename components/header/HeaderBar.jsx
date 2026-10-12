@@ -33,7 +33,6 @@ const PAGE_TITLES = [
   ['/privacy', 'Privacy Policy'],
   ['/terms', 'Terms of Service'],
   ['/covers', 'Covers'],
-  ['/cover-bid-jobs', 'Cover Bids'],
   ['/places', 'Places'],
   ['/admin/slics', 'SLICs'],
   ['/admin/new', 'New SLIC'],

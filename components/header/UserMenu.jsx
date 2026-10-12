@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   AdminPanelSettingsOutlined,
-  AssignmentOutlined,
   BadgeOutlined,
   CheckroomOutlined,
   CloseOutlined,
@@ -285,19 +284,6 @@ function UserMenu({ user, features, signOutAction }) {
                   secondary='Member only'
                   icon={<HistoryOutlined />}
                   current={isCurrent('/history')}
-                />
-              )}
-              {/* Admin-only while it's tried out in production. Cover Bids
-                  opens to members together with the check in
-                  app/cover-bid-jobs/page.jsx. */}
-              {user.role === 'admin' && (
-                <NavItem
-                  onClick={handleClose}
-                  href='/cover-bid-jobs'
-                  label='Cover Bids'
-                  secondary='Admin only for now'
-                  icon={<AssignmentOutlined />}
-                  current={isCurrent('/cover-bid-jobs')}
                 />
               )}
             </List>

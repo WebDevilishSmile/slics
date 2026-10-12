@@ -82,7 +82,7 @@ function CoverJobs() {
           px: { xs: 1, md: 3 },
         }}
       >
-        {/* The week picker is the panel's first control, as on /cover-bid-jobs. */}
+        {/* The week picker is the panel's first control, as on /covers. */}
         <CoverCalendar
           value={selectedDay}
           setValue={setSelectedDay}

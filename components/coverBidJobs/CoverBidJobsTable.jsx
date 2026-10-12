@@ -74,8 +74,10 @@ function listColumn(list) {
   };
 }
 
-// The cover jobs for a week, with a calendar to pick the week: /covers (inside
-// covers/CoverBoard.jsx) and /cover-bid-jobs.
+// The cover jobs for a week, with a calendar to pick the week, on /covers
+// (inside covers/CoverBoard.jsx). It also labels a job an admin hid
+// (`hidden`), from when admins had their own copy at /cover-bid-jobs (folded
+// into /covers on 2026-10-12); /covers never sends one.
 // - `selectedDay` / `onSelectDay`: optional, to hold the chosen day outside
 //   (CoverBoard keeps the driver's list on the same week); otherwise the
 //   table keeps its own.

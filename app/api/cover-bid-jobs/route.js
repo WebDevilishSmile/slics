@@ -4,6 +4,7 @@ import {
   getCoverBidJobsByWeek,
   serializeCoverBidJobs,
 } from '@/lib/db/coverBidJobs';
+import { getWeekHides } from '@/lib/db/coverBidJobHides';
 import { requireAdmin } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
@@ -23,10 +24,15 @@ export async function GET(request) {
       );
     }
 
-    const jobs = await getCoverBidJobsByWeek(weekEnding);
+    const [jobs, hidden] = await Promise.all([
+      getCoverBidJobsByWeek(weekEnding),
+      getWeekHides(weekEnding),
+    ]);
 
+    // `hidden`: the week's jobs hidden from drivers, by job number
+    // (docs/COVER-JOB-HIDING.md).
     return NextResponse.json(
-      { success: true, data: serializeCoverBidJobs(jobs) },
+      { success: true, data: serializeCoverBidJobs(jobs), hidden },
       { status: 200 }
     );
   } catch (error) {

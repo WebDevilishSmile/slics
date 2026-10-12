@@ -29,32 +29,22 @@ const socialLinks = [
   },
 ];
 
-// One compact column (UI-SUGGESTIONS.md #37): social icons, the legal links,
-// the contact email and the copyright. Everything inherits text.light from
-// FooterContainer. The second logo is gone; the header carries the brand.
+// Footer links are 44px tall, like the header's controls.
+const linkSx = { minHeight: '2.75rem' };
+
+// One compact column (UI-SUGGESTIONS.md #37): the legal links first (the
+// landing page's trust copy points at them), the contact email, then who made
+// the app with their social links, and the copyright. Everything inherits
+// text.light from FooterContainer. The second logo is gone; the header
+// carries the brand.
 function Footer() {
   return (
     <FooterContainer>
-      <Box>
-        {socialLinks.map(({ name, icon: Icon, url }) => (
-          <IconButton
-            key={name}
-            color='inherit'
-            href={url}
-            target='_blank'
-            rel='noopener'
-            aria-label={name}
-          >
-            <Icon sx={{ fontSize: '2rem' }} />
-          </IconButton>
-        ))}
-      </Box>
-
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <Button variant='text' color='inherit' href='/privacy'>
+        <Button variant='text' color='inherit' href='/privacy' sx={linkSx}>
           Privacy Policy
         </Button>
-        <Button variant='text' color='inherit' href='/terms'>
+        <Button variant='text' color='inherit' href='/terms' sx={linkSx}>
           Terms of Service
         </Button>
       </Box>
@@ -68,9 +58,28 @@ function Footer() {
           color='inherit'
           href={`mailto:${CONTACT_EMAIL}`}
           startIcon={<EmailOutlined />}
+          sx={linkSx}
         >
           {CONTACT_EMAIL}
         </Button>
+      </Box>
+
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography variant='caption' component='p'>
+          Made by Tiago Davila
+        </Typography>
+        {socialLinks.map(({ name, icon: Icon, url }) => (
+          <IconButton
+            key={name}
+            color='inherit'
+            href={url}
+            target='_blank'
+            rel='noopener'
+            aria-label={`Tiago Davila on ${name}`}
+          >
+            <Icon sx={{ fontSize: '2rem' }} />
+          </IconButton>
+        ))}
       </Box>
 
       <Typography variant='caption'>

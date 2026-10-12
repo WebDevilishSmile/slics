@@ -3,35 +3,25 @@ import {
   DirectionsOutlined,
   FlagOutlined,
   ForumOutlined,
-  PhoneOutlined,
   PictureAsPdfOutlined,
-  SearchOutlined,
 } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
-import { softInset, softRaised } from '@/components/utility/soft';
+import { softInset } from '@/components/utility/soft';
 
-// What a signed-in driver can do. Admin-only and not-yet-launched features
-// (covers, places) stay off this public page until they open to everyone.
+// What the example card in the Hero doesn't already show. Admin-only and
+// not-yet-launched features (covers, places) stay off this public page until
+// they open to everyone. A plain list on the page surface, not a card each:
+// the Hero's card is the raised moment, and the two sections below are cards.
 const FEATURES = [
   {
-    icon: SearchOutlined,
-    title: 'Look up any SLIC',
-    text: 'Type the code and get the destination’s name and address, hubs and customers alike.',
+    icon: ForumOutlined,
+    title: 'Tips from drivers',
+    text: 'Read and share what drivers know about a location: where to park, which door, what to watch for. A tip can pin the exact spot on the map.',
   },
   {
     icon: DirectionsOutlined,
-    title: 'Navigate in one tap',
-    text: 'Open the address in Google Maps, or Apple Maps on an iPhone. No typing it in.',
-  },
-  {
-    icon: PhoneOutlined,
-    title: 'Call ahead',
-    text: 'Tap the phone number to call the building.',
-  },
-  {
-    icon: ForumOutlined,
-    title: 'Driver tips',
-    text: 'Read and share what drivers know about a location: where to park, which door, what to watch for. A tip can pin the exact spot on the map.',
+    title: 'Your maps app',
+    text: 'Navigate opens Google Maps, or Apple Maps on an iPhone. No typing the address in.',
   },
   {
     icon: PictureAsPdfOutlined,
@@ -50,9 +40,14 @@ export default function Features() {
     <Box
       component='section'
       aria-labelledby='features-heading'
-      sx={{ width: '100%', maxWidth: theme.layout.width.wide, mt: 6 }}
+      sx={{ width: '100%', maxWidth: theme.layout.width.wide, mt: 8 }}
     >
-      <Typography variant='sectionHeading' id='features-heading'>
+      <Typography
+        variant='h5'
+        component='h2'
+        id='features-heading'
+        sx={{ textAlign: 'center', mb: 3 }}
+      >
         What you can do
       </Typography>
       <Box
@@ -61,28 +56,17 @@ export default function Features() {
           listStyle: 'none',
           p: 0,
           m: 0,
-          mt: 3,
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
-          gap: 3,
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+          columnGap: 4,
+          rowGap: 3,
         }}
       >
-        {FEATURES.map(({ icon: Icon, title, text }, i) => (
+        {FEATURES.map(({ icon: Icon, title, text }) => (
           <Box
             component='li'
             key={title}
-            className='enter'
-            style={{ '--i': i }}
-            sx={[
-              softRaised(theme),
-              {
-                display: 'flex',
-                gap: 2,
-                alignItems: 'flex-start',
-                p: 3,
-                borderRadius: 4,
-              },
-            ]}
+            sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}
           >
             <Box
               sx={[
@@ -102,7 +86,11 @@ export default function Features() {
               <Icon aria-hidden />
             </Box>
             <Box>
-              <Typography variant='h6' component='h3'>
+              <Typography
+                variant='subtitle1'
+                component='h3'
+                sx={{ fontWeight: 700 }}
+              >
                 {title}
               </Typography>
               <Typography variant='body2' color='text.secondary'>

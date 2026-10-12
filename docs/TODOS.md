@@ -51,6 +51,11 @@ The landing page should introduce SLICs and its purpose for UPS Feeder drivers. 
 
 - [x] landing page on `/` and sign-in on `/sign-in` (2026-10-12, `components/landing/`). It
       leaves out cover bidding until covers open to every driver (`COVERS_OPEN`)
+- [x] design critique pass (2026-10-12, `.impeccable/critique/`): the hero shows a made-up
+      SLIC card (`landing/ProductPreview.jsx`), what Google sign-in shares sits under the
+      button, "Why you sign in" comes before the steps, and the page ends on the button
+      again. One h2 style, `sectionHeading` centered, the footer leads with the legal
+      links, one `<main>` in `app/layout.jsx`, and a link preview (`app/opengraph-image.jsx`)
 
 ### User
 

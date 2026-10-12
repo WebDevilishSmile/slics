@@ -419,6 +419,10 @@ let theme = createTheme({
             ...theme.typography.h2,
             textAlign: 'center',
             maxWidth: theme.layout.width.prose,
+            // Centers the capped box itself, not only its text: in a parent
+            // wider than prose it sat at the left edge, off the page's axis.
+            marginLeft: 'auto',
+            marginRight: 'auto',
             paddingLeft: theme.spacing(1),
             paddingRight: theme.spacing(1),
           }),

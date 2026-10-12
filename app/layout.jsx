@@ -1,9 +1,10 @@
-import { InitColorSchemeScript } from '@mui/material';
+import { Box, InitColorSchemeScript } from '@mui/material';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Montserrat } from 'next/font/google';
 import './globals.css';
 
+import { SITE_URL } from '@/constants';
 import { statusBarColors } from '@/theme';
 
 import Footer from '@/components/footer/Footer';
@@ -20,11 +21,23 @@ const font = Montserrat({
   display: 'swap',
 });
 
+const description =
+  'SLICs is a lookup app for UPS Feeder drivers: enter a SLIC code to get the destination’s address, map link, phone number and driver tips.';
+
 export const metadata = {
+  // Absolute URLs for the link preview; its picture is app/opengraph-image.jsx.
+  metadataBase: new URL(SITE_URL),
   title: 'SLICs',
-  description:
-    'SLICs is a lookup app for UPS Feeder drivers: enter a SLIC code to get the destination’s address, map link, phone number and driver tips.',
+  description,
   applicationName: 'SLICs',
+  openGraph: {
+    type: 'website',
+    siteName: 'SLICs',
+    title: 'SLICs: the Feeder binder, on your phone',
+    description,
+    url: '/',
+  },
+  twitter: { card: 'summary_large_image' },
   // Installed on an iPhone the app runs without Safari chrome; 'default'
   // keeps content below the status bar so no safe-area CSS is needed.
   appleWebApp: { capable: true, title: 'SLICs', statusBarStyle: 'default' },
@@ -57,7 +70,22 @@ export default function RootLayout({ children }) {
           <script dangerouslySetInnerHTML={{ __html: captureInstallPrompt }} />
           <Container>
             <Header />
-            {children}
+            {/* The one <main> landmark, here rather than in PageContainer:
+                admin/layout.jsx and Suspense fallbacks nest PageContainers.
+                It repeats Container's centered column so pages lay out as
+                before. */}
+            <Box
+              component='main'
+              sx={{
+                flex: '1 0 auto',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              {children}
+            </Box>
             <Footer />
           </Container>
         </body>

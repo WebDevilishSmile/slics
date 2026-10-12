@@ -38,7 +38,8 @@ export default auth((req) => {
   // before sign-in, and the Google OAuth consent screen needs a reachable
   // privacy policy URL. /help too: its sign-in guide is for drivers who aren't
   // signed in yet. And /reset-password, opened from a reset link by someone
-  // who can't sign in (docs/PASSWORD-RESET.md).
+  // who can't sign in (docs/PASSWORD-RESET.md). /opengraph-image is the link
+  // preview picture (app/opengraph-image.jsx), fetched by crawlers.
   const publicPaths = [
     '/',
     '/sign-in',
@@ -46,6 +47,7 @@ export default auth((req) => {
     '/terms',
     '/help',
     '/reset-password',
+    '/opengraph-image',
   ];
 
   // 1. Handle unauthenticated users

@@ -20,8 +20,16 @@ through Resend from `no-reply@slics.app`. "Setting up Resend" below is done: pro
 has `RESEND_API_KEY`, and a test from the live form was delivered. That test went to a
 Google account, so an emailed reset link to a password account is still unchecked.
 The emails share the app's soft look (`lib/passwordResetEmails.js`). Without
-`RESEND_API_KEY` the form still answers normally but sends nothing. Stage 2 is still
-open.
+`RESEND_API_KEY` the form still answers normally but sends nothing.
+
+**Stage 2 live 2026-10-12.** Tested on the local dev server against the real database
+with a throwaway account, deleted afterwards. The test covered:
+- a wrong, an unchanged and a too-short password;
+- the change itself, which ended the old session;
+- only the new password signing in;
+- the sixth try in 15 minutes getting a 429.
+
+The dialog's "Password changed" step had no visual check.
 
 ---
 
@@ -134,16 +142,26 @@ makes a link on `/admin/users` and texts it to them.
 For a driver who's signed in and wants a new password, or whose password leaked
 somewhere else.
 
-- [ ] **"Change password"** in `profile/EditProfileDialog.jsx`, for password accounts
+- [x] **"Change password"** in `profile/EditProfileDialog.jsx`, for password accounts
       only: current password, new, confirm.
-- [ ] **`POST /api/users/me/password`** `{ currentPassword, newPassword }`: checks the
+  - Built: a "Password" well above "Delete account" opens
+    `profile/ChangePasswordDialog.jsx`, stacked like the delete dialog. The page passes
+    `hasPassword` (`userHasPassword` in `lib/db/users.js`), never the hash. A hidden
+    `username` field tells password managers which account it's for.
+- [x] **`POST /api/users/me/password`** `{ currentPassword, newPassword }`: checks the
       current one with bcrypt, then the same update as a reset. It's rate-limited per
       user, and a wrong current password counts toward the sign-in limit for that email
       (`login:<email>`), so this can't be used to guess passwords.
-- [ ] Afterwards every device is signed out, this one included, because the session
-      version changed. The dialog says so before they confirm, then sends them to `/`.
+  - Built: `changePassword` in `lib/db/passwordResets.js`. It also refuses a new password
+    equal to the old one, and deletes any reset link still out for the account. Every
+    try counts toward `login:<email>`, as at sign-in, plus 5 per driver per 15 minutes.
+- [x] Afterwards every device is signed out, this one included, because the session
+      version changed. The dialog says so before they confirm.
       (Keeping this device signed in would mean re-issuing its token, which isn't worth
       the code.)
+  - Built: instead of sending them to `/`, the dialog signs this device out in place
+    (`signOut({ redirect: false })`) and stays open on "Password changed" with a Sign in
+    button.
 
 ## Stage 3: "Forgot password" by email
 
@@ -247,5 +265,6 @@ Self-service, for a driver who can't reach an admin. It waits on choosing a send
 - Stage 1 adds a collection, two fields and new routes. Reverting the commits removes the
   feature, and `sessionVersion` simply stops being checked. No data has to be undone,
   and the tokens expire on their own.
+- Stage 2 adds a route and a dialog and no data. Reverting the commit removes them.
 - Stage 3: unset the email env vars and the form still answers normally but sends nothing
   (`lib/email.js` fails open). Revert the commit to bring back stage 1's note.

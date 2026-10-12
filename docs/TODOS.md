@@ -45,6 +45,10 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 ## Features
 
+### Delete Account
+
+The app should provide a way for users to delete their accounts.
+
 ### Landing page
 
 The landing page should introduce SLICs and its purpose for UPS Feeder drivers. It should provide a clear call-to-action for signing in and accessing the app's features. Consider including an overview of the app's capabilities, such as looking up SLIC codes, viewing driver tips, and accessing cover bidding for verified users. The design should be clean and informative, guiding new users to understand the app's value and how to get started. The sign in process should be in the /sign-in page.
@@ -115,12 +119,14 @@ password, and none has a verified email, so it started without email.
 - [x] stage 1: an admin makes a one-time reset link on `/admin/users` and texts it; the
       `/reset-password` page; a reset signs the account out everywhere (`sessionVersion`)
       (2026-10-11)
-- [ ] ship stage 1: `npm run db:indexes`, then make a link for a test account on the live
-      site and check it on a phone
-- [ ] stage 2: change password on `/profile`
+- [x] ship stage 1: `npm run db:indexes` (2026-10-12)
+- [ ] make a link for a test account on the live site and check it on a phone
+- [x] stage 2: change password on `/profile`, in Edit profile; a change signs every device
+      out, and its tries count toward the sign-in limit (2026-10-12)
 - [x] stage 3: reset by email, from `no-reply@slics.app` through Resend (2026-10-12)
-- [ ] ship stage 3: "Setting up Resend" in `PASSWORD-RESET.md` (account, DNS on Vercel,
-      `RESEND_API_KEY`), then send yourself a reset on the live site
+- [x] ship stage 3: "Setting up Resend" in `PASSWORD-RESET.md` (2026-10-12)
+- [ ] send a reset to a password account on the live site and open the link on a phone
+      (the 2026-10-12 test went to a Google account)
 
 ### My Daily Log
 

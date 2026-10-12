@@ -28,7 +28,7 @@ Everything written about SLICs that isn't code. The product overview is the root
 | [`COVER-BIDDING.md`](COVER-BIDDING.md) | Driver verification, the drivers' Covers page, then preference lists and picking in the app. Stage 1 built, admin-only until rollout |
 | [`COVER-JOB-HIDING.md`](COVER-JOB-HIDING.md) | An admin hides a cover job from drivers' `/covers`, and the hide survives sheet refreshes. Planned 2026-10-11 |
 | [`BMC-SUPPORT.md`](BMC-SUPPORT.md) | Buy Me a Coffee: recording support, the admin Supporters page, thank-yous, impact numbers. Stage 1 built |
-| [`PASSWORD-RESET.md`](PASSWORD-RESET.md) | Forgot password: an admin-made reset link, then change password on the profile, then reset by email. Stages 1 and 3 live |
+| [`PASSWORD-RESET.md`](PASSWORD-RESET.md) | Forgot password: an admin-made reset link, then change password on the profile, then reset by email. Stages 1–3 live |
 | [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts, then tip replies, then "your pick is up". Stage 1 live (admins) |
 | [`tutorials/VIDEO-SCRIPTS.md`](tutorials/VIDEO-SCRIPTS.md) | Shot-by-shot scripts for the driver tutorial videos, one per `/help` guide (`components/help/guides.jsx`) |
 

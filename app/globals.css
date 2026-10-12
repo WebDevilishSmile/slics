@@ -276,13 +276,14 @@ a:active > .help-pin {
   transition: scale 80ms var(--ease-out);
 }
 
-/* /help: the guide (help/HelpGuide.jsx) a link jumps to is ringed in brand
-   blue as the scroll lands, then the ring fades, so the reader sees where
-   they arrived.
+/* /help, /privacy and /terms: the guide (help/HelpGuide.jsx) or section
+   (legal/LegalSection.jsx) a link jumps to is ringed in brand blue as the
+   scroll lands, then the ring fades, so the reader sees where they arrived.
    One authored moment instead of an entry on every guide. With reduced
    motion the ring simply stays while it's the target, so the cue doesn't
    depend on the animation. */
-.help-guide:target {
+.help-guide:target,
+.legal-section:target {
   animation: help-arrive 1600ms var(--ease-out);
 }
 @keyframes help-arrive {
@@ -297,7 +298,8 @@ a:active > .help-pin {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .help-guide:target {
+  .help-guide:target,
+  .legal-section:target {
     outline: 2px solid var(--mui-palette-primary-main);
     outline-offset: clamp(6px, 2vw, 12px);
   }

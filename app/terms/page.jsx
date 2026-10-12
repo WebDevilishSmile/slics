@@ -1,34 +1,69 @@
-import { Link, Typography } from '@mui/material';
-import PageContainer from '@/components/layout/PageContainer';
+import { Link } from '@mui/material';
+import { CONTACT_EMAIL } from '@/constants';
+import LegalContact from '@/components/legal/LegalContact';
 import LegalList from '@/components/legal/LegalList';
+import LegalPage from '@/components/legal/LegalPage';
 import LegalSection from '@/components/legal/LegalSection';
+import LegalSummary from '@/components/legal/LegalSummary';
 import LegalText from '@/components/legal/LegalText';
 
 export const metadata = {
   title: 'Terms of Service · SLICs',
 };
 
-const CONTACT_EMAIL = 'WebDevilishSmile@gmail.com';
-const EFFECTIVE_DATE = 'October 7, 2026';
+const EFFECTIVE_DATE = 'October 12, 2026';
+
+// Every section's title, in page order, for the summary card's "On this
+// page" list. Keep it in step with the LegalSection titles below.
+const SECTIONS = [
+  'Agreeing to these terms',
+  'Not affiliated with UPS',
+  'Who can use the app',
+  'Safety first',
+  'Accuracy of the information',
+  'Tips and things you post',
+  'Acceptable use',
+  'Supporter memberships',
+  'Third-party services',
+  'Our content',
+  'Availability and changes',
+  'Ending your account',
+  'No warranties',
+  'Limitation of liability',
+  'Governing law',
+  'Changes to these terms',
+  'Contact',
+];
 
 export default function TermsPage() {
   return (
-    <PageContainer>
-
-      <Typography variant='sectionHeading'>Terms of Service</Typography>
-      <Typography variant='body2' sx={{ mb: 4, textAlign: 'center' }}>
-        Effective {EFFECTIVE_DATE}
-      </Typography>
-
-      <LegalSection title='The short version'>
-        <LegalText>
-          SLICs is a free tool built by a driver for drivers. Use it to look
-          things up, share what you know in the comments, and be decent to each
-          other. Don&apos;t use it while the truck is moving, don&apos;t treat it
-          as a replacement for dispatch, and don&apos;t copy the data out of it.
-          The rest of this page spells that out.
-        </LegalText>
-      </LegalSection>
+    <LegalPage title='Terms of Service' effective={EFFECTIVE_DATE} sections={SECTIONS}>
+      <LegalSummary
+        sections={SECTIONS}
+        items={[
+          <>
+            SLICs is a free tool built by a driver for drivers. Look things
+            up, share what you know in the tips, and be decent to each other.{' '}
+            <Link href='#tips-and-things-you-post'>Posting rules</Link>
+          </>,
+          <>
+            Don&apos;t use it while the truck is moving.{' '}
+            <Link href='#safety-first'>Safety first</Link>
+          </>,
+          <>
+            Don&apos;t treat it as a replacement for dispatch.{' '}
+            <Link href='#accuracy-of-the-information'>Accuracy</Link>
+          </>,
+          <>
+            Don&apos;t copy the data out of it.{' '}
+            <Link href='#acceptable-use'>Acceptable use</Link>
+          </>,
+          <>
+            You can delete your account yourself, any time, from your profile.{' '}
+            <Link href='#ending-your-account'>Ending your account</Link>
+          </>,
+        ]}
+      />
 
       <LegalSection title='Agreeing to these terms'>
         <LegalText>
@@ -75,7 +110,7 @@ export default function TermsPage() {
       <LegalSection title='Accuracy of the information'>
         <LegalText>
           Addresses, phone numbers, directions PDFs and everything else in the
-          app are maintained by hand, and the comments are written by other
+          app are maintained by hand, and the tips are written by other
           drivers. Locations change, entrances move, phone numbers get
           reassigned, and people make mistakes. We do our best to keep things
           current, but we can&apos;t promise that anything in the app is
@@ -88,10 +123,10 @@ export default function TermsPage() {
         </LegalText>
       </LegalSection>
 
-      <LegalSection title='Comments and things you post'>
+      <LegalSection title='Tips and things you post'>
         <LegalText>
-          Comments are what turn the app from an address list into shared
-          knowledge, and we want you to use them. The same goes for the places
+          Driver tips are what turn the app from an address list into shared
+          knowledge, and we want you to post them. The same goes for the places
           you add on the Places page and the comments and replies you leave
           there. A few ground rules for all of it:
         </LegalText>
@@ -108,17 +143,17 @@ export default function TermsPage() {
           You own what you write. By posting it, you give us permission to
           store it, show it to other signed-in drivers alongside your name and
           profile picture, and keep showing it until you delete it or your
-          account is removed. You can delete your own comments at any time: SLIC
-          comments from your profile page, and comments on a place from the
+          account is removed. You can delete your own posts at any time: a tip
+          from the SLIC or your profile page, and a comment on a place from the
           place itself. You can edit or delete a place you added; once other
           drivers have commented on it, only we can remove it, so ask us.
         </LegalText>
         <LegalText>
-          We can edit or remove any comment or place, and suspend or close any account,
-          that we believe breaks these rules or makes the app worse for other
-          drivers. We aren&apos;t obliged to review every comment before it
-          appears, so don&apos;t assume that a comment is accurate just because
-          it&apos;s there.
+          We can edit or remove any tip, comment or place, and suspend or close
+          any account, that we believe breaks these rules or makes the app
+          worse for other drivers. We aren&apos;t obliged to review every post
+          before it appears, so don&apos;t assume that a tip is accurate just
+          because it&apos;s there.
         </LegalText>
       </LegalSection>
 
@@ -126,7 +161,7 @@ export default function TermsPage() {
         <LegalText>When using the app, you agree not to:</LegalText>
         <LegalList
           items={[
-            'Copy, scrape, export or redistribute the address database, PDFs, places or comments, in bulk or otherwise, outside the app.',
+            'Copy, scrape, export or redistribute the address database, PDFs, places, tips or comments, in bulk or otherwise, outside the app.',
             'Use bots, scripts or automated tools to access the app, or try to get around rate limits, sign-in or other protections.',
             'Try to access accounts, admin pages or data that aren’t yours.',
             'Upload anything that contains viruses or malicious code, or do anything that disrupts the app for other people.',
@@ -153,8 +188,9 @@ export default function TermsPage() {
 
       <LegalSection title='Third-party services'>
         <LegalText>
-          The app links out to Google Maps, your phone&apos;s dialer and Buy Me
-          a Coffee, and uses Google for sign-in. Those services belong to other
+          The app links out to Google Maps or Apple Maps, your phone&apos;s
+          dialer and Buy Me a Coffee, uses Google for sign-in, and sends
+          password reset emails through Resend. Those services belong to other
           companies and have their own terms and privacy policies. We
           aren&apos;t responsible for how they work or for what happens once
           you leave the app.
@@ -184,21 +220,28 @@ export default function TermsPage() {
       <LegalSection title='Ending your account'>
         <LegalText>
           You can stop using the app at any time. To delete your account, open
-          your profile page, tap the settings icon next to your name and choose
+          your profile page, tap the gear next to your name and choose
           &quot;Delete account&quot;. You&apos;ll be asked to confirm, because
-          deletion is immediate and can&apos;t be undone. It removes your
-          profile, including your name, email address, phone number and
-          password; all of your comments; your votes on other drivers&apos;
-          comments; your lookup history; and, if you signed in with Google, the
-          link between your Google account and the app. You&apos;ll be signed
-          out on every device. If other drivers replied to one of your comments
-          on a place, it is replaced with a &quot;Comment deleted&quot; note so
-          their replies still make sense. Places you added stay in the app,
-          without your name, because other drivers rely on them.
+          deletion is immediate and can&apos;t be undone. It removes:
+        </LegalText>
+        <LegalList
+          items={[
+            'Your profile: your name, email address, phone number and password.',
+            'All of your tips and comments, and your votes on other drivers’ posts.',
+            'Your lookup history.',
+            'If you signed in with Google, the link between your Google account and the app.',
+          ]}
+        />
+        <LegalText>
+          You&apos;ll be signed out on every device. If other drivers replied
+          to one of your tips or comments, it is replaced with a &quot;Comment
+          deleted&quot; note so their replies still make sense. Places you
+          added stay in the app, without your name, because other drivers rely
+          on them.
         </LegalText>
         <LegalText>
           You&apos;re welcome to create a new account later, but your old
-          comments and history won&apos;t come back. If you have trouble
+          tips and history won&apos;t come back. If you have trouble
           deleting your account, email{' '}
           <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link> and
           we&apos;ll take care of it.
@@ -207,7 +250,7 @@ export default function TermsPage() {
           We may suspend or delete an account that breaks these terms or that
           has been used to harm the app or other drivers. If that happens,
           you&apos;ll lose access to anything tied to the account, including
-          your comments and lookup history.
+          your tips and lookup history.
         </LegalText>
       </LegalSection>
 
@@ -227,7 +270,7 @@ export default function TermsPage() {
           or damage that comes from using, or not being able to use, the app.
           That includes a wrong or outdated address, a missed or late delivery,
           a fine, a ticket, disciplinary action, an accident, lost data, or
-          anything a comment says. If we are found liable despite this, our
+          anything a tip or comment says. If we are found liable despite this, our
           total liability to you is limited to the amount you paid to support
           the app in the twelve months before the claim, or zero if you
           haven&apos;t paid anything.
@@ -253,12 +296,10 @@ export default function TermsPage() {
         </LegalText>
       </LegalSection>
 
-      <LegalSection title='Contact'>
-        <LegalText>
-          Questions about these terms go to{' '}
-          <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.
-        </LegalText>
-      </LegalSection>
-    </PageContainer>
+      <LegalContact>
+        Questions about these terms go to{' '}
+        <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.
+      </LegalContact>
+    </LegalPage>
   );
 }

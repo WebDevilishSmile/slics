@@ -1,24 +1,63 @@
-import { Link, Typography } from '@mui/material';
-import PageContainer from '@/components/layout/PageContainer';
+import { Link } from '@mui/material';
+import { CONTACT_EMAIL } from '@/constants';
+import LegalContact from '@/components/legal/LegalContact';
 import LegalList from '@/components/legal/LegalList';
+import LegalPage from '@/components/legal/LegalPage';
 import LegalSection from '@/components/legal/LegalSection';
+import LegalSummary from '@/components/legal/LegalSummary';
 import LegalText from '@/components/legal/LegalText';
 
 export const metadata = {
   title: 'Privacy Policy · SLICs',
 };
 
-const CONTACT_EMAIL = 'WebDevilishSmile@gmail.com';
 const EFFECTIVE_DATE = 'October 12, 2026';
+
+// Every section's title, in page order, for the summary card's "On this
+// page" list. Keep it in step with the LegalSection titles below.
+const SECTIONS = [
+  'Who we are',
+  'Information you give us',
+  'Information collected automatically',
+  'Cookies and local storage',
+  'How we use your information',
+  'Who can see your information',
+  'The driver roster',
+  'Covers',
+  'How long we keep information',
+  'Your choices',
+  'Security',
+  'Children',
+  'Changes to this policy',
+  'Contact',
+];
 
 export default function PrivacyPage() {
   return (
-    <PageContainer>
-
-      <Typography variant='sectionHeading'>Privacy Policy</Typography>
-      <Typography variant='body2' sx={{ mb: 4, textAlign: 'center' }}>
-        Effective {EFFECTIVE_DATE}
-      </Typography>
+    <LegalPage title='Privacy Policy' effective={EFFECTIVE_DATE} sections={SECTIONS}>
+      <LegalSummary
+        sections={SECTIONS}
+        items={[
+          <>
+            We keep your name and email, the tips and places you post, and
+            which SLICs you look up.{' '}
+            <Link href='#information-you-give-us'>What we keep</Link>
+          </>,
+          <>
+            Other drivers see your name, picture and posts, never your email,
+            phone number or lookup history.{' '}
+            <Link href='#who-can-see-your-information'>Who sees what</Link>
+          </>,
+          <>
+            We never sell your information, and the app shows no ads.{' '}
+            <Link href='#how-we-use-your-information'>How we use it</Link>
+          </>,
+          <>
+            You can delete your account yourself, any time, from your profile.{' '}
+            <Link href='#your-choices'>Your choices</Link>
+          </>,
+        ]}
+      />
 
       <LegalSection title='Who we are'>
         <LegalText>
@@ -52,11 +91,12 @@ export default function PrivacyPage() {
               number and change your display name on your profile page.
             </>,
             <>
-              <strong>Comments and places.</strong> Anything you post on a SLIC
-              is stored with your account and the SLIC it belongs to. Places you
-              add on the Places page, including any parking pin you give
-              them, and your comments and replies there are stored with your
-              account too. So are any votes you cast on other drivers&apos;
+              <strong>Driver tips and places.</strong> The tips and replies you
+              post on a SLIC, including any pin you drop on one, are stored
+              with your account and the SLIC they belong to. Places you add on
+              the Places page, including any parking pin you give them, and
+              your comments and replies there are stored with your account
+              too. So are any votes you cast on other drivers&apos; tips and
               comments.
             </>,
             <>
@@ -72,6 +112,14 @@ export default function PrivacyPage() {
               administrator decides your request. Nothing is sent to your UPS
               email. Once you&apos;re verified, your account is linked to your
               name as the on-call sheet writes it.
+            </>,
+            <>
+              <strong>Notifications.</strong> If you turn on notifications on
+              your profile page, we store the address your browser&apos;s push
+              service gives that device, so the app can send it alerts. Each
+              alert says only a SLIC number and what happened. Turning
+              notifications off deletes the address. Today only the
+              administrator can turn them on.
             </>,
             <>
               <strong>Messages you send us.</strong> If you email us, we keep
@@ -107,12 +155,13 @@ export default function PrivacyPage() {
             </>,
             <>
               <strong>Your location, only when you ask.</strong> &quot;Near
-              me&quot; and &quot;Use my current location&quot; ask your browser
-              for your location only when you tap them. Near me uses it inside
-              your browser to sort places by distance; it is never sent to or
-              stored by the app. &quot;Use my current location&quot; fills in a
-              place&apos;s parking pin, which is saved with that place only if
-              you save the place.
+              me&quot;, &quot;Use my location&quot; and &quot;Use my current
+              location&quot; ask your browser for your location only when you
+              tap them. Near me uses it inside your browser to sort places by
+              distance; it is never sent to or stored by the app. &quot;Use my
+              location&quot; fills in a tip&apos;s pin, and &quot;Use my
+              current location&quot; a place&apos;s parking pin. Either is
+              saved only if you post the tip or save the place.
             </>,
           ]}
         />
@@ -123,21 +172,31 @@ export default function PrivacyPage() {
           The app uses a small number of cookies, all of which are needed for it
           to work. A session cookie keeps you signed in for up to 30 days, and a
           couple of short-lived security cookies protect the sign-in process.
-          Your light or dark theme choice, whether you&apos;ve dismissed the
-          &quot;add to home screen&quot; reminder, and the last SLIC you looked
-          up (so the app can remind you to leave a comment about it) are saved
-          in your browser&apos;s local storage. We don&apos;t use advertising cookies or
-          any third-party tracking cookies.
+          We don&apos;t use advertising cookies or any third-party tracking
+          cookies.
         </LegalText>
+        <LegalText>
+          A few conveniences are saved only in your browser&apos;s local
+          storage, on that device. The app never sends them anywhere:
+        </LegalText>
+        <LegalList
+          items={[
+            'Your light or dark mode choice, and which maps app opens your directions.',
+            'The SLICs you looked up most recently, for the Recent list on the search.',
+            'Which tips you have already seen on each SLIC, so new ones can be marked.',
+            'The last SLIC you looked up, so the app can ask you to leave a tip about it, and whether you asked it not to for a while.',
+            'Whether you dismissed the “add to home screen” reminder or the supporter note, and which app tip was shown last.',
+          ]}
+        />
       </LegalSection>
 
       <LegalSection title='How we use your information'>
         <LegalList
           items={[
-            'To run the app: signing you in, showing SLIC details, saving your comments and profile, and building your lookup history.',
-            'To show who wrote a comment, so drivers know where a tip came from.',
+            'To run the app: signing you in, showing SLIC details, saving your tips, places and profile, and building your lookup history.',
+            'To show who wrote a tip or comment, so drivers know where it came from.',
             'To unlock supporter features, such as the History page, when you support the app on Buy Me a Coffee.',
-            'To prevent abuse, such as scripted sign-ups or comment spam.',
+            'To prevent abuse, such as scripted sign-ups or spam.',
             'To understand how the app is used and make it better.',
             'To answer your questions when you contact us.',
           ]}
@@ -152,18 +211,19 @@ export default function PrivacyPage() {
           items={[
             <>
               <strong>Other drivers.</strong> Any signed-in user can see your
-              display name, profile picture, comments, the places you add and
-              votes, and a check mark next to your name if you&apos;re a
-              verified driver. Your email, phone number, lookup history and
+              display name, profile picture, tips, comments and the places you
+              add, and a check mark next to your name if you&apos;re a verified
+              driver. They see how many votes a tip or comment has, never who
+              voted. Your email, phone number, lookup history and
               verification details are never shown to other drivers.
             </>,
             <>
               <strong>The administrator.</strong> As the person running the app,
               Tiago Davila can see account details (including your email and
-              phone number if you added one), comments, reports about SLICs, lookup
-              history and driver verification requests in order to keep the app
-              working, moderate comments and verify drivers, and the support you
-              send through Buy Me a Coffee.
+              phone number if you added one), tips and comments, reports about
+              SLICs, lookup history and driver verification requests in order
+              to keep the app working, moderate what drivers post and verify
+              drivers, and the support you send through Buy Me a Coffee.
             </>,
             <>
               <strong>Service providers.</strong> The app runs on Vercel
@@ -171,8 +231,9 @@ export default function PrivacyPage() {
               stores its data in MongoDB Atlas. Google handles Google sign-in.
               Resend sends our emails, which today are only password reset
               emails: it receives your email address and the message when you
-              ask for one.
-              Buy Me a Coffee processes supporter payments. For each one it tells
+              ask for one. If notifications are on, alerts reach your device
+              through your browser maker&apos;s push service (Google, Apple or
+              Mozilla). Buy Me a Coffee processes supporter payments. For each one it tells
               us your email address and name, the amount, any message you leave
               and when a membership starts or ends. We never receive your
               payment details.
@@ -216,10 +277,10 @@ export default function PrivacyPage() {
         <LegalList
           items={[
             'Account and profile details are kept for as long as your account exists.',
-            'Comments are kept until you delete them, or until your account is deleted. Delete SLIC comments from your profile page and comments on a place from the place itself.',
+            'Tips and comments are kept until you delete them, or until your account is deleted. Delete a tip from the SLIC or your profile page, and a comment on a place from the place itself.',
             'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
             'Reports about a SLIC are kept after they are dealt with, as a record of what was fixed. If you delete your account they stay, no longer linked to you.',
-            'Lookup history is kept while your account exists, and the History page shows all of it. Removing an entry hides it from that page; it is still counted in your lookup total, and it is deleted with your account.',
+            'Lookup history is kept while your account exists. Removing an entry from the History page hides it there, but it still counts toward your lookup total. All of it is deleted with your account.',
             'A driver verification request keeps your employee ID and seniority date only until the administrator decides it; then they are deleted. The request is deleted with your account. Your verification lasts until your account is deleted or the administrator removes it.',
             "A record of each support or membership change you make through Buy Me a Coffee is kept as the app's record of support. If you delete your account it stays, no longer linked to you; ask us to remove it.",
             'Rate-limit records for signing up, signing in and password resets, which can hold the email address you typed, expire automatically within about an hour.',
@@ -232,16 +293,26 @@ export default function PrivacyPage() {
       <LegalSection title='Your choices'>
         <LegalList
           items={[
-            'Edit your display name and phone number, or delete any of your SLIC comments, from your profile page.',
+            <>
+              <strong>Delete your account yourself.</strong> On your profile
+              page, tap the gear next to your name, then &quot;Delete
+              account&quot;. It&apos;s immediate, signs you out on every
+              device, and deletes your account, tips, comments, votes and
+              lookup history, as{' '}
+              <Link href='/terms#ending-your-account'>the terms</Link> spell
+              out.
+            </>,
+            'Edit your display name and phone number, or delete any of your tips, from your profile page.',
             'Edit or delete your comments on places, and the places you added, on the Places page.',
+            'Turn notifications off on your profile page to delete that device’s push address.',
             'Sign out from any device to end that session.',
             'If you signed in with Google, you can also remove SLICs from the apps connected to your Google account.',
             <>
               Email{' '}
               <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link> to
-              ask for a copy of the information we hold about you, or to have
-              your account and everything tied to it deleted, including your
-              comments and lookup history.
+              ask for a copy of the information we hold about you, to have an
+              entry on the driver roster corrected or removed, or if deleting
+              your account doesn&apos;t work.
             </>,
           ]}
         />
@@ -275,12 +346,10 @@ export default function PrivacyPage() {
         </LegalText>
       </LegalSection>
 
-      <LegalSection title='Contact'>
-        <LegalText>
-          Questions, corrections and deletion requests all go to{' '}
-          <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.
-        </LegalText>
-      </LegalSection>
-    </PageContainer>
+      <LegalContact>
+        Questions, corrections and deletion requests all go to{' '}
+        <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.
+      </LegalContact>
+    </LegalPage>
   );
 }

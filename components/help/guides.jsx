@@ -5,6 +5,7 @@ import {
   DirectionsOutlined,
   ForumOutlined,
   InstallMobileOutlined,
+  LockResetOutlined,
   LoginOutlined,
   MenuOutlined,
   OutlinedFlag,
@@ -15,12 +16,15 @@ import {
   SignpostOutlined,
   ThumbUpOutlined,
 } from '@mui/icons-material';
-import { Box } from '@mui/material';
+import { Box, Link } from '@mui/material';
 
-// The words on a button or label, as the driver sees them on screen.
+import { CONTACT_EMAIL } from '@/constants';
+
+// The words on a button or label, as the driver sees them on screen. Bold in
+// the text color, not brand blue: blue on this page means a link you can tap.
 function Tap({ children }) {
   return (
-    <Box component='strong' sx={{ color: 'primary.main', fontWeight: 700 }}>
+    <Box component='strong' sx={{ color: 'text.primary', fontWeight: 700 }}>
       {children}
     </Box>
   );
@@ -30,6 +34,8 @@ function Tap({ children }) {
 // `id` is its anchor (/help#navigate), so a link to one guide can be texted
 // to a driver. Steps are short, one action each, and name buttons exactly as
 // the app labels them, so keep them in step with the UI when a label changes.
+// `screen` names the picture the guide shows, with its control lit: a control
+// on the example SLIC card (ExampleSlicCard.jsx) or one of HelpScreens.jsx.
 export const HELP_SECTIONS = [
   {
     id: 'getting-started',
@@ -41,7 +47,7 @@ export const HELP_SECTIONS = [
         icon: LoginOutlined,
         steps: [
           <>
-            Open the SLICs link on your phone and tap{' '}
+            On your phone, go to <strong>www.slics.app</strong> and tap{' '}
             <Tap>Sign in or sign up</Tap>.
           </>,
           <>
@@ -67,17 +73,49 @@ export const HELP_SECTIONS = [
             Most phones stay signed in, so you may not need to.
           </>,
           <>
-            Forgot your password? Tap <Tap>Forgot your password?</Tap> under{' '}
-            <Tap>Sign in</Tap>, type your email and tap{' '}
-            <Tap>Send reset link</Tap>. Open the link in the email, type a new
-            password twice and tap <Tap>Change password</Tap>. Then sign in
-            with the new one. The link works once, for 30 minutes. No email?
-            Ask the SLICs admin for a reset link instead.
+            Can&apos;t get in? See{' '}
+            <Link href='#forgot-password'>Forgot your password</Link>.
+          </>,
+        ],
+      },
+      {
+        id: 'forgot-password',
+        title: 'Forgot your password',
+        icon: LockResetOutlined,
+        intro: 'You can set a new one yourself from the sign-in page.',
+        steps: [
+          <>
+            On the sign-in page, tap <Tap>Forgot your password?</Tap> under{' '}
+            <Tap>Sign in</Tap>.
           </>,
           <>
-            Want a new password? On your profile, tap the gear, then{' '}
-            <Tap>Change password</Tap>. It signs you out everywhere, so sign
-            in again with the new one.
+            Type the email you signed up with and tap{' '}
+            <Tap>Send reset link</Tap>.
+          </>,
+          <>
+            Open the email from SLICs and tap the link in it. It works once,
+            for 30 minutes.
+          </>,
+          <>
+            Type a new password twice and tap <Tap>Change password</Tap>.
+          </>,
+          <>Sign in with your new password.</>,
+        ],
+        notes: [
+          <>
+            Signed up with Google? You don&apos;t have a SLICs password. Tap{' '}
+            <Tap>Continue with Google</Tap> instead.
+          </>,
+          <>
+            No email after a few minutes? Check your spam folder. Still
+            nothing? Email{' '}
+            <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link> and
+            the admin will send you a reset link.
+          </>,
+          <>
+            Want a new password while you&apos;re signed in? On your profile,
+            tap the gear, then <Tap>Change password</Tap>. It signs you out
+            everywhere, so sign in again with the new one.
           </>,
         ],
       },
@@ -113,6 +151,7 @@ export const HELP_SECTIONS = [
       },
       {
         id: 'menu',
+        screen: 'menu',
         title: 'Find your way around',
         icon: MenuOutlined,
         steps: [
@@ -143,6 +182,7 @@ export const HELP_SECTIONS = [
     guides: [
       {
         id: 'search',
+        screen: 'search',
         title: 'Look up a SLIC',
         icon: SearchOutlined,
         steps: [
@@ -168,6 +208,7 @@ export const HELP_SECTIONS = [
       },
       {
         id: 'navigate',
+        screen: 'navigate',
         title: 'Get directions',
         icon: DirectionsOutlined,
         steps: [
@@ -193,6 +234,7 @@ export const HELP_SECTIONS = [
       },
       {
         id: 'call',
+        screen: 'call',
         title: 'Call the building',
         icon: PhoneOutlined,
         steps: [
@@ -211,6 +253,7 @@ export const HELP_SECTIONS = [
       },
       {
         id: 'copy',
+        screen: 'copy',
         title: 'Copy the address',
         icon: ContentCopy,
         steps: [
@@ -227,6 +270,7 @@ export const HELP_SECTIONS = [
       },
       {
         id: 'pdf',
+        screen: 'pdf',
         title: 'Open the directions PDF',
         icon: PictureAsPdfOutlined,
         steps: [
@@ -247,6 +291,7 @@ export const HELP_SECTIONS = [
     guides: [
       {
         id: 'read-tips',
+        screen: 'tips',
         title: 'Read driver tips',
         icon: ChatBubbleOutline,
         intro: 'Tips are notes from other drivers who have been there.',
@@ -271,6 +316,7 @@ export const HELP_SECTIONS = [
       },
       {
         id: 'post-tip',
+        screen: 'post-tip',
         title: 'Post a tip',
         icon: RateReviewOutlined,
         intro: 'Know where the real entrance is, or who to call? Help the next driver.',
@@ -319,6 +365,7 @@ export const HELP_SECTIONS = [
       },
       {
         id: 'report',
+        screen: 'report',
         title: 'Report a wrong address or phone number',
         icon: OutlinedFlag,
         intro: 'Reports go to the admin, who fixes the SLIC for everyone.',

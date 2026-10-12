@@ -265,3 +265,40 @@ a {
     scale: 0.9;
   }
 }
+
+/* /help's pins (help/PinnedControl.jsx): pressed in while held, then a
+   spring back on release, the same --ease-spring overshoot as .pop. */
+.help-pin {
+  transition: scale 400ms var(--ease-spring);
+}
+a:active > .help-pin {
+  scale: 0.8;
+  transition: scale 80ms var(--ease-out);
+}
+
+/* /help: the guide (help/HelpGuide.jsx) a link jumps to is ringed in brand
+   blue as the scroll lands, then the ring fades, so the reader sees where
+   they arrived.
+   One authored moment instead of an entry on every guide. With reduced
+   motion the ring simply stays while it's the target, so the cue doesn't
+   depend on the animation. */
+.help-guide:target {
+  animation: help-arrive 1600ms var(--ease-out);
+}
+@keyframes help-arrive {
+  0%,
+  35% {
+    outline: 2px solid var(--mui-palette-primary-main);
+    outline-offset: clamp(6px, 2vw, 12px);
+  }
+  100% {
+    outline: 2px solid transparent;
+    outline-offset: clamp(6px, 2vw, 12px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .help-guide:target {
+    outline: 2px solid var(--mui-palette-primary-main);
+    outline-offset: clamp(6px, 2vw, 12px);
+  }
+}

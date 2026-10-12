@@ -6,6 +6,8 @@ import { getUserById } from '@/lib/db/users';
 import { getMyDriverClaim } from '@/lib/db/driverClaims';
 import { getCoverBidJobsSince } from '@/lib/db/coverBidJobs';
 import { getCoverBidPicksSince } from '@/lib/db/coverBidPicks';
+import { getHiddenJobKeys } from '@/lib/db/coverBidJobHides';
+import { isJobHidden } from '@/lib/coverBidJobRow';
 import { myCoverSpot } from '@/lib/coverDrivers';
 import { getUpcomingSaturday } from '@/lib/format';
 import { todayInNewYork } from '@/lib/onCallSheet';
@@ -21,8 +23,10 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // The drivers' cover page (docs/COVER-BIDDING.md, stage 1). A verified driver
 // sees their own place on the week's list (cover number, call-in time) and
 // the week's jobs, picked ones grayed out with no name: toDriverCoverJob
-// drops who took each one, so it never reaches the page. Anyone else gets
-// the claim that verifies them. Admins also see the jobs while unverified.
+// drops who took each one, so it never reaches the page. Jobs an admin hid
+// (docs/COVER-JOB-HIDING.md) are left out here on the server, for admins too,
+// so they're never sent. Anyone else gets the claim that verifies them.
+// Admins also see the jobs while unverified.
 //
 // Admin-only until it rolls out (canUseCovers, COVERS_OPEN), checked before
 // anything is read (docs/SECURITY.md #7).
@@ -48,12 +52,16 @@ export default async function CoversPage() {
   ).format('YYYY-MM-DD');
   const thisWeek = getUpcomingSaturday(dayjs(todayInNewYork())).format('YYYY-MM-DD');
 
-  const [user, claim, jobs, pickWeeks] = await Promise.all([
+  const [user, claim, jobs, hiddenKeys, pickWeeks] = await Promise.all([
     verified ? getUserById(session.user.id) : null,
     verified ? null : getMyDriverClaim(session.user.id),
     showJobs ? getCoverBidJobsSince(cutoffWeek) : [],
+    showJobs ? getHiddenJobKeys(cutoffWeek) : new Set(),
     verified ? getCoverBidPicksSince(thisWeek) : [],
   ]);
+  const driverJobs = jobs
+    .filter((job) => !isJobHidden(job, hiddenKeys))
+    .map(toDriverCoverJob);
 
   const weeks = pickWeeks.map((week) => ({
     weekEnding: week.weekEnding,
@@ -77,7 +85,7 @@ export default async function CoversPage() {
       </HydrationGuard>
 
       {showJobs && (
-        <CoverBidJobsTable jobs={jobs.map(toDriverCoverJob)} minWeekEnding={cutoffWeek} />
+        <CoverBidJobsTable jobs={driverJobs} minWeekEnding={cutoffWeek} />
       )}
     </PageContainer>
   );

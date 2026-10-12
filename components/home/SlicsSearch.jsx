@@ -10,7 +10,6 @@ import {
   Autocomplete,
   Box,
   Button,
-  createFilterOptions,
   InputAdornment,
   TextField,
   Typography,
@@ -84,6 +83,9 @@ const listSx = (theme) => ({
 // (e.g. 1075), and Highlight's toLowerCase on a number crashed the page as
 // soon as the list opened.
 const text = (value) => (value === null || value === undefined ? '' : String(value));
+// Lowercase without accents, for matching ("Montréal" finds "montreal").
+const fold = (value) =>
+  value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 // `shared` is true when another entry in the list has the same SLIC number.
 // The All Hubs list has three such pairs (0269 is PRORI and YARMA, 7752 BAYTX
@@ -93,6 +95,9 @@ const text = (value) => (value === null || value === undefined ? '' : String(val
 const toOption = (slic, shared = false) => {
   const isCustomer = slic.type === 'customer';
   const numSlic = text(slic.numSlic);
+  const search = [labelFor(slic), text(slic.name), text(slic.address?.city)]
+    .filter(Boolean)
+    .join(' ');
   return {
     id: text(slic._id) || numSlic,
     alpha: shared ? text(slic.alphaSlic) : '',
@@ -103,9 +108,10 @@ const toOption = (slic, shared = false) => {
       .filter(Boolean)
       .join(' · '),
     label: labelFor(slic),
-    search: [labelFor(slic), text(slic.name), text(slic.address?.city)]
-      .filter(Boolean)
-      .join(' '),
+    search,
+    // Folded once here, not on every keystroke (rankMatches).
+    searchKey: fold(search),
+    codeKey: fold(text(slic.alphaSlic)),
     group: 'All SLICs',
   };
 };
@@ -123,7 +129,29 @@ const visuallyHidden = {
   margin: '-1px',
 };
 
-const filterAll = createFilterOptions({ stringify: (option) => option.search });
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// The typed query's matches, best first, since Enter (autoHighlight) takes
+// the first (the 2026-10-12 /home critique): the exact SLIC number or code,
+// then a number or code that starts with it, then a name or town word that
+// starts with it, then anything that contains it. What matches is unchanged
+// from the plain "contains, ignoring case and accents" it replaced; only the
+// order is new. Ties keep the list's order (sort is stable).
+function rankMatches(options, query) {
+  const q = fold(query.trim());
+  if (!q) return options;
+  const atWordStart = new RegExp(`(?:^|[^a-z0-9])${escapeRegExp(q)}`);
+  const rankOf = (option) => {
+    if (option.numSlic === q || option.codeKey === q) return 0;
+    if (option.numSlic.startsWith(q) || option.codeKey.startsWith(q)) return 1;
+    return atWordStart.test(option.searchKey) ? 2 : 3;
+  };
+  return options
+    .filter((option) => option.searchKey.includes(q))
+    .map((option) => ({ option, rank: rankOf(option) }))
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ option }) => option);
+}
 
 // Bolds the first case-insensitive match of `query` in `text` (#42).
 function Highlight({ text: value, query }) {
@@ -292,7 +320,7 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
         onChange={handleSlicChange}
         filterOptions={(all, state) =>
           state.inputValue
-            ? filterAll(all, state)
+            ? rankMatches(all, state.inputValue)
             : showRecent
               ? [...recentOptions, ...all]
               : all

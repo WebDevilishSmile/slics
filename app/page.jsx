@@ -7,6 +7,7 @@ import { Link, Typography } from '@mui/material';
 import Membership from '@/components/signIn/Membership';
 import SignIn from '@/components/signIn/SignIn';
 import RedirectMember from '@/components/signIn/RedirectMember';
+import { AppIntro, AppTagline } from '@/components/signIn/AppIntro';
 
 // `callbackUrl` is where a signed-out driver was headed (middleware.js). Sign-in
 // comes back here with it, so a non-member still sees the membership prompt;
@@ -41,10 +42,12 @@ export default async function Main({ searchParams }) {
       <Typography variant='h1'>SLICs</Typography>
       {!isLoggedIn && !isMember && (
         <>
+          <AppTagline />
           <SignIn callbackUrl={callbackUrl} />
           <Typography variant='body2' sx={{ mt: 3, textAlign: 'center' }}>
             New to SLICs? <Link href='/help#sign-in'>See how to sign in</Link>
           </Typography>
+          <AppIntro />
         </>
       )}
       {isLoggedIn && !isMember && <Membership next={next} />}

@@ -22,7 +22,8 @@ const font = Montserrat({
 
 export const metadata = {
   title: 'SLICs',
-  description: 'Created By Tiago Davila',
+  description:
+    'SLICs is a lookup app for UPS Feeder drivers: enter a SLIC code to get the destination’s address, map link, phone number and driver tips.',
   applicationName: 'SLICs',
   // Installed on an iPhone the app runs without Safari chrome; 'default'
   // keeps content below the status bar so no safe-area CSS is needed.

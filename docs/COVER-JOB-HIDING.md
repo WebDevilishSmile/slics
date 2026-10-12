@@ -5,15 +5,19 @@ Plan and checklist for letting an admin hide a cover job from drivers: one tap o
 every sheet refresh until the admin shows it again. One stage; check items off as they
 ship.
 
-**How to use this:** answer "Open questions" first; the rest assumes the defaults written
-there. Run `npm run build` (in a scratch copy, never while `next dev` runs) before
-shipping. The app is used daily in production.
+**How to use this:** the open questions were answered 2026-10-12, all with the defaults
+("Decisions" below). Run `npm run build` (in a scratch copy, never while `next dev` runs)
+before shipping. The app is used daily in production.
 
-## Status (2026-10-11)
+## Status (2026-10-12)
 
-**Planned 2026-10-11, not started.** Waiting on the admin's answers to "Open questions".
-`/covers` is still admin-only (`COVERS_OPEN` in `constants.js`), so no driver sees
-anything here until Covers rolls out (`COVER-BIDDING.md`).
+**Built 2026-10-12; waiting on deploy, `npm run db:indexes` and the live checks in
+"Verifying".** `/covers` is still admin-only (`COVERS_OPEN` in `constants.js`), so no
+driver sees anything here until Covers rolls out (`COVER-BIDDING.md`).
+
+**Rolling back:** revert the commits. Nothing else changed shape; the
+`cover-bid-job-hides` collection is new and inert without the code, so it can stay or be
+dropped.
 
 ---
 
@@ -49,66 +53,82 @@ admin needs a switch in the app itself that the sheet can't override.
 
 ## The job's key
 
-`jobKey = jobNumber.trim().toUpperCase()`, the same normalization the review dialog
-already uses to flag repeated job numbers (`lib/coverBidJobRow.js`). Put it in one
-exported helper there and use it everywhere below.
+`jobKey(jobNumber)` = `jobNumber.trim().toUpperCase()` (`lib/coverBidJobRow.js`), the
+same normalization the review dialog uses to flag repeated job numbers and the job dialog
+uses to list who picked a job. `hideKey(weekEnding, jobNumber)` and `isJobHidden(job,
+hiddenKeys)` sit beside it.
 
-- A job with **no job number** has no key, so it can't be hidden (default 2 below).
+- A job with **no job number** has no key, so it can't be hidden (decision 2).
 - If a job number appears **twice in one week**, both rows share the key, so hiding
-  hides both (default 3). The review dialog already flags these.
+  hides both (decision 3). The review dialog already flags these.
+- **A hide follows the saved job number,** the one `/covers` sees. On
+  `/admin/cover/jobs` an unsaved row can't be hidden yet, and an unsaved edit to the
+  number doesn't move the hide. Saving a new number on a hidden row leaves the hide on
+  the old number, so the job shows again (a sheet refresh would have replaced the
+  edited row anyway).
 
-## Stage 1: Hide and show a job (not started)
+## Stage 1: Hide and show a job (built 2026-10-12)
 
 **Data**
-- [ ] New collection `cover-bid-job-hides`: `{ weekEnding: 'YYYY-MM-DD', jobKey,
+- [x] New collection `cover-bid-job-hides`: `{ weekEnding: 'YYYY-MM-DD', jobKey,
       jobNumber (as the sheet spelled it), hiddenAt: ISO string, hiddenBy: { id, name } }`.
       Showing a job again deletes its row. Unique index on `{ weekEnding: 1, jobKey: 1 }`
       in `scripts/createIndexes.js` (`npm run db:indexes`)
-- [ ] `lib/db/coverBidJobHides.js`, the only module that touches it:
+- [x] `lib/db/coverBidJobHides.js`, the only module that touches it:
   - `getHiddenJobKeys(weekEndingFrom)` returns a `Set` of `"<weekEnding>|<jobKey>"` for
     every hide from that week on (one query, the same window `/covers` loads)
+  - `getWeekHides(weekEnding)` lists one week's, with who hid each and when
   - `hideCoverBidJob(weekEnding, jobNumber, user)` upserts, so a second tap is a no-op
   - `showCoverBidJob(weekEnding, jobNumber)` deletes
   - Both refuse an empty key with `HttpError(400, …)`
-- [ ] `isJobHidden(job, hiddenKeys)` next to `jobKey` in `lib/coverBidJobRow.js`
+- [x] `isJobHidden(job, hiddenKeys)` next to `jobKey` in `lib/coverBidJobRow.js`
 
 **API**
-- [ ] `app/api/cover-bid-jobs/hidden/route.js`: `PUT` hides, `DELETE` shows. Body
+- [x] `app/api/cover-bid-jobs/hidden/route.js`: `PUT` hides, `DELETE` shows. Body
       `{ weekEnding, jobNumber }`. `requireAdmin()` first; `weekEnding` must be a
       `YYYY-MM-DD` Saturday; errors are `{ error }` (`CLAUDE.md` → "API routes")
-- [ ] The admin's job read (`GET /api/cover-bid-jobs?weekEnding=`, which
-      `/admin/cover/jobs` loads) adds `hidden: true|false` to each job
+- [x] The admin's job read (`GET /api/cover-bid-jobs?weekEnding=`, which
+      `/admin/cover/jobs` loads) adds `hidden`, the week's hides (`getWeekHides`).
+      The page matches rows to them by saved job number (`useCoverBidJobs`
+      `isRowHidden`), so a hide shows on every row with that number
 
 **Drivers' page**
-- [ ] `app/covers/page.jsx`: load `getHiddenJobKeys(cutoffWeek)` alongside the jobs and
+- [x] `app/covers/page.jsx`: load `getHiddenJobKeys(cutoffWeek)` alongside the jobs and
       filter with `isJobHidden` before `toDriverCoverJob`. The filter runs for everyone,
       admins included
 
 **Admin page (`/admin/cover/jobs`)**
-- [ ] An eye button per job, "Hide from drivers" / "Show to drivers"
-      (`VisibilityOff` / `Visibility`), in `CoverBidJobRowActions.jsx` (desktop table)
-      and in `CoverBidJobReviewDialog.jsx`, where a phone card opens. Not on the card
-      itself (`CoverBidJobSummaryCard.jsx`): the whole card is a button, and a button
-      can't hold another. Disabled with a tooltip on a job with no job number
-- [ ] A hidden job reads as hidden in more than color: dimmed, plus a "Hidden" chip, in
-      the table row and on the phone card (`CLAUDE.md` → "Visual style": state is never
-      shadow or color alone)
-- [ ] The week's summary line counts them: "2 hidden from drivers"
-- [ ] Confirm in place (the button changes, plus a polite live region), not a toast
+- [x] An eye toggle per job, `HideJobButton.jsx`: "Hide job X from drivers" with
+      `aria-pressed`, the crossed-out eye while hidden (`VisibilityOff` / `Visibility`), in
+      `CoverBidJobRowActions.jsx` (desktop table) and in `CoverBidJobReviewDialog.jsx`
+      (`renderSecondary`), where a phone card opens. Not on the card itself
+      (`CoverBidJobSummaryCard.jsx`): the whole card is a button, and a button can't hold
+      another. Disabled with a tooltip on an unsaved row or one with no job number
+- [x] A hidden job reads as hidden in more than color: dimmed (`hiddenSx`, no grayscale,
+      so it reads apart from picked), plus a "Hidden" label (`HiddenLabel`,
+      `coverBidJobs/jobGrid.jsx`), in the table row, on the phone card and in the
+      dialog's title (`CLAUDE.md` → "Visual style": state is never shadow or color alone)
+- [x] A new summary line above the week's jobs counts them: "12 jobs · 2 hidden from
+      drivers"
+- [x] Confirm in place (the icon changes and pops, `tapHaptic()`, and the summary line is
+      the polite live region), not a toast
 
 **Read-only admin page (`/cover-bid-jobs`)**
-- [ ] Keeps every job and shows the same "Hidden" chip on hidden ones
+- [x] Keeps every job and shows the same "Hidden" label on hidden ones, dimmed
+      (`app/cover-bid-jobs/page.jsx` sets `hidden` on each job; the shared
+      `coverBidJobs/CoverBidJobsTable.jsx` and `JobCard.jsx` show it)
 
 **Docs**
-- [ ] `DATA-MODEL.md`: the `cover-bid-job-hides` row
-- [ ] `CLAUDE.md` → the cover bid jobs and driver verification bullets: hides, and that
+- [x] `DATA-MODEL.md`: the `cover-bid-job-hides` row
+- [x] `CLAUDE.md` → the cover bid jobs and driver verification bullets: hides, and that
       `/covers` filters them before `toDriverCoverJob`
-- [ ] `COVER-BIDDING.md` → "Ground rules": hidden jobs are out of stages 2 and 3
-- [ ] `OPERATIONS.md`: `npm run db:indexes` after deploying this
+- [x] `COVER-BIDDING.md` → "Ground rules": hidden jobs are out of stages 2 and 3
+- [x] `OPERATIONS.md`: `npm run db:indexes` after deploying this
 
-## Open questions
+## Decisions
 
-Defaults in bold; change them before building.
+Asked as open questions 2026-10-11; the admin chose every default on 2026-10-12, and
+added that a hide records only who and when (no reason note).
 
 1. **Does a hide carry into later weeks?** **No, each week on its own.** Job numbers
    repeat week to week, so a hide that carried over could hide a job the admin meant to
@@ -121,7 +141,7 @@ Defaults in bold; change them before building.
 
 ## Verifying
 
-- [ ] `npm run lint` and `npm run build`
+- [x] `npm run lint` and `npm run build` (2026-10-12, the build in a scratch copy)
 - [ ] After deploying: `npm run db:indexes`
 - [ ] On the live site, signed in as an admin, on a week that has jobs:
   - [ ] hide a job on `/admin/cover/jobs`: it dims, shows "Hidden", and the week's

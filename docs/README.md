@@ -26,7 +26,7 @@ Everything written about SLICs that isn't code. The product overview is the root
 | [`ON-CALL-SHEET-SYNC.md`](ON-CALL-SHEET-SYNC.md) | The plan, layout notes and checklist for reading the ON CALL SHEET (cover weeks, the Jobs tab, alerts). Stages 1–3 built |
 | [`on-call-sheet-apps-script.md`](on-call-sheet-apps-script.md) | The admin's guide to installing the sheet notifier (Apps Script) |
 | [`COVER-BIDDING.md`](COVER-BIDDING.md) | Driver verification, the drivers' Covers page, then preference lists and picking in the app. Stage 1 built, admin-only until rollout |
-| [`COVER-JOB-HIDING.md`](COVER-JOB-HIDING.md) | An admin hides a cover job from drivers' `/covers`, and the hide survives sheet refreshes. Planned 2026-10-11 |
+| [`COVER-JOB-HIDING.md`](COVER-JOB-HIDING.md) | An admin hides a cover job from drivers' `/covers`, and the hide survives sheet refreshes. Built 2026-10-12 |
 | [`BMC-SUPPORT.md`](BMC-SUPPORT.md) | Buy Me a Coffee: recording support, the admin Supporters page, thank-yous, impact numbers. Stage 1 built |
 | [`PASSWORD-RESET.md`](PASSWORD-RESET.md) | Forgot password: an admin-made reset link, then change password on the profile, then reset by email. Stages 1–3 live |
 | [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts, then tip replies, then "your pick is up". Stage 1 live (admins) |

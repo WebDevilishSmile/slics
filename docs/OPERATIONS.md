@@ -43,7 +43,8 @@ script with `--dry-run` and a reverse twin, one commit per step.
 - **New indexes** in `scripts/createIndexes.js` need `npm run db:indexes` once the change
   is deployed. The 2026-10-10 changes added four unique ones: one pending claim per driver,
   one account per sheet name (`users.driver.key`), and on the roster one row per employee
-  ID and per linked sheet name (`drivers.sheetKey`).
+  ID and per linked sheet name (`drivers.sheetKey`). The 2026-10-12 cover job hiding
+  (`COVER-JOB-HIDING.md`) added one on `cover-bid-job-hides`, one per week and job number.
 - **Rolling back:** in the Vercel dashboard, promote the previous deployment (Instant
   Rollback). It's faster than a revert commit, and it doesn't touch the data.
 

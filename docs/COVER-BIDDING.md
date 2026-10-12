@@ -53,6 +53,10 @@ doesn't do covers never has to.
 
   A driver never sees who picked a job, anyone else's picks, or anyone's job or leave
   status (`VACATION`, `FMLA`). Admins see everything, as today.
+- **A hidden job is out for drivers.** An admin can hide a week's job from drivers
+  (`COVER-JOB-HIDING.md`). `/covers` leaves it out on the server, before
+  `toDriverCoverJob`, and stages 2 and 3 must too: a driver can't list or pick a job they
+  can't see.
 - **The claim form never lists names.** Registration is open (`SECURITY.md` #8), so the
   list of every driver's name stays admin-only. The driver types their own; the admin
   matches it.

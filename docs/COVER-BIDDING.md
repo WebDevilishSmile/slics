@@ -8,7 +8,7 @@ then pick in the app when their time comes. Built in stages; check items off as 
 `npm run build` (in a scratch copy, never while `next dev` runs) before shipping any item.
 The app is used daily in production.
 
-## Status (2026-10-10)
+## Status (2026-10-12)
 
 - **Stage 1** (driver verification and the drivers' Covers page): built, **admin-only**
   until it rolls out. `COVERS_OPEN` in `constants.js` is `false`, so only admins see
@@ -16,7 +16,10 @@ The app is used daily in production.
   first, then follow the rollout checklist below.
 - **Indexes:** run `npm run db:indexes` once stage 1 is deployed (two of its indexes are
   unique, see "Data").
-- **Stages 2–4:** not started.
+- **Stage 2** (cover lists): built 2026-10-12 behind the same gate, so admin-only too.
+  Run `npm run db:indexes` once it's deployed (`cover-preferences`, including its TTL),
+  then check it with "Verifying stage 2" below.
+- **Stages 3–4:** not started.
 
 ---
 
@@ -112,26 +115,50 @@ doesn't do covers never has to.
 - [ ] Set `COVERS_OPEN = true` in `constants.js`. That opens `/covers`, the menu item, the
       claim route and the check mark on tips to every signed-in driver.
 - [ ] Add a "Verify you're a driver" guide to `/help` (`components/help/guides.jsx`).
-- [ ] Re-read the privacy page's "Driver verification" section.
+- [ ] Re-read the privacy page's "Driver verification" section, and add the cover lists
+      to it: which jobs a driver wants, seen by admins only, deleted four weeks after the
+      week (and with the account).
+- [ ] Add a "Keep a cover list" guide to `/help` beside "Verify you're a driver".
 - [ ] Update the line about rollout in `CLAUDE.md`.
 - [ ] Drop the "This is a work in progress" notice from `CoverBidJobsTable`, or reword it
       for drivers.
 
 ---
 
-## Stage 2: A preference list (not started)
+## Stage 2: A preference list (built 2026-10-12, admin-only)
 
 A verified driver lists the jobs they want, in order. As jobs are picked (by anyone, on
-the sheet or later in the app), they drop off everyone's list.
+the sheet or later in the app), they drop off everyone's list. Picks still happen by
+calling dispatch at the call-in time; the list is what the driver reads off on the call.
 
-- [ ] A `cover-preferences` collection, one document per driver per week, keyed by
-      `userId` + `weekEnding`. Deleted with the account; a retention decision for past
-      weeks.
-- [ ] `requireVerifiedDriver()` in `lib/authz.js` for its routes (on top of
-      `isVerifiedDriver`).
-- [ ] The list on `/covers`: add from the job list, reorder, remove. Picked jobs gray out
-      and leave the list on the next read.
-- [ ] Admins see every driver's list; drivers see only their own.
+- [x] **`cover-preferences`** (`lib/db/coverPreferences.js`), one document per driver per
+      week, keyed by `userId` + `weekEnding`, entries by job number (`jobKey`) like the
+      hides, never the job's `_id`. Deleted with the account. **Retention:** the last four
+      weeks, for checking afterwards: `expiresAt` is 28 days after the week's Saturday
+      (`COVER_LIST_KEEP_DAYS`) and a TTL index deletes it.
+- [x] **`requireVerifiedDriver()`** in `lib/authz.js`: `requireCovers()` plus
+      `isVerifiedDriver`. Admins need a verification too, since a list belongs to a
+      driver on the sheet.
+- [x] **Routes:** `GET`/`PUT /api/users/me/cover-preferences` (the session's own list
+      only; `PUT` sends the whole list in order, this week or later, drops jobs not
+      posted or hidden, 300 saves an hour). `GET /api/cover-preferences` for admins.
+- [x] **The list on `/covers`** (`covers/CoverBoard.jsx`, `covers/CoverList.jsx`): for
+      the week picked on the calendar, the open jobs in order with move up, move down
+      and remove; each job in the table, card and dialog has an add/remove button
+      (`coverBidJobs/ListToggle.jsx`; a taken job can't be added, 30 at most). A taken
+      or hidden job leaves the list on read (`coverListStatus`, `lib/coverList.js`) but
+      stays stored, so it comes back if it reopens; the list names the taken ones. The
+      page re-reads the list when the driver comes back to it. A past week's list is
+      read-only.
+- [x] **Call dispatch** under the list dials the phone on SLIC `DISPATCH_NUM_SLIC`
+      (BETPA, 1809), read at page load, beside the driver's call-in time for that week.
+      It's always the list's main action: the sheet gives call-in slots but not the bid
+      day, so it can't light up at the right moment yet.
+- [x] **Admins see every list:** `/admin/cover/lists` (`components/admin/coverLists/`),
+      each driver's list in pick order with their cover number or on-call order and
+      call-in, taken jobs struck through, and the most wanted open jobs (first choice,
+      on how many lists). `/admin/cover/jobs` labels each job "On N lists · 1st on M"
+      (`WantedLabel`). Drivers see only their own list.
 
 ## Stage 3: Picking in the app (not started)
 
@@ -182,3 +209,23 @@ super admin to review.
 5. **Turning down:** the tester sees the reason and Try again; the evidence is gone.
 6. **Removing** from the admin user page: the next request drops the check mark and the
    tiles. Deleting the test account deletes its claims.
+
+### Verifying stage 2
+
+With a verified admin (the super admin can verify themselves) on a posted week:
+
+1. **The gate:** a regular account gets 401/403 from `/api/users/me/cover-preferences`;
+   an unverified admin sees the jobs on `/covers` with no list and no add buttons.
+2. **Building a list (phone width, light and dark):** add three jobs from the cards, the
+   table and the job dialog; move one up and down; remove one. Reload: the order holds.
+   A picked job's add button is disabled ("Taken").
+3. **Dropping off:** when one of the list's jobs is picked on the sheet and the week is
+   refreshed (or synced), coming back to `/covers` drops it from the list and names it
+   under "Taken since you added it". If the pick is cleared, it returns in place. A
+   listed job an admin hides leaves the list.
+4. **Call dispatch** opens the dialer with BETPA's number; the call-in time matches the
+   week's tile.
+5. **Admins:** `/admin/cover/lists` shows the list in pick order and the most wanted
+   table; `/admin/cover/jobs` shows "On 1 list · 1st on 1" on the first open job.
+6. **Past week:** a week that's over shows its list read-only; `PUT` answers 400.
+7. **Cleanup:** delete the test list (remove every job), or delete the test account.

@@ -101,7 +101,9 @@ Plan, rules and open questions: `COVER-BIDDING.md`.
       deploy, and the live checks in its "Verifying"
 - [ ] roll stage 1 out to every driver (the checklist in `COVER-BIDDING.md`), including a
       "Verify you're a driver" guide on `/help`
-- [ ] stage 2: preference lists that lose jobs as they're picked, button with option to call dispatch
+- [x] stage 2: preference lists that lose jobs as they're picked, button with option to call dispatch
+      (built 2026-10-12, admin-only with stage 1; `COVER-BIDDING.md`). Left: `npm run
+      db:indexes` after the deploy, and its "Verifying stage 2" checks
 - [ ] stage 3: picking in the app on the clock, with auto-pick. Settle the open questions
       first, starting with what the source of truth is once the app can't write the sheet
 - [ ] drop `users.driverId`, the old roster link (nothing writes or reads it since 2026-10-10)

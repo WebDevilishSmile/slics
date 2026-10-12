@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import ListToggle from './ListToggle';
 import { softInset, softPressSx } from '@/components/utility/soft';
 import { DAY_FIELDS, DAY_LABELS, DAY_COLORS, formatDayValue } from '@/lib/dayFormat';
 
@@ -32,7 +33,9 @@ function DetailRow({ label, value }) {
 // is left out rather than shown empty.
 const WHO_FIELDS = ['name', 'assignedDriver', 'coverReason'];
 
-export default function CoverBidJobDetailDialog({ job, open, onClose }) {
+// With `list` (a verified driver on /covers), the job can go on their cover
+// list from here too.
+export default function CoverBidJobDetailDialog({ job, open, onClose, list = null }) {
   const scheduledDays = job ? DAY_FIELDS.filter((day) => job[day]) : [];
   const showWho = job ? WHO_FIELDS.some((field) => field in job) : false;
 
@@ -86,6 +89,8 @@ export default function CoverBidJobDetailDialog({ job, open, onClose }) {
             >
               {job.description || '—'}
             </Typography>
+
+            {list && <ListToggle job={job} list={list} variant='button' />}
           </Stack>
         )}
       </DialogContent>

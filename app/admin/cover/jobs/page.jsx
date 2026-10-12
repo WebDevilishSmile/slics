@@ -8,6 +8,7 @@ import CoverBidJobsManager from '@/components/admin/coverBidJobs/CoverBidJobsMan
 import CoverBidPicks from '@/components/admin/coverBidJobs/CoverBidPicks';
 import SheetRefreshButton from '@/components/admin/coverBidJobs/SheetRefreshButton';
 import { useCoverBidPicks } from '@/hooks/useCoverBidPicks';
+import { useCoverLists } from '@/hooks/useCoverLists';
 import { getUpcomingSaturday } from '@/lib/format';
 import { Paper, Typography } from '@mui/material';
 import theme from '@/theme';
@@ -26,6 +27,8 @@ function CoverJobs() {
     [selectedDay],
   );
   const pickState = useCoverBidPicks({ weekEndDate, refreshKey });
+  // How many drivers' cover lists hold each job (docs/COVER-BIDDING.md, stage 2).
+  const { demandByKey } = useCoverLists({ weekEndDate, refreshKey });
 
   // A refresh saved the week: refetch its jobs and picks, and dot it on the
   // calendar.
@@ -88,6 +91,7 @@ function CoverJobs() {
           weekEndDate={weekEndDate}
           refreshKey={refreshKey}
           picks={pickState.picks}
+          demand={demandByKey}
         />
         <CoverBidPicks {...pickState} />
       </Paper>

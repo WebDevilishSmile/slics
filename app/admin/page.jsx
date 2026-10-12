@@ -61,6 +61,7 @@ async function AdminPage() {
     { href: '/admin/jobs', label: 'Jobs' },
     { href: '/admin/cover/drivers', label: 'Cover Drivers' },
     { href: '/admin/cover/jobs', label: 'Cover Jobs' },
+    { href: '/admin/cover/lists', label: 'Cover Lists' },
     { href: '/admin/drivers', label: 'Drivers' },
     { href: '/admin/planet-fitness', label: 'Planet Fitness' },
     // Admins and Supporters live under it (lib/authz.js).

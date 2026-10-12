@@ -55,8 +55,9 @@ function UnsavedStatus({ row }) {
 }
 
 // `picks` is the week's saved picks from the on-call sheet, or null; with them,
-// the job dialog lists who picked each job.
-export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = null }) {
+// the job dialog lists who picked each job. `demand` is a Map of jobKey →
+// { lists, first } from the drivers' cover lists (hooks/useCoverLists.js).
+export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = null, demand = null }) {
   const theme = useTheme();
   const wide = useMediaQuery(theme.breakpoints.up('lg'));
 
@@ -196,6 +197,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
           rows={rows}
           duplicates={duplicates}
           isHidden={isRowHidden}
+          demand={demand}
           onFieldChange={updateField}
           renderLeading={renderLeading}
           renderActions={renderActions}
@@ -216,6 +218,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
               index={index}
               duplicate={isDuplicateJobNumber(row, duplicates)}
               hidden={isRowHidden(row)}
+              wanted={demand?.get(jobKey(row.jobNumber))}
               status={<UnsavedStatus row={row} />}
               onOpen={setReviewIndex}
             />

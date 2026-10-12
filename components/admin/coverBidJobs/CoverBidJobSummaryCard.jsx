@@ -7,6 +7,7 @@ import { isPicked, rowIssues } from '@/lib/coverBidJobRow';
 import { softPressSx, softRaised } from '@/components/utility/soft';
 import {
   HiddenLabel,
+  WantedLabel,
   hiddenSx,
   PickedLabel,
   pickedSx,
@@ -25,12 +26,15 @@ const withRouteBreaks = (text) =>
 // that can be read (all seven days and the full description). Tapping it opens
 // the job in the review dialog, where it's edited (and hidden from drivers:
 // a button can't hold another). `status` is a short line at the top right
-// (unsaved changes). Inside a button, so every element is a span.
+// (unsaved changes). `wanted` is the job's demand from the drivers' cover
+// lists ({ lists, first }), if any. Inside a button, so every element is a
+// span.
 export default function CoverBidJobSummaryCard({
   row,
   index,
   duplicate,
   hidden = false,
+  wanted = null,
   status,
   onOpen,
 }) {
@@ -72,6 +76,7 @@ export default function CoverBidJobSummaryCard({
           </Typography>
           {isPicked(row) && <PickedLabel />}
           {hidden && <HiddenLabel />}
+          <WantedLabel wanted={wanted} />
         </Box>
         {status}
       </Box>

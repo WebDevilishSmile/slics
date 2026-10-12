@@ -2,6 +2,7 @@
 
 import { Box, Chip, Tooltip, Typography } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
@@ -94,6 +95,19 @@ export function HiddenLabel({ sx }) {
   return (
     <JobLabel icon={VisibilityOffIcon} sx={sx}>
       Hidden
+    </JobLabel>
+  );
+}
+
+// Admins: how many drivers' cover lists hold a still-open job, and on how
+// many it's the first choice (docs/COVER-BIDDING.md, stage 2;
+// hooks/useCoverLists.js). Nothing when it's on none.
+export function WantedLabel({ wanted, sx }) {
+  if (!wanted?.lists) return null;
+  return (
+    <JobLabel icon={PlaylistAddCheckIcon} sx={[{ color: 'primary.main' }, ...(Array.isArray(sx) ? sx : [sx])]}>
+      On {wanted.lists} list{wanted.lists === 1 ? '' : 's'}
+      {wanted.first ? ` · 1st on ${wanted.first}` : ''}
     </JobLabel>
   );
 }

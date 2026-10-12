@@ -14,6 +14,7 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import CoverBidJobCard from './CoverBidJobCard';
 import CoverBidJobDetailDialog from './CoverBidJobDetailDialog';
+import ListToggle from './ListToggle';
 import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
 import {
   DayTimeChip,
@@ -61,7 +62,35 @@ const DESKTOP_COLUMNS = [
 
 const CARDS_PER_PAGE = 50;
 
-function CoverBidJobsTable({ jobs, minWeekEnding }) {
+// On /covers, a verified driver's add/remove button, first in each row
+// (covers/CoverBoard.jsx `listControls`).
+function listColumn(list) {
+  return {
+    field: 'myList',
+    headerName: 'My list',
+    width: 84,
+    sortable: false,
+    renderCell: ({ row }) => <ListToggle job={row} list={list} />,
+  };
+}
+
+// The cover jobs for a week, with a calendar to pick the week: /covers (inside
+// covers/CoverBoard.jsx) and /cover-bid-jobs.
+// - `selectedDay` / `onSelectDay`: optional, to hold the chosen day outside
+//   (CoverBoard keeps the driver's list on the same week); otherwise the
+//   table keeps its own.
+// - `list`: optional controls for the driver's cover list; each job then gets
+//   an add/remove button (ListToggle).
+// - `beforeJobs`: optional content between the week's filters and its jobs
+//   (the driver's list).
+function CoverBidJobsTable({
+  jobs,
+  minWeekEnding,
+  selectedDay: controlledDay,
+  onSelectDay,
+  list = null,
+  beforeJobs = null,
+}) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -72,7 +101,9 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
 
   // Default to next week — that's the week drivers are bidding on. Today still
   // gets its own ring on the calendar so the current date stays obvious.
-  const [selectedDay, setSelectedDay] = useState(() => dayjs().add(1, 'week'));
+  const [ownDay, setOwnDay] = useState(() => dayjs().add(1, 'week'));
+  const selectedDay = controlledDay ?? ownDay;
+  const setSelectedDay = onSelectDay ?? setOwnDay;
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -84,6 +115,10 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
   );
 
   const postedWeeks = useMemo(() => new Set(weeks), [weeks]);
+  const columns = useMemo(
+    () => (list ? [listColumn(list), ...DESKTOP_COLUMNS] : DESKTOP_COLUMNS),
+    [list],
+  );
   const isWeekPosted = postedWeeks.has(selectedWeek);
 
   // Start of the oldest loaded week, so that week's Sun-Fri stay clickable.
@@ -156,6 +191,8 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
         )}
       </Box>
 
+      {beforeJobs}
+
       {!isWeekPosted ? (
         <SoftNotice sx={{ maxWidth: 'none', my: 3 }}>
           Cover bid jobs for the week ending{' '}
@@ -165,7 +202,7 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
         <Box sx={jobGridCardSx}>
           <DataGrid
             rows={filteredJobs}
-            columns={DESKTOP_COLUMNS}
+            columns={columns}
             getRowId={(row) => row._id}
             pageSizeOptions={[10, 25, 50, 100]}
             initialState={{
@@ -205,6 +242,7 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
                 key={job._id}
                 job={job}
                 onSelect={setSelectedJob}
+                list={list}
               />
             ))}
           </Stack>
@@ -235,6 +273,7 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
         job={selectedJob}
         open={Boolean(selectedJob)}
         onClose={() => setSelectedJob(null)}
+        list={list}
       />
     </Box>
   );

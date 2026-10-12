@@ -28,6 +28,12 @@ async function main() {
       // Cover jobs hidden from drivers, one per week and job number
       // (docs/COVER-JOB-HIDING.md); /covers reads a range of weeks.
       { collection: 'cover-bid-job-hides', spec: { weekEnding: 1, jobKey: 1 }, options: { unique: true } },
+      // Verified drivers' cover lists, one per driver per week
+      // (docs/COVER-BIDDING.md, stage 2). The admin page reads a week; the
+      // TTL deletes a week's lists COVER_LIST_KEEP_DAYS after it ends.
+      { collection: 'cover-preferences', spec: { userId: 1, weekEnding: 1 }, options: { unique: true } },
+      { collection: 'cover-preferences', spec: { weekEnding: 1 } },
+      { collection: 'cover-preferences', spec: { expiresAt: 1 }, options: { expireAfterSeconds: 0 } },
       // The sheet's Jobs tab and its change history.
       { collection: 'sheet-jobs', spec: { jobName: 1 }, options: { unique: true } },
       { collection: 'sheet-job-changes', spec: { seenAt: -1 } },

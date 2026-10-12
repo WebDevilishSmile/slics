@@ -227,6 +227,15 @@ export const RESET_EMAIL_LINK_MINUTES = 30;
 // they roll out to every driver: `canUseCovers` in lib/authz.js and the menu
 // read this. Flip it with the rollout checklist in that doc.
 export const COVERS_OPEN = false;
+// A verified driver's cover list (docs/COVER-BIDDING.md, stage 2): the jobs
+// they want for a week, in order. At most this many per week, and a week's
+// lists are deleted this many days after the week ends (a TTL index).
+export const COVER_LIST_MAX = 30;
+export const COVER_LIST_KEEP_DAYS = 28;
+// The SLIC whose phone the cover list's "Call dispatch" dials: BETPA, the
+// drivers' own hub. By number, which never changes (CLAUDE.md, Data layer), so
+// editing the hub's phone in the SLIC form updates the button.
+export const DISPATCH_NUM_SLIC = '1809';
 // A driver's name as they claim it, or as the on-call sheet spells it.
 export const DRIVER_NAME_MAX_LENGTH = 60;
 // The reason an admin gives for turning a claim down, shown to the driver.

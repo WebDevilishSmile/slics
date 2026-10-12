@@ -61,7 +61,14 @@ function Detail({ icon, label, children }) {
 // `supporterSince`: when they first supported the app on Buy Me a Coffee (an
 // ISO string, or null). Only they see this page, so it needs no opt-in.
 // `pushPrefs`: an admin's notification kinds (`{ key: boolean }`), or null.
-function ProfileData({ userData, commentCount, supporterSince = null, pushPrefs = null }) {
+// `coversOpen`: the super admin's Covers switch, from the session.
+function ProfileData({
+  userData,
+  commentCount,
+  supporterSince = null,
+  pushPrefs = null,
+  coversOpen = COVERS_OPEN,
+}) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
   const [snackSeverity, setSnackSeverity] = useState('error');
@@ -148,7 +155,7 @@ function ProfileData({ userData, commentCount, supporterSince = null, pushPrefs 
         </Detail>
         {/* Verification is only offered where Covers is (admins until it
             rolls out, docs/COVER-BIDDING.md). */}
-        {(userData.driverVerified || COVERS_OPEN || userData.role === 'admin') && (
+        {(userData.driverVerified || coversOpen || userData.role === 'admin') && (
           <Detail icon={<VerifiedOutlined />} label='Driver'>
             {userData.driverVerified ? (
               `Verified · ${userData.driverName}`

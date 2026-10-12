@@ -6,6 +6,7 @@ import {
   MonitorHeartOutlined,
   NotificationsOutlined,
   TimelineOutlined,
+  ToggleOnOutlined,
 } from '@mui/icons-material';
 import { Alert, Box } from '@mui/material';
 
@@ -15,11 +16,11 @@ import HubSection from './HubSection';
 import HubTiles from './HubTiles';
 import TopSlics from './TopSlics';
 import UsageCharts from './UsageCharts';
-import { formatMoney, formatWhen, plural } from './format';
+import { formatDay, formatMoney, formatWhen, plural } from './format';
 
 const failed = (what) => <Alert severity='error'>Couldn&apos;t load {what}. Try again in a moment.</Alert>;
 
-function cards({ notifications, activity, health, admins, support, members }) {
+function cards({ notifications, activity, health, features, admins, support, members }) {
   const problems = health?.sections.filter((section) => section.status === 'error' || section.status === 'warning') ?? [];
   const latest = activity?.rows[0];
   return [
@@ -63,6 +64,19 @@ function cards({ notifications, activity, health, admins, support, members }) {
         : { lines: ['Couldn’t run the checks.'] }),
     },
     {
+      href: '/admin/super/features',
+      icon: <ToggleOnOutlined />,
+      title: 'Features',
+      lines: features
+        ? [
+            `Covers: ${features.coversOpen ? 'every driver' : 'admins only'}`,
+            new Date().toISOString() < features.placesNewUntil
+              ? `Places says “New” until ${formatDay(features.placesNewUntil)}`
+              : 'Places “New” label ended',
+          ]
+        : ['Couldn’t load the switches.'],
+    },
+    {
       href: '/admin/super/admins',
       icon: <AdminPanelSettingsOutlined />,
       title: 'Admins',
@@ -89,7 +103,7 @@ function cards({ notifications, activity, health, admins, support, members }) {
 // The super admin hub, /admin/super (docs/SUPER-ADMIN-HUB.md): the app at a
 // glance, a card for each place to manage it, usage over time, and the latest
 // activity. Each part is `null` when it failed to load, and says so in place.
-export default function HubView({ glance, usage, notifications, activity, health, admins, support }) {
+export default function HubView({ glance, usage, notifications, activity, health, features, admins, support }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
       <HubSection id='hub-glance' title='At a glance'>
@@ -112,7 +126,7 @@ export default function HubView({ glance, usage, notifications, activity, health
             gap: { xs: 2, sm: 2.5 },
           }}
         >
-          {cards({ notifications, activity, health, admins, support, members: glance?.members }).map(
+          {cards({ notifications, activity, health, features, admins, support, members: glance?.members }).map(
             (card, index) => (
               <HubCard key={card.href} index={index} {...card} />
             ),

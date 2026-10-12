@@ -9,6 +9,7 @@ import bcrypt from 'bcryptjs';
 import { after } from 'next/server';
 import { checkRateLimit, getClientIp } from './lib/rateLimit';
 import { notifySignUp } from './lib/pushEvents';
+import { FEATURE_DEFAULTS, getSessionFeatures } from './lib/db/appSettings';
 
 // Password sign-in limits (docs/SECURITY.md #9). Per email, so guessing one
 // account's password stalls; per IP with more room, because a building of
@@ -177,6 +178,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
 
+      // The super admin's feature switches (lib/db/appSettings.js): read on
+      // every request like the role, from a shared cache, so flipping one
+      // reaches every driver on their next request. Never throws; a failed
+      // read means the constants.js defaults.
+      token.features = await getSessionFeatures();
+
       // console.log('Main Auth.js JWT Callback - Final Token:', token);
       return token;
     },
@@ -194,6 +201,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.driverVerified = token.driverVerified === true;
         session.user.created_at = token.created_at || new Date();
       }
+      // `{ coversOpen, placesNewUntil }`: read by canUseCovers (lib/authz.js)
+      // and the header menu. Never about the user, so beside it.
+      session.features = token?.features ?? {
+        coversOpen: FEATURE_DEFAULTS.coversOpen,
+        placesNewUntil: FEATURE_DEFAULTS.placesNewUntil,
+      };
       // console.log('Main Auth.js Session Callback - Final Session:', session);
       return session;
     },

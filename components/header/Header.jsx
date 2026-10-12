@@ -16,7 +16,7 @@ export default async function Header() {
 
   return (
     <>
-      <HeaderBar user={session?.user} signOutAction={signOutAction} />
+      <HeaderBar user={session?.user} features={session?.features} signOutAction={signOutAction} />
       {/* The AppBar is position: fixed, so it takes no room in the page. This
           empty Toolbar does, at the toolbar's own responsive height (56px on
           phones), so pages start just below the header (UI-SUGGESTIONS.md #37). */}

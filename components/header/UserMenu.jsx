@@ -114,8 +114,10 @@ function ExternalItem({ href, label, icon }) {
 // The header menu: a drawer from the left, grouped as UI-SUGGESTIONS.md #50
 // lays out — where you go every day, your account, outside links, then
 // settings. Swipe it left, tap outside or press Escape to close it.
-// `signOutAction` is a server action from Header.jsx.
-function UserMenu({ user, signOutAction }) {
+// `signOutAction` is a server action from Header.jsx. `features` is the
+// session's feature switches (auth.js, lib/db/appSettings.js); the constants
+// are the defaults when there's none.
+function UserMenu({ user, features, signOutAction }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
@@ -143,10 +145,13 @@ function UserMenu({ user, signOutAction }) {
     refreshOpenReportsCount();
     refreshPendingClaimsCount();
   }, [isAdmin, pathname]);
-  // Covers is admin-only until it rolls out (COVERS_OPEN, lib/authz.js).
-  const canUseCovers = Boolean(user) && (COVERS_OPEN || isAdmin);
-  // Places opened to everyone on 2026-10-12; its row says "New" for a month.
-  const placesIsNew = new Date().toISOString() < PLACES_NEW_UNTIL;
+  // Covers is admin-only until it rolls out (the super admin's switch,
+  // canUseCovers in lib/authz.js).
+  const coversOpen = features?.coversOpen ?? COVERS_OPEN;
+  const canUseCovers = Boolean(user) && (coversOpen || isAdmin);
+  // Places opened to everyone on 2026-10-12; its row says "New" until the
+  // date the super admin set.
+  const placesIsNew = new Date().toISOString() < (features?.placesNewUntil ?? PLACES_NEW_UNTIL);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -263,7 +268,7 @@ function UserMenu({ user, signOutAction }) {
                   onClick={handleClose}
                   href='/covers'
                   label='Covers'
-                  secondary={COVERS_OPEN ? undefined : 'Admin only for now'}
+                  secondary={coversOpen ? undefined : 'Admin only for now'}
                   icon={<EventAvailableOutlined />}
                   current={isCurrent('/covers')}
                 />

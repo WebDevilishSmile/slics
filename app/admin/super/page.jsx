@@ -3,6 +3,7 @@ import { Paper, Typography } from '@mui/material';
 import HubView from '@/components/admin/hub/HubView';
 import { getSession, isSuperAdmin } from '@/lib/authz';
 import { getActivity } from '@/lib/db/activity';
+import { getFeaturesFresh } from '@/lib/db/appSettings';
 import { getSupportSummary } from '@/lib/db/bmcEvents';
 import { getAdminCounts, getGlanceNumbers, getUsageSeries } from '@/lib/db/hub';
 import { getNotificationsSummary } from '@/lib/db/pushOverview';
@@ -25,12 +26,13 @@ export default async function SuperAdminPage() {
   const session = await getSession();
   if (!isSuperAdmin(session)) return null;
 
-  const [glance, usage, notifications, activity, health, admins, support] = await Promise.all([
+  const [glance, usage, notifications, activity, health, features, admins, support] = await Promise.all([
     part('numbers', getGlanceNumbers),
     part('usage', getUsageSeries),
     part('notifications summary', getNotificationsSummary),
     part('activity', () => getActivity({ limit: 8 })),
     part('health', getSystemHealth),
+    part('features', getFeaturesFresh),
     part('admin counts', getAdminCounts),
     part('support summary', getSupportSummary),
   ]);
@@ -48,6 +50,7 @@ export default async function SuperAdminPage() {
           notifications={notifications}
           activity={activity}
           health={health}
+          features={features}
           admins={admins}
           support={support}
         />

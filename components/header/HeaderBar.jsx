@@ -47,6 +47,7 @@ const PAGE_TITLES = [
   ['/admin/super/notifications', 'Notifications'],
   ['/admin/super/activity', 'Activity'],
   ['/admin/super/health', 'System Health'],
+  ['/admin/super/features', 'Features'],
   ['/admin/super', 'Super Admin'],
   ['/admin/drivers', 'Drivers'],
   ['/admin/cover/drivers', 'Cover Drivers'],
@@ -70,7 +71,8 @@ let inAppNavigations = -1;
 // The app header (UI-SUGGESTIONS.md #52): the menu, then on a sub-page a back
 // arrow and the page name, and the logo linking home. It's flat at the top of
 // the page and lifts with a soft shadow once content scrolls under it.
-export default function HeaderBar({ user, signOutAction }) {
+// `features` is the session's feature switches (auth.js), for the menu.
+export default function HeaderBar({ user, features, signOutAction }) {
   const pathname = usePathname();
   const router = useRouter();
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 0 });
@@ -101,7 +103,7 @@ export default function HeaderBar({ user, signOutAction }) {
       })}
     >
       <Toolbar sx={{ gap: 0.5 }}>
-        <UserMenu user={user} signOutAction={signOutAction} />
+        <UserMenu user={user} features={features} signOutAction={signOutAction} />
 
         {title && (
           <>

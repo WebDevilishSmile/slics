@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Link, Typography } from '@mui/material';
 import { getSession } from '@/lib/authz';
 import theme from '@/theme';
 import { getPlaces } from '@/lib/db/places';
@@ -52,7 +52,9 @@ export default async function PlacesPage() {
         sx={{ maxWidth: theme.layout.width.prose, textAlign: 'center', mt: 2, px: 2 }}
       >
         Fuel, food, restrooms and places to rest that drivers have found along
-        their runs. Add the spots you know and tell everyone how they went.
+        their runs. Add the spots you know and tell everyone how they went.{' '}
+        {/* The /help guides for this page (components/help/guides.jsx). */}
+        <Link href='/help#find-place'>How it works</Link>
       </Typography>
       {/* Client-only render: dates use the phone's time zone. */}
       <HydrationGuard>

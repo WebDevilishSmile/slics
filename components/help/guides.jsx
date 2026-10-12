@@ -1,7 +1,9 @@
 import {
+  AddLocationAltOutlined,
   ChatBubbleOutline,
   ContentCopy,
   DirectionsOutlined,
+  ForumOutlined,
   InstallMobileOutlined,
   LoginOutlined,
   MenuOutlined,
@@ -10,6 +12,7 @@ import {
   PictureAsPdfOutlined,
   RateReviewOutlined,
   SearchOutlined,
+  SignpostOutlined,
   ThumbUpOutlined,
 } from '@mui/icons-material';
 import { Box } from '@mui/material';
@@ -118,7 +121,8 @@ export const HELP_SECTIONS = [
           </>,
           <>
             <Tap>Look up a SLIC</Tap> takes you to the search.{' '}
-            <Tap>All Hubs</Tap> shows only UPS buildings.
+            <Tap>All Hubs</Tap> shows only UPS buildings. <Tap>Places</Tap>{' '}
+            has fuel, food and restrooms other drivers have found.
           </>,
           <>
             <Tap>Profile</Tap> shows your account and the tips you&apos;ve
@@ -341,6 +345,124 @@ export const HELP_SECTIONS = [
           <>
             Tips are for other drivers. Reports are for fixing the address or
             phone number on the card.
+          </>,
+        ],
+      },
+    ],
+  },
+  {
+    id: 'places',
+    title: 'Places on your run',
+    guides: [
+      {
+        id: 'find-place',
+        title: 'Find fuel, food or a restroom',
+        icon: SignpostOutlined,
+        intro:
+          'Whip it in and whip it out: stops other drivers have found, and whether a trailer fits.',
+        steps: [
+          <>
+            Open the menu (three lines at the top left) and tap{' '}
+            <Tap>Places</Tap>.
+          </>,
+          <>
+            Tap <Tap>Near me</Tap> to put the closest places first. If your
+            phone asks to share your location, allow it.
+          </>,
+          <>
+            Tap a kind of place to narrow the list, like <Tap>Fuel</Tap>,{' '}
+            <Tap>Restroom</Tap> or <Tap>Truck parking</Tap>. Tap it again to
+            undo.
+          </>,
+          <>
+            Headed to a building? Type its SLIC in{' '}
+            <Tap>Coming from / going to</Tap> to see the spots drivers tagged
+            on that run.
+          </>,
+          <>
+            Each card says whether a trailer fits and when it&apos;s open. Tap{' '}
+            <Tap>Google Maps</Tap> to go there.
+          </>,
+        ],
+        notes: [
+          <>
+            Distances are a straight line, not the drive. Check the route
+            before you count on one.
+          </>,
+          <>
+            When a place has a parking pin, maps take you to where trucks pull
+            in, not just the address.
+          </>,
+        ],
+      },
+      {
+        id: 'add-place',
+        title: 'Add a place',
+        icon: AddLocationAltOutlined,
+        intro: 'Know a stop where a trailer gets in and out? Add it for everyone.',
+        steps: [
+          <>
+            On Places, tap <Tap>Add place</Tap>.
+          </>,
+          <>
+            Type the <Tap>Name</Tap>, like &ldquo;Pilot #312&rdquo;, and tap
+            everything that&apos;s there: <Tap>Fuel</Tap>, <Tap>Food</Tap>,{' '}
+            <Tap>Restroom</Tap> and so on.
+          </>,
+          <>
+            Under <Tap>Tractor-trailer access</Tap>, pick{' '}
+            <Tap>Trailer fits</Tap>, <Tap>Tight for a trailer</Tap> or{' '}
+            <Tap>No trailers</Tap>.
+          </>,
+          <>
+            Type the street, city and state. Type the hours, or turn on{' '}
+            <Tap>Open 24 hours</Tap>.
+          </>,
+          <>
+            Standing where trucks park? Under <Tap>Parking pin</Tap>, tap{' '}
+            <Tap>Use my current location</Tap>. A Google Maps link works too.
+          </>,
+          <>
+            Add the SLICs it&apos;s on the way to under{' '}
+            <Tap>On the way to/from (SLICs)</Tap>, then tap{' '}
+            <Tap>Add place</Tap>.
+          </>,
+        ],
+        notes: [
+          <>
+            A rest area with no street address? Leave <Tap>Street</Tap> blank
+            and drop a parking pin instead.
+          </>,
+          <>
+            To change a place you added, tap the pencil on its card. Once
+            another driver has commented on it, only the admin can delete it.
+          </>,
+        ],
+      },
+      {
+        id: 'place-comments',
+        title: 'Comment on a place',
+        icon: ForumOutlined,
+        steps: [
+          <>
+            On a place&apos;s card, tap <Tap>Comments</Tap>. The number is how
+            many there are.
+          </>,
+          <>
+            Tell drivers how it went: where to park, which lanes, how clean.
+            Tap <Tap>Post</Tap>.
+          </>,
+          <>
+            Tap <Tap>Reply</Tap> under a comment to answer it, like &ldquo;lot
+            was full tonight.&rdquo;
+          </>,
+          <>
+            Comment helped? Tap the thumbs up. Wrong? Tap the thumbs down. Tap
+            it again to take your vote back.
+          </>,
+          <>
+            On your own comments, tap the pencil to change it, or the trash
+            can to delete it.
           </>,
         ],
       },

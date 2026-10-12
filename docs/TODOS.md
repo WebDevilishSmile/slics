@@ -20,6 +20,15 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
       clear when `/admin/jobs` opens
 - [ ] one Refresh each (Jobs and a cover week) on the live site to confirm the deployment
 
+### Super admin hub (`SUPER-ADMIN-HUB.md`)
+
+- [x] stages A–F built 2026-10-12: notification choices, the hub with numbers and usage,
+      notifications, activity, system health and feature switches
+- [ ] ship it: run `npm run db:indexes`, restart `next dev` (new `@mui/x-charts`), and go
+      through "Verifying" as the super admin on a phone
+- [ ] after the first week: does the hub replace checking the Vercel and Atlas dashboards
+      day to day, and is anything missing from it?
+
 ### Places launch (`CLAUDE.md` → Data layer → Places)
 
 - [x] renamed from Whip It In & Out to Places at `/places` (the old path redirects), opened
@@ -138,6 +147,11 @@ notifications on, so nobody else's device is touched.
       toggle on `/profile`, `public/sw.js`, `push-subscriptions`, `lib/push.js`; 2026-10-10)
 - [x] ship stage 1: set the three VAPID keys on Vercel, run `npm run db:indexes`, test on
       a phone (`PUSH-NOTIFICATIONS.md` → "Verifying")
+- [x] stage 1b: each admin picks their kinds on `/profile`, with eight new kinds (cover
+      jobs and picks, tips, claims, sign-ups, Places, SLIC edits, Buy Me a Coffee) and a
+      90-day send log (2026-10-12). Ships with the hub, below
+- [ ] label the first Buy Me a Coffee renewal's event type (`PUSH-NOTIFICATIONS.md` stage
+      1b), and tick every event in BMC → Webhooks
 - [ ] stage 2: drivers opt in to replies on their tips (and on places once that page launches)
 - [ ] stage 3: "your pick is up" for cover bidding (waits on Features → User)
 

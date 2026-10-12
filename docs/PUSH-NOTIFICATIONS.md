@@ -7,11 +7,12 @@ replies, then cover bidding. Built in stages; check items off as they ship.
 `npm run build` (in a scratch copy, never while `next dev` runs) before shipping any item.
 The app is used daily in production.
 
-## Status (2026-10-10)
+## Status (2026-10-12)
 
-**Stage 1 built, not deployed.** The code is in (2026-10-10). Before it ships: set the three
-keys on Vercel and run `npm run db:indexes`. Then go through "Verifying" on a phone. Stages
-2 and 3 aren't started.
+**Stage 1 live** for admins (working on the admin's phone as of 2026-10-12). **Stage 1b
+built 2026-10-12, not deployed:** each admin chooses which kinds
+they get, with eight new kinds and a send log. Before it ships, run `npm run db:indexes`
+(the log's TTL). Stages 2 and 3 aren't started.
 
 ---
 
@@ -65,8 +66,8 @@ developer account.
 Only admins see the toggle, and the routes are `requireAdmin()`. Drivers' devices are
 untouched.
 
-- [ ] **Keys:** `npx web-push generate-vapid-keys` once. Done for `.env`, `.env.example` and
-      `OPERATIONS.md` (2026-10-10). **Vercel is still to do.** Add
+- [x] **Keys:** `npx web-push generate-vapid-keys` once. Done for `.env`, `.env.example` and
+      `OPERATIONS.md` (2026-10-10), and on Vercel (stage 1 shipped 2026-10-11, `TODOS.md`). Add
       `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` and `VAPID_SUBJECT`
       (`mailto:` the admin address) to `.env`, Vercel, `.env.example` and
       `OPERATIONS.md` → Configuration and Secrets. Rotating the private key invalidates
@@ -140,6 +141,54 @@ untouched.
 - [x] **`CLAUDE.md` → "PWA":** replace "no service worker" with the ground rules above
       (push only, no `fetch` handler, registered on opt-in).
 
+## Stage 1b — Admin notification choices (built 2026-10-12)
+
+Each admin picks which kinds they get. Still admin-only; the kinds are things only admins
+see in the app. The super admin's view of all of it is `/admin/super/notifications`
+(`SUPER-ADMIN-HUB.md` stage C).
+
+- [x] **The kinds:** `PUSH_TYPES` in `constants.js`, each `{ key, label, description, group,
+      audience, defaultOn }`. Job changes and SLIC reports are on by default, so nothing
+      changed for anyone. Every new kind is off until an admin turns it on, so no admin was
+      flooded. Buy Me a Coffee is `audience: 'superAdmin'`, offered and sent to super admins
+      only.
+- [x] **Per account, not per device:** `users.pushPrefs[key]`, missing meaning the default.
+      `getPushAudience(key)` (`lib/db/users.js`) is one query for the admins who get a kind;
+      `sendPushToAdmins(type, payload, { except })` uses it.
+- [x] **`PATCH /api/users/me/push-prefs { key, on }`:** `requireAdmin()`. An unknown key is
+      400, and a super-admin kind from another admin is 403. Rate-limited per admin.
+- [x] **On `/profile`:** once the device is on, `profile/PushTypeSwitches.jsx` lists the kinds
+      under "Send me", grouped, each a whole-row switch that saves on its own (put back with
+      an Alert if the save fails) and speaks "Tips on" in the live region. The line under the
+      device switch is now "On this device."
+- [x] **One file writes every payload:** `lib/pushEvents.js`, one `notifyX()` per kind, so
+      the lock-screen rule is checked in one place. Routes call them inside `after()`, and
+      the admin whose action set one off never gets it.
+- [x] **The new kinds and where they fire:**
+  - **Cover jobs:** `refreshCoverWeek` when a week's jobs change ("posted" when the week had
+    none). Links `/admin/cover/jobs?week=…`, which now opens on that week.
+  - **Cover picks:** `refreshCoverWeek` when picks change, as a count of drivers, never
+    names. One tag per week, so a live bid updates one notification.
+  - **Tips:** `POST /api/comments`, tips and replies, only for a SLIC that exists. Never the
+    text. One tag per SLIC.
+  - **Driver claims:** `POST /api/driver-claims`, a new claim only, not an edit.
+  - **Sign-ups:** `POST /api/auth/register` and `auth.js` `events.createUser` (Google).
+  - **Places:** `POST /api/places` and `POST /api/place-comments`.
+  - **SLIC edits** by another admin: create, edit (only when something changed), delete and
+    the PDF.
+  - **Buy Me a Coffee:** every new signed webhook event, with the kind and the amount
+    (decided 2026-10-12), never the supporter's name, email or message. Known types get a
+    label; any other goes out as "Buy Me a Coffee: <type>", so a renewal arrives whatever
+    BMC calls it.
+- [ ] **Renewals:** BMC doesn't publish its event names, and no renewal has reached the app
+      yet. Tick every event in BMC → Webhooks, and when the first renewal arrives, add its
+      `type` to `SUPPORT_TITLES` in `lib/pushEvents.js` (and `TYPE_LABELS` in
+      `admin/supporters/SupportersView.jsx`). If BMC sends no webhook for a renewal, the app
+      can't know about it.
+- [x] **The send log:** `sendPush` writes a `push-log` row for every send that reached a
+      device, and for every test, sample and written message (`lib/db/pushLog.js`, TTL 90
+      days). No recipient ids, no body text.
+
 ## Stage 2 — Drivers: replies to their tips
 
 - [ ] Show the toggle to every signed-in driver, and switch the subscription routes (and
@@ -147,8 +196,10 @@ untouched.
 - [ ] **Signing out on a shared device:** the device's row stays with the account that
       turned it on until someone signed in opens `/profile`. In stage 1 only admins hold
       rows. Once drivers do, decide whether signing out should unsubscribe the device.
-- [ ] **Per-type switches** on the user row (`pushPrefs: { tipReplies: true }`), shown
-      under the toggle, applied to all of a driver's devices. Each later type adds a key.
+- [ ] **Per-type switches:** built for admins in stage 1b (`PUSH_TYPES`, `users.pushPrefs`,
+      `profile/PushTypeSwitches.jsx`). For drivers, add `audience: 'driver'` kinds (a
+      `tipReplies` key), let `pushTypesFor` offer them to everyone, and open the prefs route
+      to `requireUser()`.
 - [ ] **Tip replies:** when `createComment` (`lib/db/comments.js`) saves a reply, push
       "New reply on your tip at SLIC 1809" to the top-level tip's author and to the
       thread's earlier repliers, never to the replier. Link `/home?slic=1809`. Use one

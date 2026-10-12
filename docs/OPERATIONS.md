@@ -45,6 +45,9 @@ script with `--dry-run` and a reverse twin, one commit per step.
   one account per sheet name (`users.driver.key`), and on the roster one row per employee
   ID and per linked sheet name (`drivers.sheetKey`). The 2026-10-12 cover job hiding
   (`COVER-JOB-HIDING.md`) added one on `cover-bid-job-hides`, one per week and job number.
+  The 2026-10-12 super admin hub (`SUPER-ADMIN-HUB.md`) added `slicViews.viewedAt` and the
+  90-day TTL on `push-log.at`. The list itself lives in `lib/db/indexSpecs.mjs`, and
+  `/admin/super/health` names any index not created yet.
 - **Rolling back:** in the Vercel dashboard, promote the previous deployment (Instant
   Rollback). It's faster than a revert commit, and it doesn't touch the data.
 
@@ -66,9 +69,15 @@ to `.env`. In production the same keys are set on the Vercel project.
 | Buy Me a Coffee events | Every delivery (saved to `bmc-events`); membership started / cancelled also sets `bmcMember` | `POST /api/webhooks/buymeacoffee` | HMAC SHA-256 with `BMC_WEBHOOK_SECRET`, constant-time; repeats are no-ops (`BMC-SUPPORT.md`) |
 
 Push notifications go out from the request that caused them, after its response
-(`lib/push.js`, `PUSH-NOTIFICATIONS.md`): job changes from a sheet read, a new SLIC report.
-Nothing is scheduled. With the VAPID keys unset, sends are skipped and logged ("Push is
-off").
+(`lib/pushEvents.js`, `PUSH-NOTIFICATIONS.md`): job changes and cover weeks from a sheet
+read, SLIC reports, tips, claims, sign-ups, Places, SLIC edits and Buy Me a Coffee events,
+each to the admins who chose that kind on `/profile`. Nothing is scheduled. With the VAPID
+keys unset, sends are skipped and logged ("Push is off"). Every send that reached a device
+is in `push-log` for 90 days, on `/admin/super/notifications`.
+
+**`/admin/super/health`** (super admin) checks the rest at a glance: which keys are set
+(never their values), the sheet's last read and ping, push failures, the PDF migration,
+missing indexes and the deploy's commit.
 
 The sheet notifier is an Apps Script in the admin's Google account. Install, test and
 uninstall steps are in `on-call-sheet-apps-script.md`. Whether it's working shows under the
@@ -82,7 +91,7 @@ production.
 
 | Command | Does | Notes |
 |---|---|---|
-| `npm run db:indexes` | Creates the indexes in `scripts/createIndexes.js` | Safe to re-run. Run it after adding an index there |
+| `npm run db:indexes` | Creates the indexes listed in `lib/db/indexSpecs.mjs` (`scripts/createIndexes.js`) | Safe to re-run. Run it after adding an index there; `/admin/super/health` shows any missing |
 | `npm run sheet:preview -- YYYY-MM-DD [--tabs]` / `-- --jobs` | Prints what a sheet refresh would save | Never writes |
 | `npm run admin:super -- <email> --dry-run` / `-- <email> --undo` | Makes an account super admin (and admin), or takes super admin away | Drop `--dry-run` to write; the only way to change it; each change is logged in `admin_audit` |
 | `npm run password:reset-link -- <email> --dry-run` | Prints a one-time reset link (24 hours) for a password account, including the ones `/admin/users` won't make one for: a super admin's, your own (`PASSWORD-RESET.md`) | Drop `--dry-run` to make it; `-- <email> --origin http://localhost:3000` for a local server; logged in `admin_audit` with no actor |

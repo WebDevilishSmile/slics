@@ -29,7 +29,8 @@ Everything written about SLICs that isn't code. The product overview is the root
 | [`COVER-JOB-HIDING.md`](COVER-JOB-HIDING.md) | An admin hides a cover job from drivers' `/covers`, and the hide survives sheet refreshes. Built 2026-10-12 |
 | [`BMC-SUPPORT.md`](BMC-SUPPORT.md) | Buy Me a Coffee: recording support, the admin Supporters page, thank-yous, impact numbers. Stage 1 built |
 | [`PASSWORD-RESET.md`](PASSWORD-RESET.md) | Forgot password: an admin-made reset link, then change password on the profile, then reset by email. Stages 1–3 live |
-| [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts, then tip replies, then "your pick is up". Stage 1 live (admins) |
+| [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts, then tip replies, then "your pick is up". Stage 1 live (admins); stage 1b (each admin's kinds) built 2026-10-12 |
+| [`SUPER-ADMIN-HUB.md`](SUPER-ADMIN-HUB.md) | The super admin's hub at `/admin/super`: numbers and usage, notifications, activity, system health, feature switches. Stages A–F built 2026-10-12 |
 | [`tutorials/VIDEO-SCRIPTS.md`](tutorials/VIDEO-SCRIPTS.md) | Shot-by-shot scripts for the driver tutorial videos, one per `/help` guide (`components/help/guides.jsx`) |
 
 ## Archive

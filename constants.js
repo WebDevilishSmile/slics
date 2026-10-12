@@ -344,3 +344,23 @@ export const PUSH_TYPES = [
     defaultOn: false,
   },
 ];
+// A notification the super admin writes on /admin/super/notifications: what
+// fits on a lock screen.
+export const PUSH_COMPOSE_TITLE_MAX = 60;
+export const PUSH_COMPOSE_BODY_MAX = 180;
+
+// The kinds of row in the super admin's activity feed (/admin/super/activity,
+// lib/db/activity.js), in the order the filter chips show.
+export const ACTIVITY_KINDS = [
+  { key: 'signUps', label: 'Sign-ups' },
+  { key: 'tips', label: 'Tips' },
+  { key: 'reports', label: 'Reports' },
+  { key: 'claims', label: 'Claims' },
+  { key: 'slics', label: 'SLIC edits' },
+  { key: 'jobs', label: 'Jobs tab' },
+  { key: 'picks', label: 'Cover picks' },
+  { key: 'places', label: 'Places' },
+  { key: 'support', label: 'Support' },
+  { key: 'admin', label: 'Admin actions' },
+  { key: 'push', label: 'Notifications' },
+];

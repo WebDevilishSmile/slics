@@ -26,6 +26,7 @@
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
     "@mui/material-nextjs": "^7.1.0",
+    "@mui/x-charts": "^8.29.3",
     "@mui/x-data-grid": "^8.22.1",
     "@mui/x-date-pickers": "^8.29.2",
     "@vercel/analytics": "^1.6.1",

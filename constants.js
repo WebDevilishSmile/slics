@@ -225,7 +225,7 @@ export const RESET_EMAIL_LINK_MINUTES = 30;
 
 // Covers and driver verification (docs/COVER-BIDDING.md) are admin-only until
 // they roll out to every driver: `canUseCovers` in lib/authz.js and the menu
-// read this. Flip it with the rollout checklist in that doc.
+// read this. Only the default: the switch on /admin/super/features wins. Flip it with the rollout checklist in that doc.
 export const COVERS_OPEN = false;
 // A verified driver's cover list (docs/COVER-BIDDING.md, stage 2): the jobs
 // they want for a week, in order. At most this many per week, and a week's

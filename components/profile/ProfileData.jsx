@@ -152,8 +152,8 @@ function ProfileData({
         <Detail icon={<BadgeOutlined />} label='Role'>
           {capitalizeFirstLetter(userData.role)}
         </Detail>
-        {/* Verification is only offered where Covers is (the super admin
-            while it's tested, docs/COVER-BIDDING.md). */}
+        {/* Verification is only offered where Covers is (admins while it's
+            tested, docs/COVER-BIDDING.md). */}
         {(userData.driverVerified || canUseCovers) && (
           <Detail icon={<VerifiedOutlined />} label='Driver'>
             {userData.driverVerified ? (

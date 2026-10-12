@@ -28,21 +28,21 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // the week's jobs, picked ones grayed out with no name: toDriverCoverJob
 // drops who took each one, so it never reaches the page. Jobs an admin hid
 // (docs/COVER-JOB-HIDING.md) are left out here on the server, for admins too,
-// so they're never sent. Anyone else gets the claim that verifies them.
-// Admins also see the jobs while unverified.
+// so they're never sent. Anyone else gets the claim that verifies them,
+// admins included: they test the page as drivers will get it.
 //
 // A verified driver also keeps a list of the jobs they want for each week
 // (stage 2, covers/CoverBoard.jsx), with BETPA's phone (DISPATCH_NUM_SLIC)
 // to call dispatch at their call-in time.
 //
-// Super-admin-only while it's tested, until the Covers switch opens it
+// Admin-only while it's tested, until the Covers switch opens it
 // (canUseCovers), checked before anything is read (docs/SECURITY.md #7).
 export default async function CoversPage() {
   const session = await getSession();
   if (!canUseCovers(session)) {
     return (
       <RedirectMessage
-        heading='Covers is in testing for now.'
+        heading='Covers is admin-only for now.'
         subheading='Redirecting you to the home page…'
         redirect='/home'
       />
@@ -50,7 +50,6 @@ export default async function CoversPage() {
   }
 
   const verified = isVerifiedDriver(session);
-  const showJobs = verified || session.user.role === 'admin';
 
   // The same window as /cover-bid-jobs, snapped to a Saturday so the oldest
   // week loads whole.
@@ -62,8 +61,8 @@ export default async function CoversPage() {
   const [user, claim, jobs, hiddenKeys, pickWeeks, savedLists, dispatchPhone] = await Promise.all([
     verified ? getUserById(session.user.id) : null,
     verified ? null : getMyDriverClaim(session.user.id),
-    showJobs ? getCoverBidJobsSince(cutoffWeek) : [],
-    showJobs ? getHiddenJobKeys(cutoffWeek) : new Set(),
+    verified ? getCoverBidJobsSince(cutoffWeek) : [],
+    verified ? getHiddenJobKeys(cutoffWeek) : new Set(),
     verified ? getCoverBidPicksSince(thisWeek) : [],
     verified ? getMyCoverLists(session.user.id, cutoffWeek) : {},
     // The button just doesn't show if the hub's SLIC can't be read.
@@ -111,7 +110,7 @@ export default async function CoversPage() {
         )}
       </HydrationGuard>
 
-      {showJobs && (
+      {verified && (
         <CoverBoard
           jobs={driverJobs}
           minWeekEnding={cutoffWeek}

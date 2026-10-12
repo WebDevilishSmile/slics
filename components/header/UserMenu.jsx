@@ -145,10 +145,10 @@ function UserMenu({ user, features, signOutAction }) {
     refreshOpenReportsCount();
     refreshPendingClaimsCount();
   }, [isAdmin, pathname]);
-  // Covers is super-admin-only while it's tested, until the super admin's
-  // switch opens it (canUseCovers in lib/authz.js).
+  // Covers is admin-only while it's tested, until the super admin's switch
+  // opens it (canUseCovers in lib/authz.js).
   const coversOpen = features?.coversOpen ?? COVERS_OPEN;
-  const canUseCovers = Boolean(user) && (coversOpen || user.superAdmin === true);
+  const canUseCovers = Boolean(user) && (coversOpen || isAdmin);
   // Places opened to everyone on 2026-10-12; its row says "New" until the
   // date the super admin set.
   const placesIsNew = new Date().toISOString() < (features?.placesNewUntil ?? PLACES_NEW_UNTIL);
@@ -268,7 +268,7 @@ function UserMenu({ user, features, signOutAction }) {
                   onClick={handleClose}
                   href='/covers'
                   label='Covers'
-                  secondary={coversOpen ? undefined : 'Super admin only for now'}
+                  secondary={coversOpen ? undefined : 'Admin only for now'}
                   icon={<EventAvailableOutlined />}
                   current={isCurrent('/covers')}
                 />

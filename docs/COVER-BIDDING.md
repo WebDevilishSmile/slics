@@ -10,13 +10,18 @@ The app is used daily in production.
 
 ## Status (2026-10-12)
 
-- **Stage 1** (driver verification and the drivers' Covers page): built, **admin-only**
-  until it rolls out. `COVERS_OPEN` in `constants.js` is `false`, so only admins see
-  `/covers`, the menu item and the check mark on Driver tips. Test it on other admins
-  first, then follow the rollout checklist below.
+- **Stage 1** (driver verification and the drivers' Covers page): built, **super admin
+  only** while it's tested (since 2026-10-12; every admin before that). Until the "Covers
+  for every driver" switch on `/admin/super/features` opens it (`COVERS_OPEN` in
+  `constants.js` is only the default), only super admins see `/covers`, the menu item
+  and the check mark on Driver tips, and only they can file a claim or keep a list
+  (`canUseCovers`, `lib/authz.js`). The admin tools (`/admin/cover/*`,
+  `/admin/driver-claims`) stay with every admin. Test it, then follow the rollout
+  checklist below.
 - **Indexes:** run `npm run db:indexes` once stage 1 is deployed (two of its indexes are
   unique, see "Data").
-- **Stage 2** (cover lists): built 2026-10-12 behind the same gate, so admin-only too.
+- **Stage 2** (cover lists): built 2026-10-12 behind the same gate, so super admin only
+  too.
   Run `npm run db:indexes` once it's deployed (`cover-preferences`, including its TTL),
   then check it with "Verifying stage 2" below.
 - **Stages 3–4:** not started.
@@ -81,7 +86,7 @@ doesn't do covers never has to.
 
 ---
 
-## Stage 1: Verification and the drivers' Covers page (built, admin-only)
+## Stage 1: Verification and the drivers' Covers page (built, super admin only while tested)
 
 - [x] **Claim:** `POST /api/driver-claims` (`requireCovers()`, 5 a day per driver), checked
       by `validateDriverClaim`. The form is `components/covers/DriverClaimDialog.jsx`.
@@ -125,7 +130,7 @@ doesn't do covers never has to.
 
 ---
 
-## Stage 2: A preference list (built 2026-10-12, admin-only)
+## Stage 2: A preference list (built 2026-10-12, super admin only while tested)
 
 A verified driver lists the jobs they want, in order. As jobs are picked (by anyone, on
 the sheet or later in the app), they drop off everyone's list. Picks still happen by

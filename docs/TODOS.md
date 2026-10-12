@@ -66,6 +66,8 @@ Plan, rules and open questions: `COVER-BIDDING.md`.
 - [x] stage 1: driver verification and the drivers' Covers page (2026-10-10). Claims, the
       `/admin/driver-claims` queue, the check mark, `/covers` with the driver's own cover
       number and call-in time and the job list without names. Admin-only (`COVERS_OPEN`)
+- [ ] hide a cover job from drivers on `/admin/cover/jobs`, kept through sheet refreshes
+      (`COVER-JOB-HIDING.md`; planned 2026-10-11, waiting on its open questions)
 - [ ] roll stage 1 out to every driver (the checklist in `COVER-BIDDING.md`), including a
       "Verify you're a driver" guide on `/help`
 - [ ] stage 2: preference lists that lose jobs as they're picked, button with option to call dispatch

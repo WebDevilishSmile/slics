@@ -19,6 +19,8 @@ import {
   DayTimeChip,
   descriptionColumn,
   filterBarSx,
+  HiddenLabel,
+  hiddenSx,
   JOB_GRID_SX,
   jobGridCardSx,
   PickedLabel,
@@ -49,6 +51,7 @@ const DESKTOP_COLUMNS = [
       <Box>
         {value}
         {isPicked(row) && <PickedLabel sx={{ display: 'flex' }} />}
+        {row.hidden && <HiddenLabel sx={{ display: 'flex' }} />}
       </Box>
     ),
   },
@@ -171,7 +174,9 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
             autoHeight
             getRowHeight={() => 'auto'}
             onRowClick={(params) => setSelectedJob(params.row)}
-            getRowClassName={({ row }) => (isPicked(row) ? 'picked' : '')}
+            getRowClassName={({ row }) =>
+              [isPicked(row) && 'picked', row.hidden && 'hidden'].filter(Boolean).join(' ')
+            }
             slots={{
               noRowsOverlay: () => (
                 <Typography
@@ -187,6 +192,7 @@ function CoverBidJobsTable({ jobs, minWeekEnding }) {
               ...JOB_GRID_SX,
               '& .MuiDataGrid-row': { cursor: 'pointer' },
               '& .MuiDataGrid-row.picked': pickedSx,
+              '& .MuiDataGrid-row.hidden': hiddenSx,
             }}
           />
         </Box>

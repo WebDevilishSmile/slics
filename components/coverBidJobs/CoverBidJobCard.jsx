@@ -20,6 +20,7 @@ function CoverBidJobCard({ job, onSelect }) {
       days={days}
       description={job.description}
       picked={isPicked(job)}
+      hidden={Boolean(job.hidden)}
       action={
         onSelect && (
           <IconButton

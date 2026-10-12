@@ -11,7 +11,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
-import { PickedLabel, pickedSx } from './jobGrid';
+import { HiddenLabel, hiddenSx, PickedLabel, pickedSx } from './jobGrid';
 
 // The phone card for one bid job on /cover-bid-jobs
 // (coverBidJobs/CoverBidJobCard.jsx maps a job into these props;
@@ -21,12 +21,19 @@ import { PickedLabel, pickedSx } from './jobGrid';
 // - `action`: optional element at the top right (a chip, a details button).
 // - `picked`: a cover job someone has picked, grayed out with a "Picked"
 //   label; its action still works.
+// - `hidden`: a cover job an admin hid from drivers, dimmed with a "Hidden"
+//   label (admins only: drivers never receive one).
 // A soft raised card (CLAUDE.md "Visual style"); the day chips keep their
 // colors, which tell the days apart.
-function JobCard({ title, action, days, description, picked = false }) {
+function JobCard({ title, action, days, description, picked = false, hidden = false }) {
   return (
     <Box
-      sx={[softRaised, { width: '100%', borderRadius: 3, p: 2, pb: 1 }, picked && pickedSx]}
+      sx={[
+        softRaised,
+        { width: '100%', borderRadius: 3, p: 2, pb: 1 },
+        picked && pickedSx,
+        hidden && hiddenSx,
+      ]}
     >
       <Box
         sx={{
@@ -40,7 +47,12 @@ function JobCard({ title, action, days, description, picked = false }) {
           <Typography variant='h6' fontWeight={700} lineHeight={1.2}>
             {title}
           </Typography>
-          {picked && <PickedLabel sx={{ mt: 0.5 }} />}
+          {(picked || hidden) && (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 1.5, mt: 0.5 }}>
+              {picked && <PickedLabel />}
+              {hidden && <HiddenLabel />}
+            </Box>
+          )}
         </Box>
         {action}
       </Box>

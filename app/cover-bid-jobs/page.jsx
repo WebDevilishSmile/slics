@@ -5,6 +5,8 @@ import {
   getCoverBidJobsSince,
   serializeCoverBidJobs,
 } from '@/lib/db/coverBidJobs';
+import { getHiddenJobKeys } from '@/lib/db/coverBidJobHides';
+import { isJobHidden } from '@/lib/coverBidJobRow';
 import CoverBidJobsTable from '@/components/coverBidJobs/CoverBidJobsTable';
 import { Typography } from '@mui/material';
 import { getAdminSession } from '@/lib/authz';
@@ -32,8 +34,16 @@ export default async function CoverBidJobsPage() {
     dayjs().subtract(COVER_BID_MONTHS_BACK, 'month'),
   ).format('YYYY-MM-DD');
 
-  const jobs = await getCoverBidJobsSince(cutoffWeek);
-  const serializedJobs = serializeCoverBidJobs(jobs);
+  const [jobs, hiddenKeys] = await Promise.all([
+    getCoverBidJobsSince(cutoffWeek),
+    getHiddenJobKeys(cutoffWeek),
+  ]);
+  // Admins see every job, the ones hidden from drivers labeled
+  // (docs/COVER-JOB-HIDING.md). /covers leaves them out instead.
+  const serializedJobs = serializeCoverBidJobs(jobs).map((job) => ({
+    ...job,
+    hidden: isJobHidden(job, hiddenKeys),
+  }));
 
   return (
     <PageContainer>

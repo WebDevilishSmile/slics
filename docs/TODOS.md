@@ -120,6 +120,11 @@ Plan, rules and open questions: `COVER-BIDDING.md`.
 
 - [ ] ability to change profile image and share time they work and show phone number for those that need help. A page where drivers that need assistance can find and contact each other.
 
+- [x] if a verified driver clicks the cover page but is not a cover or oncall driver then show a message saying the cover list is read only. They are not allowed to make any picks or setup preferred list. There should be a button that says if this is a mistake then send a message. This should send me a message that the driver is disputing his status as a cover or oncall driver.
+      (built 2026-10-12, admin only with Covers; `COVER-BIDDING.md` stage 2, "Off the
+      list is read only"). Left: `npm run db:indexes` after the deploy, and its "Verifying
+      the read-only rule" checks
+
 ### Privacy and Terms page
 
 - [x] remove Gemini from app now that we don't need it (2026-10-10; the privacy page no longer

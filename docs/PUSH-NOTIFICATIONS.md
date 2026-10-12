@@ -172,6 +172,8 @@ see in the app. The super admin's view of all of it is `/admin/super/notificatio
   - **Tips:** `POST /api/comments`, tips and replies, only for a SLIC that exists. Never the
     text. One tag per SLIC.
   - **Driver claims:** `POST /api/driver-claims`, a new claim only, not an edit.
+  - **Cover list disputes** (on by default, added 2026-10-12): `POST /api/cover-disputes`,
+    "This is a mistake" on `/covers`, a new dispute only. Never the name or the note.
   - **Sign-ups:** `POST /api/auth/register` and `auth.js` `events.createUser` (Google).
   - **Places:** `POST /api/places` and `POST /api/place-comments`.
   - **SLIC edits** by another admin: create, edit (only when something changed), delete and

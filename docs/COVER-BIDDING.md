@@ -10,20 +10,26 @@ The app is used daily in production.
 
 ## Status (2026-10-12)
 
-- **Stage 1** (driver verification and the drivers' Covers page): built, **super admin
-  only** while it's tested (since 2026-10-12; every admin before that). Until the "Covers
+- **Stage 1** (driver verification and the drivers' Covers page): built, **admin only**
+  while it's tested (super admins only for a few hours on 2026-10-12). Until the "Covers
   for every driver" switch on `/admin/super/features` opens it (`COVERS_OPEN` in
-  `constants.js` is only the default), only super admins see `/covers`, the menu item
-  and the check mark on Driver tips, and only they can file a claim or keep a list
-  (`canUseCovers`, `lib/authz.js`). The admin tools (`/admin/cover/*`,
-  `/admin/driver-claims`) stay with every admin. Test it, then follow the rollout
+  `constants.js` is only the default), only admins see `/covers`, the menu item and the
+  check mark on Driver tips, and only they can file a claim or keep a list
+  (`canUseCovers`, `lib/authz.js`). Admins are the testers, so `/covers` shows them
+  exactly what a driver will get: unverified, only the claim; verified, their place, the
+  jobs and their list, read only on a week they're off. Their admin view is the admin
+  pages (`/admin/cover/*`, `/admin/driver-claims`). Test it, then follow the rollout
   checklist below.
 - **Indexes:** run `npm run db:indexes` once stage 1 is deployed (two of its indexes are
   unique, see "Data").
-- **Stage 2** (cover lists): built 2026-10-12 behind the same gate, so super admin only
+- **Stage 2** (cover lists): built 2026-10-12 behind the same gate, so admin only
   too.
   Run `npm run db:indexes` once it's deployed (`cover-preferences`, including its TTL),
   then check it with "Verifying stage 2" below.
+- **Off the list, read only** (built 2026-10-12, behind the same gate): a verified driver
+  a posted week's pick list doesn't name can't keep a list for that week, and "This is a
+  mistake" tells the admins (see the end of stage 2). Run `npm run db:indexes` once it's
+  deployed (`cover-disputes`), then check it with "Verifying the read-only rule" below.
 - **Stages 3–4:** not started.
 
 ---
@@ -86,7 +92,7 @@ doesn't do covers never has to.
 
 ---
 
-## Stage 1: Verification and the drivers' Covers page (built, super admin only while tested)
+## Stage 1: Verification and the drivers' Covers page (built, admin only while tested)
 
 - [x] **Claim:** `POST /api/driver-claims` (`requireCovers()`, 5 a day per driver), checked
       by `validateDriverClaim`. The form is `components/covers/DriverClaimDialog.jsx`.
@@ -130,7 +136,7 @@ doesn't do covers never has to.
 
 ---
 
-## Stage 2: A preference list (built 2026-10-12, super admin only while tested)
+## Stage 2: A preference list (built 2026-10-12, admin only while tested)
 
 A verified driver lists the jobs they want, in order. As jobs are picked (by anyone, on
 the sheet or later in the app), they drop off everyone's list. Picks still happen by
@@ -164,6 +170,22 @@ calling dispatch at the call-in time; the list is what the driver reads off on t
       call-in, taken jobs struck through, and the most wanted open jobs (first choice,
       on how many lists). `/admin/cover/jobs` labels each job "On N lists · 1st on M"
       (`WantedLabel`). Drivers see only their own list.
+- [x] **Off the list is read only** (2026-10-12): a verified driver who isn't a cover or
+      on-call driver in a posted week (the week's `cover-bid-picks` has rows and none is
+      theirs, `offListWeeks` in `lib/coverDrivers.js`) sees that week's jobs but can't
+      start or change a list for it, and `PUT /api/users/me/cover-preferences` answers
+      403. A list saved before shows read-only without Call dispatch. A week whose picks
+      aren't posted isn't off: nobody knows yet. Stage 3's picking must check the same
+      rule.
+- [x] **"This is a mistake"** (`covers/CoverDispute.jsx`): the read-only notice on
+      `/covers` names the weeks (or says the whole list) and its button sends the admins
+      an optional note (`POST /api/cover-disputes`, 5 a day). The server records the
+      weeks and the linked sheet name itself, and refuses when the driver is on every
+      posted week. One open dispute per driver (`cover-disputes`,
+      `lib/db/coverDisputes.js`); sending again edits it. Admins get a push (`coverDisputes`,
+      on by default), the header-menu badge and the `/admin` banner, and close it on
+      `/admin/driver-claims` with an optional answer the driver sees on `/covers`. The fix
+      is the sheet's, or the account's link on its admin user page.
 
 ## Stage 3: Picking in the app (not started)
 
@@ -220,7 +242,7 @@ super admin to review.
 With a verified admin (the super admin can verify themselves) on a posted week:
 
 1. **The gate:** a regular account gets 401/403 from `/api/users/me/cover-preferences`;
-   an unverified admin sees the jobs on `/covers` with no list and no add buttons.
+   an unverified admin sees only the claim on `/covers`: no jobs, no list.
 2. **Building a list (phone width, light and dark):** add three jobs from the cards, the
    table and the job dialog; move one up and down; remove one. Reload: the order holds.
    A picked job's add button is disabled ("Taken").
@@ -234,3 +256,19 @@ With a verified admin (the super admin can verify themselves) on a posted week:
    table; `/admin/cover/jobs` shows "On 1 list · 1st on 1" on the first open job.
 6. **Past week:** a week that's over shows its list read-only; `PUT` answers 400.
 7. **Cleanup:** delete the test list (remove every job), or delete the test account.
+
+### Verifying the read-only rule
+
+With a verified tester whose linked name isn't in a posted week's picks (re-link them on
+their admin user page to a name only on the Jobs tab, then link them back):
+
+1. **Read only:** `/covers` says the cover list is read only, naming the week (or not,
+   when they're off every posted week). That week has no list and no add buttons, and a
+   `PUT` for it answers 403. A week they're on still works.
+2. **This is a mistake:** send it with a note. The notice says when it was sent and the
+   button goes. The admins who chose "Cover list disputes" get a push with no name; the
+   menu badge and the `/admin` banner count it; `/admin/driver-claims` shows the account,
+   the linked name, the weeks and the note. A tester on every posted week gets 409.
+3. **Closing:** close it with an answer. The driver sees the answer on `/covers` and the
+   button again; the badge drops.
+4. **Cleanup:** link the tester back. Deleting a test account deletes its disputes.

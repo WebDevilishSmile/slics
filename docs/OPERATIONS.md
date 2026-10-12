@@ -46,7 +46,8 @@ script with `--dry-run` and a reverse twin, one commit per step.
   ID and per linked sheet name (`drivers.sheetKey`). The 2026-10-12 cover job hiding
   (`COVER-JOB-HIDING.md`) added one on `cover-bid-job-hides`, one per week and job number.
   The 2026-10-12 super admin hub (`SUPER-ADMIN-HUB.md`) added `slicViews.viewedAt` and the
-  90-day TTL on `push-log.at`. The list itself lives in `lib/db/indexSpecs.mjs`, and
+  90-day TTL on `push-log.at`. The 2026-10-12 cover list disputes (`COVER-BIDDING.md`)
+  added `cover-disputes`, including a unique one: one open dispute per driver. The list itself lives in `lib/db/indexSpecs.mjs`, and
   `/admin/super/health` names any index not created yet.
 - **Rolling back:** in the Vercel dashboard, promote the previous deployment (Instant
   Rollback). It's faster than a revert commit, and it doesn't touch the data.
@@ -70,7 +71,7 @@ to `.env`. In production the same keys are set on the Vercel project.
 
 Push notifications go out from the request that caused them, after its response
 (`lib/pushEvents.js`, `PUSH-NOTIFICATIONS.md`): job changes and cover weeks from a sheet
-read, SLIC reports, tips, claims, sign-ups, Places, SLIC edits and Buy Me a Coffee events,
+read, SLIC reports, tips, claims, cover list disputes, sign-ups, Places, SLIC edits and Buy Me a Coffee events,
 each to the admins who chose that kind on `/profile`. Nothing is scheduled. With the VAPID
 keys unset, sends are skipped and logged ("Push is off"). Every send that reached a device
 is in `push-log` for 90 days, on `/admin/super/notifications`.

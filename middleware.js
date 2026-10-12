@@ -13,12 +13,16 @@ export default auth((req) => {
   // names a user (docs/SECURITY.md #4).
   const isLoggedIn = !!req.auth?.user?.id;
 
-  // There's no /signin page: sign-in lives on `/`. Old links and bookmarks to
-  // /signin (this middleware used to send signed-out drivers there) go to `/`
-  // with their callbackUrl.
-  if (url.pathname === '/signin') {
+  // Sign-in is /sign-in. Old links and bookmarks to /signin (this middleware
+  // used to send signed-out drivers there) go to it with their callbackUrl,
+  // and so does `/?callbackUrl=`: sign-in was on `/` until 2026-10-12, and a
+  // page opened before then still comes back there.
+  if (
+    url.pathname === '/signin' ||
+    (url.pathname === '/' && url.searchParams.has('callbackUrl'))
+  ) {
     const next = safeCallbackUrl(url.searchParams.get('callbackUrl'), null);
-    const signInUrl = new URL('/', url.origin);
+    const signInUrl = new URL('/sign-in', url.origin);
     if (next) signInUrl.searchParams.set('callbackUrl', next);
     return NextResponse.redirect(signInUrl);
   }
@@ -29,21 +33,29 @@ export default auth((req) => {
   // --- MODIFICATION STARTS HERE ---
 
   // List of public paths (accessible to anyone, logged in or not)
-  // Legal pages stay public: the footer links to them before sign-in, and the
-  // Google OAuth consent screen needs a reachable privacy policy URL. /help
-  // too: its sign-in guide is for drivers who aren't signed in yet. And
-  // /reset-password, opened from a reset link by someone who can't sign in
-  // (docs/PASSWORD-RESET.md).
-  const publicPaths = ['/', '/privacy', '/terms', '/help', '/reset-password'];
+  // `/` is the landing page, which Google's OAuth branding review reads, and
+  // /sign-in is sign-in. Legal pages stay public: the footer links to them
+  // before sign-in, and the Google OAuth consent screen needs a reachable
+  // privacy policy URL. /help too: its sign-in guide is for drivers who aren't
+  // signed in yet. And /reset-password, opened from a reset link by someone
+  // who can't sign in (docs/PASSWORD-RESET.md).
+  const publicPaths = [
+    '/',
+    '/sign-in',
+    '/privacy',
+    '/terms',
+    '/help',
+    '/reset-password',
+  ];
 
   // 1. Handle unauthenticated users
   if (!isLoggedIn) {
     // If the user is not logged in AND trying to access a path that is NOT public,
     // then redirect to sign-in.
     if (!publicPaths.includes(url.pathname)) {
-      // Sign-in lives on `/` (auth.config.js `pages.signIn`). The page they
+      // Sign-in is /sign-in (auth.config.js `pages.signIn`). The page they
       // wanted, query included, rides along so they land there afterwards.
-      const signInUrl = new URL('/', url.origin);
+      const signInUrl = new URL('/sign-in', url.origin);
       signInUrl.searchParams.set('callbackUrl', `${url.pathname}${url.search}`);
       // console.log(
       //   'Middleware: User not logged in and accessing protected path, redirecting to sign-in.'
@@ -63,8 +75,9 @@ export default auth((req) => {
     // console.log(
     //   'Middleware: User is logged in but not a BMC member, redirecting to home.'
     // );
-    // Note: This redirect is to the *root* page ('/'), which we just made public.
-    url.pathname = '/';
+    // /sign-in shows a signed-in non-member the membership prompt.
+    url.pathname = '/sign-in';
+    url.search = '';
     return NextResponse.redirect(url);
   }
 

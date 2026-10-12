@@ -23,8 +23,8 @@ const modeLinkSx = { verticalAlign: 'baseline' };
 
 const formSx = { display: 'flex', flexDirection: 'column', gap: 2.5 };
 
-// `returnTo` is `/`, with the callbackUrl when there is one (SignIn.jsx).
-function EmailAuth({ returnTo = '/' }) {
+// `returnTo` is /sign-in, with the callbackUrl when there is one (SignIn.jsx).
+function EmailAuth({ returnTo = '/sign-in' }) {
   const router = useRouter();
   const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
   const [loading, setLoading] = useState(false);

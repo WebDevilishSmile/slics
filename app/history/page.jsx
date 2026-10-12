@@ -17,7 +17,7 @@ export default async function HistoryPage({ searchParams }) {
       <RedirectMessage
         heading='You must be signed in to view this page.'
         subheading='Please sign in and try again.'
-        redirect='/'
+        redirect='/sign-in'
       />
     );
   }
@@ -27,7 +27,7 @@ export default async function HistoryPage({ searchParams }) {
       <RedirectMessage
         heading='This page is available to members only.'
         subheading='Support SLICs on Buy Me a Coffee to access your history.'
-        redirect='/'
+        redirect='/sign-in'
       />
     );
   }

@@ -105,7 +105,7 @@ makes a link on `/admin/users` and texts it to them.
   - Reads the token from the fragment, then clears it.
   - Soft panel: new password and confirm, with show/hide (`softInputSx` fields, one
     contained button).
-  - On success: "Password changed. Sign in with your new password," with a button to `/`.
+  - On success: "Password changed. Sign in with your new password," with a button to `/sign-in`.
     It doesn't sign them in, so the email sign-in form stays the only place a password
     is checked.
   - With no token or a bad one: the error, and "Ask an admin for a new link."

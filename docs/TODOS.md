@@ -45,6 +45,13 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 ## Features
 
+### Landing page
+
+The landing page should introduce SLICs and its purpose for UPS Feeder drivers. It should provide a clear call-to-action for signing in and accessing the app's features. Consider including an overview of the app's capabilities, such as looking up SLIC codes, viewing driver tips, and accessing cover bidding for verified users. The design should be clean and informative, guiding new users to understand the app's value and how to get started. The sign in process should be in the /sign-in page.
+
+- [x] landing page on `/` and sign-in on `/sign-in` (2026-10-12, `components/landing/`). It
+      leaves out cover bidding until covers open to every driver (`COVERS_OPEN`)
+
 ### User
 
 I need to establish a way to authenticate users. We should have a way to link the driver on the jobs list and cover and on-call list, to the user of the app. Email address will link to the driver. Sometimes the user's name and email does not match exactly with the driver roster, so additional verification may be needed. Find a way to have the user claim their driver identity. This has to be verified by admin. A verification process like X does with the check mark or badge for verified users could be implemented. Eventually, I would like the cover bid weekly bidding process to be done on this app. The verified user logs in, sees what jobs are available and their pick time (call in time), and can take his bid when his time comes. We need to maintain anonymity, so other drivers can't see what bids have been made by whom, only admins. I'm thinking a cover page where users can see available bids without revealing who has made them. Once a job is picked it is grayed out but doesn't say who took it. On the cover page there will be the name of the user and his pick time. There can be a way to create a list of bids they want in order of preference. As the jobs are picked those jobs come off of the preferred list for each user. Once the users is on the clock their auto pick will be submitted and the next driver can pick. First thing will be building the cover page for all drivers. Upon entering page, am alert that only verified drivers can see that cover list. They can submit for verification by claiming their name and employee email (employee_id@ups.com) and seniority date. Admins will review and approve these claims to ensure the integrity of the verification process. Once verified, the user will have access to the cover bidding features. I don't want to hinder drivers from accessing the SLICs app if they are not interested in this. So, this has to be cover-specific. If a driver wants to participate in the covers feature, then he must be verified.

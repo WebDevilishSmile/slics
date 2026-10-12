@@ -127,7 +127,7 @@ export default function ResetPasswordForm() {
         <Button
           variant='contained'
           LinkComponent={Link}
-          href='/'
+          href='/sign-in'
           sx={[softContainedSx, { mt: 1, px: 4, minHeight: '3rem' }]}
         >
           Sign in

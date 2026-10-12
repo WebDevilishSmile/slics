@@ -37,7 +37,9 @@ export const HELP_SECTIONS = [
         title: 'Sign in for the first time',
         icon: LoginOutlined,
         steps: [
-          <>Open the SLICs link on your phone.</>,
+          <>
+            Open the SLICs link on your phone and tap <Tap>Sign in</Tap>.
+          </>,
           <>
             If you use Gmail, tap <Tap>Continue with Google</Tap> and pick your
             account. That&apos;s it. Skip to step 5.

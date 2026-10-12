@@ -388,10 +388,10 @@ function UserMenu({ user, signOutAction }) {
           ) : (
             <NavItem
               onClick={handleClose}
-              href='/'
+              href='/sign-in'
               label='Sign in'
               icon={<LoginOutlined />}
-              current={isCurrent('/')}
+              current={isCurrent('/sign-in')}
             />
           )}
         </List>

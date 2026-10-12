@@ -15,7 +15,7 @@ export default async function AdminLayout({ children }) {
       <RedirectMessage
         heading='You must be logged in to access admin pages.'
         subheading='Please sign in to continue.'
-        redirect='/'
+        redirect='/sign-in'
       />
     );
   }

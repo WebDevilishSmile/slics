@@ -32,7 +32,7 @@ async function ProfilePage({ params }) {
       <RedirectMessage
         heading='You must be signed in to view this page.'
         subheading='Please sign in and try again.'
-        redirect='/'
+        redirect='/sign-in'
       />
     );
   }

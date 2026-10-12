@@ -43,7 +43,7 @@ export default async function Home({ searchParams }) {
     return (
       <RedirectMessage
         heading='You must be logged in to view SLICs.'
-        redirect='/'
+        redirect='/sign-in'
       />
     );
   }

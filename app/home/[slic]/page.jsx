@@ -15,7 +15,7 @@ export default async function SlicPage({ params }) {
     return (
       <RedirectMessage
         heading='You must be logged in to view SLICs.'
-        redirect='/'
+        redirect='/sign-in'
       />
     );
   }

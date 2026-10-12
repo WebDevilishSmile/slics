@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import { softInset } from '@/components/utility/soft';
 
-// A signed-in member on `/` is on their way to `to` (/home, or the page they
+// A signed-in member on /sign-in is on their way to `to` (/home, or the page they
 // were headed for before signing in): a thin progress bar in
 // a soft inset track shows the wait (router.push doesn't drive the header's
 // navigation bar).

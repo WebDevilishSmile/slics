@@ -5,13 +5,13 @@ import { Box, Button, Paper, Typography } from '@mui/material';
 import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 import EmailAuth from './EmailAuth';
 
-// Sign-in on `/` for a signed-out visitor: one soft panel. The email form's
-// Sign In is the panel's one solid blue button, so Google is a raised pill.
-// Both come back to `/`, keeping `callbackUrl` (app/page.jsx).
+// Sign-in on /sign-in for a signed-out visitor: one soft panel. The email
+// form's Sign In is the panel's one solid blue button, so Google is a raised
+// pill. Both come back to /sign-in, keeping `callbackUrl` (app/sign-in/page.jsx).
 function SignIn({ callbackUrl }) {
   const returnTo = callbackUrl
-    ? `/?callbackUrl=${encodeURIComponent(callbackUrl)}`
-    : '/';
+    ? `/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`
+    : '/sign-in';
 
   return (
     <Paper

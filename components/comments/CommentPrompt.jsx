@@ -96,20 +96,22 @@ function CommentPrompt({ user }) {
     >
       <DialogTitle id='comment-prompt-title'>How was {label}?</DialogTitle>
       <DialogContent>
-        {due?.name ? (
+        {/* Only centers are saved with an alpha code (lib/commentPrompt.js).
+            `name` can't tell them apart: check() fills it for both. */}
+        {due?.alphaSlic ? (
+          <DialogContentText>
+            {/* Message for UPS hubs */}
+            Help the next driver by providing any relevant information about
+            this location. Guard shack instructions, dispatch locations, tricky
+            turns — a quick comment helps everyone heading there.
+          </DialogContentText>
+        ) : (
           <DialogContentText>
             {/* Message for customers */}
             Help the next driver by providing any relevant information about
             this customer. Which entrance to use, security protocols, dock door
             assignments, trailer size limitations, and any other pertinent
             details.
-          </DialogContentText>
-        ) : (
-          <DialogContentText>
-            {/* Message for UPS hubs */}
-            Help the next driver by providing any relevant information about
-            this location. Guard shack instructions, dispatch locations, tricky
-            turns — a quick comment helps everyone heading there.
           </DialogContentText>
         )}
       </DialogContent>

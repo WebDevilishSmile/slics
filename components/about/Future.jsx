@@ -2,6 +2,7 @@ import theme from '@/theme';
 import { Box, Button } from '@mui/material';
 import { Email as EmailIcon, Update as UpdateIcon } from '@mui/icons-material';
 
+import { CONTACT_EMAIL } from '@/constants';
 import BouncingArrow from '@/components/utility/BouncingArrow';
 import { softContainedSx } from '@/components/utility/soft';
 import AboutSection from './AboutSection';
@@ -18,7 +19,7 @@ export default function Future() {
           <BouncingArrow />
           <Button
             variant='contained'
-            href='mailto:webdevilishsmile@gmail.com'
+            href={`mailto:${CONTACT_EMAIL}`}
             target='_blank'
             rel='noopener noreferrer'
             sx={[softContainedSx(theme), { mb: 1 }]}

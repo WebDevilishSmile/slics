@@ -3,8 +3,9 @@
 // production: lib/siteOrigin.js.
 export const SITE_URL = 'https://www.slics.app';
 
-// Where drivers write in: the footer, /privacy, /terms and the end of /help.
-export const CONTACT_EMAIL = 'WebDevilishSmile@gmail.com';
+// Where drivers write in: the footer, /privacy, /terms, /help and /about. It
+// forwards to the admin's inbox (docs/OPERATIONS.md, "Email for the domain").
+export const CONTACT_EMAIL = 'tiago@slics.app';
 
 // Rows per page in the admin SLICs table (admin/slics/SlicsTable.jsx).
 export const SLICS_PER_PAGE = 25;

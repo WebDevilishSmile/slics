@@ -49,6 +49,13 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 The app should provide a way for users to delete their accounts.
 
+- [x] self-service delete (2026-09-20; re-checked 2026-10-12): `/profile` → Edit profile →
+      Delete account (`profile/DeleteAccountDialog.jsx`, type `DELETE` to confirm, then signed
+      out). `DELETE /api/users/[id]` takes only the caller's own id and refuses admins;
+      `deleteUserAccount` (`lib/db/users.js`) covers every user-linked collection in
+      `DATA-MODEL.md`: tips, votes, places data, gym comments, lookups, Google links, claims,
+      push devices and reset links go; SLIC reports and BMC events stay, unlinked
+
 ### Landing page
 
 The landing page should introduce SLICs and its purpose for UPS Feeder drivers. It should provide a clear call-to-action for signing in and accessing the app's features. Consider including an overview of the app's capabilities, such as looking up SLIC codes, viewing driver tips, and accessing cover bidding for verified users. The design should be clean and informative, guiding new users to understand the app's value and how to get started. The sign in process should be in the /sign-in page.

@@ -16,7 +16,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
 import { isDuplicateJobNumber, isPicked, rowIssues } from '@/lib/coverBidJobRow';
 import { softInputSx, softTableSx } from '@/components/utility/soft';
-import { pickedSx } from '@/components/coverBidJobs/jobGrid';
+import { HiddenLabel, hiddenSx, pickedSx } from '@/components/coverBidJobs/jobGrid';
 import DayTimeField from './DayTimeField';
 
 // Shown to screen readers only, the usual clip pattern (as in
@@ -104,6 +104,7 @@ const JobRows = memo(function JobRows({
   row,
   index,
   duplicate,
+  hidden,
   onFieldChange,
   renderLeading,
   renderActions,
@@ -113,9 +114,15 @@ const JobRows = memo(function JobRows({
   const descriptionId = `${row.key}-description`;
 
   // A picked job's cells gray out (on the cells, which take a filter more
-  // reliably than a table row does); every field stays editable.
+  // reliably than a table row does), and a hidden one's dim; every field
+  // stays editable.
   return (
-    <TableBody sx={isPicked(row) ? { '& .MuiTableCell-root': pickedSx } : undefined}>
+    <TableBody
+      sx={[
+        isPicked(row) && { '& .MuiTableCell-root': pickedSx },
+        hidden && { '& .MuiTableCell-root': hiddenSx },
+      ]}
+    >
       <TableRow>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{renderLeading(row, index)}</TableCell>
         <TableCell>
@@ -126,6 +133,7 @@ const JobRows = memo(function JobRows({
             error={duplicate}
             singleLine
           />
+          {hidden && <HiddenLabel sx={{ mt: 0.75, ml: 1 }} />}
         </TableCell>
         <TableCell>
           <WrapField label='Name' value={row.name} onChange={change('name')} singleLine />
@@ -197,11 +205,13 @@ const JobRows = memo(function JobRows({
 
 // The week's jobs on a wide screen, every field editable in place
 // (CoverBidJobsManager). The first column is `renderLeading` (the review
-// button) and the last `renderActions`. Those two, and `onFieldChange`, must be stable
-// (useCallback): each job's rows only re-render when that job changes.
+// button) and the last `renderActions`. Those two, `isHidden(row)` and
+// `onFieldChange` must be stable (useCallback): each job's rows only
+// re-render when that job changes.
 export default function CoverBidJobsTable({
   rows,
   duplicates,
+  isHidden,
   onFieldChange,
   renderLeading,
   renderActions,
@@ -239,6 +249,7 @@ export default function CoverBidJobsTable({
             row={row}
             index={index}
             duplicate={isDuplicateJobNumber(row, duplicates)}
+            hidden={isHidden(row)}
             onFieldChange={onFieldChange}
             renderLeading={renderLeading}
             renderActions={renderActions}

@@ -2,6 +2,7 @@
 
 import { Box, Chip, Tooltip, Typography } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 
@@ -51,8 +52,12 @@ export const filterBarSx = [
 // their colors too, so the whole job reads as taken.
 export const pickedSx = { opacity: 0.55, filter: 'grayscale(1)' };
 
-// The words that go with the gray, so "picked" isn't told by color alone.
-export function PickedLabel({ sx }) {
+// A job an admin hid from drivers (docs/COVER-JOB-HIDING.md), on the admin
+// pages only: drivers never receive it. Dimmed without the gray, so it reads
+// apart from picked.
+export const hiddenSx = { opacity: 0.55 };
+
+function JobLabel({ icon: Icon, children, sx }) {
   return (
     <Box
       component='span'
@@ -69,9 +74,27 @@ export function PickedLabel({ sx }) {
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      <CheckCircleOutlineIcon sx={{ fontSize: '1rem' }} />
-      Picked
+      <Icon sx={{ fontSize: '1rem' }} />
+      {children}
     </Box>
+  );
+}
+
+// The words that go with the gray, so "picked" isn't told by color alone.
+export function PickedLabel({ sx }) {
+  return (
+    <JobLabel icon={CheckCircleOutlineIcon} sx={sx}>
+      Picked
+    </JobLabel>
+  );
+}
+
+// The words that go with the dimming on a hidden job.
+export function HiddenLabel({ sx }) {
+  return (
+    <JobLabel icon={VisibilityOffIcon} sx={sx}>
+      Hidden
+    </JobLabel>
   );
 }
 

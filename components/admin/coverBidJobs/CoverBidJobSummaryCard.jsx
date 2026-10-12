@@ -5,7 +5,12 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
 import { isPicked, rowIssues } from '@/lib/coverBidJobRow';
 import { softPressSx, softRaised } from '@/components/utility/soft';
-import { PickedLabel, pickedSx } from '@/components/coverBidJobs/jobGrid';
+import {
+  HiddenLabel,
+  hiddenSx,
+  PickedLabel,
+  pickedSx,
+} from '@/components/coverBidJobs/jobGrid';
 
 // Route codes ("BETPA>VVSPA>…") have no spaces, so let lines break after
 // each ">" rather than mid-code.
@@ -18,10 +23,17 @@ const withRouteBreaks = (text) =>
 
 // One job on a phone or a narrow window: the whole row, read-only, at a size
 // that can be read (all seven days and the full description). Tapping it opens
-// the job in the review dialog, where it's edited. `status` is a short line
-// at the top right (unsaved changes). Inside a button, so every
-// element is a span.
-export default function CoverBidJobSummaryCard({ row, index, duplicate, status, onOpen }) {
+// the job in the review dialog, where it's edited (and hidden from drivers:
+// a button can't hold another). `status` is a short line at the top right
+// (unsaved changes). Inside a button, so every element is a span.
+export default function CoverBidJobSummaryCard({
+  row,
+  index,
+  duplicate,
+  hidden = false,
+  status,
+  onOpen,
+}) {
   const issues = rowIssues(row, { duplicate });
   const people = [row.assignedDriver, row.coverReason, row.name].filter(Boolean);
 
@@ -44,17 +56,22 @@ export default function CoverBidJobSummaryCard({ row, index, duplicate, status, 
           containerType: 'inline-size',
         },
         isPicked(row) && pickedSx,
+        hidden && hiddenSx,
       ]}
     >
       <Box
         component='span'
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}
       >
-        <Box component='span' sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box
+          component='span'
+          sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', columnGap: 1.5 }}
+        >
           <Typography component='span' variant='h6' sx={{ fontWeight: 700 }}>
             {row.jobNumber || 'No job #'}
           </Typography>
           {isPicked(row) && <PickedLabel />}
+          {hidden && <HiddenLabel />}
         </Box>
         {status}
       </Box>

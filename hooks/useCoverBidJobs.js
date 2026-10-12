@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   emptyRowState,
   isUnsaved,
+  jobKey,
   rowValues,
   toRowState,
 } from '@/lib/coverBidJobRow';
@@ -18,7 +19,8 @@ async function readJson(res, fallbackMessage) {
 
 /**
  * Owns the editable rows for one week: loading them, and creating, updating and
- * deleting them against the cover bid jobs API.
+ * deleting them against the cover bid jobs API. Also the week's hides
+ * (docs/COVER-JOB-HIDING.md): which job numbers are hidden from drivers.
  *
  * Keyed on the formatted week string rather than the dayjs object so a caller
  * that builds a fresh dayjs each render doesn't send this into a refetch loop.
@@ -30,6 +32,10 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
   const [savingKey, setSavingKey] = useState(null);
   const [deletingKey, setDeletingKey] = useState(null);
   const [deletingAll, setDeletingAll] = useState(false);
+  // jobKey → { jobNumber, hiddenAt, hiddenBy: { name } } for the week's hidden
+  // jobs, and the row whose hide is being saved.
+  const [hides, setHides] = useState(() => new Map());
+  const [hidingKey, setHidingKey] = useState(null);
 
   const weekEnding = weekEndDate ? weekEndDate.format('YYYY-MM-DD') : null;
 
@@ -45,7 +51,10 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
       try {
         const res = await fetch(`/api/cover-bid-jobs?weekEnding=${weekEnding}`);
         const data = await readJson(res, 'Failed to load cover bid jobs');
-        if (!cancelled) setRows(data.data.map(toRowState));
+        if (!cancelled) {
+          setRows(data.data.map(toRowState));
+          setHides(new Map((data.hidden ?? []).map((hide) => [hide.jobKey, hide])));
+        }
       } catch (err) {
         if (!cancelled) setError(err.message);
       } finally {
@@ -160,6 +169,48 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
     }
   }, [weekEnding]);
 
+  // A hide follows the saved job number, the one drivers' /covers sees, so
+  // an unsaved row (or unsaved edit to the number) doesn't count.
+  const isRowHidden = useCallback(
+    (row) => Boolean(row.saved) && hides.has(jobKey(row.saved.jobNumber)),
+    [hides]
+  );
+
+  const toggleHidden = useCallback(
+    async (row) => {
+      const jobNumber = row.saved?.jobNumber ?? '';
+      const key = jobKey(jobNumber);
+      if (!weekEnding || !key) return;
+      const hidden = hides.has(key);
+
+      setHidingKey(row.key);
+      setError(null);
+
+      try {
+        const res = await fetch('/api/cover-bid-jobs/hidden', {
+          method: hidden ? 'DELETE' : 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ weekEnding, jobNumber }),
+        });
+        const data = await readJson(
+          res,
+          hidden ? 'Failed to show the job to drivers' : 'Failed to hide the job'
+        );
+        setHides((prev) => {
+          const next = new Map(prev);
+          if (hidden) next.delete(key);
+          else next.set(key, data.data);
+          return next;
+        });
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setHidingKey(null);
+      }
+    },
+    [weekEnding, hides]
+  );
+
   return {
     rows,
     loading,
@@ -167,10 +218,13 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
     savingKey,
     deletingKey,
     deletingAll,
+    hidingKey,
     updateField,
     addRow,
     saveRow,
     deleteRow,
     deleteAll,
+    isRowHidden,
+    toggleHidden,
   };
 }

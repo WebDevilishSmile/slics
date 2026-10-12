@@ -15,8 +15,9 @@ import {
 } from '@mui/material';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
-import CoverBidJobReviewDialog from './CoverBidJobReviewDialog';
+import CoverBidJobReviewDialog, { squareButtonSx } from './CoverBidJobReviewDialog';
 import CoverBidJobRowActions from './CoverBidJobRowActions';
+import HideJobButton from './HideJobButton';
 import CoverBidJobSummaryCard from './CoverBidJobSummaryCard';
 import CoverBidJobsTable from './CoverBidJobsTable';
 import DeleteCoverBidJobsDialog from './DeleteCoverBidJobsDialog';
@@ -27,8 +28,10 @@ import {
   isDirty,
   isDuplicateJobNumber,
   isUnsaved,
+  jobKey,
 } from '@/lib/coverBidJobRow';
 import { softContainedSx, softPressSx, softRaisedSmall } from '@/components/utility/soft';
+import { HiddenLabel } from '@/components/coverBidJobs/jobGrid';
 
 // Nothing for a row that matches what's saved.
 function UnsavedStatus({ row }) {
@@ -64,11 +67,14 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
     savingKey,
     deletingKey,
     deletingAll,
+    hidingKey,
     updateField,
     addRow,
     saveRow,
     deleteRow,
     deleteAll,
+    isRowHidden,
+    toggleHidden,
   } = useCoverBidJobs({ weekEndDate, refreshKey });
 
   // null when closed; otherwise the pending destructive action.
@@ -79,6 +85,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
 
   const duplicates = useMemo(() => findDuplicateJobNumbers(rows), [rows]);
   const pickedBy = useMemo(() => pickedByJob(picks), [picks]);
+  const hiddenCount = useMemo(() => rows.filter(isRowHidden).length, [rows, isRowHidden]);
 
   const requestDeleteRow = useCallback(
     (row) => {
@@ -142,11 +149,14 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
         row={row}
         onSave={saveRow}
         onDelete={requestDeleteRow}
+        onToggleHidden={toggleHidden}
         saving={savingKey === row.key}
         deleting={deletingKey === row.key}
+        hidden={isRowHidden(row)}
+        hiding={hidingKey === row.key}
       />
     ),
-    [saveRow, requestDeleteRow, savingKey, deletingKey]
+    [saveRow, requestDeleteRow, toggleHidden, isRowHidden, savingKey, deletingKey, hidingKey]
   );
 
   const deleteInFlight =
@@ -173,10 +183,19 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
         </Alert>
       )}
 
+      {/* Also the polite announcement when a job is hidden or shown. */}
+      {rows.length > 0 && (
+        <Typography variant='body2' color='text.secondary' aria-live='polite' sx={{ mb: 2 }}>
+          {rows.length} job{rows.length !== 1 ? 's' : ''}
+          {hiddenCount > 0 && ` · ${hiddenCount} hidden from drivers`}
+        </Typography>
+      )}
+
       {wide ? (
         <CoverBidJobsTable
           rows={rows}
           duplicates={duplicates}
+          isHidden={isRowHidden}
           onFieldChange={updateField}
           renderLeading={renderLeading}
           renderActions={renderActions}
@@ -196,6 +215,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
               row={row}
               index={index}
               duplicate={isDuplicateJobNumber(row, duplicates)}
+              hidden={isRowHidden(row)}
               status={<UnsavedStatus row={row} />}
               onOpen={setReviewIndex}
             />
@@ -241,15 +261,29 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
         onClose={() => setReviewIndex(null)}
         onFieldChange={updateField}
         duplicates={duplicates}
-        status={(row) => <UnsavedStatus row={row} />}
+        status={(row) => (
+          <Box
+            component='span'
+            sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', columnGap: 2 }}
+          >
+            {isRowHidden(row) && <HiddenLabel sx={{ typography: 'body2', fontWeight: 600 }} />}
+            <UnsavedStatus row={row} />
+          </Box>
+        )}
         onDelete={requestDeleteRow}
+        renderSecondary={(row) => (
+          <HideJobButton
+            row={row}
+            hidden={isRowHidden(row)}
+            onToggle={toggleHidden}
+            busy={hidingKey === row.key}
+            disabled={savingKey === row.key || deletingKey === row.key}
+            sx={squareButtonSx}
+          />
+        )}
         footer={
           picks
-            ? (row) => (
-                <PickedByList
-                  entries={pickedBy.get(row.jobNumber?.trim().toUpperCase()) ?? []}
-                />
-              )
+            ? (row) => <PickedByList entries={pickedBy.get(jobKey(row.jobNumber)) ?? []} />
             : undefined
         }
         renderPrimary={(row) => {

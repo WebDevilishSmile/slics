@@ -21,7 +21,7 @@ import { isDuplicateJobNumber } from '@/lib/coverBidJobRow';
 import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 import CoverBidJobFields from './CoverBidJobFields';
 
-const squareButtonSx = [softRaisedSmall, softPressSx, { width: '3rem', height: '3rem' }];
+export const squareButtonSx = [softRaisedSmall, softPressSx, { width: '3rem', height: '3rem' }];
 
 // Reviews and edits the week's jobs one at a time, at full size, stepping
 // through them in sheet order. Full screen on a phone. Used by the saved week
@@ -29,6 +29,8 @@ const squareButtonSx = [softRaisedSmall, softPressSx, { width: '3rem', height: '
 // - `index` is the open job, or null when closed;
 // - `status(row)` is a short line under the title (unsaved changes);
 // - `onDelete(row)` drops the job, after which the next one shows;
+// - `renderSecondary(row)` is optional, a square button before Delete (hide
+//   from drivers);
 // - `renderPrimary(row, index)` is the one contained button (Save);
 // - `footer(row)` is optional content under the fields (who picked the job).
 export default function CoverBidJobReviewDialog({
@@ -40,6 +42,7 @@ export default function CoverBidJobReviewDialog({
   duplicates,
   status,
   onDelete,
+  renderSecondary,
   renderPrimary,
   footer,
 }) {
@@ -124,6 +127,7 @@ export default function CoverBidJobReviewDialog({
               </span>
             </Tooltip>
             <Box sx={{ flex: 1 }} />
+            {renderSecondary?.(row)}
             <Tooltip title={`Delete ${jobLabel}`}>
               <IconButton
                 aria-label={`Delete ${jobLabel}`}

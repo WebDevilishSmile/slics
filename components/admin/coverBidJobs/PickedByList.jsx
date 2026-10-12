@@ -3,6 +3,7 @@
 import { Box, Typography } from '@mui/material';
 
 import { softInset } from '@/components/utility/soft';
+import { jobKey } from '@/lib/coverBidJobRow';
 
 // job number (upper-cased) → [{ name, order, pick }], in the sheet's pick
 // order, from the week's saved picks (docs/ON-CALL-SHEET-SYNC.md).
@@ -10,7 +11,7 @@ export function pickedByJob(picks) {
   const byJob = new Map();
   for (const row of picks?.rows ?? []) {
     row.picks.forEach((code, index) => {
-      const job = code.trim().toUpperCase();
+      const job = jobKey(code);
       if (!job) return;
       if (!byJob.has(job)) byJob.set(job, []);
       byJob.get(job).push({ name: row.name, order: row.order, pick: index + 1 });

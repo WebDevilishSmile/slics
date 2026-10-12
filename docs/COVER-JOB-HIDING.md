@@ -70,8 +70,9 @@ hiddenKeys)` sit beside it.
 ## Stage 1: Hide and show a job (built 2026-10-12)
 
 **Data**
+
 - [x] New collection `cover-bid-job-hides`: `{ weekEnding: 'YYYY-MM-DD', jobKey,
-      jobNumber (as the sheet spelled it), hiddenAt: ISO string, hiddenBy: { id, name } }`.
+    jobNumber (as the sheet spelled it), hiddenAt: ISO string, hiddenBy: { id, name } }`.
       Showing a job again deletes its row. Unique index on `{ weekEnding: 1, jobKey: 1 }`
       in `scripts/createIndexes.js` (`npm run db:indexes`)
 - [x] `lib/db/coverBidJobHides.js`, the only module that touches it:
@@ -84,6 +85,7 @@ hiddenKeys)` sit beside it.
 - [x] `isJobHidden(job, hiddenKeys)` next to `jobKey` in `lib/coverBidJobRow.js`
 
 **API**
+
 - [x] `app/api/cover-bid-jobs/hidden/route.js`: `PUT` hides, `DELETE` shows. Body
       `{ weekEnding, jobNumber }`. `requireAdmin()` first; `weekEnding` must be a
       `YYYY-MM-DD` Saturday; errors are `{ error }` (`CLAUDE.md` → "API routes")
@@ -93,11 +95,13 @@ hiddenKeys)` sit beside it.
       `isRowHidden`), so a hide shows on every row with that number
 
 **Drivers' page**
+
 - [x] `app/covers/page.jsx`: load `getHiddenJobKeys(cutoffWeek)` alongside the jobs and
       filter with `isJobHidden` before `toDriverCoverJob`. The filter runs for everyone,
       admins included
 
 **Admin page (`/admin/cover/jobs`)**
+
 - [x] An eye toggle per job, `HideJobButton.jsx`: "Hide job X from drivers" with
       `aria-pressed`, the crossed-out eye while hidden (`VisibilityOff` / `Visibility`), in
       `CoverBidJobRowActions.jsx` (desktop table) and in `CoverBidJobReviewDialog.jsx`
@@ -114,11 +118,13 @@ hiddenKeys)` sit beside it.
       the polite live region), not a toast
 
 **Read-only admin page (`/cover-bid-jobs`)**
+
 - [x] Keeps every job and shows the same "Hidden" label on hidden ones, dimmed
       (`app/cover-bid-jobs/page.jsx` sets `hidden` on each job; the shared
       `coverBidJobs/CoverBidJobsTable.jsx` and `JobCard.jsx` show it)
 
 **Docs**
+
 - [x] `DATA-MODEL.md`: the `cover-bid-job-hides` row
 - [x] `CLAUDE.md` → the cover bid jobs and driver verification bullets: hides, and that
       `/covers` filters them before `toDriverCoverJob`
@@ -142,7 +148,7 @@ added that a hide records only who and when (no reason note).
 ## Verifying
 
 - [x] `npm run lint` and `npm run build` (2026-10-12, the build in a scratch copy)
-- [ ] After deploying: `npm run db:indexes`
+- [x] After deploying: `npm run db:indexes`
 - [ ] On the live site, signed in as an admin, on a week that has jobs:
   - [ ] hide a job on `/admin/cover/jobs`: it dims, shows "Hidden", and the week's
         summary counts it

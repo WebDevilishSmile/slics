@@ -2,6 +2,7 @@ import { getCommentsBySlic } from '@/lib/db/comments';
 import { serializeSlics } from '@/lib/serializers';
 
 import Comments from '@/components/comments/Comments';
+import LookupSkeleton from '@/components/home/LookupSkeleton';
 import Main from '@/components/home/Main';
 import PageContainer from '@/components/layout/PageContainer';
 import HydrationGuard from '@/components/utility/HydrationGuard';
@@ -25,7 +26,7 @@ export default async function SlicLookupPage({
       {heading}
       {children}
 
-      <HydrationGuard>
+      <HydrationGuard fallback={<LookupSkeleton hasSlic={Boolean(slic)} />}>
         <Main
           slics={serializeSlics(slics)}
           commentsCount={commentsCount}

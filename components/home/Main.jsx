@@ -116,6 +116,7 @@ function Main({ slics, commentsCount, user }) {
       <SlicDisplay
         commentsCount={countForSlic}
         loading={loading}
+        expectsSlic={Boolean(urlSlic)}
         slic={slic}
         user={user}
       />

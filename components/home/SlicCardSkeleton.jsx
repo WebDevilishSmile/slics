@@ -6,7 +6,9 @@ import { softInset, softRaised, softRaisedSmall } from '@/components/utility/sof
 
 // The lookup card while it loads (UI-SUGGESTIONS.md #43), shaped like the real
 // thing so nothing jumps when it arrives: title and subline with the type
-// pill, the address well, Navigate, and the row of action tiles. Soft shapes
+// pill, the address well, Navigate, the row of action tiles and the report
+// link. It's also what the server sends for a `?slic=` link
+// (home/LookupSkeleton.jsx). Soft shapes
 // as on the card (utility/soft.js), with skeleton bars inside them.
 export default function SlicCardSkeleton() {
   return (
@@ -58,6 +60,19 @@ export default function SlicCardSkeleton() {
             <Skeleton variant='text' width='2.5rem' />
           </Box>
         ))}
+      </Box>
+
+      {/* "Something wrong with this SLIC?" (home/ReportSlic.jsx). */}
+      <Box
+        sx={{
+          mt: 2.5,
+          minHeight: '3rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Skeleton variant='text' sx={{ width: '60%' }} />
       </Box>
     </Paper>
   );

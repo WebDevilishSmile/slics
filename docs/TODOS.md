@@ -112,11 +112,13 @@ Plan, rules and open questions: `COVER-BIDDING.md`.
       "Verify you're a driver" guide on `/help`
 - [x] stage 2: preference lists that lose jobs as they're picked, button with option to call dispatch
       (built 2026-10-12, admin-only with stage 1; `COVER-BIDDING.md`). Left: `npm run
-      db:indexes` after the deploy, and its "Verifying stage 2" checks
+    db:indexes` after the deploy, and its "Verifying stage 2" checks
 - [ ] stage 3: picking in the app on the clock, with auto-pick. Settle the open questions
       first, starting with what the source of truth is once the app can't write the sheet
 - [ ] drop `users.driverId`, the old roster link (nothing writes or reads it since 2026-10-10)
-- [ ] fold `/cover-bid-jobs` into `/covers` once Covers rolls out
+- [x] fold `/cover-bid-jobs` into `/covers` once Covers rolls out (2026-10-12, early: it was
+      an admin-only copy of the job list, and admins have `/covers` now. The page is gone,
+      with its menu row; the path redirects to `/covers`, temporarily)
 
 - [ ] ability to change profile image and share time they work and show phone number for those that need help. A page where drivers that need assistance can find and contact each other.
 
@@ -124,6 +126,8 @@ Plan, rules and open questions: `COVER-BIDDING.md`.
       (built 2026-10-12, admin only with Covers; `COVER-BIDDING.md` stage 2, "Off the
       list is read only"). Left: `npm run db:indexes` after the deploy, and its "Verifying
       the read-only rule" checks
+
+- [ ] on cover page, where it says the cover list is read only, include the driver's current job code. For example, "The cover list is read only. Your current job code is BMEL."
 
 ### Privacy and Terms page
 

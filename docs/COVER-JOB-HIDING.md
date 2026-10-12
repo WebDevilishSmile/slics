@@ -42,8 +42,8 @@ admin needs a switch in the app itself that the sheet can't override.
   anonymity rule in `COVER-BIDDING.md`: what drivers mustn't see isn't sent, rather
   than sent and hidden in the page.
 - **Admins see what drivers see on `/covers`.** An admin viewing `/covers` gets the
-  driver's list, hidden jobs left out. The admin pages (`/admin/cover/jobs`,
-  `/cover-bid-jobs`) keep every job and label the hidden ones.
+  driver's list, hidden jobs left out. The admin pages (`/admin/cover/jobs`) keep every
+  job and label the hidden ones.
 - **Only admins hide or show a job,** through `requireAdmin()` on the route.
 - **Later stages honor it.** Preference lists (stage 2) and picking in the app (stage 3)
   in `COVER-BIDDING.md` must leave hidden jobs out: a driver can't list or pick a job
@@ -117,9 +117,10 @@ hiddenKeys)` sit beside it.
 - [x] Confirm in place (the icon changes and pops, `tapHaptic()`, and the summary line is
       the polite live region), not a toast
 
-**Read-only admin page (`/cover-bid-jobs`)**
+**Read-only admin page (`/cover-bid-jobs`, folded into `/covers` on 2026-10-12; the path
+redirects there)**
 
-- [x] Keeps every job and shows the same "Hidden" label on hidden ones, dimmed
+- [x] Kept every job and shows the same "Hidden" label on hidden ones, dimmed
       (`app/cover-bid-jobs/page.jsx` sets `hidden` on each job; the shared
       `coverBidJobs/CoverBidJobsTable.jsx` and `JobCard.jsx` show it)
 

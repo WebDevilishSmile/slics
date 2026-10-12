@@ -173,7 +173,7 @@ Replaces the photo upload with a **Refresh** button for the week picked on the c
   - It shows grayed (`pickedSx`) with a "Picked" label (`PickedLabel`), both in
     `components/coverBidJobs/jobGrid.jsx`.
   - It still opens on a tap or click.
-  - This applies on `/cover-bid-jobs` and `/admin/cover/jobs`, as tables and cards.
+  - This applies on `/covers` and `/admin/cover/jobs`, as tables and cards.
   - "cut" in NAME counts as picked too.
 - [x] **Keep the old upload code for now** (deleted in stage 4, 2026-10-10):
   - `BidSheetUploader.jsx`, `BidSheetSourceViewer.jsx`, the `extract` route and

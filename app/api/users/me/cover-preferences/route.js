@@ -5,11 +5,14 @@ import { requireVerifiedDriver } from '@/lib/authz';
 import { errorResponse } from '@/lib/httpError';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { cleanCoverList, coverListStatus } from '@/lib/coverList';
+import { offListWeeks } from '@/lib/coverDrivers';
 import { getUpcomingSaturday } from '@/lib/format';
 import { isSaturday, todayInNewYork } from '@/lib/onCallSheet';
 import { getCoverBidJobsByWeek } from '@/lib/db/coverBidJobs';
+import { getCoverBidPicks } from '@/lib/db/coverBidPicks';
 import { getHiddenJobKeys } from '@/lib/db/coverBidJobHides';
 import { getMyCoverList, saveMyCoverList } from '@/lib/db/coverPreferences';
+import { getUserById } from '@/lib/db/users';
 import { COVER_LIST_MAX } from '@/constants';
 
 // The signed-in driver's cover list for one week (docs/COVER-BIDDING.md,
@@ -22,7 +25,9 @@ import { COVER_LIST_MAX } from '@/constants';
 // PUT { weekEnding, jobNumbers: [in order] } → the same shape. Replaces the
 //   list. Only this week or a later one; jobs that aren't in the week, or are
 //   hidden from drivers, are dropped. A picked job may stay: the driver's
-//   list was saved from what they saw, and reading it sorts that out.
+//   list was saved from what they saw, and reading it sorts that out. A
+//   driver the week's posted pick list leaves off isn't a cover or on-call
+//   driver that week, so they can't (lib/coverDrivers.js offListWeeks).
 
 // Reordering saves on every move, so this is generous; it only stops a loop.
 const SAVE_LIMIT = 300;
@@ -92,9 +97,19 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'Each job number must be text, 40 characters at most.' }, { status: 400 });
     }
 
-    const { jobs, hiddenKeys } = await weekJobs(weekEnding);
+    const [{ jobs, hiddenKeys }, picks, user] = await Promise.all([
+      weekJobs(weekEnding),
+      getCoverBidPicks(weekEnding),
+      getUserById(session.user.id),
+    ]);
     if (jobs.length === 0) {
       return NextResponse.json({ error: 'That week’s jobs aren’t posted yet.' }, { status: 404 });
+    }
+    if (picks && offListWeeks([picks], user?.driver?.key).length > 0) {
+      return NextResponse.json(
+        { error: 'You’re not on that week’s cover or on-call list, so you can’t keep a list for it.' },
+        { status: 403 },
+      );
     }
 
     // Keep only jobs the driver can see this week.

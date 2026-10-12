@@ -3,6 +3,7 @@
 import { Box, Paper, Typography } from '@mui/material';
 
 import { formatWeekEnding } from '@/lib/onCallSheet';
+import CoverDispute from '@/components/covers/CoverDispute';
 import SoftNotice from '@/components/utility/SoftNotice';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
 import { softInset, softRaised } from '@/components/utility/soft';
@@ -75,7 +76,10 @@ function WeekTile({ weekEnding, spot, index }) {
 // A verified driver's own place on the cover list, one tile per posted week
 // from this one on: "Cover 7", their call-in (pick) time. Only their row:
 // nobody else's name, status or picks reach the page (docs/COVER-BIDDING.md).
-export default function MyCoverWeeks({ name, driverName, weeks }) {
+// `offWeeks` are the posted weeks they're not on, which are read only for
+// them, with "This is a mistake" (covers/CoverDispute.jsx); `dispute` is
+// their latest message about it.
+export default function MyCoverWeeks({ name, driverName, weeks, offWeeks, allOff, dispute }) {
   return (
     <Paper variant='panel' className='enter' sx={{ minHeight: 0, alignItems: 'stretch', gap: 2.5 }}>
       <Box sx={{ textAlign: 'center' }}>
@@ -87,6 +91,15 @@ export default function MyCoverWeeks({ name, driverName, weeks }) {
           On the sheet as {driverName}
         </Typography>
       </Box>
+
+      {offWeeks.length > 0 && (
+        <CoverDispute
+          offWeeks={offWeeks}
+          allOff={allOff}
+          driverName={driverName}
+          initialDispute={dispute}
+        />
+      )}
 
       {weeks.length === 0 ? (
         <SoftNotice>This week&apos;s pick list isn&apos;t posted yet.</SoftNotice>

@@ -240,6 +240,9 @@ export const DISPATCH_NUM_SLIC = '1809';
 export const DRIVER_NAME_MAX_LENGTH = 60;
 // The reason an admin gives for turning a claim down, shown to the driver.
 export const DRIVER_CLAIM_NOTE_MAX_LENGTH = 300;
+// A verified driver's note saying they should be on the week's cover list
+// (lib/db/coverDisputes.js), and the admin's answer, which the driver sees.
+export const COVER_DISPUTE_NOTE_MAX_LENGTH = 300;
 
 // The hours on the "What it takes" card (/about, support/WhatItTakes.jsx), a
 // floor estimated 2026-10-10: git shows about 60 work sessions since May 2025
@@ -310,6 +313,14 @@ export const PUSH_TYPES = [
     description: 'A driver asks to be verified for Covers.',
     audience: 'admin',
     defaultOn: false,
+  },
+  {
+    key: 'coverDisputes',
+    group: 'Drivers',
+    label: 'Cover list disputes',
+    description: "A verified driver says they should be on the week's cover list.",
+    audience: 'admin',
+    defaultOn: true,
   },
   {
     key: 'signUps',

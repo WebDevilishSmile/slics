@@ -9,6 +9,7 @@ import SlicReportsNotice from '@/components/admin/slicReports/SlicReportsNotice'
 import { getOpenReportSummary } from '@/lib/db/slicReports';
 import DriverClaimsNotice from '@/components/admin/driverClaims/DriverClaimsNotice';
 import { getPendingClaimCount } from '@/lib/db/driverClaims';
+import { getOpenDisputeCount } from '@/lib/db/coverDisputes';
 
 // Jobs-tab changes this admin hasn't seen, for the banner. A failure only
 // hides the banner: the admin index must always load.
@@ -42,14 +43,25 @@ async function pendingClaims() {
   }
 }
 
+// Open cover list disputes, which share the claims banner. Same rule.
+async function openDisputes() {
+  try {
+    return await getOpenDisputeCount();
+  } catch (error) {
+    console.error('Error counting cover disputes for /admin:', error);
+    return 0;
+  }
+}
+
 async function AdminPage() {
   const session = await getAdminSession();
   if (!session) return null;
 
-  const [jobChanges, reports, claims] = await Promise.all([
+  const [jobChanges, reports, claims, disputes] = await Promise.all([
     unseenJobChanges(session.user.id),
     openReports(),
     pendingClaims(),
+    openDisputes(),
   ]);
 
   const adminLinks = [
@@ -74,7 +86,7 @@ async function AdminPage() {
 
       <Paper variant='panel' sx={{ gap: 3 }}>
         <SlicReportsNotice {...reports} />
-        <DriverClaimsNotice count={claims} />
+        <DriverClaimsNotice count={claims} disputes={disputes} />
         <JobChangesNotice {...jobChanges} />
         <AdminLinks links={adminLinks} />
         <ThankYouPreview firstName={session.user.name?.split(' ')[0]} />

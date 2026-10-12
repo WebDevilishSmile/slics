@@ -52,7 +52,9 @@ const moveButtonSx = [softPressSx, { width: '2.75rem', height: '2.75rem' }];
 // down and remove save at once (CoverBoard does the saving).
 // - `entries`: [{ jobKey, jobNumber, status }] (lib/coverList.js).
 // - `jobsByKey`: the week's driver rows by jobKey, for each job's days.
-// - `editable`: false for a week that's over.
+// - `editable`: false for a week that's over, or one the driver is off.
+// - `offList`: the driver isn't on this week's posted pick list, so the list
+//   is read only and there's no call to make.
 // - `callIn`: the driver's call-in time that week, when they're on the list.
 // - `dispatchPhone`: BETPA's phone (DISPATCH_NUM_SLIC), or null.
 export default function CoverList({
@@ -60,6 +62,7 @@ export default function CoverList({
   entries,
   jobsByKey,
   editable,
+  offList,
   saving,
   error,
   announcement,
@@ -89,7 +92,9 @@ export default function CoverList({
       <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
         {editable
           ? 'The jobs you want, in order. Add them with + in the jobs below. Taken jobs drop off.'
-          : 'This week is over. Your list is kept for four weeks.'}
+          : offList
+            ? "You're not on this week's cover or on-call list, so your list is read only."
+            : 'This week is over. Your list is kept for four weeks.'}
       </Typography>
 
       {error && (
@@ -188,7 +193,7 @@ export default function CoverList({
         </Typography>
       )}
 
-      {dispatchPhone && (
+      {dispatchPhone && !offList && (
         <Box sx={{ mt: 2.5, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
           <Button
             variant='contained'

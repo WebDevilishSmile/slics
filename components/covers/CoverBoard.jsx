@@ -23,6 +23,9 @@ const NO_ENTRIES = [];
 // - `initialLists`: { weekEnding: entries with status } (lib/coverList.js).
 // - `callIns`: { weekEnding: the driver's call-in time }.
 // - `canList`: a verified driver; an admin who isn't sees the jobs only.
+// - `offListWeeks`: posted weeks the driver isn't on (lib/coverDrivers.js
+//   offListWeeks). They're read only: a list saved before shows, but can't
+//   change, and none can be started.
 // - `thisWeek`: the current week's Saturday; earlier lists can't change.
 export default function CoverBoard({
   jobs,
@@ -31,6 +34,7 @@ export default function CoverBoard({
   callIns,
   dispatchPhone,
   canList,
+  offListWeeks,
   thisWeek,
 }) {
   // Next week: the week drivers bid on (as CoverBidJobsTable's own default).
@@ -63,7 +67,8 @@ export default function CoverBoard({
   }, [weekJobs]);
 
   const entries = useMemo(() => lists[selectedWeek] ?? NO_ENTRIES, [lists, selectedWeek]);
-  const editable = canList && selectedWeek >= thisWeek && weekJobs.length > 0;
+  const offList = Boolean(offListWeeks?.includes(selectedWeek));
+  const editable = canList && !offList && selectedWeek >= thisWeek && weekJobs.length > 0;
 
   const save = useCallback(async (week, next, message) => {
     const previous = listsRef.current[week] ?? [];
@@ -169,7 +174,7 @@ export default function CoverBoard({
     return () => document.removeEventListener('visibilitychange', refresh);
   }, [canList, selectedWeek]);
 
-  const showList = canList && (weekJobs.length > 0 || entries.length > 0);
+  const showList = canList && (entries.length > 0 || (weekJobs.length > 0 && !offList));
 
   return (
     <CoverBidJobsTable
@@ -185,6 +190,7 @@ export default function CoverBoard({
             entries={entries}
             jobsByKey={jobsByKey}
             editable={editable}
+            offList={offList}
             saving={saving}
             error={error}
             announcement={announcement}

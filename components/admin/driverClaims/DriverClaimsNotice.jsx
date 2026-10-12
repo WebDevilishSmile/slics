@@ -7,11 +7,12 @@ import { Button } from '@mui/material';
 import SoftNotice from '@/components/utility/SoftNotice';
 import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 
-// The /admin banner for driver claims waiting for a decision
-// (docs/COVER-BIDDING.md) and a way to the queue. `count` comes from
-// getPendingClaimCount. Renders nothing when none are waiting.
-export default function DriverClaimsNotice({ count }) {
-  if (!count) return null;
+// The /admin banner for driver claims waiting for a decision and open cover
+// list disputes (docs/COVER-BIDDING.md), both on /admin/driver-claims, and a
+// way there. `count` comes from getPendingClaimCount, `disputes` from
+// getOpenDisputeCount. Renders nothing when neither is waiting.
+export default function DriverClaimsNotice({ count, disputes = 0 }) {
+  if (!count && !disputes) return null;
 
   return (
     <SoftNotice
@@ -23,14 +24,27 @@ export default function DriverClaimsNotice({ count }) {
           endIcon={<ChevronRightOutlined />}
           sx={[softRaisedSmall, softPressSx, { px: 2.5, minHeight: '2.75rem', ml: 1 }]}
         >
-          Review claims
+          {count ? 'Review claims' : 'Review'}
         </Button>
       }
     >
-      <strong>
-        {count} driver claim{count === 1 ? '' : 's'}
-      </strong>{' '}
-      waiting to be verified
+      {count > 0 && (
+        <>
+          <strong>
+            {count} driver claim{count === 1 ? '' : 's'}
+          </strong>{' '}
+          waiting to be verified
+          {disputes > 0 && <br />}
+        </>
+      )}
+      {disputes > 0 && (
+        <>
+          <strong>
+            {disputes} driver{disputes === 1 ? '' : 's'}
+          </strong>{' '}
+          {disputes === 1 ? 'says they' : 'say they'} should be on the cover list
+        </>
+      )}
     </SoftNotice>
   );
 }

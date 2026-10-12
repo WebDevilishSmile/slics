@@ -4,6 +4,7 @@ import { Typography } from '@mui/material';
 import { canUseCovers, getSession, isVerifiedDriver } from '@/lib/authz';
 import { getUserById } from '@/lib/db/users';
 import { getMyDriverClaim } from '@/lib/db/driverClaims';
+import { getMyCoverDispute } from '@/lib/db/coverDisputes';
 import { getCoverBidJobsSince } from '@/lib/db/coverBidJobs';
 import { getCoverBidPicksSince } from '@/lib/db/coverBidPicks';
 import { getHiddenJobKeys } from '@/lib/db/coverBidJobHides';
@@ -11,7 +12,7 @@ import { getMyCoverLists } from '@/lib/db/coverPreferences';
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { isJobHidden } from '@/lib/coverBidJobRow';
 import { coverListStatus } from '@/lib/coverList';
-import { myCoverSpot } from '@/lib/coverDrivers';
+import { myCoverSpot, offListWeeks } from '@/lib/coverDrivers';
 import { getUpcomingSaturday } from '@/lib/format';
 import { todayInNewYork } from '@/lib/onCallSheet';
 import { toDriverCoverJob } from '@/lib/serializers';
@@ -34,6 +35,11 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // A verified driver also keeps a list of the jobs they want for each week
 // (stage 2, covers/CoverBoard.jsx), with BETPA's phone (DISPATCH_NUM_SLIC)
 // to call dispatch at their call-in time.
+//
+// A verified driver a posted week's pick list leaves off isn't a cover or
+// on-call driver that week: the week is read only for them (no list, and no
+// picking once stage 3 comes), and "This is a mistake" tells the admins
+// (covers/CoverDispute.jsx). The cover list route checks the same rule.
 //
 // Admin-only while it's tested, until the Covers switch opens it
 // (canUseCovers), checked before anything is read (docs/SECURITY.md #7).
@@ -58,7 +64,7 @@ export default async function CoversPage() {
   ).format('YYYY-MM-DD');
   const thisWeek = getUpcomingSaturday(dayjs(todayInNewYork())).format('YYYY-MM-DD');
 
-  const [user, claim, jobs, hiddenKeys, pickWeeks, savedLists, dispatchPhone] = await Promise.all([
+  const [user, claim, jobs, hiddenKeys, pickWeeks, savedLists, dispatchPhone, dispute] = await Promise.all([
     verified ? getUserById(session.user.id) : null,
     verified ? null : getMyDriverClaim(session.user.id),
     verified ? getCoverBidJobsSince(cutoffWeek) : [],
@@ -69,6 +75,7 @@ export default async function CoversPage() {
     verified
       ? getSlicByNumSlic(DISPATCH_NUM_SLIC).then((slic) => slic.phone || null).catch(() => null)
       : null,
+    verified ? getMyCoverDispute(session.user.id) : null,
   ]);
   const driverJobs = jobs
     .filter((job) => !isJobHidden(job, hiddenKeys))
@@ -78,6 +85,8 @@ export default async function CoversPage() {
     weekEnding: week.weekEnding,
     spot: myCoverSpot(week.rows ?? [], user?.driver?.key),
   }));
+  const offWeeks = verified ? offListWeeks(pickWeeks, user?.driver?.key) : [];
+  const postedWeeks = pickWeeks.filter((week) => (week.rows?.length ?? 0) > 0).length;
   const callIns = Object.fromEntries(
     weeks.filter((week) => week.spot?.callIn).map((week) => [week.weekEnding, week.spot.callIn]),
   );
@@ -104,6 +113,9 @@ export default async function CoversPage() {
             name={session.user.name ?? ''}
             driverName={user?.driver?.name ?? ''}
             weeks={weeks}
+            offWeeks={offWeeks}
+            allOff={offWeeks.length > 0 && offWeeks.length === postedWeeks}
+            dispute={dispute}
           />
         ) : (
           <DriverVerification initialClaim={claim} />
@@ -118,6 +130,7 @@ export default async function CoversPage() {
           callIns={callIns}
           dispatchPhone={dispatchPhone}
           canList={verified}
+          offListWeeks={offWeeks}
           thisWeek={thisWeek}
         />
       )}

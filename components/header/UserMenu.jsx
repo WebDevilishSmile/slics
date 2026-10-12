@@ -39,6 +39,7 @@ import {
 } from '@mui/material';
 
 import { BMC_URL, COVERS_OPEN, PLACES_NEW_UNTIL } from '@/constants';
+import { refreshOpenDisputesCount, useOpenDisputesCount } from '@/lib/coverDisputesStore';
 import { refreshPendingClaimsCount, usePendingClaimsCount } from '@/lib/driverClaimsStore';
 import { refreshJobChangesCount, useJobChangesCount } from '@/lib/jobChangesStore';
 import { refreshOpenReportsCount, useOpenReportsCount } from '@/lib/slicReportsStore';
@@ -125,17 +126,19 @@ function UserMenu({ user, features, signOutAction }) {
   // Admins: Jobs-tab changes they haven't seen (stage 3 alerts,
   // docs/ON-CALL-SHEET-SYNC.md; /admin/jobs clears them), open SLIC reports
   // (RECOMMENDATIONS.md #5; they count until closed on /admin/reports) and
-  // driver claims waiting for a decision (docs/COVER-BIDDING.md), all
-  // rechecked on every route change.
+  // driver claims waiting for a decision and open cover list disputes
+  // (docs/COVER-BIDDING.md), all rechecked on every route change.
   const isAdmin = user?.role === 'admin';
   const jobChanges = useJobChangesCount();
   const openReports = useOpenReportsCount();
   const pendingClaims = usePendingClaimsCount();
-  const alerts = jobChanges + openReports + pendingClaims;
+  const openDisputes = useOpenDisputesCount();
+  const alerts = jobChanges + openReports + pendingClaims + openDisputes;
   const alertsText = [
     jobChanges && `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`,
     openReports && `${openReports} SLIC report${openReports === 1 ? '' : 's'}`,
     pendingClaims && `${pendingClaims} driver claim${pendingClaims === 1 ? '' : 's'}`,
+    openDisputes && `${openDisputes} cover list dispute${openDisputes === 1 ? '' : 's'}`,
   ]
     .filter(Boolean)
     .join(', ');
@@ -144,6 +147,7 @@ function UserMenu({ user, features, signOutAction }) {
     refreshJobChangesCount();
     refreshOpenReportsCount();
     refreshPendingClaimsCount();
+    refreshOpenDisputesCount();
   }, [isAdmin, pathname]);
   // Covers is admin-only while it's tested, until the super admin's switch
   // opens it (canUseCovers in lib/authz.js).

@@ -13,11 +13,13 @@ const KINDS = [
 ];
 
 // Plays the supporters' thank-you note (support/ThankYouNote.jsx) on /admin,
-// with the admin's own first name. A preview only: it stamps nothing.
+// with the admin's own first name, dated the day it's played. A preview only:
+// it stamps nothing.
 export default function ThankYouPreview({ firstName }) {
   const [open, setOpen] = useState(false);
   // Kept after closing, so the letter doesn't change as it fades out.
   const [type, setType] = useState(KINDS[0][0]);
+  const [date, setDate] = useState(null);
 
   return (
     <Box component='section' aria-labelledby='thank-you-preview' sx={{ width: '100%' }}>
@@ -33,6 +35,7 @@ export default function ThankYouPreview({ firstName }) {
             key={kind}
             onClick={() => {
               setType(kind);
+              setDate(new Date().toISOString());
               setOpen(true);
             }}
             aria-haspopup='dialog'
@@ -46,6 +49,7 @@ export default function ThankYouPreview({ firstName }) {
         open={open}
         onClose={() => setOpen(false)}
         type={type}
+        date={date}
         firstName={firstName}
       />
     </Box>

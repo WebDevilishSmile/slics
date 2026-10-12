@@ -5,6 +5,7 @@ import { CloseOutlined } from '@mui/icons-material';
 import { Box, ButtonBase, IconButton, Typography } from '@mui/material';
 
 import { softPressSx, softRaised } from '@/components/utility/soft';
+import { withViewTransition } from '@/lib/viewTransition';
 import theme from '@/theme';
 
 import Envelope from './Envelope';
@@ -12,9 +13,11 @@ import ThankYouNote from './ThankYouNote';
 
 // A one-time thank-you on /home after a driver supports the app on Buy Me a
 // Coffee (docs/BMC-SUPPORT.md stage 3). `support` is the newest support not
-// yet thanked, from the server. The card holds a sealed envelope; tapping it
-// opens the note. Closing the note, or dismissing the card, stamps the
-// support so it won't come back.
+// yet thanked, from the server ({ type, receivedAt }). The card holds a sealed envelope; tapping it
+// opens the note, and the envelope flies out of the card into it (a View
+// Transition: the two envelopes share a name, never at the same time).
+// Closing the note, or dismissing the card, stamps the support so it won't
+// come back.
 export default function SupportThanks({ support, firstName }) {
   const [shown, setShown] = useState(!!support);
   const [reading, setReading] = useState(false);
@@ -54,7 +57,7 @@ export default function SupportThanks({ support, firstName }) {
           ]}
         >
           <ButtonBase
-            onClick={() => setReading(true)}
+            onClick={() => withViewTransition(() => setReading(true))}
             aria-haspopup='dialog'
             sx={[
               softPressSx,
@@ -69,7 +72,10 @@ export default function SupportThanks({ support, firstName }) {
               },
             ]}
           >
-            <Envelope width='4.5rem' wiggle />
+            {/* Once it has flown to the note, the card's spot stays empty. */}
+            <Box sx={{ flexShrink: 0, visibility: reading ? 'hidden' : 'visible' }}>
+              <Envelope width='4.5rem' wiggle name={reading ? undefined : 'thank'} />
+            </Box>
             <Box sx={{ minWidth: 0 }}>
               <Typography sx={{ fontWeight: 700 }}>
                 A note for you{firstName ? `, ${firstName}` : ''}
@@ -88,7 +94,13 @@ export default function SupportThanks({ support, firstName }) {
           </IconButton>
         </Box>
       )}
-      <ThankYouNote open={reading} onClose={closeNote} type={support.type} firstName={firstName} />
+      <ThankYouNote
+        open={reading}
+        onClose={closeNote}
+        type={support.type}
+        date={support.receivedAt}
+        firstName={firstName}
+      />
     </>
   );
 }

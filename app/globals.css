@@ -235,21 +235,33 @@ a {
   text-decoration: none;
 }
 
-/* The thank-you note (support/ThankYouNote.jsx): the letter peeking out of
-   the envelope morphs into the full note, and the envelope drops away. The
-   reduced-motion floor above turns both off (the note opens straight to the
-   letter then anyway). */
+/* The thank-you note (support/ThankYouNote.jsx, support/Envelope.jsx).
+   Tapping the /home card, its envelope flies to the middle of the screen.
+   Then the letter peeking out of the envelope comes forward into the full
+   note while the envelope drops away. The front pocket drops with it but is
+   named apart, so it stays in front and the letter is drawn out of it. The
+   reduced-motion floor above turns all of it off (the note opens straight to
+   the letter then anyway). */
+::view-transition-group(thank-envelope) {
+  animation-duration: 450ms;
+  animation-timing-function: var(--ease-out);
+}
 ::view-transition-group(thank-letter) {
   animation-duration: 550ms;
   animation-timing-function: var(--ease-out);
 }
-::view-transition-old(thank-envelope) {
-  animation: thank-envelope-away 450ms var(--ease-out) both;
+::view-transition-old(thank-envelope):only-child,
+::view-transition-old(thank-pocket):only-child {
+  animation: thank-envelope-away 400ms var(--ease-out) both;
 }
+/* Gone from in front of the letter well before the letter settles. */
 @keyframes thank-envelope-away {
+  60% {
+    opacity: 0;
+  }
   to {
     opacity: 0;
-    translate: 0 35%;
+    translate: 0 60%;
     scale: 0.9;
   }
 }

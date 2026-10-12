@@ -89,9 +89,6 @@ let theme = createTheme({
     // A sticky filter bar over its own scrolling table (bids, cover bid jobs);
     // below every MUI layer so menus, dialogs and the app bar still cover it.
     stickyBar: 10,
-    // The thank-you note's confetti and balloons (support/Celebration.jsx): over
-    // everything, dialogs included, and never taking a tap.
-    celebration: 1600,
   },
   // App-level layout tokens. Not MUI keys — read them as `theme.layout.*`
   // (import the theme directly; that works in server components too because
@@ -141,6 +138,13 @@ let theme = createTheme({
     overlay: {
       light: `0 16px 40px ${alpha(tokens.brand[900], 0.28)}`,
       dark: `0 16px 40px ${alpha(tokens.void, 0.8)}`,
+    },
+    // A shape pressed up out of the surface that isn't a box (the thank-you
+    // letterhead's mark): the same highlight and shadow, as a `filter`, whose
+    // drop-shadows follow the shape's outline where a box-shadow can't.
+    emboss: {
+      light: `drop-shadow(-1px -1px 0 ${alpha(tokens.white, 0.95)}) drop-shadow(1px 1.5px 1px ${alpha(tokens.brand[900], 0.3)})`,
+      dark: `drop-shadow(-1px -1px 0 ${alpha(tokens.chalk, 0.14)}) drop-shadow(1px 1.5px 1.5px ${alpha(tokens.void, 0.9)})`,
     },
   },
   colorSchemes: {

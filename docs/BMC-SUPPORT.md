@@ -130,15 +130,27 @@ to remove it).
   - It counts a coffee or a new membership, never a cancellation.
   - The card reads "A note for you, John"; the note's words are `noteCopy` in
     `support/ThankYouNote.jsx`.
-- [x] The note (built 2026-10-10): the /home card holds a sealed envelope
-      (`support/Envelope.jsx`). Tapping it opens `support/ThankYouNote.jsx`: the seal
-      pops, the flap swings up, the letter slides out and morphs into the full note (a
-      View Transition), and confetti fires from the bottom corners while balloons float up
-      (`support/Celebration.jsx`: a canvas plus transform-only balloons, theme colors,
-      `zIndex: 'celebration'`). The note is signed "Tiago" in Caveat, with wording for a
-      coffee, a membership and monthly support. Under reduced motion it opens straight to
-      the letter with no celebration. `/admin` has a preview (`admin/ThankYouPreview.jsx`)
-      that stamps nothing.
+- [x] The note (built 2026-10-10, redesigned 2026-10-12): the /home card holds a sealed
+      envelope (`support/Envelope.jsx`). Tapping it opens `support/ThankYouNote.jsx`:
+  - The envelope flies out of the card to the middle of the screen. Its paper is
+    shaded as if lit from the top left, like the app's soft shadows. Its amber wax seal
+    (the coffee cup pressed in) lifts away, and the flap swings up.
+  - The letter tucked inside is the note itself, drawn smaller. It slides most of the
+    way out, then comes forward as the envelope drops away (View Transitions; the
+    names and timing are in `app/globals.css`). Tapping the envelope skips ahead.
+  - The letter is stationery: the SLICs mark embossed at the top (`theme.soft.emboss`),
+    then the words. Then "Tiago" signs itself in Caveat.
+  - It's dated the day the support came in (`receivedAt` of the newest waiting event,
+    from `getUnthankedSupport`), in the driver's time zone. The `/admin` preview dates
+    it the day it's played.
+  - One burst of confetti comes from behind the letter (`support/Confetti.jsx`: a canvas,
+    theme colors, about 4 seconds). It's drawn inside the dialog, under the letter, so it
+    never covers the words. It replaced the 2026-10-10 confetti and balloons, which flew
+    over the letter for 9 seconds.
+  - The words are for a coffee, a membership or monthly support. A membership's note
+    adds "Open SLIC History", which goes to `/history` and closes the note.
+  - Under reduced motion it opens straight to the signed letter, with no confetti.
+  - `/admin` has a preview (`admin/ThankYouPreview.jsx`) that stamps nothing.
 - [x] Closing the note or dismissing the card calls `POST /api/users/me/thanks` (`markSupportThanked`), which
       stamps `thankedAt` on every waiting event. It's once per visit's worth of support, not
       once per event.

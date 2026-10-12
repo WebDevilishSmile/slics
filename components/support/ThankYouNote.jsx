@@ -1,19 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Caveat } from 'next/font/google';
-import { LocalCafe } from '@mui/icons-material';
-import { Box, Button, Dialog, Typography } from '@mui/material';
+import { Box, Button, ButtonBase, Dialog, Typography } from '@mui/material';
+import { keyframes } from '@mui/material/styles';
 
-import { softContainedSx } from '@/components/utility/soft';
+import SlicsMark from '@/components/utility/SlicsMark';
+import { softContainedSx, softPressSx, softRaisedSmall } from '@/components/utility/soft';
 import { tapHaptic } from '@/lib/haptics';
 import { withViewTransition } from '@/lib/viewTransition';
 
-import Celebration from './Celebration';
+import Confetti from './Confetti';
 import Envelope from './Envelope';
 
-// The signature's handwriting. Only this note uses it, so it isn't preloaded.
+// The signature's handwriting. Only this note uses it, so it isn't preloaded;
+// the tucked letter starts the download while the envelope is still shut.
 const script = Caveat({ subsets: ['latin'], preload: false, display: 'swap' });
+
+// The note's width: a phone's width less the dialog's margins, up to 24rem.
+// The envelope is a little narrower, and the letter tucked inside it is drawn
+// at 84% of the envelope's width (0.86 × 0.84 ≈ 0.72), so it's the same
+// letter, smaller, at any screen width.
+const LETTER_WIDTH = 'min(24rem, calc(100vw - 2rem))';
+const ENVELOPE_WIDTH = `calc(${LETTER_WIDTH} * 0.86)`;
+const TUCKED_SCALE = 0.72;
 
 // The note's words for each kind of support (`bmc-events` types).
 export function noteCopy(type, firstName) {
@@ -47,109 +57,184 @@ export function noteCopy(type, firstName) {
   };
 }
 
-const overlayShadow = (theme) => ({
-  boxShadow: theme.soft.overlay.light,
-  ...theme.applyStyles('dark', { boxShadow: theme.soft.overlay.dark }),
-});
+// The day the support came in, dated the way a letter is: "October 10, 2026",
+// in the driver's own time zone. Nothing for a missing or unreadable date.
+function letterDate(iso) {
+  const date = iso ? new Date(iso) : null;
+  if (!date || Number.isNaN(date.getTime())) return null;
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
 
-function Letter({ type, firstName, onClose }) {
+// The signature writes itself once the letter is out: a soft-edged mask
+// sweeps left to right across it, like ink going down.
+const write = keyframes`
+  from { mask-position: 100% 0; }
+  to { mask-position: 0 0; }
+`;
+
+function Signature({ tucked }) {
+  return (
+    // h1's size: Caveat runs small, so this reads like a signature, not a heading.
+    <Typography
+      variant='h1'
+      component='p'
+      sx={{
+        width: 'fit-content',
+        pr: 3, // room for the mask's soft edge past the last letter
+        fontFamily: script.style.fontFamily,
+        fontWeight: 600,
+        lineHeight: 1,
+        color: 'primary.main',
+        rotate: '-4deg',
+        transformOrigin: 'left center',
+        maskImage: 'linear-gradient(90deg, #000 45%, transparent 55%)',
+        maskSize: '220% 100%',
+        maskRepeat: 'no-repeat',
+        // Unsigned while it's in the envelope, so the letter that comes out
+        // matches the one that opens; under reduced motion it's just signed.
+        maskPosition: tucked ? '100% 0' : '0 0',
+        ...(!tucked && {
+          '@media (prefers-reduced-motion: no-preference)': {
+            animation: `${write} 1s linear 600ms both`,
+          },
+        }),
+      }}
+    >
+      Tiago
+    </Typography>
+  );
+}
+
+// The letter: stationery with the SLICs mark embossed at the top, the date,
+// the words, and Tiago's signature. `tucked` is the copy inside the envelope:
+// the same letter, unsigned, with nothing focusable or labelled.
+function Letter({ ref, type, date, firstName, onClose, tucked = false }) {
   const { title, paragraphs } = noteCopy(type, firstName);
+  const dated = letterDate(date);
+  const member = type === 'membership.started';
+  const buttonSx = { minHeight: '3rem', px: 3 };
+
+  // The main action takes focus as the letter opens. Not with autoFocus:
+  // React only honors it on form controls, and Open SLIC History is a link.
+  const primary = useRef(null);
+  useEffect(() => {
+    if (!tucked) primary.current?.focus();
+  }, [tucked]);
   return (
     <Box
+      ref={ref}
       sx={(theme) => ({
-        ...overlayShadow(theme),
-        viewTransitionName: 'thank-letter',
+        boxShadow: theme.soft.overlay.light,
+        ...theme.applyStyles('dark', { boxShadow: theme.soft.overlay.dark }),
         position: 'relative',
-        width: 'min(24rem, calc(100vw - 2rem))',
-        mt: 3.5,
+        zIndex: 1, // over the confetti
+        width: LETTER_WIDTH,
         px: { xs: 3, sm: 4 },
-        pt: 5.5,
+        pt: 3.5,
         pb: 3,
         borderRadius: 4,
         bgcolor: 'background.default',
+        viewTransitionName: tucked ? undefined : 'thank-letter',
       })}
     >
-      <Box
-        className='pop'
-        aria-hidden
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: '50%',
-          translate: '-50% -50%',
-          width: '3.5rem',
-          height: '3.5rem',
-          borderRadius: '50%',
-          display: 'grid',
-          placeItems: 'center',
-          bgcolor: 'warning.main',
-          color: 'warning.contrastText',
-          boxShadow:
-            '0 2px 8px rgba(0, 0, 0, 0.25), inset 0 0 0 3px rgba(255, 255, 255, 0.25)',
-        }}
-      >
-        <LocalCafe />
-      </Box>
-
+      {/* The letterhead: the mark pressed up out of the paper. */}
+      <SlicsMark
+        sx={(theme) => ({
+          mx: 'auto',
+          fontSize: '2.75rem',
+          color: `color-mix(in srgb, ${theme.vars.palette.primary.main} 22%, ${theme.vars.palette.background.default})`,
+          filter: theme.soft.emboss.light,
+          ...theme.applyStyles('dark', { filter: theme.soft.emboss.dark }),
+        })}
+      />
+      {dated && (
+        <Typography
+          component='time'
+          dateTime={date}
+          variant='body2'
+          color='text.secondary'
+          sx={{ display: 'block', textAlign: 'right', mt: 1 }}
+        >
+          {dated}
+        </Typography>
+      )}
       <Typography
-        id='thank-you-title'
+        id={tucked ? undefined : 'thank-you-title'}
         variant='h5'
-        component='h2'
-        sx={{ fontWeight: 700, textAlign: 'center', mb: 2.5 }}
+        component={tucked ? 'p' : 'h2'}
+        sx={{ fontWeight: 700, textAlign: 'center', textWrap: 'balance', mt: dated ? 1.5 : 2, mb: 2.5 }}
       >
         {title}
       </Typography>
       {paragraphs.map((text, i) => (
-        <Typography key={i} className='enter' sx={{ '--i': i + 2, mb: 1.5 }}>
+        <Typography key={i} sx={{ mb: 1.5 }}>
           {text}
         </Typography>
       ))}
-      <Typography
-        variant='body2'
-        color='text.secondary'
-        className='enter'
-        sx={{ '--i': 5, mt: 2.5 }}
-      >
+      <Typography variant='body2' color='text.secondary' sx={{ mt: 3, mb: 0.5 }}>
         With gratitude,
       </Typography>
-      <Typography
-        variant='h3'
-        component='p'
-        className='enter'
-        sx={{
-          '--i': 6,
-          fontFamily: script.style.fontFamily,
-          fontWeight: 600,
-          color: 'primary.main',
-          lineHeight: 1.1,
-        }}
-      >
-        Tiago
-      </Typography>
+      <Signature tucked={tucked} />
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2.5 }}>
-        <Button
-          variant='contained'
-          onClick={onClose}
-          autoFocus
-          sx={[softContainedSx, { px: 4, minHeight: '3rem' }]}
-        >
-          Close
-        </Button>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 1.5, mt: 3 }}>
+        {member ? (
+          <>
+            <Button onClick={onClose} sx={[softRaisedSmall, softPressSx, buttonSx]}>
+              Close
+            </Button>
+            <Button
+              ref={primary}
+              variant='contained'
+              href='/history'
+              onClick={onClose}
+              sx={[softContainedSx, buttonSx]}
+            >
+              Open SLIC History
+            </Button>
+          </>
+        ) : (
+          <Button
+            ref={primary}
+            variant='contained'
+            onClick={onClose}
+            sx={[softContainedSx, buttonSx, { px: 4 }]}
+          >
+            Close
+          </Button>
+        )}
       </Box>
     </Box>
   );
 }
 
 // The thank-you note (docs/BMC-SUPPORT.md stage 3). Opening it plays the
-// envelope: the seal pops, the flap swings up, the letter slides out and
-// becomes the full note (a View Transition morph), and confetti and balloons
-// fly. Under reduced motion it opens straight to the letter, with no
-// celebration. `type` is the support's event type; `onClose` runs on Close,
-// Escape or a tap outside.
-export default function ThankYouNote({ open, onClose, type, firstName }) {
+// envelope: the wax seal lifts away, the flap swings up, the letter slides
+// most of the way out, then comes to the reader as the envelope drops away (a
+// View Transition morph) while confetti bursts behind it, and last Tiago
+// signs it. Tapping the envelope skips ahead to the letter. Under reduced
+// motion it opens straight to the signed letter, with no confetti. `type` is
+// the support's event type and `date` when it came in (ISO; the letter is
+// dated with it); `onClose` runs on Close (or Open SLIC History, on
+// a membership's note), Escape or a tap outside.
+export default function ThankYouNote({ open, onClose, type, date, firstName }) {
   const [stage, setStage] = useState('closed');
-  const [burst, setBurst] = useState(0);
+  const [confetti, setConfetti] = useState(false);
+  const timers = useRef([]);
+  const letter = useRef(null);
+
+  const clearTimers = useCallback(() => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  }, []);
+
+  const takeOut = useCallback(() => {
+    clearTimers();
+    withViewTransition(() => {
+      setStage('read');
+      setConfetti(true);
+    });
+    tapHaptic(30);
+  }, [clearTimers]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -157,54 +242,74 @@ export default function ThankYouNote({ open, onClose, type, firstName }) {
       setStage('read');
       return undefined;
     }
-    const timers = [
-      setTimeout(() => setStage('opening'), 450),
-      setTimeout(() => setStage('peek'), 1050),
-      setTimeout(() => {
-        withViewTransition(() => setStage('read'));
-        setBurst((n) => n + 1);
-        tapHaptic(30);
-      }, 1800),
+    // The first beat leaves time for the envelope to fly in from the /home
+    // card (support/SupportThanks.jsx).
+    timers.current = [
+      setTimeout(() => setStage('opening'), 550),
+      setTimeout(() => setStage('peek'), 1100),
+      setTimeout(takeOut, 1950),
     ];
-    return () => timers.forEach(clearTimeout);
-  }, [open]);
+    return clearTimers;
+  }, [open, takeOut, clearTimers]);
 
   return (
-    <>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        aria-labelledby={stage === 'read' ? 'thank-you-title' : undefined}
-        aria-label={
-          stage === 'read' ? undefined : 'A thank-you note from Tiago'
-        }
-        slotProps={{
-          // The envelope floats on the backdrop by itself; the letter brings
-          // its own card. So the Dialog's paper is only a centering box.
-          paper: {
-            sx: (theme) => ({
-              bgcolor: 'transparent',
-              backgroundImage: 'none',
-              boxShadow: 'none',
-              ...theme.applyStyles('dark', { boxShadow: 'none' }),
-              overflow: 'visible',
-              alignItems: 'center',
-              maxWidth: 'none',
-              m: 2,
-            }),
+    <Dialog
+      open={open}
+      onClose={onClose}
+      aria-labelledby={stage === 'read' ? 'thank-you-title' : undefined}
+      aria-label={stage === 'read' ? undefined : 'A thank-you note from Tiago'}
+      slotProps={{
+        // The envelope and the letter each bring their own shadow, so the
+        // Dialog's paper is only a centering box.
+        paper: {
+          sx: (theme) => ({
+            bgcolor: 'transparent',
+            backgroundImage: 'none',
+            boxShadow: 'none',
+            ...theme.applyStyles('dark', { boxShadow: 'none' }),
+            overflow: 'visible',
+            alignItems: 'center',
+            maxWidth: 'none',
+            m: 2,
+          }),
+        },
+        transition: {
+          onExited: () => {
+            setStage('closed');
+            setConfetti(false);
           },
-          transition: { onExited: () => setStage('closed') },
-        }}
-      >
-        {stage === 'read' ? (
-          <Letter type={type} firstName={firstName} onClose={onClose} />
-        ) : (
-          <Box sx={{ py: 10 }}>
-            <Envelope stage={stage} width='20rem' named />
-          </Box>
-        )}
-      </Dialog>
-      <Celebration burst={burst} />
-    </>
+        },
+      }}
+    >
+      {stage === 'read' ? (
+        <>
+          {confetti && <Confetti from={letter} />}
+          <Letter ref={letter} type={type} date={date} firstName={firstName} onClose={onClose} />
+        </>
+      ) : (
+        // Room above the envelope for the letter to rise into, so the whole
+        // picture stays centered.
+        <Box sx={{ pt: '11rem', pb: 3 }}>
+          {/* A div, not a <button>: the tucked letter has buttons in it
+              (inert, but a button can't hold a button). */}
+          <ButtonBase
+            component='div'
+            onClick={takeOut}
+            autoFocus
+            aria-label='Open the note'
+            sx={{ display: 'block', borderRadius: '4.7% / 7%' }}
+          >
+            <Envelope
+              stage={stage}
+              width={ENVELOPE_WIDTH}
+              floating
+              name='thank'
+              letterScale={TUCKED_SCALE}
+              letter={<Letter type={type} date={date} firstName={firstName} tucked />}
+            />
+          </ButtonBase>
+        </Box>
+      )}
+    </Dialog>
   );
 }

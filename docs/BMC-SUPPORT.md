@@ -138,8 +138,10 @@ to remove it).
   - The letter tucked inside is the note itself, drawn smaller. It slides most of the
     way out, then comes forward as the envelope drops away (View Transitions; the
     names and timing are in `app/globals.css`). Tapping the envelope skips ahead.
-  - The letter is stationery: the SLICs mark embossed at the top (`theme.soft.emboss`),
-    then the words. Then "Tiago" signs itself in Caveat.
+  - The letter is stationery: a heart embossed at the top (`theme.soft.emboss`), then
+    the words. Then "Tiago" signs itself in Caveat, and the heart beats twice and turns
+    into the SLICs mark (2026-10-12, `utility/AnimatedSlicsMark.jsx` `story='heart'`).
+    The letter still in the envelope shows the heart, held still (`paused`).
   - It's dated the day the support came in (`receivedAt` of the newest waiting event,
     from `getUnthankedSupport`), in the driver's time zone. The `/admin` preview dates
     it the day it's played.
@@ -149,7 +151,8 @@ to remove it).
     over the letter for 9 seconds.
   - The words are for a coffee, a membership or monthly support. A membership's note
     adds "Open SLIC History", which goes to `/history` and closes the note.
-  - Under reduced motion it opens straight to the signed letter, with no confetti.
+  - Under reduced motion it opens straight to the signed letter, under the still mark,
+    with no confetti.
   - `/admin` has a preview (`admin/ThankYouPreview.jsx`) that stamps nothing.
 - [x] Closing the note or dismissing the card calls `POST /api/users/me/thanks` (`markSupportThanked`), which
       stamps `thankedAt` on every waiting event. It's once per visit's worth of support, not

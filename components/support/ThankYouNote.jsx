@@ -5,7 +5,7 @@ import { Caveat } from 'next/font/google';
 import { Box, Button, ButtonBase, Dialog, Typography } from '@mui/material';
 import { keyframes } from '@mui/material/styles';
 
-import SlicsMark from '@/components/utility/SlicsMark';
+import AnimatedSlicsMark from '@/components/utility/AnimatedSlicsMark';
 import { softContainedSx, softPressSx, softRaisedSmall } from '@/components/utility/soft';
 import { tapHaptic } from '@/lib/haptics';
 import { withViewTransition } from '@/lib/viewTransition';
@@ -66,7 +66,9 @@ function letterDate(iso) {
 }
 
 // The signature writes itself once the letter is out: a soft-edged mask
-// sweeps left to right across it, like ink going down.
+// sweeps left to right across it, like ink going down. The letterhead's heart
+// waits for it before it beats and turns into the mark (HEART_ONCE in
+// utility/AnimatedSlicsMark.jsx), so change their timing together.
 const write = keyframes`
   from { mask-position: 100% 0; }
   to { mask-position: 0 0; }
@@ -105,9 +107,10 @@ function Signature({ tucked }) {
   );
 }
 
-// The letter: stationery with the SLICs mark embossed at the top, the date,
-// the words, and Tiago's signature. `tucked` is the copy inside the envelope:
-// the same letter, unsigned, with nothing focusable or labelled.
+// The letter: stationery with a heart embossed at the top, the date, the
+// words, and Tiago's signature, after which the heart beats and turns into the
+// SLICs mark. `tucked` is the copy inside the envelope: the same letter,
+// unsigned, its heart still, with nothing focusable or labelled.
 function Letter({ ref, type, date, firstName, onClose, tucked = false }) {
   const { title, paragraphs } = noteCopy(type, firstName);
   const dated = letterDate(date);
@@ -137,8 +140,12 @@ function Letter({ ref, type, date, firstName, onClose, tucked = false }) {
         viewTransitionName: tucked ? undefined : 'thank-letter',
       })}
     >
-      {/* The letterhead: the mark pressed up out of the paper. */}
-      <SlicsMark
+      {/* The letterhead: a heart pressed up out of the paper that, once Tiago
+          has signed, turns into the mark. The tucked copy holds its first
+          frame, so the letter that comes out starts the way it went in. */}
+      <AnimatedSlicsMark
+        story='heart'
+        paused={tucked}
         sx={(theme) => ({
           mx: 'auto',
           fontSize: '2.75rem',
@@ -210,12 +217,13 @@ function Letter({ ref, type, date, firstName, onClose, tucked = false }) {
 // The thank-you note (docs/BMC-SUPPORT.md stage 3). Opening it plays the
 // envelope: the wax seal lifts away, the flap swings up, the letter slides
 // most of the way out, then comes to the reader as the envelope drops away (a
-// View Transition morph) while confetti bursts behind it, and last Tiago
-// signs it. Tapping the envelope skips ahead to the letter. Under reduced
-// motion it opens straight to the signed letter, with no confetti. `type` is
+// View Transition morph) while confetti bursts behind it, then Tiago signs it
+// and last the letterhead's heart beats and turns into the SLICs mark. Tapping
+// the envelope skips ahead to the letter. Under reduced motion it opens
+// straight to the signed letter, under the mark, with no confetti. `type` is
 // the support's event type and `date` when it came in (ISO; the letter is
-// dated with it); `onClose` runs on Close (or Open SLIC History, on
-// a membership's note), Escape or a tap outside.
+// dated with it); `onClose` runs on Close (or Open SLIC History, on a
+// membership's note), Escape or a tap outside.
 export default function ThankYouNote({ open, onClose, type, date, firstName }) {
   const [stage, setStage] = useState('closed');
   const [confetti, setConfetti] = useState(false);

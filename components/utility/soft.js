@@ -23,6 +23,10 @@ const shadow = (theme, kind) => ({
 // A card that stands up out of the panel (a tip).
 export const softRaised = (theme) => ({ ...surface(theme), ...shadow(theme, 'raised') });
 
+// A card with a tighter, crisper shadow than softRaised: the raised cards of
+// /help, /privacy and /terms.
+export const softRaisedTight = (theme) => ({ ...surface(theme), ...shadow(theme, 'raisedTight') });
+
 // A small raised control (topic chips, the selected sort option).
 export const softRaisedSmall = (theme) => ({
   ...surface(theme),

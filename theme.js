@@ -128,6 +128,10 @@ let theme = createTheme({
   soft: {
     panel: softShadow({ x: 12, blur: 28 }),
     raised: softShadow({ x: 6, blur: 14 }),
+    // A tighter card with a crisper edge than `raised`: the evolved look on
+    // /help, /privacy and /terms (the example SLIC card, the legal summary and
+    // contact cards).
+    raisedTight: softShadow({ x: 4, blur: 10 }),
     raisedSmall: softShadow({ x: 3, blur: 7 }),
     inset: softShadow({ x: 3, blur: 7, inset: true }),
     // A focused field: the same well, pressed a little deeper.

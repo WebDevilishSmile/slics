@@ -60,6 +60,11 @@ The landing page should introduce SLICs and its purpose for UPS Feeder drivers. 
       button, "Why you sign in" comes before the steps, and the page ends on the button
       again. One h2 style, `sectionHeading` centered, the footer leads with the legal
       links, one `<main>` in `app/layout.jsx`, and a link preview (`app/opengraph-image.jsx`)
+- [x] `/sign-in` critique pass (2026-10-12): errors sit on the field or above the button,
+      both "wrong password" and "already exists" name the Google route, each form has its
+      own heading (focused on switch) and `?mode=`, a show-password eye replaces Confirm
+      Password, and Google shows "Opening Google…". Sign-in goes straight to where the
+      driver was headed; the membership prompt shows only for a non-member on `/history`
 
 ### User
 

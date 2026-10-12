@@ -153,8 +153,8 @@ untouched.
       "New reply on your tip at SLIC 1809" to the top-level tip's author and to the
       thread's earlier repliers, never to the replier. Link `/home?slic=1809`. Use one
       `tag` per thread, so a busy thread is one notification.
-- [ ] **Places:** the same for place comments (`lib/db/places.js`) once
-      `/whip-it-in-and-out` is open to drivers.
+- [ ] **Places:** the same for place comments (`lib/db/places.js`). Places (`/places`)
+      opened to every driver on 2026-10-12, so this no longer waits on it.
 - [ ] **Privacy page** (`app/privacy/page.jsx`): what's kept (one push address per device
       a driver turns notifications on for), and how to turn it off.
 - [ ] **Telling drivers about it:** a line in the profile and in a "What's new"

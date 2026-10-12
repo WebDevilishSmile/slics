@@ -81,7 +81,7 @@ See `ON-CALL-SHEET-SYNC.md` for how these are filled.
 
 | Collection | Holds | Keyed by | Written by | Personal data | Goes away when |
 |---|---|---|---|---|---|
-| `places` | Driver-added stops (`/whip-it-in-and-out`): categories, trailer access, address, pin, hours, `slics` tags | `_id` | `lib/db/places.js` | `createdBy` (string id; `null` after the author deletes their account) | Author or admin deletes it (only an admin once others have commented) |
+| `places` | Driver-added stops (`/places`): categories, trailer access, address, pin, hours, `slics` tags | `_id` | `lib/db/places.js` | `createdBy` (string id; `null` after the author deletes their account) | Author or admin deletes it (only an admin once others have commented) |
 | `placeComments` | Plain-text comments, one level of replies, votes, `deleted` placeholder | `placeId` + `parentId`; `userId` | `lib/db/places.js` | Author id, voter ids | Author deletes it; account deletion (`deleteUserPlaceData`) |
 | `gyms` | The admin's truck-accessible Planet Fitness list | `_id` | `lib/db/gyms.js`, admin only | Admin stamp | Admin deletes it |
 | `gymComments` | Comments on a gym (kept apart from `comments`, which assumes a `numSlic`) | `gymId` + `created_at` | `lib/db/gyms.js` | Author id and name | Account deletion |

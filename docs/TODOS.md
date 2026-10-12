@@ -20,6 +20,20 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
       clear when `/admin/jobs` opens
 - [ ] one Refresh each (Jobs and a cover week) on the live site to confirm the deployment
 
+### Places launch (`CLAUDE.md` → Data layer → Places)
+
+- [x] renamed from Whip It In & Out to Places at `/places` (the old path redirects), opened
+      to every driver, and announced in the menu ("New" until `PLACES_NEW_UNTIL`), an
+      empty-state tip on /home, the landing page and a `/help` section (2026-10-12)
+- [ ] check on a phone as a non-admin driver: the Places row under All Hubs, adding a place,
+      a comment, and an old `/whip-it-in-and-out` bookmark landing on `/places`
+- [ ] **on or after 2026-11-12:** count the places and `placeComments` added since
+      2026-10-12 and the `/places` pageviews in Vercel Analytics, then decide the forum
+      (Features → Forum Page)
+- [ ] **on or after 2026-11-12:** make the `/whip-it-in-and-out` redirect `permanent: true`
+      (`next.config.mjs`), and remove `PLACES_NEW_UNTIL` and its check in
+      `header/UserMenu.jsx`
+
 ### SLIC reports (`RECOMMENDATIONS.md` #5)
 
 - [x] send a test report from a phone, then Fix it from `/admin/reports` and check the
@@ -104,8 +118,9 @@ Plan, rules and open questions: `COVER-BIDDING.md`.
 
 - [ ] implement forum page for discussions among users
 
-On hold (decided 2026-10-10). Launch `/whip-it-in-and-out` to all drivers first and see
-whether they use its comments. If they do, build a small board on the places comment code
+On hold (decided 2026-10-10). Places (`/places`, was `/whip-it-in-and-out`) launched to all
+drivers on 2026-10-12; first see whether they use its comments (the check under Now → Places
+launch). If they do, build a small board on the places comment code
 (`lib/db/places.js`, `components/places/`): plain text, one-level threads, votes, maybe posts
 that expire. Concerns: drivers post little now, there are no push notifications yet
 (planned in `PUSH-NOTIFICATIONS.md`), and someone has to moderate.

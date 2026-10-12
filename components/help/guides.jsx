@@ -64,9 +64,12 @@ export const HELP_SECTIONS = [
             Most phones stay signed in, so you may not need to.
           </>,
           <>
-            Forgot your password? Ask the SLICs admin for a reset link. Open
-            it, type a new password twice and tap <Tap>Change password</Tap>.
-            Then sign in with the new one. The link works once, for 24 hours.
+            Forgot your password? Tap <Tap>Forgot your password?</Tap> under{' '}
+            <Tap>Sign In</Tap>, type your email and tap{' '}
+            <Tap>Send reset link</Tap>. Open the link in the email, type a new
+            password twice and tap <Tap>Change password</Tap>. Then sign in
+            with the new one. The link works once, for 30 minutes. No email?
+            Ask the SLICs admin for a reset link instead.
           </>,
         ],
       },

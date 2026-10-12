@@ -6,6 +6,7 @@ import { checkRateLimit } from '@/lib/rateLimit';
 import { recordAdminAction } from '@/lib/db/adminAudit';
 import { createPasswordReset, resetUrl } from '@/lib/db/passwordResets';
 import client from '@/lib/db/client';
+import { siteOrigin } from '@/lib/siteOrigin';
 
 export const runtime = 'nodejs';
 
@@ -87,7 +88,7 @@ export async function POST(request, { params }) {
     });
 
     return NextResponse.json({
-      url: resetUrl(request.nextUrl.origin, token),
+      url: resetUrl(siteOrigin(request), token),
       expiresAt: expiresAt.toISOString(),
     });
   } catch (error) {

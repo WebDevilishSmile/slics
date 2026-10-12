@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 
 import { softContainedSx, softInputSx } from '@/components/utility/soft';
+import ForgotPassword from '@/components/signIn/ForgotPassword';
 
 // The "Create one" / "Sign in" mode switches (UI-SUGGESTIONS.md #33). They're
 // real buttons, so Tab and Enter reach them, styled as links. MUI's button-link
@@ -26,10 +27,9 @@ const formSx = { display: 'flex', flexDirection: 'column', gap: 2.5 };
 // `returnTo` is /sign-in, with the callbackUrl when there is one (SignIn.jsx).
 function EmailAuth({ returnTo = '/sign-in' }) {
   const router = useRouter();
-  const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
+  const [mode, setMode] = useState('signin'); // 'signin' | 'signup' | 'forgot'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [forgotOpen, setForgotOpen] = useState(false);
 
   const [signInFields, setSignInFields] = useState({ email: '', password: '' });
   const [signUpFields, setSignUpFields] = useState({
@@ -136,7 +136,12 @@ function EmailAuth({ returnTo = '/sign-in' }) {
         </Alert>
       )}
 
-      {mode === 'signin' ? (
+      {mode === 'forgot' ? (
+        <ForgotPassword
+          initialEmail={signInFields.email}
+          onBack={() => switchMode('signin')}
+        />
+      ) : mode === 'signin' ? (
         <Box component='form' onSubmit={handleSignIn} sx={formSx}>
           <TextField
             label='Email'
@@ -174,33 +179,17 @@ function EmailAuth({ returnTo = '/sign-in' }) {
           >
             {loading ? 'Signing in…' : 'Sign In'}
           </Button>
-          {/* No reset by email yet (docs/PASSWORD-RESET.md stage 3): an
-              admin makes the driver a reset link. */}
+          {/* A reset link by email (docs/PASSWORD-RESET.md stage 3). */}
           <Typography variant='body2' sx={{ textAlign: 'center' }}>
             <Link
               component='button'
               type='button'
-              onClick={() => setForgotOpen((open) => !open)}
-              aria-expanded={forgotOpen}
-              aria-controls={forgotOpen ? 'forgot-password-note' : undefined}
+              onClick={() => switchMode('forgot')}
               sx={modeLinkSx}
             >
               Forgot your password?
             </Link>
           </Typography>
-          {forgotOpen && (
-            <Typography
-              id='forgot-password-note'
-              variant='body2'
-              color='text.secondary'
-              className='enter'
-              sx={{ textAlign: 'center', mt: -1 }}
-            >
-              Ask the SLICs admin for a reset link. It lets you choose a new
-              password. If you signed up with Google, you don&apos;t have a
-              password here: use Continue with Google.
-            </Typography>
-          )}
           <Typography variant='body2' sx={{ textAlign: 'center' }}>
             Don&apos;t have an account?{' '}
             <Link

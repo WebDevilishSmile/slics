@@ -15,6 +15,7 @@ import {
   CircularProgress,
   IconButton,
   InputAdornment,
+  Link as MuiLink,
   Paper,
   Skeleton,
   TextField,
@@ -23,9 +24,17 @@ import {
 
 import { apiRequest } from '@/lib/apiRequest';
 import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from '@/constants';
-import { softContainedSx, softInputSx, softPressSx } from '@/components/utility/soft';
+import {
+  softContainedSx,
+  softInputSx,
+  softPressSx,
+  softRaisedSmall,
+} from '@/components/utility/soft';
 
 const formSx = { display: 'flex', flexDirection: 'column', gap: 2.5 };
+
+// What app/api/auth/reset-password answers for a wrong, used or expired link.
+const LINK_ERROR = 'This link has expired or was already used.';
 
 // A panel's message with a blue icon above it: the "link doesn't work" and
 // "done" states.
@@ -45,7 +54,7 @@ function Outcome({ icon, title, children }) {
 // fragment, which never reaches the server, Vercel's logs or analytics. It's
 // read once on mount and wiped from the address bar, then sent with the new
 // password. The page doesn't sign the driver in: they sign in with the new
-// password on `/`, where the sign-in limit applies.
+// password on /sign-in, where the sign-in limit applies.
 export default function ResetPasswordForm() {
   // null until the fragment is read, then the token or ''.
   const [token, setToken] = useState(null);
@@ -138,9 +147,17 @@ export default function ResetPasswordForm() {
     content = (
       <Outcome icon={<LinkOffOutlined fontSize='large' />} title='This link is missing its code'>
         <Typography color='text.secondary'>
-          Open the whole link you were sent, or ask the SLICs admin for a new one. If you sign in
-          with Google, you don&apos;t need a password: use the Google button.
+          Open the whole link you were sent, or get a new one: tap Forgot your password? on the
+          sign-in page, or ask the SLICs admin. If you sign in with Google, you don&apos;t need a
+          password: use the Google button.
         </Typography>
+        <Button
+          LinkComponent={Link}
+          href='/sign-in'
+          sx={[softRaisedSmall, softPressSx, { mt: 1, px: 3, minHeight: '3rem' }]}
+        >
+          Go to sign-in
+        </Button>
       </Outcome>
     );
   } else {
@@ -149,7 +166,21 @@ export default function ResetPasswordForm() {
         <Typography variant='body2' sx={{ textAlign: 'center' }}>
           Choose a new password for your SLICs account. The link works once.
         </Typography>
-        {error && <Alert severity='error'>{error}</Alert>}
+        {error && (
+          <Alert severity='error'>
+            {error}{' '}
+            {/* Only the link's own errors get the way to a new one. */}
+            {error === LINK_ERROR && (
+              <>
+                Get a new one with{' '}
+                <MuiLink component={Link} href='/sign-in'>
+                  Forgot your password?
+                </MuiLink>{' '}
+                on the sign-in page.
+              </>
+            )}
+          </Alert>
+        )}
         <TextField
           label='New password'
           type={show ? 'text' : 'password'}

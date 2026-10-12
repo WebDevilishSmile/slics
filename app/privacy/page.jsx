@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 const CONTACT_EMAIL = 'WebDevilishSmile@gmail.com';
-const EFFECTIVE_DATE = 'October 10, 2026';
+const EFFECTIVE_DATE = 'October 12, 2026';
 
 export default function PrivacyPage() {
   return (
@@ -44,7 +44,8 @@ export default function PrivacyPage() {
               If you create an account with an email and password, we store
               your first name, last name and email address. Your password is
               stored only as a one-way hash, so it cannot be read back by us or
-              anyone else.
+              anyone else. If you reset your password from an emailed link, we
+              note that your email address is confirmed.
             </>,
             <>
               <strong>Profile details.</strong> You can optionally add a phone
@@ -168,6 +169,9 @@ export default function PrivacyPage() {
               <strong>Service providers.</strong> The app runs on Vercel
               (hosting, analytics and file storage for directions PDFs) and
               stores its data in MongoDB Atlas. Google handles Google sign-in.
+              Resend sends our emails, which today are only password reset
+              emails: it receives your email address and the message when you
+              ask for one.
               Buy Me a Coffee processes supporter payments. For each one it tells
               us your email address and name, the amount, any message you leave
               and when a membership starts or ends. We never receive your
@@ -218,7 +222,8 @@ export default function PrivacyPage() {
             'Lookup history is kept while your account exists, and the History page shows all of it. Removing an entry hides it from that page; it is still counted in your lookup total, and it is deleted with your account.',
             'A driver verification request keeps your employee ID and seniority date only until the administrator decides it; then they are deleted. The request is deleted with your account. Your verification lasts until your account is deleted or the administrator removes it.',
             "A record of each support or membership change you make through Buy Me a Coffee is kept as the app's record of support. If you delete your account it stays, no longer linked to you; ask us to remove it.",
-            'Sign-up rate-limit records expire automatically within about an hour.',
+            'Rate-limit records for signing up, signing in and password resets, which can hold the email address you typed, expire automatically within about an hour.',
+            'A password reset link is kept only as a one-way hash, and only until it is used or expires: 30 minutes for a link sent by email, 24 hours for one from the administrator.',
             'Session cookies expire after 30 days, or as soon as you sign out.',
           ]}
         />

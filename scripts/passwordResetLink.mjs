@@ -18,13 +18,13 @@ const LINK_TTL_MS = 24 * 60 * 60 * 1000;
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
 const originIndex = args.indexOf('--origin');
-const origin = originIndex >= 0 ? args[originIndex + 1] : 'https://slics.vercel.app';
+const origin = originIndex >= 0 ? args[originIndex + 1] : 'https://www.slics.app';
 const email = args.find((arg, i) => !arg.startsWith('--') && (originIndex < 0 || i !== originIndex + 1));
 
 async function main() {
   if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI is not set.');
   if (!email) throw new Error('Pass the account email.');
-  if (!/^https?:\/\/[^/]+$/.test(origin ?? '')) throw new Error('--origin is a scheme and host, like https://slics.vercel.app');
+  if (!/^https?:\/\/[^/]+$/.test(origin ?? '')) throw new Error('--origin is a scheme and host, like https://www.slics.app');
 
   const client = new MongoClient(process.env.MONGODB_URI);
   await client.connect();

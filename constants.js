@@ -1,3 +1,8 @@
+// The app's address since 2026-10-12 (slics.app redirects here, and
+// slics.vercel.app still answers). Links the app sends out use it in
+// production: lib/siteOrigin.js.
+export const SITE_URL = 'https://www.slics.app';
+
 // Rows per page in the admin SLICs table (admin/slics/SlicsTable.jsx).
 export const SLICS_PER_PAGE = 25;
 
@@ -205,6 +210,9 @@ export const SLIC_REPORT_NOTE_MAX_LENGTH = 500;
 // A new password's length, at sign-up and on a reset (lib/password.js).
 export const PASSWORD_MIN_LENGTH = 8;
 export const PASSWORD_MAX_LENGTH = 128;
+// How long a reset link from "Forgot your password?" works
+// (app/api/auth/forgot-password, signIn/ForgotPassword.jsx).
+export const RESET_EMAIL_LINK_MINUTES = 30;
 
 // Covers and driver verification (docs/COVER-BIDDING.md) are admin-only until
 // they roll out to every driver: `canUseCovers` in lib/authz.js and the menu

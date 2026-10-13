@@ -18,12 +18,18 @@ import {
   ListItemText,
 } from '@mui/material';
 
+import { SITE_URL } from '@/constants';
 import SlicsMark from '@/components/utility/SlicsMark';
 import SoftNotice from '@/components/utility/SoftNotice';
 import { softContainedSx, softPressSx } from '@/components/utility/soft';
 import BottomSheetDialog, {
   BottomSheetActions,
 } from '@/components/utility/BottomSheetDialog';
+
+// The address to type in Safari: the short one, which redirects to SITE_URL.
+// Not the page's own host, since older installs run on slics.vercel.app and
+// a new one should be added from the app's real address.
+const ADDRESS = new URL(SITE_URL).host.replace(/^www\./, '');
 
 // An iPhone keeps the icon an app was added to the home screen with, and the
 // only way to get the new one (ICON_CHANGED_AT in constants.js) is to remove
@@ -35,7 +41,6 @@ export default function NewIconNotice({ due }) {
   // Hidden until the device check runs, so it never flashes elsewhere.
   const [shown, setShown] = useState(false);
   const [stepsOpen, setStepsOpen] = useState(false);
-  const [address, setAddress] = useState('');
 
   useEffect(() => {
     if (!due) return;
@@ -47,7 +52,6 @@ export default function NewIconNotice({ due }) {
       /iphone|ipad|ipod/i.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     setShown(standalone && isIos);
-    setAddress(window.location.host);
   }, [due]);
 
   const dismiss = () => {
@@ -71,7 +75,7 @@ export default function NewIconNotice({ due }) {
     {
       icon: <LanguageOutlined />,
       primary: 'Open SLICs in Safari',
-      secondary: address ? `Go to ${address}` : undefined,
+      secondary: `Go to ${ADDRESS}`,
     },
     {
       icon: <IosShare />,

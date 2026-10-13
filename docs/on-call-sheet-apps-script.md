@@ -77,7 +77,7 @@ account so the app updates when the sheet changes. It doesn't touch the sheet."
 // the sheet itself, read-only. Edits to tabs the app doesn't use send nothing.
 
 const SHEET_ID = 'PASTE_SHEET_ID_HERE';
-const APP_URL = 'https://slics.vercel.app/api/webhooks/on-call-sheet';
+const APP_URL = 'https://www.slics.app/api/webhooks/on-call-sheet';
 // A tab whose whole name is a date (10/17/2026, 6/01/24, 03.04.23) is a cover week.
 const DATE_TAB = /^\s*\d{1,2}[\/.]\d{1,2}[\/.](\d{2}|\d{4})\s*$/;
 

@@ -229,7 +229,7 @@ alert; cover weeks update quietly.
     - `onSheetEdit` sends `{ tab }`, only for `Jobs` or a dated tab;
     - `onSheetChange` sends `{ changeType }` for added or removed rows, columns or tabs.
   - **The webhook must match it:**
-    - `POST https://slics.vercel.app/api/webhooks/on-call-sheet`;
+    - `POST https://www.slics.app/api/webhooks/on-call-sheet`;
     - header `x-sheet-secret` (the script property `APP_SECRET`);
     - answers 200 when done, 202 when queued behind a running sync, 401/403 for a missing
       or wrong secret.

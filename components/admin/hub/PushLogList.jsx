@@ -21,8 +21,9 @@ const sourceLabel = (row) => {
 // went out, to how many devices, and what failed, newest first, kept 90 days.
 // "Delivered" means the push service took it; whether the phone showed it
 // can't be known (docs/PUSH-NOTIFICATIONS.md, "Worth knowing"). A gone device
-// isn't a failure.
-export default function PushLogList({ initial }) {
+// isn't a failure, and failures up to `clearedAt` ("Clear failures" above it)
+// are shown quietly, no longer in the error color.
+export default function PushLogList({ initial, clearedAt = null }) {
   const [rows, setRows] = useState(initial.rows);
   const [hasMore, setHasMore] = useState(initial.hasMore);
   const [loading, setLoading] = useState(false);
@@ -58,27 +59,31 @@ export default function PushLogList({ initial }) {
           { listStyle: 'none', m: 0, p: { xs: 1.5, sm: 2 }, borderRadius: 4, display: 'flex', flexDirection: 'column', gap: 1.5 },
         ]}
       >
-        {rows.map((row) => (
-          <Box component='li' key={row._id} sx={{ minWidth: 0 }}>
-            <Typography variant='body2' sx={{ fontWeight: 600, overflowWrap: 'anywhere' }}>
-              {row.title || 'Untitled'}
-            </Typography>
-            <Typography variant='body2' color='text.secondary'>
-              {sourceLabel(row)} · {plural(row.devices, 'device')}
-              {row.devices > 0 && `, ${row.sent} delivered`}
-              {row.errored > 0 && `, ${row.errored} failed`}
-              {row.gone > 0 && ` (${plural(row.gone, 'device')} gone, removed)`}
-            </Typography>
-            {row.errors.length > 0 && (
-              <Typography variant='caption' color='error' component='p'>
-                {row.errors.map((failure) => `${failure.host}${failure.status ? ` ${failure.status}` : ''}`).join(', ')}
+        {rows.map((row) => {
+          const cleared = row.errored > 0 && clearedAt && new Date(row.at) <= new Date(clearedAt);
+          return (
+            <Box component='li' key={row._id} sx={{ minWidth: 0 }}>
+              <Typography variant='body2' sx={{ fontWeight: 600, overflowWrap: 'anywhere' }}>
+                {row.title || 'Untitled'}
               </Typography>
-            )}
-            <Typography variant='caption' color='text.secondary' component='p'>
-              <time dateTime={row.at}>{formatWhen(row.at)}</time>
-            </Typography>
-          </Box>
-        ))}
+              <Typography variant='body2' color='text.secondary'>
+                {sourceLabel(row)} · {plural(row.devices, 'device')}
+                {row.devices > 0 && `, ${row.sent} delivered`}
+                {row.errored > 0 && `, ${row.errored} failed`}
+                {row.gone > 0 && ` (${plural(row.gone, 'device')} gone, removed)`}
+              </Typography>
+              {row.errors.length > 0 && (
+                <Typography variant='caption' color={cleared ? 'text.secondary' : 'error'} component='p'>
+                  {row.errors.map((failure) => `${failure.host}${failure.status ? ` ${failure.status}` : ''}`).join(', ')}
+                  {cleared && ' · cleared'}
+                </Typography>
+              )}
+              <Typography variant='caption' color='text.secondary' component='p'>
+                <time dateTime={row.at}>{formatWhen(row.at)}</time>
+              </Typography>
+            </Box>
+          );
+        })}
       </Box>
       {error && <Alert severity='error'>{error}</Alert>}
       {hasMore && (

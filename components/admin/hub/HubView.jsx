@@ -30,11 +30,11 @@ function cards({ notifications, activity, health, features, admins, support, mem
       title: 'Notifications',
       ...(notifications
         ? {
-            status: !notifications.configured ? 'error' : notifications.failedWeek > 0 ? 'warning' : 'ok',
+            status: !notifications.configured ? 'error' : notifications.openFailed > 0 ? 'warning' : 'ok',
             statusWord: !notifications.configured
               ? 'Keys not set'
-              : notifications.failedWeek > 0
-                ? `${notifications.failedWeek} failed this week`
+              : notifications.openFailed > 0
+                ? `${notifications.openFailed} failed ${notifications.cleared ? 'since cleared' : 'this week'}`
                 : 'Sending normally',
             lines: [
               `${plural(notifications.adminsOn, 'admin')} with a device · ${plural(notifications.devices, 'device')}`,

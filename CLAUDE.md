@@ -91,7 +91,7 @@ Route protection happens at two levels:
 
 Roles: `user` and `admin` on `session.user.role`. A **super admin** (since 2026-10-10) is an admin with `superAdmin: true` on their user row (`session.user.superAdmin`, fresh like `role`), so every admin check still passes for them; check it with `isSuperAdmin(session)` / `requireSuperAdmin()` (`lib/authz.js`), never by email. Only a super admin sees `/admin/super` and changes roles. Since 2026-10-12 it's the hub (`docs/SUPER-ADMIN-HUB.md`):
 - numbers and usage charts (`lib/db/hub.js`, `@mui/x-charts`);
-- Notifications (`lib/db/pushOverview.js`, the `push-log`, samples, a written message);
+- Notifications (`lib/db/pushOverview.js`, the `push-log`, samples, a written message; "Clear failures" marks the failures so far as seen, `app-settings` doc `push`, and a gone device is never a failure);
 - Activity (`lib/db/activity.js`, every collection merged newest first);
 - System health (`lib/systemHealth.js`: keys as set or not, never values; missing indexes from `lib/db/indexSpecs.mjs`);
 - Features (`app-settings`, `lib/db/appSettings.js`: Covers, the Places "New" date and the icon notice, each written to `admin_audit`; the `constants.js` values are only defaults, read on every session through a 5-minute shared cache);

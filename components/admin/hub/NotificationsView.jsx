@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { CheckCircleOutline, NotificationsActiveOutlined, VerifiedUser } from '@mui/icons-material';
-import { Alert, Box, Button, Chip, Typography } from '@mui/material';
+import { CheckCircleOutline, DoneAll, NotificationsActiveOutlined, Undo, VerifiedUser } from '@mui/icons-material';
+import { Alert, Box, Button, Chip, CircularProgress, Typography } from '@mui/material';
 
 import { PUSH_TYPES } from '@/constants';
 import { apiRequest } from '@/lib/apiRequest';
@@ -15,6 +15,7 @@ import StatusLabel from './StatusLabel';
 import { formatCount, formatDay, formatWhen, plural } from './format';
 
 const SENT_FEEDBACK_MS = 2500;
+const UNDO_MS = 10_000;
 const TYPE_LABELS = Object.fromEntries(PUSH_TYPES.map((type) => [type.key, type.label]));
 
 const visuallyHidden = {
@@ -165,31 +166,92 @@ export default function NotificationsView({ overview, log, myId }) {
     );
   };
 
-  const { stats } = overview;
+  // The stats as the last clear or undo returned them, until the page's own
+  // props change (a refresh after a written notification).
+  const [stats, setStats] = useState(overview.stats);
+  const [statsFrom, setStatsFrom] = useState(overview.stats);
+  if (overview.stats !== statsFrom) {
+    setStatsFrom(overview.stats);
+    setStats(overview.stats);
+  }
+  const [clearing, setClearing] = useState(false);
+  const [canUndo, setCanUndo] = useState(false);
+  const [clearError, setClearError] = useState('');
+
+  // "Clear" (POST) and "Undo" (DELETE): lib/db/pushLog.js. Confirmed in
+  // place: the status turns to "Sending normally" and the button to "Undo"
+  // for UNDO_MS.
+  const changeClear = async (undo) => {
+    setClearing(true);
+    setClearError('');
+    clearTimeout(timers.current.undo);
+    const { data, error } = await apiRequest('/api/push-log/clear', { method: undo ? 'DELETE' : 'POST' });
+    setClearing(false);
+    if (error) {
+      setCanUndo(false);
+      return setClearError(error);
+    }
+    setStats(data.data);
+    setCanUndo(!undo);
+    setAnnouncement(undo ? 'Clear undone' : 'Failures cleared');
+    tapHaptic();
+    if (!undo) timers.current.undo = setTimeout(() => setCanUndo(false), UNDO_MS);
+  };
+
   const adminsOn = overview.admins.filter((admin) => admin.devices.length > 0).length;
   const devices = overview.admins.reduce((sum, admin) => sum + admin.devices.length, 0);
+  const failing = stats.open.failed > 0;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
       <HubSection id='push-overview' title='Overview'>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', alignItems: 'center' }}>
             <StatusLabel
-              status={overview.configured ? (stats.week.errored > 0 ? 'warning' : 'ok') : 'error'}
+              status={overview.configured ? (failing ? 'warning' : 'ok') : 'error'}
               word={
                 overview.configured
-                  ? stats.week.errored > 0
-                    ? `${stats.week.errored} failed this week`
+                  ? failing
+                    ? `${stats.open.failed} failed ${stats.cleared ? 'since cleared' : 'this week'}`
                     : 'Sending normally'
                   : 'Push keys not set: nothing can be sent'
               }
             />
-            {stats.lastFailure && (
-              <Typography variant='body2' color='text.secondary'>
-                Last failure {formatWhen(stats.lastFailure.at)}: &ldquo;{stats.lastFailure.title}&rdquo;
-              </Typography>
+            {(failing || canUndo) && (
+              <Button
+                onClick={() => changeClear(canUndo)}
+                disabled={clearing}
+                startIcon={
+                  clearing ? (
+                    <CircularProgress size={16} color='inherit' />
+                  ) : canUndo ? (
+                    <Undo className='pop' />
+                  ) : (
+                    <DoneAll />
+                  )
+                }
+                sx={[softRaisedSmall, softPressSx, { minHeight: '2.75rem', px: 2 }]}
+              >
+                {canUndo ? 'Undo' : 'Clear failures'}
+              </Button>
             )}
           </Box>
+          {(stats.lastFailure && !stats.lastFailure.cleared) || stats.cleared ? (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              {stats.lastFailure && !stats.lastFailure.cleared && (
+                <Typography variant='body2' color='text.secondary'>
+                  Last failure {formatWhen(stats.lastFailure.at)}: &ldquo;{stats.lastFailure.title}&rdquo;
+                </Typography>
+              )}
+              {stats.cleared && (
+                <Typography variant='body2' color='text.secondary'>
+                  Failures cleared {formatWhen(stats.cleared.at)}
+                  {stats.cleared.by ? ` by ${stats.cleared.by.name}` : ''}. Earlier ones stay in Recent sends.
+                </Typography>
+              )}
+            </Box>
+          ) : null}
+          {clearError && <Alert severity='error'>{clearError}</Alert>}
           <Box
             component='ul'
             sx={{
@@ -270,7 +332,7 @@ export default function NotificationsView({ overview, log, myId }) {
 
       <HubSection id='push-log' title='Recent sends' description='Kept 90 days. “Delivered” means the push service took it.'>
         {/* Keyed on the newest row, so a refresh after a send starts it over. */}
-        <PushLogList key={log.rows[0]?._id ?? 'empty'} initial={log} />
+        <PushLogList key={log.rows[0]?._id ?? 'empty'} initial={log} clearedAt={stats.cleared?.at ?? null} />
       </HubSection>
 
       <Box component='span' role='status' aria-live='polite' sx={visuallyHidden}>

@@ -117,6 +117,13 @@ The detail is in `PUSH-NOTIFICATIONS.md` stage 1b.
       reached a device, and every test, sample and written message. TTL 90 days.
 - [x] **`NotificationsView.jsx`** has these sections:
   - **Overview:** status, admins with a device, devices, and sends today and this week.
+    **Clear failures** (since 2026-10-13) acknowledges the failures so far: the warning
+    here, on the hub card and in System health counts only failures this week after the
+    mark (`open` from `getPushStats`). The log rows stay, their errors shown in gray with
+    "cleared". The button turns to **Undo** for 10 seconds. Both are written to
+    `admin_audit` (`push.failuresCleared`, `push.failuresClearUndone`), and the mark is the
+    `app-settings` doc `push`. A gone device (404/410) is never a failure: it's
+    `failed - gone` that counts.
   - **Admins and devices:** each device's push service, read from the endpoint's host (the
     endpoint itself never leaves the server), when it was turned on and when it last
     received something. Plus the kinds each admin chose.
@@ -130,7 +137,8 @@ The detail is in `PUSH-NOTIFICATIONS.md` stage 1b.
     - it asks first, and it's recorded as `push.composed`.
   - **Recent sends:** with Load more.
 - [x] **Routes**, all behind `requireSuperAdmin()`: `GET /api/push-log?before=`,
-      `POST /api/push/sample`, `POST /api/push/compose`. Each is rate-limited.
+      `POST /api/push/sample`, `POST /api/push/compose`, `POST`/`DELETE /api/push-log/clear`.
+      Each is rate-limited.
 
 ## Stage D — Activity (`/admin/super/activity`, built 2026-10-12)
 

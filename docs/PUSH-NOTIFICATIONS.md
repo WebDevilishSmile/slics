@@ -191,7 +191,8 @@ see in the app. The super admin's view of all of it is `/admin/super/notificatio
       device, and for every test, sample and written message (`lib/db/pushLog.js`, TTL 90
       days). No recipient ids, no body text. Its `failed` includes gone devices (404/410),
       which `recordPushResults` removes; only `failed - gone` counts as a failure on the
-      super admin's pages.
+      super admin's pages, and the super admin can clear those once looked at (Clear
+      failures, `SUPER-ADMIN-HUB.md` stage C).
 
 ## Stage 2 — Drivers: replies to their tips
 

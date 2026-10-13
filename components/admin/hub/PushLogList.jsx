@@ -20,7 +20,8 @@ const sourceLabel = (row) => {
 // The push send log on /admin/super/notifications (lib/db/pushLog.js): what
 // went out, to how many devices, and what failed, newest first, kept 90 days.
 // "Delivered" means the push service took it; whether the phone showed it
-// can't be known (docs/PUSH-NOTIFICATIONS.md, "Worth knowing").
+// can't be known (docs/PUSH-NOTIFICATIONS.md, "Worth knowing"). A gone device
+// isn't a failure.
 export default function PushLogList({ initial }) {
   const [rows, setRows] = useState(initial.rows);
   const [hasMore, setHasMore] = useState(initial.hasMore);
@@ -65,7 +66,7 @@ export default function PushLogList({ initial }) {
             <Typography variant='body2' color='text.secondary'>
               {sourceLabel(row)} · {plural(row.devices, 'device')}
               {row.devices > 0 && `, ${row.sent} delivered`}
-              {row.failed > 0 && `, ${row.failed} failed`}
+              {row.errored > 0 && `, ${row.errored} failed`}
               {row.gone > 0 && ` (${plural(row.gone, 'device')} gone, removed)`}
             </Typography>
             {row.errors.length > 0 && (

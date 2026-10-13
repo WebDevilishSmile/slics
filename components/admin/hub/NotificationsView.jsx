@@ -175,11 +175,11 @@ export default function NotificationsView({ overview, log, myId }) {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
             <StatusLabel
-              status={overview.configured ? (stats.week.failed > 0 ? 'warning' : 'ok') : 'error'}
+              status={overview.configured ? (stats.week.errored > 0 ? 'warning' : 'ok') : 'error'}
               word={
                 overview.configured
-                  ? stats.week.failed > 0
-                    ? `${stats.week.failed} failed this week`
+                  ? stats.week.errored > 0
+                    ? `${stats.week.errored} failed this week`
                     : 'Sending normally'
                   : 'Push keys not set: nothing can be sent'
               }
@@ -204,7 +204,7 @@ export default function NotificationsView({ overview, log, myId }) {
             <Stat label='Admins with a device' value={adminsOn} detail={`of ${plural(overview.admins.length, 'admin')}`} />
             <Stat label='Devices on' value={devices} detail={overview.otherDevices ? `${overview.otherDevices} on other accounts` : null} />
             <Stat label='Sends today' value={stats.day.sends} detail={`${formatCount(stats.day.sent)} delivered`} />
-            <Stat label='Sends this week' value={stats.week.sends} detail={`${formatCount(stats.week.sent)} delivered, ${formatCount(stats.week.failed)} failed`} />
+            <Stat label='Sends this week' value={stats.week.sends} detail={`${formatCount(stats.week.sent)} delivered, ${formatCount(stats.week.errored)} failed${stats.week.gone ? `, ${formatCount(stats.week.gone)} gone` : ''}`} />
           </Box>
         </Box>
       </HubSection>

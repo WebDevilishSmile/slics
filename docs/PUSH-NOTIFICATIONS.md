@@ -189,7 +189,9 @@ see in the app. The super admin's view of all of it is `/admin/super/notificatio
       can't know about it.
 - [x] **The send log:** `sendPush` writes a `push-log` row for every send that reached a
       device, and for every test, sample and written message (`lib/db/pushLog.js`, TTL 90
-      days). No recipient ids, no body text.
+      days). No recipient ids, no body text. Its `failed` includes gone devices (404/410),
+      which `recordPushResults` removes; only `failed - gone` counts as a failure on the
+      super admin's pages.
 
 ## Stage 2 — Drivers: replies to their tips
 

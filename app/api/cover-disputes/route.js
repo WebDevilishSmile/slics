@@ -13,6 +13,7 @@ import {
   getOpenDisputeCount,
   validateDisputeNote,
 } from '@/lib/db/coverDisputes';
+import { getDriverJobName } from '@/lib/db/sheetJobs';
 import { getUserById } from '@/lib/db/users';
 
 // Per driver, not per network: drivers share the building's wifi. Editing an
@@ -59,9 +60,12 @@ export async function POST(request) {
       );
     }
 
+    // The job they hold on the Jobs tab, for the admin; none if unreadable.
+    const jobName = await getDriverJobName(user.driver.key).catch(() => null);
     const result = await createCoverDispute({
       userId: session.user.id,
       driverName: user.driver.name,
+      jobName,
       weeks,
       note,
     });

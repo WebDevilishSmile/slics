@@ -5,6 +5,7 @@ import { canUseCovers, getSession, isVerifiedDriver } from '@/lib/authz';
 import { getUserById } from '@/lib/db/users';
 import { getMyDriverClaim } from '@/lib/db/driverClaims';
 import { getMyCoverDispute } from '@/lib/db/coverDisputes';
+import { getDriverJobName } from '@/lib/db/sheetJobs';
 import { getCoverBidJobsSince } from '@/lib/db/coverBidJobs';
 import { getCoverBidPicksSince } from '@/lib/db/coverBidPicks';
 import { getHiddenJobKeys } from '@/lib/db/coverBidJobHides';
@@ -87,6 +88,15 @@ export default async function CoversPage() {
   }));
   const offWeeks = verified ? offListWeeks(pickWeeks, user?.driver?.key) : [];
   const postedWeeks = pickWeeks.filter((week) => (week.rows?.length ?? 0) > 0).length;
+  // The read-only notice names the job they hold on the Jobs tab. Only their
+  // own; the notice just leaves it out if it can't be read.
+  const jobCode =
+    offWeeks.length > 0
+      ? await getDriverJobName(user?.driver?.key).catch((error) => {
+          console.error('Error reading the driver’s job for /covers:', error);
+          return null;
+        })
+      : null;
   const callIns = Object.fromEntries(
     weeks.filter((week) => week.spot?.callIn).map((week) => [week.weekEnding, week.spot.callIn]),
   );
@@ -116,6 +126,7 @@ export default async function CoversPage() {
             offWeeks={offWeeks}
             allOff={offWeeks.length > 0 && offWeeks.length === postedWeeks}
             dispute={dispute}
+            jobCode={jobCode}
           />
         ) : (
           <DriverVerification initialClaim={claim} />

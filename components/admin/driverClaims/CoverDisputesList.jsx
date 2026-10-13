@@ -62,6 +62,11 @@ function OpenDispute({ dispute, index, busy, onClose }) {
           Linked to <strong>{dispute.driverName}</strong>
           {relinked && ` (now ${account.driverName})`}, not on {weekLabels(dispute.weeks)}.
         </Typography>
+        <Typography variant='body2' color='text.secondary'>
+          {dispute.jobName
+            ? `On the Jobs tab as ${dispute.jobName}.`
+            : 'Not on the Jobs tab.'}
+        </Typography>
         {dispute.note ? (
           // Plain text, never HTML.
           <Typography variant='body2' sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>

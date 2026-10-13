@@ -78,8 +78,17 @@ function WeekTile({ weekEnding, spot, index }) {
 // nobody else's name, status or picks reach the page (docs/COVER-BIDDING.md).
 // `offWeeks` are the posted weeks they're not on, which are read only for
 // them, with "This is a mistake" (covers/CoverDispute.jsx); `dispute` is
-// their latest message about it.
-export default function MyCoverWeeks({ name, driverName, weeks, offWeeks, allOff, dispute }) {
+// their latest message about it, and `jobCode` the job they hold on the Jobs
+// tab, which the notice names.
+export default function MyCoverWeeks({
+  name,
+  driverName,
+  weeks,
+  offWeeks,
+  allOff,
+  dispute,
+  jobCode,
+}) {
   return (
     <Paper variant='panel' className='enter' sx={{ minHeight: 0, alignItems: 'stretch', gap: 2.5 }}>
       <Box sx={{ textAlign: 'center' }}>
@@ -97,6 +106,7 @@ export default function MyCoverWeeks({ name, driverName, weeks, offWeeks, allOff
           offWeeks={offWeeks}
           allOff={allOff}
           driverName={driverName}
+          jobCode={jobCode}
           initialDispute={dispute}
         />
       )}

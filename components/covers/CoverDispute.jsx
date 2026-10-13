@@ -111,10 +111,11 @@ function DisputeDialog({ driverName, onClose, onSent }) {
 // driver those weeks, so they see the jobs but can't keep a list or pick.
 // "This is a mistake" tells the admins (lib/db/coverDisputes.js).
 // - `offWeeks`: the posted weeks they're off; `allOff` when that's all of them.
+// - `jobCode`: the job they hold on the Jobs tab ("BMEL"), or null.
 // - `initialDispute`: their latest message (getMyCoverDispute) or null. While
 //   it's open the button is replaced by when they sent it; once it's closed,
 //   the admin's answer shows and they can send another.
-export default function CoverDispute({ offWeeks, allOff, driverName, initialDispute }) {
+export default function CoverDispute({ offWeeks, allOff, driverName, jobCode, initialDispute }) {
   const [dispute, setDispute] = useState(initialDispute);
   const [open, setOpen] = useState(false);
   const [justSent, setJustSent] = useState(false);
@@ -135,9 +136,14 @@ export default function CoverDispute({ offWeeks, allOff, driverName, initialDisp
           )
         }
       >
-        <strong>The cover list is read only for you.</strong> You&apos;re not
-        a cover or on-call driver{scope}, so you can see the jobs but can&apos;t
-        pick them or keep a list.
+        <strong>The cover list is read only for you.</strong>
+        {jobCode && (
+          <>
+            {' '}Your current job code is <strong>{jobCode}</strong>.
+          </>
+        )}{' '}
+        You&apos;re not a cover or on-call driver{scope}, so you can see the
+        jobs but can&apos;t pick them or keep a list.
       </SoftNotice>
 
       {waiting && (

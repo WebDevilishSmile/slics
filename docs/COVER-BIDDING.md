@@ -178,10 +178,12 @@ calling dispatch at the call-in time; the list is what the driver reads off on t
       aren't posted isn't off: nobody knows yet. Stage 3's picking must check the same
       rule.
 - [x] **"This is a mistake"** (`covers/CoverDispute.jsx`): the read-only notice on
-      `/covers` names the weeks (or says the whole list) and its button sends the admins
+      `/covers` names the weeks (or says the whole list) and the driver's current job
+      code from the Jobs tab ("Your current job code is BMEL", `getDriverJobName` in
+      `lib/db/sheetJobs.js`, left out when they hold none), and its button sends the admins
       an optional note (`POST /api/cover-disputes`, 5 a day). The server records the
       weeks and the linked sheet name itself, and refuses when the driver is on every
-      posted week. One open dispute per driver (`cover-disputes`,
+      posted week. The dispute keeps their job code for the admin. One open dispute per driver (`cover-disputes`,
       `lib/db/coverDisputes.js`); sending again edits it. Admins get a push (`coverDisputes`,
       on by default), the header-menu badge and the `/admin` banner, and close it on
       `/admin/driver-claims` with an optional answer the driver sees on `/covers`. The fix

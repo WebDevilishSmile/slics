@@ -127,7 +127,9 @@ Plan, rules and open questions: `COVER-BIDDING.md`.
       list is read only"). Left: `npm run db:indexes` after the deploy, and its "Verifying
       the read-only rule" checks
 
-- [ ] on cover page, where it says the cover list is read only, include the driver's current job code. For example, "The cover list is read only. Your current job code is BMEL."
+- [x] on cover page, where it says the cover list is read only, include the driver's current job code. For example, "The cover list is read only. Your current job code is BMEL."
+      (2026-10-12: the job the Jobs tab names them on, `getDriverJobName` in
+      `lib/db/sheetJobs.js`; left out when they hold none. A dispute keeps it for the admin)
 
 ### Privacy and Terms page
 

@@ -23,13 +23,19 @@ import {
   softRaisedSmall,
 } from '@/components/utility/soft';
 
-function summary({ jobs, jobsChanged, picks, pickChanges, firstRefresh }) {
+function summary({ jobs, jobsChanged, jobChanges, picks, pickChanges, firstRefresh }) {
   const time = dayjs().format('h:mm A');
   if (firstRefresh) {
     return `Saved at ${time}: ${jobs} jobs and ${picks} pick rows`;
   }
+  // Jobs that only moved up or down the tab are saved but aren't a change.
+  const jobText = !jobsChanged
+    ? 'jobs unchanged'
+    : jobChanges > 0
+      ? `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`
+      : `${jobs} jobs saved`;
   const pickText = `${pickChanges} pick change${pickChanges === 1 ? '' : 's'}`;
-  return `Updated at ${time}: ${jobsChanged ? `${jobs} jobs saved` : 'jobs unchanged'} · ${pickText}`;
+  return `Updated at ${time}: ${jobText} · ${pickText}`;
 }
 
 // Pulls the selected week from the on-call sheet and saves it

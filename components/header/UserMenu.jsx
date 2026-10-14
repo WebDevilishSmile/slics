@@ -41,6 +41,7 @@ import { BMC_URL, COVERS_OPEN, PLACES_NEW_UNTIL } from '@/constants';
 import { refreshOpenDisputesCount, useOpenDisputesCount } from '@/lib/coverDisputesStore';
 import { refreshPendingClaimsCount, usePendingClaimsCount } from '@/lib/driverClaimsStore';
 import { refreshJobChangesCount, useJobChangesCount } from '@/lib/jobChangesStore';
+import { refreshCoverJobChangesCount, useCoverJobChangesCount } from '@/lib/coverJobChangesStore';
 import { refreshOpenReportsCount, useOpenReportsCount } from '@/lib/slicReportsStore';
 
 import InstallMenuItem from '@/components/install/InstallMenuItem';
@@ -122,19 +123,22 @@ function UserMenu({ user, features, signOutAction }) {
   const pathname = usePathname();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
-  // Admins: Jobs-tab changes they haven't seen (stage 3 alerts,
-  // docs/ON-CALL-SHEET-SYNC.md; /admin/jobs clears them), open SLIC reports
-  // (RECOMMENDATIONS.md #5; they count until closed on /admin/reports) and
-  // driver claims waiting for a decision and open cover list disputes
-  // (docs/COVER-BIDDING.md), all rechecked on every route change.
+  // Admins: Jobs-tab and cover-tab changes they haven't seen (alerts,
+  // docs/ON-CALL-SHEET-SYNC.md; /admin/jobs and /admin/cover/jobs clear
+  // them), open SLIC reports (RECOMMENDATIONS.md #5; they count until closed
+  // on /admin/reports) and driver claims waiting for a decision and open
+  // cover list disputes (docs/COVER-BIDDING.md), all rechecked on every
+  // route change.
   const isAdmin = user?.role === 'admin';
   const jobChanges = useJobChangesCount();
+  const coverJobChanges = useCoverJobChangesCount();
   const openReports = useOpenReportsCount();
   const pendingClaims = usePendingClaimsCount();
   const openDisputes = useOpenDisputesCount();
-  const alerts = jobChanges + openReports + pendingClaims + openDisputes;
+  const alerts = jobChanges + coverJobChanges + openReports + pendingClaims + openDisputes;
   const alertsText = [
     jobChanges && `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`,
+    coverJobChanges && `${coverJobChanges} cover job change${coverJobChanges === 1 ? '' : 's'}`,
     openReports && `${openReports} SLIC report${openReports === 1 ? '' : 's'}`,
     pendingClaims && `${pendingClaims} driver claim${pendingClaims === 1 ? '' : 's'}`,
     openDisputes && `${openDisputes} cover list dispute${openDisputes === 1 ? '' : 's'}`,
@@ -144,6 +148,7 @@ function UserMenu({ user, features, signOutAction }) {
   useEffect(() => {
     if (!isAdmin) return;
     refreshJobChangesCount();
+    refreshCoverJobChangesCount();
     refreshOpenReportsCount();
     refreshPendingClaimsCount();
     refreshOpenDisputesCount();

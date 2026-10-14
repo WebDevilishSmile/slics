@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import CoverCalendar from '@/components/covers/Calendar';
 import CoverBidJobsManager from '@/components/admin/coverBidJobs/CoverBidJobsManager';
 import CoverBidPicks from '@/components/admin/coverBidJobs/CoverBidPicks';
+import CoverJobChangesFeed from '@/components/admin/coverBidJobs/CoverJobChangesFeed';
 import SheetRefreshButton from '@/components/admin/coverBidJobs/SheetRefreshButton';
 import { useCoverBidPicks } from '@/hooks/useCoverBidPicks';
 import { useCoverLists } from '@/hooks/useCoverLists';
@@ -93,6 +94,11 @@ function CoverJobs() {
           key={weekEndDate.format('YYYY-MM-DD')}
           weekEndDate={weekEndDate}
           onRefreshed={handleRefreshed}
+        />
+        {/* Every week's changes, which the alerts point here for. */}
+        <CoverJobChangesFeed
+          refreshKey={refreshKey}
+          onSelectWeek={(week) => setSelectedDay(dayjs(week))}
         />
         <CoverBidJobsManager
           weekEndDate={weekEndDate}

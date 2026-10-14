@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import dayjs from 'dayjs';
-import { BuildOutlined, CheckCircleOutline } from '@mui/icons-material';
-import { Alert, Box, Button, Paper, Typography } from '@mui/material';
+import { BuildOutlined, CheckCircleOutline, DeleteOutline } from '@mui/icons-material';
+import { Alert, Box, Button, IconButton, Paper, Tooltip, Typography } from '@mui/material';
 
 import { apiRequest } from '@/lib/apiRequest';
 import { setOpenReportsCount } from '@/lib/slicReportsStore';
@@ -15,12 +15,13 @@ import {
   softRaised,
   softRaisedSmall,
 } from '@/components/utility/soft';
+import DeleteReportDialog from './DeleteReportDialog';
 import { reportKindLabel, reportSlicName } from './reportText';
 
 const when = (iso) => (iso ? dayjs(iso).format('MMM D, YYYY h:mm A') : '');
 const STATUS_LABELS = { resolved: 'Fixed', dismissed: 'Dismissed' };
 
-function OpenReport({ report, index, busy, onDismiss }) {
+function OpenReport({ report, index, busy, onDismiss, onDelete }) {
   return (
     <Box
       component='li'
@@ -56,6 +57,15 @@ function OpenReport({ report, index, busy, onDismiss }) {
       </Typography>
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 1.5 }}>
+        {/* For test reports; a real one is closed with Dismiss or Fix. */}
+        <Button
+          onClick={() => onDelete(report)}
+          disabled={busy}
+          startIcon={<DeleteOutline />}
+          sx={[softRaisedSmall, softPressSx, { px: 2.5, minHeight: '3rem', mr: 'auto', color: 'error.main' }]}
+        >
+          Delete
+        </Button>
         <Button
           onClick={() => onDismiss(report)}
           disabled={busy}
@@ -81,12 +91,23 @@ function OpenReport({ report, index, busy, onDismiss }) {
 
 // The admin queue of driver reports (RECOMMENDATIONS.md #5): open reports,
 // oldest first, then the last few closed ones. Fix opens the SLIC's edit form,
-// whose save resolves the report; Dismiss closes one that needs no change.
+// whose save resolves the report; Dismiss closes one that needs no change;
+// Delete removes a test report for good (DeleteReportDialog).
 export default function SlicReportsQueue({ initialOpen, initialClosed }) {
   const [open, setOpen] = useState(initialOpen);
   const [closed, setClosed] = useState(initialClosed);
   const [busyId, setBusyId] = useState(null);
   const [error, setError] = useState('');
+  // The report the delete dialog is asking about, or null.
+  const [deleting, setDeleting] = useState(null);
+
+  const handleDeleted = (id) => {
+    const nextOpen = open.filter((item) => item._id !== id);
+    setOpen(nextOpen);
+    setClosed(closed.filter((item) => item._id !== id));
+    setOpenReportsCount(nextOpen.length);
+    setDeleting(null);
+  };
 
   const changeStatus = async (report, status) => {
     setBusyId(report._id);
@@ -133,6 +154,7 @@ export default function SlicReportsQueue({ initialOpen, initialClosed }) {
               index={index}
               busy={busyId === report._id}
               onDismiss={(item) => changeStatus(item, 'dismissed')}
+              onDelete={setDeleting}
             />
           ))}
         </Box>
@@ -170,10 +192,31 @@ export default function SlicReportsQueue({ initialOpen, initialClosed }) {
                 >
                   Reopen
                 </Button>
+                <Tooltip title='Delete'>
+                  {/* A disabled button emits no events, so the tooltip needs a live wrapper. */}
+                  <span>
+                    <IconButton
+                      onClick={() => setDeleting(report)}
+                      disabled={busyId === report._id}
+                      aria-label={`Delete the report on ${reportSlicName(report)}`}
+                      sx={[softPressSx, { color: 'error.main', flexShrink: 0 }]}
+                    >
+                      <DeleteOutline />
+                    </IconButton>
+                  </span>
+                </Tooltip>
               </Box>
             ))}
           </Box>
         </Box>
+      )}
+
+      {deleting && (
+        <DeleteReportDialog
+          report={deleting}
+          onClose={() => setDeleting(null)}
+          onDeleted={handleDeleted}
+        />
       )}
     </Paper>
   );

@@ -1,21 +1,25 @@
 # RECOMMENDATIONS.md
 
-Ideas for where the app could go next, based on what it does today (2026-10-10). These
-are suggestions, not commitments. When you decide to build one, move it to `TODOS.md`. If
-it has stages, give it its own plan doc in the `ON-CALL-SHEET-SYNC.md` shape (Status, Why,
-Ground rules, Stages, Verifying).
+Design notes for ideas: how each one could be built. Written 2026-10-10 from what the app
+did then. **The list of ideas, and what's committed, is in `TODOS.md` → Ideas** (since
+2026-10-14); this file only explains. When you decide to build one, it moves to
+`TODOS.md` → Next, and if it has stages it gets its own plan doc in the
+`ON-CALL-SHEET-SYNC.md` shape (Status, Why, Ground rules, Stages, Verifying). A new idea
+that needs more than a few lines of notes gets the next number here.
 
-Part 1 works through the objectives already in `TODOS.md`. Parts 2–4 are new. Part 5 is
-about this folder.
+Item numbers are permanent: code and `TODOS.md` cite them (`RECOMMENDATIONS.md` #5).
+
+Part 1 works through the objectives that were in `TODOS.md` on 2026-10-10. Parts 2–4 are
+new. Part 5 is about this folder.
 
 **Effort:** S = an evening or two · M = a few evenings · L = a project with stages.
 
 | #   | Idea                                                                  | For             | Effort | Builds on                                                   |
 | --- | --------------------------------------------------------------------- | --------------- | ------ | ----------------------------------------------------------- |
 | 1   | My Daily Log                                                          | Drivers         | L      | `sheet-jobs`, `slics.alphaSlic`, `DayTimeField`, `/history` |
-| 2   | Buy Me a Coffee: track support, thank people, show impact             | Everyone        | S–M    | The BMC webhook, `SECURITY.md` #14                          |
+| 2   | Buy Me a Coffee (**built 2026-10-10**, `BMC-SUPPORT.md`)             | Everyone        | S–M    | The BMC webhook, `SECURITY.md` #14                          |
 | 3   | Cover drivers and call-in times from the sheet (**built 2026-10-10**) | Admin           | S–M    | `cover-bid-picks`, the sheet sync                           |
-| 4   | Embossed headings                                                     | Everyone        | S      | `sectionHeading`, `theme.soft`                              |
+| 4   | Embossed headings (notes removed 2026-10-10, not built)               | Everyone        | S      | `sectionHeading`, `theme.soft`                              |
 | 5   | "Something's wrong?" reports on a SLIC (**built 2026-10-10**)        | Drivers → admin | S–M    | The job-change alert pattern                                |
 | 6   | Safety notes at the top of the card                                   | Drivers         | S–M    | Tips, votes                                                 |
 | 7   | Tip freshness                                                         | Drivers         | S      | Tips, votes                                                 |
@@ -24,8 +28,8 @@ about this folder.
 | 10  | "What's new" after a release                                          | Drivers         | S      | `SoftNotice`, `BottomSheetDialog`                           |
 | 11  | Faster cards on a weak signal                                         | Drivers         | S      | `lib/recentLookups.js`                                      |
 | 12  | A data-health page                                                    | Admin           | S      | `slics`                                                     |
-| 13  | An in-app usage page                                                  | Admin, README   | S–M    | `slicViews`, `comments`                                     |
-| 14  | An admin audit log                                                    | Admin           | S      | `SECURITY.md` #17                                           |
+| 13  | An in-app usage page (**built 2026-10-12**, the super admin hub)     | Admin, README   | S–M    | `slicViews`, `comments`                                     |
+| 14  | An admin audit log (partly: `admin_audit`, the hub's Activity)        | Admin           | S      | `SECURITY.md` #17                                           |
 | 15  | A dev database                                                        | You             | S      | `SECURITY.md` #20                                           |
 | 16  | A small test suite                                                    | You             | M      | The sheet parsers, `SECURITY.md` Part 3                     |
 | 17  | CI on GitHub Actions                                                  | You             | S      | `npm run build`, lint, knip                                 |
@@ -85,7 +89,7 @@ card, tips and phone number.
 }
 ```
 
-- **Overnight shifts.** The example in `TODOS.md` crosses midnight (22:15 → 23:45, then
+- **Overnight shifts.** The example in `TODOS.md` → Ideas crosses midnight (22:15 → 23:45, then
   00:10). Store real timestamps, and compute them on save from the shift date and the
   typed `HH:MM`: a time earlier than the one before it is the next day. Display stays
   24-hour `HH:MM`. Durations and weekly totals then just work.
@@ -193,8 +197,9 @@ The rule is in `lib/coverDrivers.js`, the page in `components/covers/CoverDriver
 The page also lists the on-call drivers, everyone after driver 20. The hand-edited list
 and its route were deleted the same day; its rows stay in the `cover` collection for now.
 Older tabs (10/3, 10/10) list out drivers unnumbered without skipping a number, so they
-show in the cover table without a position. Available days weren't found in the sheet;
-`TODOS.md` has the follow-up. The rest of this section is the original note.
+show in the cover table without a position. Available days weren't found in the sheet,
+and the follow-up was closed as "not a feature" (`archive/DONE.md` → Admin pages). The
+rest of this section is the original note.
 
 **Before** `/admin/cover/drivers` read the hand-edited `cover` collection.
 
@@ -264,7 +269,7 @@ Sort stale and contradicted tips down.
 
 ### 8. Pinned SLICs, filled from your job
 
-`archive/UI-SUGGESTIONS.md` #54, already in `TODOS.md`. With idea 1, a confirmed job can
+`archive/UI-SUGGESTIONS.md` #54, in `TODOS.md` → Ideas. With idea 1, a confirmed job can
 pin its route's SLICs automatically, so a driver's own stops lead the search list and the
 empty state.
 

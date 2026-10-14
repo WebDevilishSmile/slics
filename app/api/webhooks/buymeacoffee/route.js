@@ -77,9 +77,10 @@ export async function POST(request) {
 
     // A push to the super admins who chose it, after the response: the kind
     // and the amount, never the supporter's name, email or message. Every
-    // type, so a renewal reaches them whatever BMC calls it.
+    // type, so anything new reaches them whatever BMC calls it. `update` says
+    // what a `.updated` one was: a renewal, a failed charge (lib/db/bmcEvents.js).
     after(() =>
-      notifySupport({ type: fields.type, amount: fields.amount, currency: fields.currency }),
+      notifySupport({ type: fields.type, update: event.update, amount: fields.amount, currency: fields.currency }),
     );
 
     // Logs name the event and the account id, never the supporter's email.

@@ -33,11 +33,20 @@ const TYPE_LABELS = {
   'membership.canceled': 'Cancelled membership',
   'donation.created': 'Bought coffee',
   'recurring_donation.started': 'Started monthly support',
+  'recurring_donation.updated': 'Monthly support updated',
   'recurring_donation.cancelled': 'Cancelled monthly support',
+};
+// A renewal and a failed charge both come as `.updated`; `update`
+// (lib/db/bmcEvents.js) says which. Rows from before 2026-10-14 have none.
+const UPDATE_LABELS = {
+  renewed: { membership: 'Renewed membership', recurring_donation: 'Renewed monthly support' },
+  paymentFailed: { membership: 'Membership payment failed', recurring_donation: 'Monthly support payment failed' },
+  paid: { membership: 'Membership renewal paid', recurring_donation: 'Monthly support renewal paid' },
 };
 // Anything else is shown as BMC named it, so a new event type is visible
 // before it gets a label here.
-const typeLabel = (type) => TYPE_LABELS[type] ?? type;
+const typeLabel = (type, update) =>
+  (type.endsWith('.updated') && UPDATE_LABELS[update]?.[type.split('.')[0]]) || TYPE_LABELS[type] || type;
 
 function money(amount, currency) {
   if (amount === null || amount === undefined) return '';
@@ -182,7 +191,7 @@ export default function SupportersView({ months, recent: firstPage, recentHasMor
                             Test ·{' '}
                           </Box>
                         )}
-                        {typeLabel(event.type)} · {dayjs(event.receivedAt).format('MMM D, YYYY h:mm A')}
+                        {typeLabel(event.type, event.update)} · {dayjs(event.receivedAt).format('MMM D, YYYY h:mm A')}
                         {!event.userId && ' · no account'}
                       </Typography>
                     </Box>
@@ -194,7 +203,7 @@ export default function SupportersView({ months, recent: firstPage, recentHasMor
                   </Box>
                   <IconButton
                     onClick={() => setDeleting(event)}
-                    aria-label={`Delete ${typeLabel(event.type)} from ${supporterOf(event)}, ${dayjs(event.receivedAt).format('MMM D')}`}
+                    aria-label={`Delete ${typeLabel(event.type, event.update)} from ${supporterOf(event)}, ${dayjs(event.receivedAt).format('MMM D')}`}
                     sx={[softPressSx, { mt: -1, mr: -1, color: 'text.secondary' }]}
                   >
                     <DeleteOutline />
@@ -272,7 +281,7 @@ export default function SupportersView({ months, recent: firstPage, recentHasMor
                     <Box sx={{ fontWeight: 600 }}>{row.name || row.email}</Box>
                     {row.name && <Box>{row.email}</Box>}
                     <Box sx={{ color: 'text.secondary' }}>
-                      {row.count} event{row.count === 1 ? '' : 's'} ({row.types.map(typeLabel).join(', ')}) ·
+                      {row.count} event{row.count === 1 ? '' : 's'} ({row.types.map((type) => typeLabel(type)).join(', ')}) ·
                       last {dayjs(row.lastAt).format('MMM D, YYYY')}
                     </Box>
                   </Box>
@@ -330,7 +339,7 @@ export default function SupportersView({ months, recent: firstPage, recentHasMor
         <DeleteSupportDialog
           event={deleting}
           label={[
-            `${typeLabel(deleting.type)} from ${supporterOf(deleting)}`,
+            `${typeLabel(deleting.type, deleting.update)} from ${supporterOf(deleting)}`,
             money(deleting.amount, deleting.currency),
             dayjs(deleting.receivedAt).format('MMM D, YYYY h:mm A'),
           ]

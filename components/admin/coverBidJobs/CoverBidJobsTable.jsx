@@ -134,7 +134,7 @@ const JobRows = memo(function JobRows({
             error={duplicate}
             singleLine
           />
-          {hidden && <HiddenLabel sx={{ mt: 0.75, ml: 1 }} />}
+          {hidden && <HiddenLabel reason={hidden} sx={{ mt: 0.75, ml: 1 }} />}
           {wanted && <WantedLabel wanted={wanted} sx={{ display: 'flex', mt: 0.75, ml: 1 }} />}
         </TableCell>
         <TableCell>

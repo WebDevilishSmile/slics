@@ -75,7 +75,7 @@ export default function CoverBidJobSummaryCard({
             {row.jobNumber || 'No job #'}
           </Typography>
           {isPicked(row) && <PickedLabel />}
-          {hidden && <HiddenLabel />}
+          {hidden && <HiddenLabel reason={hidden} />}
           <WantedLabel wanted={wanted} />
         </Box>
         {status}

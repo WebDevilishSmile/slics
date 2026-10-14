@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import {
+  autoHideReason,
   emptyRowState,
   isUnsaved,
   jobKey,
@@ -169,18 +170,28 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
     }
   }, [weekEnding]);
 
-  // A hide follows the saved job number, the one drivers' /covers sees, so
-  // an unsaved row (or unsaved edit to the number) doesn't count.
-  const isRowHidden = useCallback(
-    (row) => Boolean(row.saved) && hides.has(jobKey(row.saved.jobNumber)),
+  // Why a row is hidden from drivers: 'sheet' or 'sleeper' when it's
+  // automatic (autoHideReason), 'admin' for an admin's hide, or null. A hide
+  // follows the saved job number, the one drivers' /covers sees, so an unsaved
+  // row (or unsaved edit to the number) doesn't count.
+  const hideReason = useCallback(
+    (row) => {
+      if (!row.saved) return null;
+      const auto = autoHideReason({ ...row.saved, sheetHidden: row.sheetHidden });
+      if (auto) return auto;
+      return hides.has(jobKey(row.saved.jobNumber)) ? 'admin' : null;
+    },
     [hides]
   );
+
+  const isRowHidden = useCallback((row) => Boolean(hideReason(row)), [hideReason]);
 
   const toggleHidden = useCallback(
     async (row) => {
       const jobNumber = row.saved?.jobNumber ?? '';
       const key = jobKey(jobNumber);
-      if (!weekEnding || !key) return;
+      // An automatic hide is the sheet's to change, not the admin's.
+      if (!weekEnding || !key || hideReason(row) === 'sheet' || hideReason(row) === 'sleeper') return;
       const hidden = hides.has(key);
 
       setHidingKey(row.key);
@@ -208,7 +219,7 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
         setHidingKey(null);
       }
     },
-    [weekEnding, hides]
+    [weekEnding, hides, hideReason]
   );
 
   return {
@@ -225,6 +236,7 @@ export function useCoverBidJobs({ weekEndDate, refreshKey }) {
     deleteRow,
     deleteAll,
     isRowHidden,
+    hideReason,
     toggleHidden,
   };
 }

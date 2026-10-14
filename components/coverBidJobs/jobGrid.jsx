@@ -90,11 +90,15 @@ export function PickedLabel({ sx }) {
   );
 }
 
-// The words that go with the dimming on a hidden job.
-export function HiddenLabel({ sx }) {
+// The words that go with the dimming on a hidden job. `reason` says why when
+// it's automatic (autoHideReason, lib/coverBidJobRow.js); an admin's hide is
+// just "Hidden".
+const HIDDEN_WORDS = { sheet: 'Hidden in sheet', sleeper: 'Sleeper job' };
+
+export function HiddenLabel({ reason, sx }) {
   return (
     <JobLabel icon={VisibilityOffIcon} sx={sx}>
-      Hidden
+      {HIDDEN_WORDS[reason] ?? 'Hidden'}
     </JobLabel>
   );
 }

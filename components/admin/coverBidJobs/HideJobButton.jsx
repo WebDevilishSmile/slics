@@ -10,7 +10,14 @@ import { tapHaptic } from '@/lib/haptics';
 // (docs/COVER-JOB-HIDING.md). A toggle: pressed (and the crossed-out eye)
 // while hidden. It follows the job number as saved, the one /covers sees, so
 // it waits for a saved row with a number. The week's summary line in
-// CoverBidJobsManager announces the change.
+// CoverBidJobsManager announces the change. `hidden` is why it's hidden
+// (useCoverBidJobs' hideReason): an automatic hide ('sheet', 'sleeper') can't
+// be undone here, so the button stays pressed and disabled.
+const AUTO_HIDDEN = {
+  sheet: 'Hidden in the sheet. Unhide the row there to show it to drivers',
+  sleeper: 'Sleeper jobs are always hidden from drivers',
+};
+
 export default function HideJobButton({
   row,
   hidden,
@@ -24,12 +31,14 @@ export default function HideJobButton({
   const [tapped, setTapped] = useState(false);
 
   const jobNumber = row.saved?.jobNumber?.trim() ?? '';
-  const blocked = !row.saved
-    ? 'Save this job before hiding it'
-    : !jobNumber
-      ? "A job with no job number can't be hidden"
-      : null;
-  const label = jobNumber ? `Hide job ${jobNumber} from drivers` : 'Hide from drivers';
+  const blocked = AUTO_HIDDEN[hidden]
+    ?? (!row.saved
+      ? 'Save this job before hiding it'
+      : !jobNumber
+        ? "A job with no job number can't be hidden"
+        : null);
+  const label = AUTO_HIDDEN[hidden]
+    ?? (jobNumber ? `Hide job ${jobNumber} from drivers` : 'Hide from drivers');
   const tooltip = blocked ?? (hidden ? `Hidden from drivers. Show job ${jobNumber}` : label);
 
   const handleClick = () => {
@@ -46,7 +55,7 @@ export default function HideJobButton({
       <span>
         <IconButton
           aria-label={label}
-          aria-pressed={hidden}
+          aria-pressed={Boolean(hidden)}
           size={size}
           onClick={handleClick}
           disabled={Boolean(blocked) || busy || disabled}

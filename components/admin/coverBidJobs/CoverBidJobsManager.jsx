@@ -75,6 +75,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
     deleteRow,
     deleteAll,
     isRowHidden,
+    hideReason,
     toggleHidden,
   } = useCoverBidJobs({ weekEndDate, refreshKey });
 
@@ -153,11 +154,11 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
         onToggleHidden={toggleHidden}
         saving={savingKey === row.key}
         deleting={deletingKey === row.key}
-        hidden={isRowHidden(row)}
+        hidden={hideReason(row)}
         hiding={hidingKey === row.key}
       />
     ),
-    [saveRow, requestDeleteRow, toggleHidden, isRowHidden, savingKey, deletingKey, hidingKey]
+    [saveRow, requestDeleteRow, toggleHidden, hideReason, savingKey, deletingKey, hidingKey]
   );
 
   const deleteInFlight =
@@ -196,7 +197,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
         <CoverBidJobsTable
           rows={rows}
           duplicates={duplicates}
-          isHidden={isRowHidden}
+          isHidden={hideReason}
           demand={demand}
           onFieldChange={updateField}
           renderLeading={renderLeading}
@@ -217,7 +218,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
               row={row}
               index={index}
               duplicate={isDuplicateJobNumber(row, duplicates)}
-              hidden={isRowHidden(row)}
+              hidden={hideReason(row)}
               wanted={demand?.get(jobKey(row.jobNumber))}
               status={<UnsavedStatus row={row} />}
               onOpen={setReviewIndex}
@@ -269,7 +270,9 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
             component='span'
             sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', columnGap: 2 }}
           >
-            {isRowHidden(row) && <HiddenLabel sx={{ typography: 'body2', fontWeight: 600 }} />}
+            {isRowHidden(row) && (
+              <HiddenLabel reason={hideReason(row)} sx={{ typography: 'body2', fontWeight: 600 }} />
+            )}
             <UnsavedStatus row={row} />
           </Box>
         )}
@@ -277,7 +280,7 @@ export default function CoverBidJobsManager({ weekEndDate, refreshKey, picks = n
         renderSecondary={(row) => (
           <HideJobButton
             row={row}
-            hidden={isRowHidden(row)}
+            hidden={hideReason(row)}
             onToggle={toggleHidden}
             busy={hidingKey === row.key}
             disabled={savingKey === row.key || deletingKey === row.key}

@@ -49,7 +49,7 @@ Use absolute dates.
 - [ ] **Covers:** screenshot `/covers` with an account linked to a driver
       (`archive/UI-SUGGESTIONS.md` #57)
 - [ ] **Admin fixes from 2026-10-11:** check them on a phone, signed in as an admin, in
-      both schemes (`archive/DONE.md` → UI/UX; they couldn't be screenshotted without an
+      both schemes (`archive/DONE.md` → UI/UX; they couldn't be screen-shotted without an
       admin session)
 - [ ] **Places:** check on a phone as a non-admin driver: the Places row under All Hubs,
       adding a place, a comment, and an old `/whip-it-in-and-out` bookmark landing on
@@ -206,8 +206,8 @@ order that file suggests:
 
 ## Housekeeping
 
-- [ ] Gemini: remove `GEMINI_API_KEY` from Vercel and `.env`, and revoke it in Google AI
-      Studio (the code went 2026-10-10, `ON-CALL-SHEET-SYNC.md` → "Stage 4")
+- [ ] Gemini: revoke the key in Google AI Studio and remove `GEMINI_API_KEY` from `.env`
+      (gone from Vercel; the code went 2026-10-10, `ON-CALL-SHEET-SYNC.md` → "Stage 4")
 - [ ] `/admin/drivers`: link the 20 suggested matches, add details for the new hires, and
       delete the roster rows of drivers who left
 - [ ] check the three SLIC numbers that are on two hubs in `allHubs`: 0269 (PRORI Warwick,

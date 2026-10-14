@@ -147,7 +147,7 @@ the sheet and whether it failed.
   key answers 400, and an IP-restricted key answers 403.
 - "Your sheet script may be off": run `testPing` in the Apps Script (see
   `on-call-sheet-apps-script.md`). A 401/403 there means `APP_SECRET` doesn't match.
-- The cron answers 500 while `CRON_SECRET` isn't set on Vercel.
+- The cron answers 500 if `CRON_SECRET` isn't set on Vercel (it has been since 2026-10-10).
 - A layout change in the sheet (a renamed header) makes a refresh stop with a format
   error instead of saving bad data. Fix the parser (`lib/coverSheetParser.js`,
   `lib/jobsSheetParser.js`) and check it with `npm run sheet:preview`.

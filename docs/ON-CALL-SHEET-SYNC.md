@@ -360,13 +360,13 @@ alert, and since 2026-10-14 so do cover weeks.
   - `todayInNewYork` moved to `lib/onCallSheet.js` so the page can use it.
   - Checked 2026-10-10 at 390px, light and dark, on a scratch preview page with healthy,
     silent and failing states.
-- [ ] **Env** (`.env.example`):
+- [x] **Env** (`.env.example`):
   - [x] `ON_CALL_SHEET_WEBHOOK_SECRET` (`openssl rand -hex 32`; the same value is the
     script's `APP_SECRET`): in `.env` and on Vercel since 2026-10-10.
-  - [ ] `CRON_SECRET`: in `.env.example` and `.env`; still to be set on Vercel. Until then
-    the cron route answers 500.
+  - [x] `CRON_SECRET`: in `.env.example`, `.env` and on Vercel since 2026-10-10. Without
+    it the cron route answers 500.
 - [x] **Install.** The admin installed the script on 2026-10-10; `testPing` answered 200.
-  - [ ] A heads-up to their superior.
+  - [x] A heads-up to their superior.
 
 ## Stage 4 — Cleanup (after stage 1 has run for a few weeks)
 
@@ -377,8 +377,8 @@ alert, and since 2026-10-14 so do cover weeks.
   - `@google/genai` and `GEMINI_API_KEY`.
 - [x] **Docs.** `CLAUDE.md`'s cover bid jobs section, `.env.example`, the privacy page,
   `OPERATIONS.md` and `SECURITY.md`.
-- [ ] **Outside the repo:** remove `GEMINI_API_KEY` from Vercel and local `.env`, and revoke
-  the key in Google AI Studio.
+- [ ] **Outside the repo:** revoke the key in Google AI Studio and remove `GEMINI_API_KEY`
+  from the local `.env`. It's already gone from Vercel (checked 2026-10-14).
 
 ---
 

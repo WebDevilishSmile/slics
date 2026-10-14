@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
+import { DeleteOutline } from '@mui/icons-material';
 import {
   Alert,
   Box,
   Button,
   CircularProgress,
+  IconButton,
   Link as MuiLink,
   Stack,
   Table,
@@ -20,10 +23,12 @@ import {
 
 import { apiRequest } from '@/lib/apiRequest';
 import { softInset, softPressSx, softRaised, softRaisedSmall, softTableSx } from '@/components/utility/soft';
+import DeleteSupportDialog from './DeleteSupportDialog';
 import LinkSupportDialog from './LinkSupportDialog';
 
 const TYPE_LABELS = {
   'membership.started': 'Became a member',
+  'membership.updated': 'Membership updated',
   'membership.cancelled': 'Cancelled membership',
   'membership.canceled': 'Cancelled membership',
   'donation.created': 'Bought coffee',
@@ -70,13 +75,38 @@ function Empty({ children }) {
 
 // The admin Supporters page (docs/BMC-SUPPORT.md stage 2). Shows what the BMC
 // webhook has saved since 2026-10-10, and who's a member now. Recent loads ten
-// at a time; an email with no account can be linked to one (`accounts`).
+// at a time; an email with no account can be linked to one (`accounts`), and
+// an event (BMC's test deliveries) can be deleted.
 export default function SupportersView({ months, recent: firstPage, recentHasMore, unmatched, members, accounts }) {
+  const router = useRouter();
   const [recent, setRecent] = useState(firstPage);
   const [hasMore, setHasMore] = useState(recentHasMore);
+  // Deleting every row shown leaves Load more with no cursor, so the page the
+  // refresh brings back takes their place.
+  const [lastFirstPage, setLastFirstPage] = useState(firstPage);
+  if (firstPage !== lastFirstPage) {
+    setLastFirstPage(firstPage);
+    if (recent.length === 0) {
+      setRecent(firstPage);
+      setHasMore(recentHasMore);
+    }
+  }
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState('');
   const [linking, setLinking] = useState(null);
+  const [deleting, setDeleting] = useState(null);
+
+  const supporterOf = (event) =>
+    event.userId
+      ? event.userName || event.supporterName || 'Driver'
+      : event.supporterName || event.email || 'Unknown supporter';
+
+  // The totals and No matching account come from the server, so refresh them.
+  const handleDeleted = (id) => {
+    setDeleting(null);
+    setRecent((current) => current.filter((event) => event._id !== id));
+    router.refresh();
+  };
 
   const loadMore = async () => {
     setLoadingMore(true);
@@ -134,27 +164,41 @@ export default function SupportersView({ months, recent: firstPage, recentHasMor
                 key={event._id}
                 sx={(theme) => ({ ...softRaised(theme), borderRadius: 4, p: 2 })}
               >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
-                  <Box sx={{ minWidth: 0 }}>
-                    <Typography sx={{ fontWeight: 700 }}>
-                      {event.userId ? (
-                        <MuiLink component={Link} href={`/admin/users/${event.userId}`}>
-                          {event.userName || event.supporterName || 'Driver'}
-                        </MuiLink>
-                      ) : (
-                        event.supporterName || event.email || 'Unknown supporter'
-                      )}
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary'>
-                      {typeLabel(event.type)} · {dayjs(event.receivedAt).format('MMM D, YYYY h:mm A')}
-                      {!event.userId && ' · no account'}
-                    </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                  <Box sx={{ flex: 1, minWidth: 0, display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography sx={{ fontWeight: 700 }}>
+                        {event.userId ? (
+                          <MuiLink component={Link} href={`/admin/users/${event.userId}`}>
+                            {supporterOf(event)}
+                          </MuiLink>
+                        ) : (
+                          supporterOf(event)
+                        )}
+                      </Typography>
+                      <Typography variant='body2' color='text.secondary'>
+                        {event.test && (
+                          <Box component='span' sx={{ fontWeight: 700, color: 'text.primary' }}>
+                            Test ·{' '}
+                          </Box>
+                        )}
+                        {typeLabel(event.type)} · {dayjs(event.receivedAt).format('MMM D, YYYY h:mm A')}
+                        {!event.userId && ' · no account'}
+                      </Typography>
+                    </Box>
+                    {event.amount !== null && (
+                      <Typography sx={{ fontWeight: 700, color: 'primary.main' }}>
+                        {money(event.amount, event.currency)}
+                      </Typography>
+                    )}
                   </Box>
-                  {event.amount !== null && (
-                    <Typography sx={{ fontWeight: 700, color: 'primary.main' }}>
-                      {money(event.amount, event.currency)}
-                    </Typography>
-                  )}
+                  <IconButton
+                    onClick={() => setDeleting(event)}
+                    aria-label={`Delete ${typeLabel(event.type)} from ${supporterOf(event)}, ${dayjs(event.receivedAt).format('MMM D')}`}
+                    sx={[softPressSx, { mt: -1, mr: -1, color: 'text.secondary' }]}
+                  >
+                    <DeleteOutline />
+                  </IconButton>
                 </Box>
                 {event.message && (
                   <Typography
@@ -281,6 +325,20 @@ export default function SupportersView({ months, recent: firstPage, recentHasMor
       </Section>
       {linking && (
         <LinkSupportDialog supporter={linking} accounts={accounts} onClose={() => setLinking(null)} />
+      )}
+      {deleting && (
+        <DeleteSupportDialog
+          event={deleting}
+          label={[
+            `${typeLabel(deleting.type)} from ${supporterOf(deleting)}`,
+            money(deleting.amount, deleting.currency),
+            dayjs(deleting.receivedAt).format('MMM D, YYYY h:mm A'),
+          ]
+            .filter(Boolean)
+            .join(' · ')}
+          onClose={() => setDeleting(null)}
+          onDeleted={handleDeleted}
+        />
       )}
     </Stack>
   );

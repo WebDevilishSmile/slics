@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { apiRequest } from '@/lib/apiRequest';
+import { PUSH_SUBSCRIPTIONS_URL as SUBSCRIPTIONS_URL, removeThisDevice } from '@/lib/pushDevice';
 
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-const SUBSCRIPTIONS_URL = '/api/users/me/push-subscriptions';
 
 // The VAPID public key (base64url) as the bytes pushManager.subscribe takes.
 function keyBytes(base64url) {
@@ -54,7 +54,8 @@ const getRegistration = () => navigator.serviceWorker.getRegistration('/');
  * `enable()` must run inside a tap: it asks for permission first, while the
  * tap still counts, then registers public/sw.js, subscribes and saves the
  * subscription. `disable()` unsubscribes, deletes it and unregisters the
- * worker, so nothing is left behind. Both resolve `{ error }` on failure.
+ * worker, so nothing is left behind (removeThisDevice, lib/pushDevice.js, which
+ * signing out uses too). Both resolve `{ error }` on failure.
  */
 export function usePushNotifications() {
   const [state, setState] = useState(null);
@@ -89,19 +90,7 @@ export function usePushNotifications() {
   const disable = useCallback(async () => {
     setBusy(true);
     try {
-      const registration = await getRegistration();
-      const subscription = await registration?.pushManager.getSubscription();
-      if (subscription) {
-        // The server row goes first, while the endpoint is still known. If
-        // that fails, the push service answers 410 on the next send and
-        // lib/push.js deletes it then.
-        await apiRequest(SUBSCRIPTIONS_URL, {
-          method: 'DELETE',
-          body: { endpoint: subscription.endpoint },
-        });
-        await subscription.unsubscribe();
-      }
-      await registration?.unregister();
+      await removeThisDevice();
       setState(Notification.permission === 'denied' ? 'blocked' : 'off');
       return {};
     } catch (error) {

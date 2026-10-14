@@ -42,6 +42,7 @@ import { refreshOpenDisputesCount, useOpenDisputesCount } from '@/lib/coverDispu
 import { refreshPendingClaimsCount, usePendingClaimsCount } from '@/lib/driverClaimsStore';
 import { refreshJobChangesCount, useJobChangesCount } from '@/lib/jobChangesStore';
 import { refreshCoverJobChangesCount, useCoverJobChangesCount } from '@/lib/coverJobChangesStore';
+import { turnOffThisDevice } from '@/lib/pushDevice';
 import { refreshOpenReportsCount, useOpenReportsCount } from '@/lib/slicReportsStore';
 
 import InstallMenuItem from '@/components/install/InstallMenuItem';
@@ -115,12 +116,20 @@ function ExternalItem({ href, label, icon }) {
 // The header menu: a drawer from the left, grouped as UI-SUGGESTIONS.md #50
 // lays out — where you go every day, your account, outside links, then
 // settings. Swipe it left, tap outside or press Escape to close it.
-// `signOutAction` is a server action from Header.jsx. `features` is the
+// `signOutAction` is a server action from Header.jsx; signing out first turns
+// this device's notifications off (lib/pushDevice.js), so the next driver to
+// use it isn't sent this account's. `features` is the
 // session's feature switches (auth.js, lib/db/appSettings.js); the constants
 // are the defaults when there's none.
 function UserMenu({ user, features, signOutAction }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+
+  // The push row is deleted while the session still exists.
+  const signOut = async () => {
+    await turnOffThisDevice();
+    await signOutAction();
+  };
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   // Admins: Jobs-tab and cover-tab changes they haven't seen (alerts,
@@ -372,7 +381,7 @@ function UserMenu({ user, features, signOutAction }) {
                   drawer and made it scroll sideways on a phone. */}
               <Box
                 component='form'
-                action={signOutAction}
+                action={signOut}
                 sx={{ display: 'flex', width: '100%' }}
               >
                 <ListItemButton

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { signOut } from 'next-auth/react';
+
+import { turnOffThisDevice } from '@/lib/pushDevice';
 import {
   Alert,
   Button,
@@ -48,8 +50,11 @@ function DeleteAccountDialog({ open, onClose, userId, commentCount }) {
         const data = await response.json();
         throw new Error(data.error || 'Failed to delete account');
       }
-      // The account is gone but this device's JWT isn't; signing out clears
-      // it and leaves the page. isDeleting stays true — nothing to re-enable.
+      // The server deleted the account's push rows; this unregisters this
+      // device's service worker (lib/pushDevice.js). The account is gone but
+      // this device's JWT isn't; signing out clears it and leaves the page.
+      // isDeleting stays true — nothing to re-enable.
+      await turnOffThisDevice();
       await signOut({ redirectTo: '/' });
     } catch (err) {
       setError(err.message);

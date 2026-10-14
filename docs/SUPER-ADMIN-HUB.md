@@ -73,7 +73,9 @@ The detail is in `PUSH-NOTIFICATIONS.md` stage 1b.
 - [x] `profile/PushTypeSwitches.jsx` under the device switch on `/profile`.
 - [x] `/admin/cover/jobs?week=YYYY-MM-DD` opens on that week (the cover notifications link
       there).
-- [ ] The first Buy Me a Coffee renewal: label its `type` (`PUSH-NOTIFICATIONS.md`).
+- [x] The first Buy Me a Coffee renewal: label its `type` (`PUSH-NOTIFICATIONS.md`).
+      It came 2026-10-14 as `membership.updated`, which also carries a failed charge;
+      `BMC-SUPPORT.md`, "Renewals".
 
 ## Stage B — Hub, At a glance and usage (built 2026-10-12)
 

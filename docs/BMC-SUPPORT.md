@@ -132,6 +132,30 @@ to remove it).
       `admin_audit` gets `support.deleted` first, with the row's type, amount and date. It
       doesn't touch membership; switch that off on the account's page. The `key` goes with
       the row, so the same body sent again would be saved again.
+- [x] **Renewals** (2026-10-14): the first one came as `membership.updated`. A monthly $5
+      membership's new period began at 17:04 UTC and the event came at 17:05. A second
+      `membership.updated` came at 18:05, and BMC's API then showed the membership
+      `past_due`: the charge had failed. Both were labeled "Membership updated" and both
+      counted $5 in the totals. Since then (`lib/db/bmcEvents.js`):
+  - Every subscription event keeps BMC's `status`, `current_period_start` (as
+    `periodStart`) and the membership's id (`subscriptionId`), none of them personal.
+  - A `.updated` row (memberships and monthly support) gets `update`: `renewed` (a new
+    period began within a day before it came), `paymentFailed` (`past_due`, `unpaid`,
+    `incomplete`), `paid` (a later update in a period whose renewal had failed: the retry
+    went through) or `other`. One renewal per membership and period: another update in
+    the same period is never a second renewal.
+  - A failed charge sets `unpaid` on that period's renewal, and `paid` clears it.
+  - Money in counts a `.updated` row only as a renewal that isn't `unpaid` (`PAID`), in
+    the month totals and the hub's card. So the two rows of 2026-10-14, saved before
+    `update` existed, no longer count.
+  - Labels: "Renewed membership", "Membership payment failed" and "Membership renewal
+    paid" on Supporters; "Membership renewed", "Membership payment failed" ("The $5.00
+    charge didn't go through.") and "Membership renewal paid" in the push and Activity;
+    the same for monthly support.
+  - A `.updated` row never brings the thank-you note: its words are for a start or a
+    coffee, and a renewal read "Your coffee made my day."
+  - Not checked yet: what BMC sends when a retried charge goes through. If it sends
+    nothing, a renewal whose charge failed stays out of the totals.
 
 ## Stage 3 — Thank-you notice (built)
 

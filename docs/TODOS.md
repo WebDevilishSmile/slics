@@ -168,8 +168,12 @@ notifications on, so nobody else's device is touched.
 - [x] stage 1b: each admin picks their kinds on `/profile`, with eight new kinds (cover
       jobs and picks, tips, claims, sign-ups, Places, SLIC edits, Buy Me a Coffee) and a
       90-day send log (2026-10-12). Ships with the hub, below
-- [ ] label the first Buy Me a Coffee renewal's event type (`PUSH-NOTIFICATIONS.md` stage
-      1b), and tick every event in BMC → Webhooks
+- [x] label the first Buy Me a Coffee renewal's event type (`PUSH-NOTIFICATIONS.md` stage
+      1b): `membership.updated` (2026-10-14), which also carries a failed charge, so the
+      app now tells them apart (`BMC-SUPPORT.md`, "Renewals")
+- [ ] tick every event in BMC → Webhooks (monthly support's renewals would be
+      `recurring_donation.updated`), and watch what BMC sends when a failed renewal's
+      retry goes through
 - [ ] stage 2: drivers opt in to replies on their tips (and on places once that page launches)
 - [ ] stage 3: "your pick is up" for cover bidding (waits on Features → User)
 

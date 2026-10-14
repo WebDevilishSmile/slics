@@ -190,11 +190,13 @@ see in the app. The super admin's view of all of it is `/admin/super/notificatio
     (decided 2026-10-12), never the supporter's name, email or message. Known types get a
     label; any other goes out as "Buy Me a Coffee: <type>", so a renewal arrives whatever
     BMC calls it.
-- [ ] **Renewals:** BMC doesn't publish its event names, and no renewal has reached the app
-      yet. Tick every event in BMC → Webhooks, and when the first renewal arrives, add its
-      `type` to `SUPPORT_TITLES` in `lib/pushEvents.js` (and `TYPE_LABELS` in
-      `admin/supporters/SupportersView.jsx`). If BMC sends no webhook for a renewal, the app
-      can't know about it.
+- [x] **Renewals** (2026-10-14): a renewal comes as `membership.updated`, and so does a
+      failed charge. The push now says which, from the status and period BMC sends:
+      "Membership renewed" with the amount, "Membership payment failed" with "The $5.00
+      charge didn't go through.", or "Membership renewal paid" when a retry goes through
+      (`UPDATE_TITLES` in `lib/pushEvents.js`; `BMC-SUPPORT.md`, "Renewals"). Other
+      updates stay "Membership updated". Whether every event is ticked in BMC → Webhooks
+      is still to check (monthly support's renewals would be `recurring_donation.updated`).
 - [x] **The send log:** `sendPush` writes a `push-log` row for every send that reached a
       device, and for every test, sample and written message (`lib/db/pushLog.js`, TTL 90
       days). No recipient ids, no body text. Its `failed` includes gone devices (404/410),

@@ -42,6 +42,10 @@ Use absolute dates.
       (`COVER-JOB-HIDING.md` → "Verifying"), cover lists (`COVER-BIDDING.md` → "Verifying
       stage 2") and the read-only rule (`COVER-BIDDING.md` → "Verifying the read-only
       rule")
+- [ ] **Cover jobs, automatic hides** (built 2026-10-14): press Refresh for W/E 10/24 on
+      `/admin/cover/jobs`. SH16, WA03, WA09 and SH12 should read "Hidden in sheet", the ER
+      jobs "Sleeper job", each with its eye disabled, and SH13 should show once. None of
+      them should be on `/covers` (`COVER-JOB-HIDING.md` → "Automatic hides")
 - [ ] **Covers:** screenshot `/covers` with an account linked to a driver
       (`archive/UI-SUGGESTIONS.md` #57)
 - [ ] **Admin fixes from 2026-10-11:** check them on a phone, signed in as an admin, in

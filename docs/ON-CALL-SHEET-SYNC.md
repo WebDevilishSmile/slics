@@ -110,10 +110,16 @@ row or column doesn't break them.
 **Hidden rows are read on purpose (decided 2026-10-10).** The sheet's owner hides rows
 with "Hide row": on 10/17/2026, the picked jobs SH16, WA09 and SH12, and pick rows for
 drivers with no picks. The 10/10 and 10/24 tabs hide pick rows the same way. The
-Sheets API returns hidden rows like any other, and the app keeps them, so a week can list
-jobs drivers don't see in the sheet. Picked ones show grayed as "Picked". Skipping them
-would take one more request per tab for `rowMetadata.hiddenByUser`, which carries no cell
-data.
+Sheets API returns hidden rows like any other, and the app keeps them.
+
+**Since 2026-10-14 hidden job rows are kept from drivers** (`COVER-JOB-HIDING.md` →
+"Automatic hides"). The hidden job rows are the shifter jobs at the top of the tab, which
+aren't for cover drivers (on 10/24/2026: SH16, WA03, WA09 and SH12). A refresh makes one
+more request per tab for `rowMetadata.hiddenByUser` (`getHiddenRows`,
+`lib/googleSheets.js`), which carries no cell data, and saves each job's `sheetHidden`.
+Admins still see them on `/admin/cover/jobs`, labeled "Hidden in sheet". Sleeper jobs
+(`ER` and a digit) are hidden the same way, and a row the tab lists twice with every
+field the same is saved once (`dedupeJobs`, `lib/coverSheetParser.js`).
 
 ---
 

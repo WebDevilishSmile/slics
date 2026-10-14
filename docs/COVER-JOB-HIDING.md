@@ -132,6 +132,32 @@ redirects there)**
 - [x] `COVER-BIDDING.md` → "Ground rules": hidden jobs are out of stages 2 and 3
 - [x] `OPERATIONS.md`: `npm run db:indexes` after deploying this
 
+## Automatic hides (built 2026-10-14)
+
+Some jobs on a week's tab are never for cover drivers, so the app hides them without an
+admin's hide:
+
+- **Rows the sheet hides.** The sheet's owner hides the shifter jobs at the top of the tab
+  with "Hide row" (on 10/24/2026: SH16, WA03, WA09 and SH12). The refresh reads which
+  rows are hidden (`getHiddenRows` in `lib/googleSheets.js`: a second request per tab,
+  row metadata only, no cell data, still read-only) and saves each job's `sheetHidden`.
+  A row the owner unhides shows again on the next read. Only "Hide row" counts, not a
+  filter.
+- **Sleeper jobs.** A job number starting with `ER` and a digit (ER18003), always.
+- **The same row twice.** A row the tab lists twice with every field the same is saved
+  once (`dedupeJobs`, `lib/coverSheetParser.js`); it's hidden only if every copy is
+  (10/24 lists SH13 in the hidden shifter block and again, shown, in time order).
+
+`autoHideReason(job)` (`lib/coverBidJobRow.js`) returns `'sheet'`, `'sleeper'` or `null`,
+and `isJobHidden` is true for either, so `/covers`, the cover lists (`coverListStatus`)
+and the admins' list counts all leave them out with no change of their own.
+
+**Automatic is final** (decided 2026-10-14). On `/admin/cover/jobs` these jobs are dimmed
+and labeled "Hidden in sheet" or "Sleeper job", and the eye is pressed and disabled,
+saying why. To show one, unhide the row in the sheet. `sheetHidden` counts as a
+difference when a refresh compares the week, so it saves, but it never records a cover
+job change or sends a push.
+
 ## Decisions
 
 Asked as open questions 2026-10-11; the admin chose every default on 2026-10-12, and

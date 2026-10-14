@@ -122,6 +122,16 @@ to remove it).
       (and `linkedAt`), and if that email's latest membership event is a start, membership
       turns on. Both go to `admin_audit` first (`support.linked`, `membership.granted`).
       Webhook events not yet thanked will show the driver the thank-you note.
+- [x] Test deliveries (2026-10-13): BMC's "send test" posts real-looking events, matched to
+      whichever account has the test email, and a `membership.started` one turns that
+      account's membership on. Each row now keeps BMC's `live_mode` as `liveMode`; Recent
+      labels `false` "Test", and the month totals and the hub's Supporters card leave it out
+      (`NOT_TEST`). Rows saved before that have no `liveMode` and count.
+- [x] **Delete** on a Recent row (2026-10-13, `DeleteSupportDialog.jsx`,
+      `DELETE /api/bmc-events/[id]`, `deleteBmcEvent`), super admin only, for those tests.
+      `admin_audit` gets `support.deleted` first, with the row's type, amount and date. It
+      doesn't touch membership; switch that off on the account's page. The `key` goes with
+      the row, so the same body sent again would be saved again.
 
 ## Stage 3 — Thank-you notice (built)
 

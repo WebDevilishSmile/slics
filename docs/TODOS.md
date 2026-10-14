@@ -19,6 +19,13 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 - [ ] watch the first real Jobs-tab edit raise the `/admin` banner and menu badge, then
       clear when `/admin/jobs` opens
 - [ ] one Refresh each (Jobs and a cover week) on the live site to confirm the deployment
+- [ ] cover-week alerts (built 2026-10-14, "Alerts for cover weeks"): after the deploy,
+      run `npm run db:indexes` (`cover-job-changes.seenAt`), then watch the first real
+      cover-tab edit raise the `/admin` banner, the menu badge and the push, and clear
+      when `/admin/cover/jobs` opens. `push-log` should show every device sent, iPhones
+      included (the `Topic` fix). As of 2026-10-14 `sheet-job-changes` is still empty:
+      the Jobs tab hasn't changed since its 10/09 baseline, so no Jobs-tab alert has
+      fired in production yet either
 
 ### Super admin hub (`SUPER-ADMIN-HUB.md`)
 

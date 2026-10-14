@@ -98,8 +98,9 @@ untouched.
   - Deletes rows the push service answers 404/410 for.
   - `console.error`s anything else and never throws.
   - The payload can be a function of the user id, so each admin's job-change count is
-    their own. A `tag` is also sent as the push service's `Topic`, so an undelivered push
-    is replaced too. TTL is 12 hours.
+    their own. A `tag` also sets the push service's `Topic`, so an undelivered push is
+    replaced too: since 2026-10-14 the Topic is a 32-character hash of the tag, because
+    Apple refused some tags as they were ("Worth knowing"). TTL is 12 hours.
 - [x] **`/api/users/me/push-subscriptions`:**
   - `POST` saves the subscription. It checks that `endpoint` is an `https:` URL and the
     keys are strings, and it's rate-limited per user.
@@ -128,9 +129,11 @@ untouched.
   - **Job changes:** after `refreshJobsTab` saves changes (`lib/onCallSheetSync.js`),
     push the admins "N job changes on the Jobs tab", linking `/admin/jobs`. Reuse one
     `tag` so a burst of sheet pings replaces the notification instead of stacking.
-    Built: the body is each admin's own unseen count (`countJobChangesSince` their
-    `jobChangesSeenAt`), and nobody is sent one with nothing new. The admin who pressed
-    Refresh isn't sent one.
+    Built: the body is each admin's own unseen changes (`getUnseenJobChangeRows` since
+    their `jobChangesSeenAt`), and nobody is sent one with nothing new. The admin who
+    pressed Refresh isn't sent one. Since 2026-10-14 it names them ("LV93 driver changed
+    and LV57 times changed", or "7 jobs added, 1 removed, 2 changed" past three jobs)
+    instead of "3 new changes on the Jobs tab".
   - **SLIC reports:** after `createSlicReport` in `app/api/slic-reports/route.js`, push
     "New report on SLIC 1809", linking `/admin/reports`. Built: the body is the kind
     ("Wrong phone number"), never the driver's note. A driver re-reporting the same thing
@@ -166,7 +169,12 @@ see in the app. The super admin's view of all of it is `/admin/super/notificatio
       the admin whose action set one off never gets it.
 - [x] **The new kinds and where they fire:**
   - **Cover jobs:** `refreshCoverWeek` when a week's jobs change ("posted" when the week had
-    none). Links `/admin/cover/jobs?week=…`, which now opens on that week.
+    none). Links `/admin/cover/jobs?week=…`, which now opens on that week. Since
+    2026-10-14 it's on by default and works like job changes: each admin's unseen
+    `cover-job-changes`, week by week ("W/E 10/24/2026: SH16 added and LV92 times
+    changed."), one tag for all weeks, with a banner and badge behind it
+    (`ON-CALL-SHEET-SYNC.md`, "Alerts for cover weeks"). Job numbers only: a cover job's
+    name is a driver's.
   - **Cover picks:** `refreshCoverWeek` when picks change, as a count of drivers, never
     names. One tag per week, so a live bid updates one notification.
   - **Tips:** `POST /api/comments`, tips and replies, only for a SLIC that exists. Never the
@@ -258,3 +266,12 @@ This waits on driver verification and in-app bidding (`TODOS.md` → Features �
   saving can delay or drop a push, and there's no delivery receipt.
 - **The keys identify the server, not an account.** No Apple or Google sign-up is
   involved. A subscription made with one public key only works with its private key.
+- **Apple decodes the `Topic` header** (found 2026-10-14). A topic must be base64url, and
+  a length that leaves 1 when divided by 4 can't be base64, so Apple answers
+  `400 {"reason":"BadWebPushTopic"}`. The tags `driver-claims` (13 characters) and
+  `cover-jobs-2026-10-24` (21) were sent as they were, so those two kinds failed on
+  every iPhone from 2026-10-12 while Android and desktop got them: `push-log` showed
+  "sent 1, failed 3" on each. `cover-picks-…` (22) and `sign-ups` (8) happened to pass.
+  `lib/push.js` now hashes every tag into a 32-character topic. If one kind fails on a
+  single platform, check the reason in the Vercel logs ("Push to web.push.apple.com
+  failed").

@@ -36,8 +36,9 @@ sheet's `Jobs` tab (every bid job, its driver, times, hours, miles and seniority
 tracked at all.
 
 Reading the sheet directly is exact (no OCR), keeps the picks, and lets the app record
-what changed and when. Changes to the Jobs tab are worth an alert; cover weeks change too
-often for that and update quietly.
+what changed and when. Changes to the Jobs tab are worth an alert. Cover weeks were
+meant to update quietly, since they change often; on 2026-10-14 the admin asked for the
+same alerts there, after a job added to a week went unnoticed ("Alerts" in stage 3).
 
 ## Ground rules
 
@@ -198,7 +199,8 @@ Replaces the photo upload with a **Refresh** button for the week picked on the c
   - A job name listed twice keeps its first row; the repeats are noted in `sync-state`.
   - `sync-state` `{ _id: 'jobs', lastSyncedAt, lastSource, duplicates }` records each read.
     Stage 3's lock and ping times go in the same collection.
-  - For stage 3: `countJobChangesSince(iso)` and `latestJobChange()`.
+  - For stage 3: `getUnseenJobChanges(iso)`, `getUnseenJobChangeRows(iso)` (the push's
+    summary) and `latestJobChange()`.
   - Indexes in `scripts/createIndexes.js`.
 - [x] **Shared refresh.** `refreshJobsTab({ source })` in `lib/onCallSheetSync.js`.
 - [x] **Routes:**
@@ -222,7 +224,7 @@ Replaces the photo upload with a **Refresh** button for the week picked on the c
 The admin runs the Apps Script from their own Google account; the guide is
 `docs/on-call-sheet-apps-script.md`. When the `Jobs` tab or a dated tab is edited, the
 script pings the app, and the app re-reads that part of the sheet. Jobs changes raise an
-alert; cover weeks update quietly.
+alert, and since 2026-10-14 so do cover weeks.
 
 - [x] **Guide.** `docs/on-call-sheet-apps-script.md`:
   - A standalone script with two installable triggers:
@@ -272,7 +274,7 @@ alert; cover weeks update quietly.
   - Tested 2026-10-10 on a scratch build against a throwaway database: no token, a wrong
     token or the bare secret → 401, POST → 405, the right token read Jobs and three weeks
     in 3.1 s with `lastSource: 'cron'`.
-- [x] **Alerts (Jobs tab only):**
+- [x] **Alerts** (the Jobs tab; cover weeks below, since 2026-10-14):
   - **Seen marker:** `jobChangesSeenAt` on the admin's `users` doc (server-side, so phone
     and desktop agree), through `getJobChangesSeenAt` / `markJobChangesSeen` in
     `lib/db/users.js`. `null` means everything since the baseline is new. The mark only
@@ -303,6 +305,44 @@ alert; cover weeks update quietly.
     - With the mark a day back, 4 of 5 changes counted (SH03, BE11, LV56).
     - The banner, the feed's "New" labels, the Admin row's badge and the menu button's
       dot ("Open menu, 3 job changes") were checked at 390px, light and dark.
+  - **The push** names what changed: "LV93 driver changed and LV57 times changed", or
+    "7 jobs added, 1 removed, 2 changed" past three jobs (`lib/pushEvents.js`). Job codes
+    and the kind of field only, never a value: a value can be a driver's name.
+- [x] **Alerts for cover weeks** (2026-10-14). Until then a week's jobs were replaced
+  without a record of what changed, and the only alert was a push that's off by default
+  and that Apple refused (`PUSH-NOTIFICATIONS.md`, "Worth knowing"), so a job added to
+  W/E 10/24 went unnoticed. Now it works like the Jobs tab:
+  - **`cover-job-changes`** (`lib/db/coverJobChanges.js`): `replaceCoverBidJobsForWeek`
+    diffs the saved week against the tab (`diffCoverJobs`) and records each job added,
+    removed or changed, field by field, keyed by job number like the hides. A week's
+    first save is one `posted` row. Jobs that only moved up or down the tab aren't a
+    change, so they send nothing. The rows go in before the jobs are replaced: a failure
+    in between records a change twice rather than losing it. `source` says what read it.
+  - **Seen marker:** `coverChangesSeenAt` on the admin's `users` doc, the same rules as
+    `jobChangesSeenAt` (`getCoverChangesSeenAt` / `markCoverChangesSeen`).
+  - **Routes:** `GET /api/cover-job-changes` (every week's changes, newest first, 10 a
+    page, with the admin's mark on the first page), `GET /api/cover-job-changes/unseen` →
+    `{ count, latest: [3], week }` and `POST /api/cover-job-changes/seen { upTo }`.
+  - **Banner on `/admin`:** `coverBidJobs/CoverJobChangesNotice.jsx`: "**3 cover job
+    changes** since you last looked", the latest 3 ("W/E 10/24/2026 · SH16 · added"), and
+    "View changes" → `/admin/cover/jobs?week=` the newest one's week.
+  - **Menu badge:** counted with the others ("2 cover job changes"), from
+    `lib/coverJobChangesStore.js`.
+  - **Clearing:** the **Job changes** list on `/admin/cover/jobs`
+    (`coverBidJobs/CoverJobChangesFeed.jsx`), under Refresh, shows every week's changes
+    with "New" on the unseen ones (the latest 3, or every new one, then "Show all" and
+    "Show older"). Showing them moves the mark. Tapping a change opens its week.
+  - **The push** (`coverJobs`, on by default since 2026-10-14): each admin's unseen
+    changes, week by week: "W/E 10/24/2026: SH16 added and LV92 times changed." A week
+    posted since they looked is "W/E 10/31/2026 posted with 31 jobs." Job numbers and the
+    kind of field only: a cover job's `name` is a driver's, and its reason is why they're
+    off. One tag, so a burst of pings updates one notification.
+  - **Activity:** the super admin's feed has a "Cover jobs" kind, one row per read that
+    changed a week.
+  - Checked 2026-10-14 against production, read only: the new queries run under Stable
+    API strict, both current weeks' tabs matched their saved jobs (nothing pending), and
+    the routes answer 401 signed out on a production build. Not yet seen: a real sheet
+    edit raising the banner, badge and push.
 - [x] **Health on `/admin/jobs`:** `components/admin/sheetJobs/SheetSyncHealth.jsx` under
   the Refresh button, fed by `getSheetSyncHealth` (`lib/db/syncState.js`).
   - "Last checked …" names what read it: Refresh, a sheet edit or the daily check

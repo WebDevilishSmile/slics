@@ -40,8 +40,8 @@ const NOTES = {
     "Notifications are blocked for SLICs on this device. On Android, tap the icon left of the address bar and allow them. On an iPhone, go to Settings → Notifications → SLICs. Then reload this page.",
 };
 
-// The notifications switch on /profile (docs/PUSH-NOTIFICATIONS.md), for admins
-// only for now: this device on or off. A pressed-in well like the details
+// The notifications switch on /profile (docs/PUSH-NOTIFICATIONS.md), for
+// whoever `canUsePush` lets in: this device on or off. A pressed-in well like the details
 // above it. Once it's on, "Send a test" and the kinds to send
 // (PushTypeSwitches, per account; `prefs` from the page, or null to hide
 // them). Confirms in place (the button and a live region), not with a toast.

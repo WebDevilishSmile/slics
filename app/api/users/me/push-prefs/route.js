@@ -1,23 +1,24 @@
 import { NextResponse } from 'next/server';
 
 import { PUSH_TYPES } from '@/constants';
-import { isSuperAdmin, requireAdmin } from '@/lib/authz';
+import { isSuperAdmin, requirePush } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { getPushPrefs, setPushPref } from '@/lib/db/users';
 
-// The kinds of push notification the signed-in admin gets
-// (docs/PUSH-NOTIFICATIONS.md, stage 1b; PUSH_TYPES in constants.js). Per
-// account, so a switch applies to every device they turned on. Admin-only like
-// the subscription routes; a super-admin kind only for a super admin.
+// The kinds of push notification the signed-in driver gets
+// (docs/PUSH-NOTIFICATIONS.md, stages 1b and 2; PUSH_TYPES in constants.js).
+// Per account, so a switch applies to every device they turned on. Behind the
+// same gate as the subscription routes (requirePush); an admin kind only for an
+// admin, a super-admin kind only for a super admin.
 
-// Per admin, generous: each switch saves on its own.
+// Per driver, generous: each switch saves on its own.
 const LIMIT = 120;
 const WINDOW_MS = 60 * 60 * 1000; // an hour
 
 // PATCH `{ key, on }` → `{ success, data: prefs }`, every kind this account
 // may choose, resolved.
 export async function PATCH(request) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requirePush();
   if (denied) return denied;
 
   const rate = await checkRateLimit({
@@ -44,6 +45,9 @@ export async function PATCH(request) {
     return NextResponse.json({ error: 'Unknown notification setting.' }, { status: 400 });
   }
   const superAdmin = isSuperAdmin(session);
+  if (type.audience === 'admin' && session.user.role !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+  }
   if (type.audience === 'superAdmin' && !superAdmin) {
     return NextResponse.json({ error: 'Forbidden: Super admin access required' }, { status: 403 });
   }

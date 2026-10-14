@@ -59,14 +59,16 @@ function Detail({ icon, label, children }) {
 // delete). `userData.hasPassword` comes from the page, never the hash.
 // `supporterSince`: when they first supported the app on Buy Me a Coffee (an
 // ISO string, or null). Only they see this page, so it needs no opt-in.
-// `pushPrefs`: an admin's notification kinds (`{ key: boolean }`), or null.
-// `canUseCovers`: whether this account has Covers (lib/authz.js), from the page.
+// `pushPrefs`: this account's notification kinds (`{ key: boolean }`), or null.
+// `canUseCovers`, `canUsePush`: whether this account has Covers and
+// notifications (lib/authz.js), from the page.
 function ProfileData({
   userData,
   commentCount,
   supporterSince = null,
   pushPrefs = null,
   canUseCovers = false,
+  canUsePush = false,
 }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
@@ -181,9 +183,9 @@ function ProfileData({
         </Detail>
       </Box>
 
-      {/* Admins only until stage 2 (docs/PUSH-NOTIFICATIONS.md); the
-          subscription routes check it too. */}
-      {userData.role === 'admin' && <PushNotifications prefs={pushPrefs} />}
+      {/* Admins only until the "Notifications for every driver" switch is on
+          (docs/PUSH-NOTIFICATIONS.md, stage 2); the routes check it too. */}
+      {canUsePush && <PushNotifications prefs={pushPrefs} />}
 
       {!userData.bmcMember && (
         <SoftNotice

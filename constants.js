@@ -259,6 +259,12 @@ export const SUPPORT_HOURS_ESTIMATE = 200;
 // Move it forward with the next icon change.
 export const ICON_CHANGED_AT = '2026-10-11T00:00:00.000Z';
 
+// Push notifications are admin-only until stage 2 rolls out to every driver
+// (docs/PUSH-NOTIFICATIONS.md): `canUsePush` in lib/authz.js reads this. Only
+// the default: the switch on /admin/super/features wins. Turning it off again
+// is the rollback, and it stops sends to drivers too.
+export const PUSH_OPEN = false;
+
 // The kinds of push notification an admin can choose on /profile
 // (docs/PUSH-NOTIFICATIONS.md, stage 1b), in the order the switches show.
 // Choices are per account (`users.pushPrefs[key]`); a key the account never

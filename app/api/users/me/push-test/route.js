@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
 
-import { requireAdmin } from '@/lib/authz';
+import { requirePush } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { sendPush } from '@/lib/push';
 
 // POST: "Send a test" on /profile. Pushes a test notification to every device
 // the caller turned notifications on for, and answers `{ sent, failed }` so the
-// button can say whether it went. Admin-only in stage 1, like the
-// subscription routes (docs/PUSH-NOTIFICATIONS.md).
+// button can say whether it went. Behind the same gate as the subscription
+// routes (requirePush, docs/PUSH-NOTIFICATIONS.md).
 export async function POST() {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requirePush();
   if (denied) return denied;
 
   const rate = await checkRateLimit({

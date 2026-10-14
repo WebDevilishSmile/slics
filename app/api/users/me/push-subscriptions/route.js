@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { requireAdmin } from '@/lib/authz';
+import { requirePush } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
 import {
   deletePushSubscription,
@@ -9,7 +9,8 @@ import {
 } from '@/lib/db/pushSubscriptions';
 
 // The signed-in driver's push notification devices (docs/PUSH-NOTIFICATIONS.md).
-// Admin-only in stage 1; stage 2 opens it to every driver with requireUser().
+// Admin-only until the "Notifications for every driver" switch is on
+// (requirePush, lib/authz.js).
 
 // Per driver, not per network: drivers share the building's wifi. The profile
 // toggle re-saves a device's subscription on every visit, so leave headroom.
@@ -19,7 +20,7 @@ const SAVE_WINDOW_MS = 60 * 60 * 1000; // an hour
 // POST: a `PushSubscription.toJSON()`, `{ endpoint, keys: { p256dh, auth } }`.
 // Saves this device for the caller, or moves it to them.
 export async function POST(request) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requirePush();
   if (denied) return denied;
 
   const rate = await checkRateLimit({
@@ -58,7 +59,7 @@ export async function POST(request) {
 // DELETE `{ endpoint }`: turns this device off. Only the caller's own device;
 // one that's already gone is still a success.
 export async function DELETE(request) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requirePush();
   if (denied) return denied;
 
   let body;

@@ -127,6 +127,45 @@ export default function FeaturesView({ initial }) {
         <Changed features={features} featureKey='coversOpen' />
       </FeatureCard>
 
+      <FeatureCard title='Notifications for every driver'>
+        <Box component='label' sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: busy ? 'default' : 'pointer' }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography sx={{ fontWeight: 700 }}>Notifications for every driver</Typography>
+            <Typography variant='body2' color='text.secondary'>
+              {features.pushOpen
+                ? 'On: every signed-in driver can turn notifications on for replies to their tips and places.'
+                : 'Off: only admins have notifications while they’re tested.'}
+            </Typography>
+          </Box>
+          <Switch
+            edge='end'
+            checked={features.pushOpen}
+            disabled={busy}
+            onChange={(event) =>
+              setConfirm(
+                event.target.checked
+                  ? {
+                      title: 'Open notifications to every driver?',
+                      body:
+                        'Every signed-in driver gets the notifications switch on /profile and can be sent replies to their tips and places. Go through “Verifying stage 2” in docs/PUSH-NOTIFICATIONS.md first.',
+                      action: 'Open notifications',
+                      key: 'pushOpen',
+                      value: true,
+                    }
+                  : {
+                      title: 'Close notifications to drivers?',
+                      body: 'Drivers lose the switch on /profile and nothing more is sent to them; admins keep theirs. Their devices stay saved, so opening it again picks them up.',
+                      action: 'Close notifications',
+                      key: 'pushOpen',
+                      value: false,
+                    },
+              )
+            }
+          />
+        </Box>
+        <Changed features={features} featureKey='pushOpen' />
+      </FeatureCard>
+
       <FeatureCard title='Places "New" label'>
         <Box>
           <Typography sx={{ fontWeight: 700 }}>Places &ldquo;New&rdquo; label</Typography>

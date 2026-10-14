@@ -201,10 +201,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.driverVerified = token.driverVerified === true;
         session.user.created_at = token.created_at || new Date();
       }
-      // `{ coversOpen, placesNewUntil }`: read by canUseCovers (lib/authz.js)
-      // and the header menu. Never about the user, so beside it.
+      // `{ coversOpen, pushOpen, placesNewUntil }`: read by canUseCovers and
+      // canUsePush (lib/authz.js) and the header menu. Never about the user, so
+      // beside it.
       session.features = token?.features ?? {
         coversOpen: FEATURE_DEFAULTS.coversOpen,
+        pushOpen: FEATURE_DEFAULTS.pushOpen,
         placesNewUntil: FEATURE_DEFAULTS.placesNewUntil,
       };
       // console.log('Main Auth.js Session Callback - Final Session:', session);

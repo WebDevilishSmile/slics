@@ -1,4 +1,4 @@
-import { canUseCovers, getSession, isSuperAdmin } from '@/lib/authz';
+import { canUseCovers, canUsePush, getSession, isSuperAdmin } from '@/lib/authz';
 import { getCommentsByUserId } from '@/lib/db/comments';
 import { getPushPrefs, getUserById, userHasPassword } from '@/lib/db/users';
 import { getSupporterSince } from '@/lib/db/bmcEvents';
@@ -55,9 +55,9 @@ async function ProfilePage({ params }) {
     getSupporterSince(userData._id).catch(() => null),
     // Puts "Change password" in Edit profile; only the flag, never the hash.
     userHasPassword(id),
-    // The kinds of notification an admin gets (docs/PUSH-NOTIFICATIONS.md,
-    // stage 1b). A failure only hides the switches.
-    session.user.role === 'admin'
+    // The kinds of notification this account gets (docs/PUSH-NOTIFICATIONS.md,
+    // stages 1b and 2). A failure only hides the switches.
+    canUsePush(session)
       ? getPushPrefs(id, { superAdmin: isSuperAdmin(session) }).catch(() => null)
       : null,
   ]);
@@ -74,6 +74,7 @@ async function ProfilePage({ params }) {
             supporterSince={supporterSince}
             pushPrefs={pushPrefs}
             canUseCovers={canUseCovers(session)}
+            canUsePush={canUsePush(session)}
           />
           <ProfileComments comments={serializeComments(comments)} />
         </HydrationGuard>

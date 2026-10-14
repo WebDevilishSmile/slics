@@ -7,6 +7,7 @@ import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import { softRaised } from '@/components/utility/soft';
 import PlaceComment from './PlaceComment';
 import PlaceCommentComposer from './PlaceCommentComposer';
+import PushNudge from '@/components/push/PushNudge';
 
 // Moves the viewer's vote on one comment (top-level or reply) the way the
 // server will: one vote per driver, switching sides moves it, null takes it
@@ -29,11 +30,13 @@ function applyVote(comments, commentId, voteType) {
 
 // The thread for one place, fetched when the card's comments open. Votes are
 // optimistic; posts, edits and deletes reload the thread and refresh the page
-// so the card's comment count follows.
+// so the card's comment count follows. A post (`{ posted: true }`) also offers
+// reply notifications (push/PushNudge.jsx), mounted only from then on.
 function PlaceComments({ place, user }) {
   const { refresh } = useCommentRefresh();
   const [comments, setComments] = useState(null); // null while loading
   const [error, setError] = useState('');
+  const [posted, setPosted] = useState(false);
 
   const load = useCallback(async () => {
     const { data, error } = await apiRequest(
@@ -49,10 +52,14 @@ function PlaceComments({ place, user }) {
     load();
   }, [load]);
 
-  const handleChanged = useCallback(async () => {
-    await load();
-    refresh();
-  }, [load, refresh]);
+  const handleChanged = useCallback(
+    async ({ posted: justPosted = false } = {}) => {
+      await load();
+      refresh();
+      if (justPosted) setPosted(true);
+    },
+    [load, refresh],
+  );
 
   const handleVote = async (commentId, voteType) => {
     setComments((current) => applyVote(current, commentId, voteType));
@@ -71,8 +78,11 @@ function PlaceComments({ place, user }) {
       <PlaceCommentComposer
         placeId={place._id}
         placeholder='What should other drivers know? Where to park, which lanes, how clean…'
-        onPosted={handleChanged}
+        onPosted={() => handleChanged({ posted: true })}
       />
+
+      {/* Inside the place's raised card, so a pressed-in well. */}
+      {posted && <PushNudge inset />}
 
       {error && (
         <Alert severity='error' onClose={() => setError('')}>

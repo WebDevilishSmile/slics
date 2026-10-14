@@ -5,7 +5,8 @@ import { Box, Button, Link, Typography } from '@mui/material';
 import { CONTACT_EMAIL } from '@/constants';
 import ExampleSlicCard, { CARD_CONTROLS } from '@/components/help/ExampleSlicCard';
 import HelpGuide from '@/components/help/HelpGuide';
-import { HELP_SECTIONS } from '@/components/help/guides';
+import { HELP_SECTIONS, visibleHelpSections } from '@/components/help/guides';
+import { getFeatures } from '@/lib/db/appSettings';
 import PageContainer from '@/components/layout/PageContainer';
 import AnimatedSlicsMark from '@/components/utility/AnimatedSlicsMark';
 import {
@@ -90,7 +91,11 @@ const listSx = { listStyle: 'none', m: 0, p: 0 };
 // pictures are the embossed objects. "Back to guides", once per section,
 // returns to #guides;
 // "Still stuck?" at the end is the way to reach a person.
-export default function HelpPage() {
+// A guide behind a feature switch (`feature` in guides.jsx) shows once it's on.
+// getFeatures is the shared cache the switch's save clears, so the page
+// follows a change without a deploy.
+export default async function HelpPage() {
+  const sections = visibleHelpSections(await getFeatures());
   return (
     <PageContainer>
       <Box sx={{ width: '100%', maxWidth: theme.layout.width.prose, display: 'flex', flexDirection: 'column' }}>
@@ -122,7 +127,7 @@ export default function HelpPage() {
             </Box>
 
             <Box sx={[softInset(theme), { mt: 3, p: 1.5, borderRadius: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }]}>
-              {HELP_SECTIONS.map((section) => {
+              {sections.map((section) => {
                 const guides = section.guides.filter((guide) => !CARD_GUIDE_IDS.has(guide.id));
                 if (!guides.length) return null;
                 return (
@@ -142,7 +147,7 @@ export default function HelpPage() {
           </Box>
         </Box>
 
-        {HELP_SECTIONS.map((section) => (
+        {sections.map((section) => (
           <Box
             component='section'
             key={section.id}

@@ -324,7 +324,7 @@ function PlaceComment({
             onCancel={() => setReplying(false)}
             onPosted={async () => {
               setReplying(false);
-              await onChanged();
+              await onChanged({ posted: true });
             }}
           />
         </Box>

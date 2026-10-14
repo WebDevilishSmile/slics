@@ -20,6 +20,7 @@ import { COMMENTS_SECTION_ID } from '@/constants';
 import Comment from './Comment';
 import CommentComposer from './CommentComposer';
 import NoSlicComments from './NoSlicComments';
+import PushNudge from '@/components/push/PushNudge';
 import { softInset, softRaised, softRaisedSmall } from '@/components/utility/soft';
 
 const time = (value) => new Date(value).getTime() || 0;
@@ -80,11 +81,17 @@ function Comments({ user }) {
   // Reload after a change. A post passes its new id, which marks that tip or
   // reply "just posted" for the tint in comments/Comment.jsx (UI-SUGGESTIONS.md
   // #49); the mark clears once the 1.8s animation is done, so it can play again.
+  // A post also offers reply notifications (push/PushNudge.jsx), mounted only
+  // from then on.
   const [justPosted, setJustPosted] = useState(null);
+  const [posted, setPosted] = useState(false);
   const refresh = useCallback(
     async (id) => {
       await fetchThread();
-      if (id) setJustPosted(id);
+      if (id) {
+        setJustPosted(id);
+        setPosted(true);
+      }
     },
     [fetchThread],
   );
@@ -256,6 +263,8 @@ function Comments({ user }) {
           setSnack({ message: 'Thanks! Your tip is posted.', severity: 'success' });
         }}
       />
+
+      {posted && <PushNudge />}
 
       {loadError && <Alert severity='error'>{loadError}</Alert>}
 

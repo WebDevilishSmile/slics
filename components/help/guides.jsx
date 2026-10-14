@@ -8,6 +8,7 @@ import {
   LockResetOutlined,
   LoginOutlined,
   MenuOutlined,
+  NotificationsActiveOutlined,
   OutlinedFlag,
   PhoneOutlined,
   PictureAsPdfOutlined,
@@ -36,6 +37,18 @@ function Tap({ children }) {
 // the app labels them, so keep them in step with the UI when a label changes.
 // `screen` names the picture the guide shows, with its control lit: a control
 // on the example SLIC card (ExampleSlicCard.jsx) or one of HelpScreens.jsx.
+// `feature` names a switch on /admin/super/features (lib/db/appSettings.js):
+// the guide shows only while it's on, so drivers aren't told about something
+// they don't have yet (visibleHelpSections).
+// The sections with only the guides whose `feature` is on. `features` is
+// getFeatures() (lib/db/appSettings.js). A section with none left is dropped.
+export function visibleHelpSections(features) {
+  return HELP_SECTIONS.map((section) => ({
+    ...section,
+    guides: section.guides.filter((guide) => !guide.feature || features?.[guide.feature] === true),
+  })).filter((section) => section.guides.length > 0);
+}
+
 export const HELP_SECTIONS = [
   {
     id: 'getting-started',
@@ -360,6 +373,52 @@ export const HELP_SECTIONS = [
           <>
             On your own tips, tap the pencil to change it, or the trash can to
             delete it.
+          </>,
+        ],
+      },
+      {
+        id: 'notifications',
+        feature: 'pushOpen',
+        title: 'Get a notification when someone replies',
+        icon: NotificationsActiveOutlined,
+        intro: 'Your phone tells you when a driver answers your tip, so you don’t have to check.',
+        steps: [
+          <>
+            Open the menu (three lines at the top left) and tap{' '}
+            <Tap>Profile</Tap>.
+          </>,
+          <>
+            Turn on <Tap>Notifications</Tap>. When your phone asks, tap{' '}
+            <Tap>Allow</Tap>.
+          </>,
+          <>
+            Tap <Tap>Send a test</Tap>. A notification from SLICs should show
+            up in a few seconds.
+          </>,
+          <>
+            Under <Tap>Send me</Tap>, choose what you get: <Tap>Replies</Tap>{' '}
+            on your tips, and <Tap>Comments</Tap> on places you added or
+            commented on.
+          </>,
+        ],
+        notes: [
+          <>
+            <strong>iPhone:</strong> notifications only work in SLICs on your
+            home screen, not in Safari. See{' '}
+            <Link href='#install'>Put SLICs on your home screen</Link> first.
+          </>,
+          <>
+            Right after you post a tip, a reply or a comment on a place, SLICs
+            also asks. Tap{' '}
+            <Tap>Turn on</Tap> there to skip the steps above.
+          </>,
+          <>
+            A notification only says the SLIC number and that someone replied,
+            never who or what they wrote. Tap it to open the tips.
+          </>,
+          <>
+            To stop them, turn <Tap>Notifications</Tap> off. Signing out turns
+            them off on that phone too.
           </>,
         ],
       },

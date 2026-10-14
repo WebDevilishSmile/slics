@@ -44,8 +44,9 @@ export async function PATCH(request) {
   if (!type || typeof body?.on !== 'boolean') {
     return NextResponse.json({ error: 'Unknown notification setting.' }, { status: 400 });
   }
+  const admin = session.user.role === 'admin';
   const superAdmin = isSuperAdmin(session);
-  if (type.audience === 'admin' && session.user.role !== 'admin') {
+  if (type.audience === 'admin' && !admin) {
     return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
   }
   if (type.audience === 'superAdmin' && !superAdmin) {
@@ -56,7 +57,7 @@ export async function PATCH(request) {
     await setPushPref(session.user.id, type.key, body.on);
     return NextResponse.json({
       success: true,
-      data: await getPushPrefs(session.user.id, { superAdmin }),
+      data: await getPushPrefs(session.user.id, { admin, superAdmin }),
     });
   } catch (error) {
     console.error('Error saving a notification setting:', error);

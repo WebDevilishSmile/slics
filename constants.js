@@ -265,13 +265,32 @@ export const ICON_CHANGED_AT = '2026-10-11T00:00:00.000Z';
 // is the rollback, and it stops sends to drivers too.
 export const PUSH_OPEN = false;
 
-// The kinds of push notification an admin can choose on /profile
-// (docs/PUSH-NOTIFICATIONS.md, stage 1b), in the order the switches show.
-// Choices are per account (`users.pushPrefs[key]`); a key the account never
-// set means `defaultOn`. `audience: 'superAdmin'` kinds are offered and sent
-// only to super admins. The wording of each notification is in
+// The kinds of push notification a driver can choose on /profile
+// (docs/PUSH-NOTIFICATIONS.md, stages 1b and 2), in the order the switches
+// show. Choices are per account (`users.pushPrefs[key]`); a key the account
+// never set means `defaultOn`. `audience` says who's offered and sent a kind:
+// 'driver' everyone `canUsePush` lets in (lib/authz.js), 'admin' admins,
+// 'superAdmin' super admins. The wording of each notification is in
 // lib/pushEvents.js.
 export const PUSH_TYPES = [
+  // A driver has opted in by turning the device on, so these start on: with
+  // them off, a device that's on would get nothing.
+  {
+    key: 'tipReplies',
+    group: 'Your tips',
+    label: 'Replies',
+    description: 'Someone replies to your tip, or after you in a thread.',
+    audience: 'driver',
+    defaultOn: true,
+  },
+  {
+    key: 'placeComments',
+    group: 'Places',
+    label: 'Comments',
+    description: 'A comment on a place you added, or a reply after you in a thread.',
+    audience: 'driver',
+    defaultOn: true,
+  },
   {
     key: 'jobChanges',
     group: 'On-call sheet',

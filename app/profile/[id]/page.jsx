@@ -58,7 +58,10 @@ async function ProfilePage({ params }) {
     // The kinds of notification this account gets (docs/PUSH-NOTIFICATIONS.md,
     // stages 1b and 2). A failure only hides the switches.
     canUsePush(session)
-      ? getPushPrefs(id, { superAdmin: isSuperAdmin(session) }).catch(() => null)
+      ? getPushPrefs(id, {
+          admin: session.user.role === 'admin',
+          superAdmin: isSuperAdmin(session),
+        }).catch(() => null)
       : null,
   ]);
 

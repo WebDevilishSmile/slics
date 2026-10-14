@@ -6,7 +6,7 @@ import {
   getPlaceThread,
   validatePlaceComment,
 } from '@/lib/db/places';
-import { notifyPlace } from '@/lib/pushEvents';
+import { notifyPlace, notifyPlaceComment } from '@/lib/pushEvents';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // Same limit as SLIC comments (app/api/comments/route.js), keyed by user id.
@@ -84,9 +84,19 @@ export async function POST(request) {
         { error: 'The comment you replied to no longer exists.' },
         { status: 404 },
       );
-    // A push to the admins who chose Places, after the response. Never the
-    // comment's text.
-    after(() => notifyPlace({ isComment: true, except: session.user.id }));
+    // Pushes after the response, never the comment's text: first the drivers
+    // in the thread, or who added the place (docs/PUSH-NOTIFICATIONS.md,
+    // stage 2), then the admins who chose Places, except those just told.
+    after(async () => {
+      const told = await notifyPlaceComment({
+        placeId: body.placeId,
+        threadId: result.threadId,
+        isReply: Boolean(body.parentId),
+        placeCreatedBy: result.placeCreatedBy,
+        except: session.user.id,
+      });
+      await notifyPlace({ isComment: true, except: [session.user.id, ...told] });
+    });
     return NextResponse.json({ _id: result.id }, { status: 201 });
   } catch (error) {
     console.error('Error adding place comment:', error);

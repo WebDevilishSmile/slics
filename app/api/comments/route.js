@@ -8,7 +8,7 @@ import {
   validateSlicComment,
 } from '@/lib/db/comments';
 import { getSlicByNumSlic } from '@/lib/db/slics';
-import { notifyTip } from '@/lib/pushEvents';
+import { notifyTip, notifyTipReply } from '@/lib/pushEvents';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // GET ?slic=<numSlic> — the SLIC's tips as a thread, shaped for the signed-in
@@ -105,13 +105,21 @@ export async function POST(request) {
         { error: 'That comment no longer exists.' },
         { status: 404 },
       );
-    // A push to the admins who chose tips, after the response. The route takes
-    // any numSlic string, so only for a SLIC that exists, by its own number.
+    // Pushes after the response. The route takes any numSlic string, so only
+    // for a SLIC that exists, by its own number. A reply first goes to the
+    // drivers in its thread (docs/PUSH-NOTIFICATIONS.md, stage 2); then the
+    // admins who chose tips, except those just sent the reply push.
     after(async () => {
       const slic = await getSlicByNumSlic(numSlic).catch(() => null);
-      if (slic) {
-        await notifyTip({ numSlic: slic.numSlic, isReply: Boolean(parentId), except: session.user.id });
-      }
+      if (!slic) return;
+      const told = parentId
+        ? await notifyTipReply({ numSlic: slic.numSlic, threadId: result.threadId, except: session.user.id })
+        : [];
+      await notifyTip({
+        numSlic: slic.numSlic,
+        isReply: Boolean(parentId),
+        except: [session.user.id, ...told],
+      });
     });
     return NextResponse.json({ success: true, id: result.id.toString() });
   } catch (error) {

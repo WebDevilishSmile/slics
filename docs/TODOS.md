@@ -16,7 +16,7 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 - [x] set `CRON_SECRET` on Vercel (until then the daily cron route answers 500)
 - [x] give the admin's superior a heads-up about the sheet notifier
-- [ ] watch the first real Jobs-tab edit raise the `/admin` banner and menu badge, then
+- [x] watch the first real Jobs-tab edit raise the `/admin` banner and menu badge, then
       clear when `/admin/jobs` opens
 - [ ] one Refresh each (Jobs and a cover week) on the live site to confirm the deployment
 - [ ] cover-week alerts (built 2026-10-14, "Alerts for cover weeks"): after the deploy,
@@ -31,7 +31,7 @@ Sections go from "time-bound" to "someday". Check an item off where it is, then 
 
 - [x] stages A–F built 2026-10-12: notification choices, the hub with numbers and usage,
       notifications, activity, system health and feature switches
-- [ ] ship it: run `npm run db:indexes`, restart `next dev` (new `@mui/x-charts`), and go
+- [x] ship it: run `npm run db:indexes`, restart `next dev` (new `@mui/x-charts`), and go
       through "Verifying" as the super admin on a phone
 - [ ] after the first week: does the hub replace checking the Vercel and Atlas dashboards
       day to day, and is anything missing from it?
@@ -119,15 +119,13 @@ Plan, rules and open questions: `COVER-BIDDING.md`.
       "Verify you're a driver" guide on `/help`
 - [x] stage 2: preference lists that lose jobs as they're picked, button with option to call dispatch
       (built 2026-10-12, admin-only with stage 1; `COVER-BIDDING.md`). Left: `npm run
-    db:indexes` after the deploy, and its "Verifying stage 2" checks
+  db:indexes` after the deploy, and its "Verifying stage 2" checks
 - [ ] stage 3: picking in the app on the clock, with auto-pick. Settle the open questions
       first, starting with what the source of truth is once the app can't write the sheet
 - [ ] drop `users.driverId`, the old roster link (nothing writes or reads it since 2026-10-10)
 - [x] fold `/cover-bid-jobs` into `/covers` once Covers rolls out (2026-10-12, early: it was
       an admin-only copy of the job list, and admins have `/covers` now. The page is gone,
       with its menu row; the path redirects to `/covers`, temporarily)
-
-- [ ] ability to change profile image and share time they work and show phone number for those that need help. A page where drivers that need assistance can find and contact each other.
 
 - [x] if a verified driver clicks the cover page but is not a cover or oncall driver then show a message saying the cover list is read only. They are not allowed to make any picks or setup preferred list. There should be a button that says if this is a mistake then send a message. This should send me a message that the driver is disputing his status as a cover or oncall driver.
       (built 2026-10-12, admin only with Covers; `COVER-BIDDING.md` stage 2, "Off the
@@ -137,6 +135,8 @@ Plan, rules and open questions: `COVER-BIDDING.md`.
 - [x] on cover page, where it says the cover list is read only, include the driver's current job code. For example, "The cover list is read only. Your current job code is BMEL."
       (2026-10-12: the job the Jobs tab names them on, `getDriverJobName` in
       `lib/db/sheetJobs.js`; left out when they hold none. A dispute keeps it for the admin)
+
+- [ ] ability to change profile image and share time they work and show phone number for those that need help. A page where drivers that need assistance can find and contact each other. A driver can choose a schedule (mon: 18:30 - tues: 05:00) that they are available for assistance. Any driver can call with questions about where they are going and the driver will try to help.
 
 ### Privacy and Terms page
 

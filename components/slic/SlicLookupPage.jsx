@@ -1,5 +1,5 @@
 import { getCommentsBySlic } from '@/lib/db/comments';
-import { serializeSlics } from '@/lib/serializers';
+import { toDriverSlics } from '@/lib/serializers';
 
 import Comments from '@/components/comments/Comments';
 import LookupSkeleton from '@/components/home/LookupSkeleton';
@@ -28,7 +28,7 @@ export default async function SlicLookupPage({
 
       <HydrationGuard fallback={<LookupSkeleton hasSlic={Boolean(slic)} />}>
         <Main
-          slics={serializeSlics(slics)}
+          slics={toDriverSlics(slics)}
           commentsCount={commentsCount}
           user={user}
         />

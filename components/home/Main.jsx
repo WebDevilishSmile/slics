@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { recordLookup } from '@/lib/commentPrompt';
 import { recordRecentLookup } from '@/lib/recentLookups';
-import { serializeSlics } from '@/lib/serializers';
 import { withViewTransition } from '@/lib/viewTransition';
 
 import SlicDisplay from './SlicDisplay';
@@ -107,7 +106,7 @@ function Main({ slics, commentsCount, user }) {
   return (
     <>
       <SlicsSearch
-        slics={serializeSlics(slics)}
+        slics={slics}
         onSelect={showSlic}
         viewCount={viewCount}
         isMember={!!session?.user?.bmcMember}

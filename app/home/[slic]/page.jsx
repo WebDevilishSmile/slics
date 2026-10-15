@@ -5,7 +5,7 @@ import Title from '@/components/slic/Title';
 
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getCommentsBySlic } from '@/lib/db/comments';
-import { serializeSlic } from '@/lib/serializers';
+import { toDriverSlic } from '@/lib/serializers';
 
 export default async function SlicPage({ params }) {
   const { slic } = await params;
@@ -32,7 +32,7 @@ export default async function SlicPage({ params }) {
 
   return (
     <PageContainer>
-      <Title slic={serializeSlic(slicData)} commentsCount={commentsCount} />
+      <Title slic={toDriverSlic(slicData)} commentsCount={commentsCount} />
     </PageContainer>
   );
 }

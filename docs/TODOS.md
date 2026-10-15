@@ -209,8 +209,10 @@ order that file suggests:
       and the register route's 409 (the sign-in limit and the reset flow are done)
 - [ ] **#14** BMC webhook, mostly done 2026-10-10. Left: a freshness check, `emailVerified`
       (#8) and an `admin_audit` row (#17)
-- [ ] **#20** dev database for local work and previews (`.env` points at production today;
-      `RECOMMENDATIONS.md` #15)
+- [ ] **#20** dev database for local work and previews (`DEV-DATABASE.md`). The seed
+      script is built and dry-run checked (2026-10-14). Left: the `slics-dev` Atlas user
+      and `DEV_MONGODB_URI` (stage 2), `.env.development.local` and the dev-time warning
+      (stage 3), Vercel Preview on it (stage 4)
 - [ ] then Tier 2 (#15–#18, #21, #24, #27) in any order
 
 ---

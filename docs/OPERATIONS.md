@@ -96,6 +96,7 @@ production.
 
 | Command | Does | Notes |
 |---|---|---|
+| `npm run db:dev-seed -- --dry-run` | Copies production into the dev database (`DEV_MONGODB_URI`) with people swapped for made-up ones, dropping tokens, push addresses, money and employee IDs, and adds the test accounts (`DEV-DATABASE.md`) | Reads production only. Drop `--dry-run` to write; it replaces the dev collections each time and refuses a database without "dev" in its name |
 | `npm run db:indexes` | Creates the indexes listed in `lib/db/indexSpecs.mjs` (`scripts/createIndexes.js`) | Safe to re-run. Run it after adding an index there; `/admin/super/health` shows any missing |
 | `npm run sheet:preview -- YYYY-MM-DD [--tabs]` / `-- --jobs` | Prints what a sheet refresh would save | Never writes |
 | `npm run admin:super -- <email> --dry-run` / `-- <email> --undo` | Makes an account super admin (and admin), or takes super admin away | Drop `--dry-run` to write; the only way to change it; each change is logged in `admin_audit` |

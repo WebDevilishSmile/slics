@@ -23,10 +23,11 @@ a line for each open stage and links here.
 | Doc | What it's for |
 |---|---|
 | [`COVER-BIDDING.md`](COVER-BIDDING.md) | Driver verification, the drivers' Covers page, preference lists, then picking in the app. Stages 1–2 built, admin-only until rollout |
-| [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts (stages 1, 1b live), every driver's tip and place replies (stage 2, planned 2026-10-13), then "your pick is up" |
+| [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts (stages 1, 1b live), every driver's tip and place replies (stage 2, built 2026-10-14, switch off), then "your pick is up" |
 | [`ON-CALL-SHEET-SYNC.md`](ON-CALL-SHEET-SYNC.md) | Reading the ON CALL SHEET: cover weeks, the Jobs tab, alerts. Stages 1–3 built |
 | [`COVER-JOB-HIDING.md`](COVER-JOB-HIDING.md) | An admin hides a cover job from drivers' `/covers`, and the hide survives sheet refreshes. Built 2026-10-12 |
 | [`BMC-SUPPORT.md`](BMC-SUPPORT.md) | Buy Me a Coffee: recording support, the Supporters page, thank-yous, impact numbers, renewals. Built |
+| [`DEV-DATABASE.md`](DEV-DATABASE.md) | A scrubbed copy of production for local work and previews: the seed script (built 2026-10-14), then the Atlas user, local dev and Vercel Preview |
 | [`PASSWORD-RESET.md`](PASSWORD-RESET.md) | Forgot password: an admin-made link, change password on the profile, reset by email. Stages 1–3 live |
 | [`SUPER-ADMIN-HUB.md`](SUPER-ADMIN-HUB.md) | The super admin's hub at `/admin/super`: numbers and usage, notifications, activity, system health, feature switches. Built 2026-10-12 |
 | [`RECOMMENDATIONS.md`](RECOMMENDATIONS.md) | Design notes for the ideas in `TODOS.md` → Ideas, numbered (#1–#20). An idea's notes move into its own plan doc when it's committed |

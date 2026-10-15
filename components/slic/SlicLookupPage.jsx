@@ -1,4 +1,5 @@
 import { getCommentsBySlic } from '@/lib/db/comments';
+import { countSlicViews } from '@/lib/db/slicViews';
 import { toDriverSlics } from '@/lib/serializers';
 
 import Comments from '@/components/comments/Comments';
@@ -11,6 +12,18 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // only): the search, the looked-up SLIC's card (`?slic=`) and its Driver tips.
 // The routes check the session and load `slics`; they differ only in the
 // list, the `heading`, and what they put under it (`children`).
+
+// The driver's lifetime lookup count, read with the page instead of by a call
+// of its own. A counter is never worth failing the lookup screen over.
+async function lookupCount(userId) {
+  try {
+    return await countSlicViews(userId);
+  } catch (error) {
+    console.error('Error counting lookups for the lookup page:', error);
+    return 0;
+  }
+}
+
 export default async function SlicLookupPage({
   searchParams,
   slics,
@@ -19,7 +32,10 @@ export default async function SlicLookupPage({
   children,
 }) {
   const { slic } = await searchParams;
-  const commentsCount = slic ? (await getCommentsBySlic(slic)).length : 0;
+  const [commentsCount, viewCount] = await Promise.all([
+    slic ? getCommentsBySlic(slic).then((comments) => comments.length) : 0,
+    lookupCount(user.id),
+  ]);
 
   return (
     <PageContainer>
@@ -30,6 +46,7 @@ export default async function SlicLookupPage({
         <Main
           slics={toDriverSlics(slics)}
           commentsCount={commentsCount}
+          viewCount={viewCount}
           user={user}
         />
       </HydrationGuard>

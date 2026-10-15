@@ -1,20 +1,17 @@
 import { NextResponse } from 'next/server';
-import { ObjectId } from 'mongodb';
 import { requireUser } from '@/lib/authz';
-import client from '@/lib/db/client';
+import { countSlicViews } from '@/lib/db/slicViews';
 
 export const runtime = 'nodejs';
 
+// The driver's lifetime lookup count. The lookup page now gets it with the
+// page (slic/SlicLookupPage.jsx); this stays for an app opened before that.
 export async function GET() {
   try {
     const { session, denied } = await requireUser();
     if (denied) return denied;
 
-    const db = client.db();
-
-    const total = await db
-      .collection('slicViews')
-      .countDocuments({ userId: new ObjectId(session.user.id) });
+    const total = await countSlicViews(session.user.id);
 
     return NextResponse.json({ slicViews: total }, { status: 200 });
   } catch (error) {

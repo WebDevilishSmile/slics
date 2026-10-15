@@ -10,25 +10,16 @@ import { withViewTransition } from '@/lib/viewTransition';
 import SlicDisplay from './SlicDisplay';
 import SlicsSearch from './SlicsSearch';
 
-function Main({ slics, commentsCount, user }) {
+function Main({ slics, commentsCount, viewCount: initialViewCount = 0, user }) {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [slic, setSlic] = useState(null);
-  const [viewCount, setViewCount] = useState(0);
+  // The lifetime lookup count comes with the page (slic/SlicLookupPage.jsx);
+  // track-view answers each lookup with the new one.
+  const [viewCount, setViewCount] = useState(initialViewCount);
   const prevSlicNumRef = useRef(null);
 
   const searchParams = useSearchParams();
-
-  // Fetch lifetime view count on mount
-  useEffect(() => {
-    fetch('/api/users/me/views')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.slicViews !== undefined) setViewCount(data.slicViews);
-      })
-      // Best-effort stat: a failed counter must not disturb the lookup itself.
-      .catch((err) => console.error('Error fetching view count:', err));
-  }, []);
 
   // By number; `alpha` picks between entries that share one (three pairs in
   // the All Hubs list, see SlicsSearch.jsx), and is null everywhere else.

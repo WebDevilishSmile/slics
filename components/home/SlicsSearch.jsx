@@ -15,8 +15,9 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { pushLookupUrl } from '@/lib/lookupUrl';
 import { readRecentLookups } from '@/lib/recentLookups';
 import { BMC_URL } from '@/constants';
 import SoftNotice from '@/components/utility/SoftNotice';
@@ -187,8 +188,8 @@ const donationSnoozed = () => {
 // lookups come first under "Recent" (lib/recentLookups.js); type and every
 // SLIC matches on number, code, name or city, with the match highlighted.
 // Enter takes the top match. `onSelect(numSlic | null)` shows the pick at
-// once (home/Main.jsx); the URL follows through router.push so Back and
-// sharing still work. On a touch screen a pick closes the keyboard, which
+// once (home/Main.jsx); the URL follows through pushLookupUrl, with no server
+// round trip, so Back and sharing still work. On a touch screen a pick closes the keyboard, which
 // would otherwise sit over the card's Navigate button, and every pick is
 // read out by screen readers.
 function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
@@ -205,7 +206,6 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
   // mouse and keyboard, focus stays in the search for the next lookup.
   const touchScreen = useMediaQuery('(pointer: coarse)');
   const pathname = usePathname();
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const options = useMemo(() => {
@@ -246,7 +246,7 @@ function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
     setAnnouncement(value ? `Showing ${value.title}, ${value.subtitle}` : '');
     onSelect?.(value?.numSlic ?? null, value?.alpha || null);
     const alpha = value?.alpha ? `&alpha=${encodeURIComponent(value.alpha)}` : '';
-    router.push(value ? `${pathname}?slic=${value.numSlic}${alpha}` : pathname);
+    pushLookupUrl(value ? `${pathname}?slic=${value.numSlic}${alpha}` : pathname);
   };
 
   useEffect(() => {

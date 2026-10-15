@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
   Alert,
   Box,
@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 
 import { apiRequest } from '@/lib/apiRequest';
+import { replaceLookupUrl } from '@/lib/lookupUrl';
 import { readTipsSeen, setTips, writeTipsSeen } from '@/lib/tipsStore';
 import { COMMENTS_SECTION_ID } from '@/constants';
 
@@ -50,7 +51,6 @@ const liveCount = (thread) =>
 // (UI-SUGGESTIONS.md #45). The SLIC comes from ?slic= in the URL.
 function Comments({ user }) {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const numSlic = searchParams.get('slic');
 
   const [thread, setThread] = useState(null); // null while loading
@@ -166,8 +166,8 @@ function Comments({ user }) {
     if (searchParams.get('comment') !== '1' || !numSlic) return;
     sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     composerRef.current?.focus();
-    router.replace(`/home?slic=${numSlic}`, { scroll: false });
-  }, [searchParams, numSlic, router]);
+    replaceLookupUrl(`${window.location.pathname}?slic=${numSlic}`);
+  }, [searchParams, numSlic]);
 
   // Optimistic: the counts and the pressed state change on tap. The list isn't
   // re-sorted until the next load, so a tip doesn't jump away under a thumb.

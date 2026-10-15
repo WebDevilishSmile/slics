@@ -18,6 +18,7 @@ import {
   Typography,
 } from '@mui/material';
 
+import { pushLookupUrl } from '@/lib/lookupUrl';
 import { readRecentLookups } from '@/lib/recentLookups';
 import { BMC_URL } from '@/constants';
 
@@ -109,6 +110,13 @@ function EmptySlic({ user }) {
                 key={item.numSlic}
                 component={Link}
                 href={`/home?slic=${encodeURIComponent(item.numSlic)}`}
+                // Already on /home: show it without a server round trip
+                // (lib/lookupUrl.js). On /hubs the link goes to /home.
+                onClick={(event) => {
+                  if (window.location.pathname !== '/home') return;
+                  event.preventDefault();
+                  pushLookupUrl(event.currentTarget.getAttribute('href'));
+                }}
                 clickable
                 icon={
                   item.type === 'customer' ? (

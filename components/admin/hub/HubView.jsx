@@ -38,6 +38,7 @@ function cards({ notifications, activity, health, features, admins, support, mem
                 : 'Sending normally',
             lines: [
               `${plural(notifications.adminsOn, 'admin')} with a device · ${plural(notifications.devices, 'device')}`,
+              ...(notifications.driversOn ? [`${plural(notifications.driversOn, 'driver')} with a device`] : []),
               `${plural(notifications.sentWeek, 'send')} this week`,
             ],
           }

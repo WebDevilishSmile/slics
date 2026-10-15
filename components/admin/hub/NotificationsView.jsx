@@ -263,8 +263,17 @@ export default function NotificationsView({ overview, log, myId }) {
               gap: { xs: 1.5, sm: 2 },
             }}
           >
-            <Stat label='Admins with a device' value={adminsOn} detail={`of ${plural(overview.admins.length, 'admin')}`} />
-            <Stat label='Devices on' value={devices} detail={overview.otherDevices ? `${overview.otherDevices} on other accounts` : null} />
+            <Stat
+              label='Admins with a device'
+              value={adminsOn}
+              detail={`of ${plural(overview.admins.length, 'admin')}, ${plural(devices, 'device')}`}
+            />
+            {/* Counts only: who they are stays private (docs/PUSH-NOTIFICATIONS.md, stage 2). */}
+            <Stat
+              label='Drivers with a device'
+              value={overview.drivers.accounts}
+              detail={plural(overview.drivers.devices, 'device')}
+            />
             <Stat label='Sends today' value={stats.day.sends} detail={`${formatCount(stats.day.sent)} delivered`} />
             <Stat label='Sends this week' value={stats.week.sends} detail={`${formatCount(stats.week.sent)} delivered, ${formatCount(stats.week.errored)} failed${stats.week.gone ? `, ${formatCount(stats.week.gone)} gone` : ''}`} />
           </Box>

@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Privacy Policy · SLICs',
 };
 
-const EFFECTIVE_DATE = 'October 12, 2026';
+const EFFECTIVE_DATE = 'October 14, 2026';
 
 // Every section's title, in page order, for the summary card's "On this
 // page" list. Keep it in step with the LegalSection titles below.
@@ -117,11 +117,14 @@ export default function PrivacyPage() {
               <strong>Notifications.</strong> If you turn on notifications on
               your profile page, we store the address your browser&apos;s push
               service gives that device, so the app can send it alerts, and
-              which kinds of alert you chose, with your account. Each alert
-              says only a SLIC number and what happened. Turning notifications
-              off deletes the address. For 90 days we keep a record of each
-              alert sent: what it said and how many devices took it, not who
-              got it. Today only administrators can turn them on.
+              which kinds of alert you chose, with your account. One address
+              is kept for each device you turn them on for. An alert says only
+              a SLIC number or that it&apos;s about Places, and what happened,
+              like &quot;someone replied&quot;: never who, and never what they
+              wrote. Turning notifications off, or signing out on that device,
+              deletes its address. For 90 days we keep a record of each alert
+              sent: what it said and how many devices took it, not who got
+              it.
             </>,
             <>
               <strong>Messages you send us.</strong> If you email us, we keep
@@ -279,6 +282,7 @@ export default function PrivacyPage() {
         <LegalList
           items={[
             'Account and profile details are kept for as long as your account exists.',
+            'A device’s push address is kept until you turn notifications off, sign out on that device, or delete your account. One the push service says is gone is deleted the next time an alert is sent.',
             'Tips and comments are kept until you delete them, or until your account is deleted. Delete a tip from the SLIC or your profile page, and a comment on a place from the place itself.',
             'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
             'Reports about a SLIC are kept after they are dealt with, as a record of what was fixed. If you delete your account they stay, no longer linked to you.',
@@ -306,7 +310,7 @@ export default function PrivacyPage() {
             </>,
             'Edit your display name and phone number, or delete any of your tips, from your profile page.',
             'Edit or delete your comments on places, and the places you added, on the Places page.',
-            'Turn notifications off on your profile page to delete that device’s push address.',
+            'Turn notifications off on your profile page, or sign out on that device, to delete its push address.',
             'Sign out from any device to end that session.',
             'If you signed in with Google, you can also remove SLICs from the apps connected to your Google account.',
             <>

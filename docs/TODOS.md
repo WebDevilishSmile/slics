@@ -29,6 +29,9 @@ Use absolute dates.
   `push-subscriptions` rows stay, so a device signed out that way keeps getting its
   pushes until someone signs in on it. Delete them where `sessionVersion` is bumped?
   (found 2026-10-14 building Push stage 2, `PUSH-NOTIFICATIONS.md` → 2.4)
+- `/about` isn't in the middleware's `publicPaths`, but the signed-out menu links to it,
+  so a signed-out tap bounces to `/sign-in` (seen 2026-10-15 tracing CPU). Make it
+  public, or hide the row signed out?
 
 ---
 
@@ -82,6 +85,12 @@ Use absolute dates.
 
 ## Waiting
 
+- [ ] **On or after 2026-10-17:** compare Vercel → Observability → Functions (last 12
+  hours) with 2026-10-15's, before the CPU fixes: ~2.6K calls, ~4 min of Active CPU (about
+  Hobby's 4 CPU-hours a month); `/home` 231 calls / 58s, `/` 130 / 36s, the auth route
+  489 / 31s, `/help` 155 / 11s, the 404 page 61 / 11s, `/sign-in` 101 / 10s,
+  `/api/users/me/views` 99 / 10s. Still close? Static public pages (Ideas → Platform)
+  or Pro. A cold `/home` went from 14 calls to 2 for an admin, 1 for a driver.
 - [ ] **On or after 2026-10-21** (a week after it shipped): does the super admin hub
       replace checking the Vercel and Atlas dashboards day to day, and is anything missing
       from it? (`SUPER-ADMIN-HUB.md`)
@@ -186,6 +195,10 @@ Effort: S = an evening or two · M = a few evenings · L = a project with stages
 - **Schemas at the API boundary** (M, #18): zod per collection (`SECURITY.md` #10–#11)
 - **Next 16** (M, #19): clears the last audit findings (`SECURITY.md` #3)
 - **Error alerts** (S, #20): a 500 on a driver's phone reaches you first
+- **Static public pages** (M): the root layout reads the session for the header, so every
+  route renders on demand. Without it, `/`, `/help`, `/privacy`, `/terms` and the 404
+  page could be static files, free for crawlers; the header's signed-in parts would come
+  from the client. Only if the 2026-10-17 CPU check says so.
 - A dev database (#15) is under Security → #20
 
 ---

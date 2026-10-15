@@ -12,7 +12,9 @@ The app is used daily in production.
 **Stage 1 live** for admins (working on the admin's phone as of 2026-10-12). **Stage 1b
 built 2026-10-12** and shipped with the super admin hub (`TODOS.md` checked it off
 2026-10-14): each admin chooses which kinds they get, with eight new kinds and a send
-log. **Stage 2 planned 2026-10-13** (below), not started. Stage 3 isn't started.
+log. **Stage 2 built and deployed 2026-10-14 with its switch off** (below): admins
+already get the two reply kinds; drivers get nothing until the super admin turns on
+"Notifications for every driver", after "Verifying stage 2". Stage 3 isn't started.
 
 ---
 
@@ -204,7 +206,7 @@ see in the app. The super admin's view of all of it is `/admin/super/notificatio
       super admin's pages, and the super admin can clear those once looked at (Clear
       failures, `SUPER-ADMIN-HUB.md` stage C).
 
-## Stage 2 — Every signed-in driver: tip and place replies (planned 2026-10-13)
+## Stage 2 — Every signed-in driver: tip and place replies (built 2026-10-14)
 
 Stages 1 and 1b are live, but only for admins. Drivers still see a reply to their tip only
 when they happen to look up that SLIC again. Stage 2 lets every signed-in driver turn
@@ -224,39 +226,64 @@ or comments in their threads on Places.
 - **Driver kinds are on by default.** A driver has already opted in by turning the device
   on, and with the kinds off a device that's on would get nothing.
 
+**Built 2026-10-14** in the seven commits below, each built and deployed with the switch
+off. Where the build differs from this plan:
+
+- The cached reader is `getFeatures` (`lib/db/appSettings.js`); there's no
+  `getAppSettings`.
+- `addPlaceComment` returns the place's `placeCreatedBy` with `threadId`, so the send needs
+  no second read of the place.
+- `getThreadParticipants` and `getPlaceThreadParticipants` share one aggregate,
+  `threadParticipants` in `lib/db/comments.js`. A comment's `userId` is a string, an old
+  one's may be an ObjectId, and a deleted placeholder's is null; the ids come back as
+  unique strings.
+- The teardown is `lib/pushDevice.js` (a client helper, not a hook): `removeThisDevice()`,
+  which throws, for the `/profile` switch, and `turnOffThisDevice()`, which never throws
+  and gives up after 3 seconds, for sign-out and account deletion.
+- The nudge is `components/push/PushNudge.jsx`. Inside a place's raised card it's a
+  pressed-in well (`inset`). After a tap it says "Notifications on", or that the device
+  blocked them.
+- The `/help` guide ("Get a notification when someone replies", under Driver tips &
+  reports) has `feature: 'pushOpen'`: `visibleHelpSections` shows it only while the switch
+  is on.
+- On `/admin/super/notifications`, "Drivers with a device" replaced "Devices on", whose
+  count moved under the admins'.
+- Admins get the reply kinds now, switch off or on: an admin who wrote in a thread gets
+  "New reply on SLIC …".
+
 ### 2.1 The switch and the gate
 
-- [ ] `constants.js`: `PUSH_OPEN = false` as the default.
-- [ ] `lib/db/appSettings.js`: add `pushOpen` to `FEATURE_DEFAULTS`, labels and the reader,
+- [x] `constants.js`: `PUSH_OPEN = false` as the default.
+- [x] `lib/db/appSettings.js`: add `pushOpen` to `FEATURE_DEFAULTS`, labels and the reader,
       the same way as `coversOpen`. Add the switch to the `/admin/super/features` UI, which
       writes `admin_audit` like the others.
-- [ ] `auth.js`: put `pushOpen` in `session.features`, including the fallback object.
-- [ ] `lib/authz.js`: add `canUsePush(session)` (an admin, or anyone once `pushOpen` is
+- [x] `auth.js`: put `pushOpen` in `session.features`, including the fallback object.
+- [x] `lib/authz.js`: add `canUsePush(session)` (an admin, or anyone once `pushOpen` is
       on). Add `requirePush()`, which is `requireUser()` plus a 403 `{ error }` when the
       gate is closed. Model both on `canUseCovers`/`requireCovers`.
-- [ ] Switch `app/api/users/me/push-subscriptions`, `push-test` and `push-prefs` from
+- [x] Switch `app/api/users/me/push-subscriptions`, `push-test` and `push-prefs` from
       `requireAdmin()` to `requirePush()`.
-- [ ] In `push-prefs`, an `audience: 'admin'` kind from a non-admin answers 403, the same
+- [x] In `push-prefs`, an `audience: 'admin'` kind from a non-admin answers 403, the same
       way a super-admin kind from another admin already does.
-- [ ] `app/profile/[id]/page.jsx`: load `getPushPrefs` when `canUsePush(session)` is true
+- [x] `app/profile/[id]/page.jsx`: load `getPushPrefs` when `canUsePush(session)` is true
       and pass `canUsePush` down. In `ProfileData.jsx`, change the `role === 'admin'` check
       around `<PushNotifications>` to `canUsePush`.
 
 ### 2.2 Driver kinds
 
-- [ ] `constants.js` `PUSH_TYPES`: add two kinds first, so a driver's list and an admin's
+- [x] `constants.js` `PUSH_TYPES`: add two kinds first, so a driver's list and an admin's
       list both open on them:
   - `tipReplies`: group Your tips, label Replies. Description: "Someone replies to your
     tip, or after you in a thread." `audience: 'driver'`, `defaultOn: true`.
   - `placeComments`: group Places, label Comments. Description: "A comment on a place you
     added, or a reply after you in a thread." `audience: 'driver'`, `defaultOn: true`.
-- [ ] `lib/db/users.js`:
+- [x] `lib/db/users.js`:
   - `pushTypesFor({ admin, superAdmin })` offers driver kinds to everyone, admin kinds to
     admins and super-admin kinds to super admins.
   - `resolvePushPrefs` and `getPushPrefs` take `admin`.
   - Update the callers: the profile page, the `push-prefs` route, and
     `lib/db/pushOverview.js` (admins, so `admin: true`).
-- [ ] New `getDriverPushAudience(key, userIds)` in `lib/db/users.js`: one query over
+- [x] New `getDriverPushAudience(key, userIds)` in `lib/db/users.js`: one query over
       `_id ∈ userIds` with `pushPrefs.<key> ≠ false`. It adds `role: 'admin'` unless
       `pushOpen` is on (`getAppSettings`, which is cached), so closing the switch stops
       driver sends too. `getPushAudience` stays admin-only and is never called with a
@@ -266,18 +293,18 @@ or comments in their threads on Places.
 
 ### 2.3 Who gets a reply push
 
-- [ ] `lib/db/comments.js`:
+- [x] `lib/db/comments.js`:
   - `createComment` also returns `threadId` (the top-level comment's `_id`).
   - New `getThreadParticipants(threadId)`: an aggregate with `$match` on
     `{ $or: [{ _id }, { parentId }], deleted: { $ne: true } }` and `$group` on `userId`.
     Stable API strict has no `.distinct()`. It returns `{ authorId, userIds }`, where
     `authorId` is the top-level tip's author and is `null` for a deleted placeholder.
-- [ ] `lib/db/places.js`:
+- [x] `lib/db/places.js`:
   - `addPlaceComment` also returns `threadId`.
   - New `getPlaceThreadParticipants(threadId)`, the same shape as
     `getThreadParticipants`.
   - The place's `createdBy` comes from `getPlaceById`.
-- [ ] `lib/pushEvents.js`: two new `notifyX()` functions. Each send is per user, through a
+- [x] `lib/pushEvents.js`: two new `notifyX()` functions. Each send is per user, through a
       payload function, and never includes a name, text or address.
   - `notifyTipReply({ numSlic, threadId, except })`:
     - Recipients are the thread's participants minus the replier.
@@ -295,33 +322,33 @@ or comments in their threads on Places.
       place you added."
     - Title: "New comment on Places". `url` is `/places` and `tag` is `place-<placeId>`.
   - Add both to `SAMPLES`, so `/admin/super/notifications` can send them.
-- [ ] **No double push for an admin:** `sendPushToAdmins` takes `except` as an id or an
+- [x] **No double push for an admin:** `sendPushToAdmins` takes `except` as an id or an
       array. The routes run the driver send first and then the admin kinds (`notifyTip`,
       `notifyPlace`), passing `except: [replier, ...replyRecipients]`. An admin who is
       also the tip's author gets one push, not two.
-- [ ] Routes call them inside the existing `after()` blocks:
+- [x] Routes call them inside the existing `after()` blocks:
   - `app/api/comments/route.js`: only when `parentId` is set and the SLIC exists, the
     same check `notifyTip` already uses.
   - `app/api/place-comments/route.js`: every new comment, top-level or reply.
 
 ### 2.4 Signing out turns the device off
 
-- [ ] Move the device teardown out of `hooks/usePushNotifications.js` `disable()` into an
+- [x] Move the device teardown out of `hooks/usePushNotifications.js` `disable()` into an
       exported helper, `turnOffThisDevice()`. It finds the existing registration, gets its
       subscription, DELETEs the endpoint, then unsubscribes and unregisters. It is wrapped
       in try/catch and capped at about 3 seconds, so a slow network never blocks sign-out.
       The hook's `disable()` calls the same helper.
-- [ ] `components/header/UserMenu.jsx`: the sign-out form's action becomes a client
+- [x] `components/header/UserMenu.jsx`: the sign-out form's action becomes a client
       function that runs `await turnOffThisDevice()` and then `await signOutAction()`.
       React 19 allows a client function to call a server action this way. The DELETE runs
       while the session still exists.
-- [ ] `profile/DeleteAccountDialog.jsx`: call the same helper before `signOut`. The server
+- [x] `profile/DeleteAccountDialog.jsx`: call the same helper before `signOut`. The server
       already deletes the rows, so this only unregisters the worker on that device.
 - The helper never calls `register()`. When a device has no registration, it does nothing.
 
 ### 2.5 Discovery
 
-- [ ] New `components/push/PushNudge.jsx` (or `utility/`, whichever fits better): a
+- [x] New `components/push/PushNudge.jsx` (or `utility/`, whichever fits better): a
       `utility/SoftNotice` reading "Get a notification when someone replies.", with a Turn
       on button and a dismiss.
   - It renders only after a successful post, in `comments/Comments.jsx` and
@@ -337,7 +364,7 @@ or comments in their threads on Places.
     those.
   - Before building it, check that the hook's mount path never calls `register()`. The
     ground rule is that the worker is registered only by the tap.
-- [ ] `components/help/guides.jsx`: add a "Notifications" guide. It covers turning them on
+- [x] `components/help/guides.jsx`: add a "Notifications" guide. It covers turning them on
       from Profile, that an iPhone needs the home-screen app, what they say, and how to
       turn them off. Use the button names exactly as the page labels them.
 - `/profile`: the line under the switch stays "On this device." The kinds below it explain
@@ -345,27 +372,27 @@ or comments in their threads on Places.
 
 ### 2.6 Super admin view
 
-- [ ] `lib/db/pushOverview.js` and its page: add a "Drivers" summary showing how many
+- [x] `lib/db/pushOverview.js` and its page: add a "Drivers" summary showing how many
       non-admin accounts have a device on and how many devices that is. It shows counts
       only, with no driver list. The per-kind rows for the driver kinds show admins only,
       which is fine.
-- [ ] `/admin/super/features`: the new switch (2.1).
+- [x] `/admin/super/features`: the new switch (2.1).
 
 ### 2.7 Words and docs (same commits as the code they describe)
 
-- [ ] `app/privacy/page.jsx`, the notifications paragraph (around line 117):
+- [x] `app/privacy/page.jsx`, the notifications paragraph (around line 117):
   - Remove "admin-only today".
   - Say that it keeps one push address per device a driver turns on.
   - Say what a notification can show: a SLIC number and "someone replied", never who or
     what.
   - Say that signing out or turning the switch off deletes that address.
-- [ ] This file: Status, tick the stage 2 boxes, and update "Verifying". In particular,
+- [x] This file: Status, tick the stage 2 boxes, and update "Verifying". In particular,
       the stage 1 line saying a driver's POST answers 403 now depends on the switch.
-- [ ] `CLAUDE.md`, the PWA section: replace "Admin-only so far" with the switch and
+- [x] `CLAUDE.md`, the PWA section: replace "Admin-only so far" with the switch and
       `canUsePush`, the driver kinds, and sign-out turning the device off.
-- [ ] `DATA-MODEL.md`: the `users.pushPrefs` keys and `app-settings.pushOpen`.
-- [ ] `OPERATIONS.md`: what sends notifications.
-- [ ] `TODOS.md`: the stage 2 line.
+- [x] `DATA-MODEL.md`: the `users.pushPrefs` keys and `app-settings.pushOpen`.
+- [x] `OPERATIONS.md`: what sends notifications.
+- [x] `TODOS.md`: the stage 2 line.
 
 ### Commit order (each shippable, switch off throughout)
 
@@ -381,6 +408,13 @@ or comments in their threads on Places.
 Flip the switch on only after the phone checks below pass.
 
 ### Verifying stage 2
+
+Done 2026-10-14, before deploying: lint and build for every commit; the audience and
+thread queries read-only against production (5 admins of 25 accounts with the switch
+off; the one place thread with a reply gave its 2 writers; no SLIC tip had a reply yet);
+the nudge's states and the `/help` guide at 390px in light and dark on a scratch preview;
+signed out, the push routes answer 401 and `/help` has no Notifications guide. Still to
+do, on phones:
 
 - Run `npm run lint`, then `npm run build` in a scratch copy, never while `next dev` runs.
 - Run `getThreadParticipants`/`getPlaceThreadParticipants` and `getDriverPushAudience`
@@ -433,8 +467,9 @@ This waits on driver verification and in-app bidding (`COVER-BIDDING.md` stage 3
   `localhost`.
 - **Turning off:** the row is gone from `push-subscriptions`, and
   `navigator.serviceWorker.getRegistrations()` is empty.
-- **During stage 1, as a driver account:** no toggle on `/profile`, no service worker
-  registered, and `POST /api/users/me/push-subscriptions` answers 403.
+- **While "Notifications for every driver" is off, as a driver account:** no toggle on
+  `/profile`, no service worker registered, and `POST /api/users/me/push-subscriptions`
+  answers 403.
 - **Expired subscriptions:** remove the home-screen app or revoke the permission, trigger
   a send, and check that the row was deleted.
 - **A failing send:** with a bad private key, a SLIC report still saves and answers

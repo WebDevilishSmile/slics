@@ -73,7 +73,10 @@ to `.env`. In production the same keys are set on the Vercel project.
 Push notifications go out from the request that caused them, after its response
 (`lib/pushEvents.js`, `PUSH-NOTIFICATIONS.md`): Jobs-tab and cover-week changes from a
 sheet read (each naming the jobs), SLIC reports, tips, claims, cover list disputes, sign-ups, Places, SLIC edits and Buy Me a Coffee events,
-each to the admins who chose that kind on `/profile`. Nothing is scheduled. With the VAPID
+each to the admins who chose that kind on `/profile`; and a reply on a tip or a comment on a
+place, to the drivers in that thread (or who added the place) who have a device on. Drivers
+get those only while "Notifications for every driver" is on (`/admin/super/features`);
+turning it off stops them at once, which is the rollback. Nothing is scheduled. With the VAPID
 keys unset, sends are skipped and logged ("Push is off"). Every send that reached a device
 is in `push-log` for 90 days, on `/admin/super/notifications`.
 

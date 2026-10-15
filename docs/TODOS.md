@@ -25,6 +25,11 @@ Use absolute dates.
 
 <!-- Add anything here, any wording. -->
 
+- Changing your password (or a reset) signs you out everywhere, but the account's
+  `push-subscriptions` rows stay, so a device signed out that way keeps getting its
+  pushes until someone signs in on it. Delete them where `sessionVersion` is bumped?
+  (found 2026-10-14 building Push stage 2, `PUSH-NOTIFICATIONS.md` → 2.4)
+
 ---
 
 ## Now
@@ -58,6 +63,11 @@ Use absolute dates.
       a phone (`PASSWORD-RESET.md` → "Verifying")
 - [ ] **Password reset:** send a reset to a password account on the live site and open the
       link on a phone (the 2026-10-12 test went to a Google account)
+- [ ] **Push stage 2** (built and deployed 2026-10-14, switch off): run "Verifying stage
+      2" on phones (`PUSH-NOTIFICATIONS.md`): as an admin, a second account's reply gives
+      exactly one push; sign-out empties `push-subscriptions` for that device, offline too;
+      then turn on "Notifications for every driver" on `/admin/super/features` and check
+      it as a driver (desktop Chrome, Android, the iPhone home-screen app)
 - [ ] **Buy Me a Coffee:** tick every event in BMC → Webhooks (monthly support's renewals
       would be `recurring_donation.updated`), and watch what BMC sends when a failed
       renewal's retry goes through (`BMC-SUPPORT.md` → "Renewals")
@@ -101,9 +111,6 @@ The system health page counts the two collections (`lib/systemHealth.js`).
 
 ## Next
 
-- [ ] **Push stage 2:** every signed-in driver can turn notifications on for replies on
-      their tips and places, behind a switch. Planned 2026-10-13
-      (`PUSH-NOTIFICATIONS.md` → "Stage 2")
 - [ ] **Covers for every driver:** roll stage 1 out (`COVER-BIDDING.md` → "Rolling stage
       1 out to every driver"), including a "Verify you're a driver" guide on `/help`
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open
@@ -142,8 +149,8 @@ Effort: S = an evening or two · M = a few evenings · L = a project with stages
   Places count on 2026-11-12 (Waiting): first see whether drivers use the Places comments.
   If they do, build a small board on the places comment code (`lib/db/places.js`,
   `components/places/`): plain text, one-level threads, votes, maybe posts that expire.
-  Concerns: drivers post little now, push notifications for drivers aren't built yet
-  (Next → Push stage 2), and someone has to moderate.
+  Concerns: drivers post little now, push notifications for drivers are built but not
+  switched on yet (Now → Push stage 2), and someone has to moderate.
 - **Pinned SLICs** (S, #8): a star on the details card; pinned SLICs lead the search list
   and the empty state. Start in localStorage (`archive/UI-SUGGESTIONS.md` #54). With the
   daily log, a confirmed job could pin its route's SLICs.

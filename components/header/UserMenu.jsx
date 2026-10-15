@@ -38,12 +38,13 @@ import {
 } from '@mui/material';
 
 import { BMC_URL, COVERS_OPEN, PLACES_NEW_UNTIL } from '@/constants';
-import { refreshOpenDisputesCount, useOpenDisputesCount } from '@/lib/coverDisputesStore';
-import { refreshPendingClaimsCount, usePendingClaimsCount } from '@/lib/driverClaimsStore';
-import { refreshJobChangesCount, useJobChangesCount } from '@/lib/jobChangesStore';
-import { refreshCoverJobChangesCount, useCoverJobChangesCount } from '@/lib/coverJobChangesStore';
+import { refreshAdminAlerts } from '@/lib/adminAlertsStore';
+import { useOpenDisputesCount } from '@/lib/coverDisputesStore';
+import { usePendingClaimsCount } from '@/lib/driverClaimsStore';
+import { useJobChangesCount } from '@/lib/jobChangesStore';
+import { useCoverJobChangesCount } from '@/lib/coverJobChangesStore';
 import { turnOffThisDevice } from '@/lib/pushDevice';
-import { refreshOpenReportsCount, useOpenReportsCount } from '@/lib/slicReportsStore';
+import { useOpenReportsCount } from '@/lib/slicReportsStore';
 
 import InstallMenuItem from '@/components/install/InstallMenuItem';
 import ModeSwitch from '@/components/layout/ModeSwitch';
@@ -136,8 +137,8 @@ function UserMenu({ user, features, signOutAction }) {
   // docs/ON-CALL-SHEET-SYNC.md; /admin/jobs and /admin/cover/jobs clear
   // them), open SLIC reports (RECOMMENDATIONS.md #5; they count until closed
   // on /admin/reports) and driver claims waiting for a decision and open
-  // cover list disputes (docs/COVER-BIDDING.md), all rechecked on every
-  // route change.
+  // cover list disputes (docs/COVER-BIDDING.md), rechecked on route changes
+  // with one call, at most once a minute (lib/adminAlertsStore.js).
   const isAdmin = user?.role === 'admin';
   const jobChanges = useJobChangesCount();
   const coverJobChanges = useCoverJobChangesCount();
@@ -156,11 +157,7 @@ function UserMenu({ user, features, signOutAction }) {
     .join(', ');
   useEffect(() => {
     if (!isAdmin) return;
-    refreshJobChangesCount();
-    refreshCoverJobChangesCount();
-    refreshOpenReportsCount();
-    refreshPendingClaimsCount();
-    refreshOpenDisputesCount();
+    refreshAdminAlerts();
   }, [isAdmin, pathname]);
   // Covers is admin-only while it's tested, until the super admin's switch
   // opens it (canUseCovers in lib/authz.js).

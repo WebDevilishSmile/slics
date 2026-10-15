@@ -15,12 +15,13 @@ import {
   SettingsOutlined,
   VerifiedOutlined,
   VolunteerActivismOutlined,
+  WorkOutline,
 } from '@mui/icons-material';
 import {
   Alert,
   Box,
+  Button,
   IconButton,
-  Link as MuiLink,
   Paper,
   Snackbar,
   Tooltip,
@@ -34,6 +35,7 @@ import { softInset, softPressSx } from '@/components/utility/soft';
 import EditProfileDialog from './EditProfileDialog';
 import ProfileImage from './ProfileImage';
 import PushNotifications from './PushNotifications';
+import ThisWeek from './ThisWeek';
 
 // One line of the details well: a brand-blue icon, a quiet label, the value.
 function Detail({ icon, label, children }) {
@@ -52,16 +54,19 @@ function Detail({ icon, label, children }) {
   );
 }
 
-// The profile card in the soft style (CLAUDE.md "Visual style"): a seamless
-// panel with the avatar on a raised ring, the name, the details in a
-// pressed-in well, and, for a non-member, a soft notice with the Buy Me a
-// Coffee button. The gear opens EditProfileDialog (name, phone, password,
+// The driver's hub in the soft style (CLAUDE.md "Visual style"): a seamless
+// panel with the avatar on a raised ring and the name, then, in order, This
+// week (their job, or the cover job they're working; ThisWeek.jsx), the
+// notifications switch, the account details in a pressed-in well and, for a
+// non-member, a soft notice with the Buy Me a Coffee button. Their tips follow
+// in their own panel (ProfileComments.jsx). The gear opens EditProfileDialog (name, phone, password,
 // delete). `userData.hasPassword` comes from the page, never the hash.
 // `supporterSince`: when they first supported the app on Buy Me a Coffee (an
 // ISO string, or null). Only they see this page, so it needs no opt-in.
 // `pushPrefs`: this account's notification kinds (`{ key: boolean }`), or null.
 // `canUseCovers`, `canUsePush`: whether this account has Covers and
-// notifications (lib/authz.js), from the page.
+// notifications (lib/authz.js), from the page. `driverWeek`: a verified
+// driver's This week card (toDriverWeek, lib/serializers.js), or null.
 function ProfileData({
   userData,
   commentCount,
@@ -69,6 +74,7 @@ function ProfileData({
   pushPrefs = null,
   canUseCovers = false,
   canUsePush = false,
+  driverWeek = null,
 }) {
   const [openSnack, setOpenSnack] = useState(false);
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
@@ -132,60 +138,85 @@ function ProfileData({
         </Typography>
       </Box>
 
-      <Box
-        sx={[
-          softInset,
-          {
-            alignSelf: 'stretch',
-            borderRadius: 4,
-            p: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          },
-        ]}
-      >
-        <Detail icon={<EmailOutlined />} label='Email'>
-          {userData.email}
-        </Detail>
-        <Detail icon={<PhoneOutlined />} label='Phone'>
-          {userData.phone || 'Not provided'}
-        </Detail>
-        <Detail icon={<BadgeOutlined />} label='Role'>
-          {capitalizeFirstLetter(userData.role)}
-        </Detail>
-        {/* Verification is only offered where Covers is (admins while it's
-            tested, docs/COVER-BIDDING.md). */}
-        {(userData.driverVerified || canUseCovers) && (
-          <Detail icon={<VerifiedOutlined />} label='Driver'>
-            {userData.driverVerified ? (
-              `Verified · ${userData.driverName}`
-            ) : (
-              <>
-                Not verified ·{' '}
-                <MuiLink component={Link} href='/covers'>
-                  Verify on Covers
-                </MuiLink>
-              </>
-            )}
-          </Detail>
-        )}
-        <Detail icon={<LocalCafeOutlined />} label='Membership'>
-          {userData.bmcMember ? 'Active' : 'Inactive'}
-        </Detail>
-        {supporterSince && (
-          <Detail icon={<VolunteerActivismOutlined />} label='Supporter since'>
-            {dayjs(supporterSince).format('MMMM YYYY')}
-          </Detail>
-        )}
-        <Detail icon={<EventOutlined />} label='Joined'>
-          {dayjs(userData.created_at).format('MMM D, YYYY')}
-        </Detail>
-      </Box>
+      {driverWeek && <ThisWeek data={driverWeek} />}
+      {/* The card needs the account linked to a name on the sheet, which is
+          part of Covers (admins while it's tested, docs/COVER-BIDDING.md). */}
+      {!userData.driverVerified && canUseCovers && (
+        <SoftNotice
+          icon={<WorkOutline />}
+          sx={{ maxWidth: 'none' }}
+          actions={
+            <Button
+              size='small'
+              component={Link}
+              href='/covers'
+              sx={[softPressSx, { px: 1.5, minHeight: '2.5rem' }]}
+            >
+              Verify on Covers
+            </Button>
+          }
+        >
+          Verify your driver name to see your job and your cover weeks here.
+        </SoftNotice>
+      )}
 
       {/* Admins only until the "Notifications for every driver" switch is on
           (docs/PUSH-NOTIFICATIONS.md, stage 2); the routes check it too. */}
       {canUsePush && <PushNotifications prefs={pushPrefs} />}
+
+      <Box component='section' aria-labelledby='account-heading' sx={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Typography
+          id='account-heading'
+          component='h2'
+          variant='subtitle2'
+          color='text.secondary'
+          sx={{ fontWeight: 700, px: 0.5 }}
+        >
+          Account
+        </Typography>
+        <Box
+          sx={[
+            softInset,
+            {
+              alignSelf: 'stretch',
+              borderRadius: 4,
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+            },
+          ]}
+        >
+          <Detail icon={<EmailOutlined />} label='Email'>
+            {userData.email}
+          </Detail>
+          <Detail icon={<PhoneOutlined />} label='Phone'>
+            {userData.phone || 'Not provided'}
+          </Detail>
+          <Detail icon={<BadgeOutlined />} label='Role'>
+            {capitalizeFirstLetter(userData.role)}
+          </Detail>
+          {/* Verification is only offered where Covers is (admins while it's
+              tested, docs/COVER-BIDDING.md). */}
+          {(userData.driverVerified || canUseCovers) && (
+            <Detail icon={<VerifiedOutlined />} label='Driver'>
+              {/* Unverified: the notice above has the way to verify. */}
+              {userData.driverVerified ? `Verified · ${userData.driverName}` : 'Not verified'}
+            </Detail>
+          )}
+          <Detail icon={<LocalCafeOutlined />} label='Membership'>
+            {userData.bmcMember ? 'Active' : 'Inactive'}
+          </Detail>
+          {supporterSince && (
+            <Detail icon={<VolunteerActivismOutlined />} label='Supporter since'>
+              {dayjs(supporterSince).format('MMMM YYYY')}
+            </Detail>
+          )}
+          <Detail icon={<EventOutlined />} label='Joined'>
+            {dayjs(userData.created_at).format('MMM D, YYYY')}
+          </Detail>
+        </Box>
+      </Box>
 
       {!userData.bmcMember && (
         <SoftNotice

@@ -8,6 +8,8 @@
 //
 // Outputs are committed; regenerate rather than hand-editing them:
 //   app/apple-icon.png                180x180 square (iOS rounds the corners itself)
+//   public/apple-touch-icon.png       the same again: iPhones also ask for these
+//   public/apple-touch-icon-precomposed.png  root paths, which 404'd before
 //   public/maskable-icon-192x192.png  192x192 square (the launcher applies its mask)
 //   public/maskable-icon-512x512.png  512x512 square
 //   public/android-chrome-*.png       192/512, rounded corners on transparent: the
@@ -47,6 +49,8 @@ async function render(size, rounded) {
 
 const pngs = [
   { file: 'app/apple-icon.png', size: 180 },
+  { file: 'public/apple-touch-icon.png', size: 180 },
+  { file: 'public/apple-touch-icon-precomposed.png', size: 180 },
   { file: 'public/maskable-icon-192x192.png', size: 192 },
   { file: 'public/maskable-icon-512x512.png', size: 512 },
   { file: 'public/android-chrome-192x192.png', size: 192, rounded: true },

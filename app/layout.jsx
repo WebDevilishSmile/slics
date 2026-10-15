@@ -5,6 +5,7 @@ import { Montserrat } from 'next/font/google';
 import './globals.css';
 
 import { SITE_URL } from '@/constants';
+import { getSession } from '@/lib/authz';
 import { statusBarColors } from '@/theme';
 
 import Footer from '@/components/footer/Footer';
@@ -60,10 +61,16 @@ export const viewport = {
 const captureInstallPrompt =
   "window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__slicsInstallPrompt=e;});";
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  // Handed to SessionProvider so the browser never fetches it. Round-tripped
+  // through JSON so it matches what /api/auth/session would send (the user
+  // row's values are Mongo types and Dates, which a client prop can't take).
+  const session = await getSession();
+  const clientSession = session ? JSON.parse(JSON.stringify(session)) : null;
+
   return (
     <html lang='en' suppressHydrationWarning>
-      <Providers>
+      <Providers session={clientSession}>
         <body className={font.variable}>
           <InitColorSchemeScript attribute='class' />
           <ThemeColorSync />

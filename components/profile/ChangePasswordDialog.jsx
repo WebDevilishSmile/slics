@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import { signOut } from 'next-auth/react';
 import { CheckCircleOutline, Visibility, VisibilityOff } from '@mui/icons-material';
 import {

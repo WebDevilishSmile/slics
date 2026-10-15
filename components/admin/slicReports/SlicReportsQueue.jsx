@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import dayjs from 'dayjs';
 import { BuildOutlined, CheckCircleOutline, DeleteOutline } from '@mui/icons-material';
 import { Alert, Box, Button, IconButton, Paper, Tooltip, Typography } from '@mui/material';

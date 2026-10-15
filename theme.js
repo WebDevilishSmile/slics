@@ -1,4 +1,4 @@
-import NextLink from 'next/link';
+import NextLink from '@/components/utility/NextLink';
 import { lightBlue } from '@mui/material/colors';
 import {
   alpha,
@@ -253,7 +253,8 @@ let theme = createTheme({
     // behave as plain links (next/link leaves non-local URLs to the browser).
     // Opt out with `LinkComponent='a'` (ButtonBase) or `component='a'` (Link)
     // where a full reload is the point (app/error.jsx).
-    // header/NavigationProgress.jsx shows the wait.
+    // header/NavigationProgress.jsx shows the wait. It's utility/NextLink.jsx,
+    // next/link with prefetching off: every prefetch was a function call.
     //
     // No ripple anywhere (buttons, chips, menu rows, switches): soft controls
     // answer a tap by pressing in (softPressSx), and the ripple's flash and

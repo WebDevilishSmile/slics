@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { CheckCircleOutline, ErrorOutline, RefreshOutlined } from '@mui/icons-material';

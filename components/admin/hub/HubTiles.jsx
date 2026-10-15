@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import { Box, ButtonBase, Typography } from '@mui/material';
 
 import { softPressSx, softRaised } from '@/components/utility/soft';

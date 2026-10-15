@@ -1,7 +1,7 @@
 'use client';
 
 import { useId, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import dayjs from 'dayjs';
 import { ChevronRightOutlined } from '@mui/icons-material';
 import {

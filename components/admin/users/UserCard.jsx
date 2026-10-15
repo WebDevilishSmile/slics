@@ -15,7 +15,7 @@ import {
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 
 import { softPressSx, softRaised, softRaisedSmall } from '@/components/utility/soft';
 import ResetPasswordDialog from './ResetPasswordDialog';

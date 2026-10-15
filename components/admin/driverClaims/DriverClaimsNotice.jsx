@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import { ChevronRightOutlined, VerifiedOutlined } from '@mui/icons-material';
 import { Button } from '@mui/material';
 

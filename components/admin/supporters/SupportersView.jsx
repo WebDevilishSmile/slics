@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import { DeleteOutline } from '@mui/icons-material';

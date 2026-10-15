@@ -1,7 +1,7 @@
 'use client';
 
 import dayjs from 'dayjs';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import { useState } from 'react';
 
 import { capitalizeFirstLetter } from '@/lib/format';

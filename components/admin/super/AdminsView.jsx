@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import dayjs from 'dayjs';
 import { ExpandLess, ExpandMore, PersonAddAlt1Outlined, VerifiedUser } from '@mui/icons-material';
 import {

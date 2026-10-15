@@ -15,6 +15,25 @@ const eslintConfig = [
   // skip with "File ignored because no matching configuration was supplied".
   { files: ["**/*.{js,jsx,mjs}"] },
   ...compat.extends("next/core-web-vitals"),
+  // Links go through components/utility/NextLink.jsx, which turns prefetching
+  // off: on this app every prefetch is a function call.
+  {
+    files: ["**/*.{js,jsx,mjs}"],
+    ignores: ["components/utility/NextLink.jsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "next/link",
+              message: "Import Link from '@/components/utility/NextLink' (prefetching off).",
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;

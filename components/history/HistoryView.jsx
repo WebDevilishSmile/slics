@@ -13,7 +13,7 @@ import {
   Snackbar,
   Typography,
 } from '@mui/material';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 
 import { apiRequest } from '@/lib/apiRequest';
 

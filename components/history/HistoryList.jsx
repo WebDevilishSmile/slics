@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import dayjs from 'dayjs';
 import { MoreVert } from '@mui/icons-material';
 import {

@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useEffect } from 'react';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import { usePathname, useRouter } from 'next/navigation';
 import { ArrowBack } from '@mui/icons-material';
 import {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import { usePathname } from 'next/navigation';
 import {
   AdminPanelSettingsOutlined,
@@ -208,6 +208,9 @@ function UserMenu({ user, features, signOutAction }) {
         onClose={handleClose}
         // Opening is the button's job: an edge swipe fights iOS's back gesture.
         disableSwipeToOpen
+        // Mounted only while open. SwipeableDrawer keeps a closed menu in the
+        // page just off-screen, where every page load prefetched its links.
+        ModalProps={{ keepMounted: false }}
         transitionDuration={reduceMotion ? 0 : undefined}
         slotProps={{
           paper: {

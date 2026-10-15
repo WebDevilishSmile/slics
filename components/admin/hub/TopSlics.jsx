@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/utility/NextLink';
 import { Box, Link as MuiLink, Typography } from '@mui/material';
 
 import { softRaised } from '@/components/utility/soft';

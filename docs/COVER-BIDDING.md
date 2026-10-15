@@ -138,6 +138,17 @@ doesn't do covers never has to.
 - [ ] Drop the "This is a work in progress" notice from `CoverBidJobsTable`, or reword it
       for drivers.
 
+### This week on the profile (built 2026-10-14)
+
+A verified driver's `/profile` opens on what they work this week, and next week once its
+pick list names them (`profile/ThisWeek.jsx`, `lib/db/driverWeeks.js`). The pick list's
+"Job / status" column is what each driver works that week: on W/E 10/17/2026 it held the
+picked cover job's number for 27 of the 35 picked jobs, and otherwise their own job, a
+leave, `ON CALL`, `COVERING ER#####`, or nothing before a pick. The PICK #1–7 columns are
+almost always empty, so the card doesn't use them. It shows the cover job's start times
+for that week and its route by day (`lib/jobRoutes.js`), never who owns it or why
+they're off (`toDriverWeek`).
+
 ---
 
 ## Stage 2: A preference list (built 2026-10-12, admin only while tested)

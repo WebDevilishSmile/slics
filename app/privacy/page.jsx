@@ -273,7 +273,9 @@ export default function PrivacyPage() {
         <LegalText>
           The Covers page is for verified drivers. It shows which cover jobs
           are still open and which are taken, never who took them, and your own
-          place and call-in time on the week&apos;s list. It never shows you
+          place and call-in time on the week&apos;s list. Your profile shows
+          you your own job and, in a week you cover, the job you&apos;re
+          working, with its days, start times and route. Neither ever shows you
           another driver&apos;s picks or why they are off.
         </LegalText>
       </LegalSection>

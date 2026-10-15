@@ -63,6 +63,10 @@ Use absolute dates.
       a phone (`PASSWORD-RESET.md` → "Verifying")
 - [ ] **Password reset:** send a reset to a password account on the live site and open the
       link on a phone (the 2026-10-12 test went to a Google account)
+- [ ] **Profile, This week** (built 2026-10-14): on a phone, signed in as a verified admin,
+      check the card against the sheet for this week and next, tap a stop to open its
+      SLIC, open the folded "Your job" on a cover week, in both schemes
+      (`COVER-BIDDING.md` → "This week on the profile")
 - [ ] **Push stage 2** (built and deployed 2026-10-14, switch off): run "Verifying stage
       2" on phones (`PUSH-NOTIFICATIONS.md`): as an admin, a second account's reply gives
       exactly one push; sign-out empties `push-subscriptions` for that device, offline too;

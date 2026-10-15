@@ -16,6 +16,7 @@ import {
   SearchOutlined,
   SignpostOutlined,
   ThumbUpOutlined,
+  WorkOutline,
 } from '@mui/icons-material';
 import { Box, Link } from '@mui/material';
 
@@ -451,6 +452,50 @@ export const HELP_SECTIONS = [
           <>
             Tips are for other drivers. Reports are for fixing the address or
             phone number on the card.
+          </>,
+        ],
+      },
+    ],
+  },
+  {
+    id: 'your-job',
+    title: 'Your job',
+    guides: [
+      {
+        id: 'this-week',
+        feature: 'coversOpen',
+        title: 'See your job this week',
+        icon: WorkOutline,
+        intro: 'Your profile shows the job you work this week, or the one you’re covering.',
+        steps: [
+          <>
+            Open the menu (three lines at the top left) and tap{' '}
+            <Tap>Profile</Tap>.
+          </>,
+          <>
+            Under <Tap>This week</Tap>, the blue line says what you&apos;re
+            on: your own job, the job you&apos;re covering, on call, or off.
+          </>,
+          <>
+            Below it is each day you work, with your start time and the route.
+            Days with the same route are shown once, like{' '}
+            <Tap>Mon–Thu</Tap>.
+          </>,
+          <>Tap a stop on the route to open that SLIC&apos;s address and tips.</>,
+          <>
+            Once next week&apos;s cover list has you on it, tap{' '}
+            <Tap>Next</Tap> to see that week.
+          </>,
+        ],
+        notes: [
+          <>
+            Covering this week? Tap <Tap>Your job</Tap> under the week to see
+            your own job too.
+          </>,
+          <>
+            It comes from the on-call sheet, so it&apos;s only as current as
+            the sheet. It needs your account verified on <Tap>Covers</Tap>{' '}
+            first.
           </>,
         ],
       },

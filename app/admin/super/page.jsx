@@ -3,7 +3,7 @@ import { Paper, Typography } from '@mui/material';
 import HubView from '@/components/admin/hub/HubView';
 import { getSession, isSuperAdmin } from '@/lib/authz';
 import { getActivity } from '@/lib/db/activity';
-import { getFeaturesFresh } from '@/lib/db/appSettings';
+import { getFeaturesFresh, getRoleAreas } from '@/lib/db/appSettings';
 import { getSupportSummary } from '@/lib/db/bmcEvents';
 import { getAdminCounts, getGlanceNumbers, getUsageSeries } from '@/lib/db/hub';
 import { getNotificationsSummary } from '@/lib/db/pushOverview';
@@ -26,7 +26,9 @@ export default async function SuperAdminPage() {
   const session = await getSession();
   if (!isSuperAdmin(session)) return null;
 
-  const [glance, usage, notifications, activity, health, features, admins, support] = await Promise.all([
+  // The welcome note's preview names each role's tools; getRoleAreas never
+  // throws (the defaults stand in).
+  const [glance, usage, notifications, activity, health, features, admins, support, roleAreas] = await Promise.all([
     part('numbers', getGlanceNumbers),
     part('usage', getUsageSeries),
     part('notifications summary', getNotificationsSummary),
@@ -35,6 +37,7 @@ export default async function SuperAdminPage() {
     part('features', getFeaturesFresh),
     part('admin counts', getAdminCounts),
     part('support summary', getSupportSummary),
+    getRoleAreas(),
   ]);
 
   return (
@@ -53,6 +56,8 @@ export default async function SuperAdminPage() {
           features={features}
           admins={admins}
           support={support}
+          roleAreas={roleAreas}
+          firstName={session.user.name?.split(' ')[0]}
         />
       </Paper>
     </>

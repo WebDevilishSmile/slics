@@ -99,6 +99,10 @@ The detail is in `PUSH-NOTIFICATIONS.md` stage 1b.
     A tile with a page to go to is a link.
   - **Manage:** a `HubCard.jsx` each for Notifications, Activity, System health, Features,
     Admins and Supporters, each with a live line and, where it matters, a status.
+  - **Notes** (since 2026-10-16): play the thank-you note (Coffee, Membership, Monthly;
+    `ThankYouPreview.jsx`, on `/admin` before) and the welcome note new staff get (Admin,
+    Dispatch; `WelcomePreview.jsx`, `STAFF-ROLES.md`) with your own name. Playing one
+    stamps nothing.
   - **Usage:** described in the next item.
   - **Latest activity:** the 8 newest rows, with "See all".
 - [x] **Usage charts** (`UsageCharts.jsx`, `@mui/x-charts` 8):

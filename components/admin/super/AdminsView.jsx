@@ -42,7 +42,6 @@ import {
   softToggleSx,
 } from '@/components/utility/soft';
 import RoleAreas from './RoleAreas';
-import WelcomePreview from './WelcomePreview';
 
 const COUNT_LABELS = [
   ['slicEdits', 'SLIC change', 'SLIC changes'],
@@ -291,13 +290,7 @@ const FIND_THEM = {
 // role may use, every admin and dispatcher with what the app recorded them
 // doing, and adding, moving or removing one. Every change goes to
 // `admin_audit`. `roleAreas` is { areas, changed } (getRoleAreasFresh).
-export default function AdminsView({
-  admins,
-  candidates,
-  roleAreas: initialRoleAreas,
-  myId,
-  firstName,
-}) {
+export default function AdminsView({ admins, candidates, roleAreas: initialRoleAreas, myId }) {
   const [roleAreas, setRoleAreas] = useState(initialRoleAreas.areas);
   const [picked, setPicked] = useState(null);
   const [pickedRole, setPickedRole] = useState('admin');
@@ -437,10 +430,6 @@ export default function AdminsView({
             </Button>
           </Box>
         </Stack>
-      </Section>
-
-      <Section id='admins-welcome' title='Welcome note'>
-        <WelcomePreview roleAreas={roleAreas} firstName={firstName} />
       </Section>
 
       <Typography variant='body2' color='text.secondary'>

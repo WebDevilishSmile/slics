@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { LocalCafeOutlined } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 
 import ThankYouNote from '@/components/support/ThankYouNote';
@@ -12,9 +13,10 @@ const KINDS = [
   ['recurring_donation.started', 'Monthly'],
 ];
 
-// Plays the supporters' thank-you note (support/ThankYouNote.jsx) on /admin,
-// with the admin's own first name, dated the day it's played. A preview only:
-// it stamps nothing.
+// Plays the supporters' thank-you note (support/ThankYouNote.jsx) in the
+// super admin hub's Notes (it was on /admin until 2026-10-16), with the super
+// admin's own first name, dated the day it's played. A preview only: it
+// stamps nothing.
 export default function ThankYouPreview({ firstName }) {
   const [open, setOpen] = useState(false);
   // Kept after closing, so the letter doesn't change as it fades out.
@@ -22,12 +24,15 @@ export default function ThankYouPreview({ firstName }) {
   const [date, setDate] = useState(null);
 
   return (
-    <Box component='section' aria-labelledby='thank-you-preview' sx={{ width: '100%' }}>
-      <Typography id='thank-you-preview' variant='h6' component='h3'>
-        Thank-you note
-      </Typography>
+    <Box component='section' aria-labelledby='thank-you-preview'>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+        <LocalCafeOutlined color='primary' />
+        <Typography id='thank-you-preview' variant='subtitle1' component='h4' sx={{ fontWeight: 700 }}>
+          Thank-you note
+        </Typography>
+      </Box>
       <Typography variant='body2' color='text.secondary' sx={{ mb: 1.5 }}>
-        What a supporter sees on /home. Preview it:
+        What a supporter finds on /home after a coffee or a membership.
       </Typography>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
         {KINDS.map(([kind, label]) => (

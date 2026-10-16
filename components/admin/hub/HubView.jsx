@@ -14,8 +14,10 @@ import ActivityList from './ActivityList';
 import HubCard from './HubCard';
 import HubSection from './HubSection';
 import HubTiles from './HubTiles';
+import ThankYouPreview from './ThankYouPreview';
 import TopSlics from './TopSlics';
 import UsageCharts from './UsageCharts';
+import WelcomePreview from './WelcomePreview';
 import { formatDay, formatMoney, formatWhen, plural } from './format';
 
 const failed = (what) => <Alert severity='error'>Couldn&apos;t load {what}. Try again in a moment.</Alert>;
@@ -106,9 +108,21 @@ function cards({ notifications, activity, health, features, admins, support, mem
 }
 
 // The super admin hub, /admin/super (docs/SUPER-ADMIN-HUB.md): the app at a
-// glance, a card for each place to manage it, usage over time, and the latest
-// activity. Each part is `null` when it failed to load, and says so in place.
-export default function HubView({ glance, usage, notifications, activity, health, features, admins, support }) {
+// glance, a card for each place to manage it, the notes drivers and new staff
+// find on /home to play, usage over time, and the latest activity. Each part
+// is `null` when it failed to load, and says so in place.
+export default function HubView({
+  glance,
+  usage,
+  notifications,
+  activity,
+  health,
+  features,
+  admins,
+  support,
+  roleAreas,
+  firstName,
+}) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
       <HubSection id='hub-glance' title='At a glance'>
@@ -136,6 +150,23 @@ export default function HubView({ glance, usage, notifications, activity, health
               <HubCard key={card.href} index={index} {...card} />
             ),
           )}
+        </Box>
+      </HubSection>
+
+      <HubSection
+        id='hub-notes'
+        title='Notes'
+        description='Play one to check it, with your name. Playing one stamps nothing.'
+      >
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))' },
+            gap: { xs: 3, sm: 2.5 },
+          }}
+        >
+          <ThankYouPreview firstName={firstName} />
+          <WelcomePreview roleAreas={roleAreas} firstName={firstName} />
         </Box>
       </HubSection>
 

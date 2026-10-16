@@ -181,7 +181,7 @@ to remove it).
     into the SLICs mark (2026-10-12, `utility/AnimatedSlicsMark.jsx` `story='heart'`).
     The letter still in the envelope shows the heart, held still (`paused`).
   - It's dated the day the support came in (`receivedAt` of the newest waiting event,
-    from `getUnthankedSupport`), in the driver's time zone. The `/admin` preview dates
+    from `getUnthankedSupport`), in the driver's time zone. The hub's preview dates
     it the day it's played.
   - One burst of confetti comes from behind the letter (`support/Confetti.jsx`: a canvas,
     theme colors, about 4 seconds). It's drawn inside the dialog, under the letter, so it
@@ -191,7 +191,9 @@ to remove it).
     adds "Open SLIC History", which goes to `/history` and closes the note.
   - Under reduced motion it opens straight to the signed letter, under the still mark,
     with no confetti.
-  - `/admin` has a preview (`admin/ThankYouPreview.jsx`) that stamps nothing.
+  - The super admin hub has a preview under Notes (`admin/hub/ThankYouPreview.jsx`, on
+    `/admin` until 2026-10-16, when it moved so only super admins have it) that stamps
+    nothing.
 - [x] Closing the note or dismissing the card calls `POST /api/users/me/thanks` (`markSupportThanked`), which
       stamps `thankedAt` on every waiting event. It's once per visit's worth of support, not
       once per event.

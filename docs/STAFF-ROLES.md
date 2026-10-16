@@ -169,7 +169,9 @@ No heart tho. Maybe a new animated svg, that shows the S from just the dot."
       names the role's tools, is signed "Glad to have you," and opens `/admin` or
       `/dispatch`. Opening or dismissing it calls `POST /api/users/me/role-notice`, which
       clears the notice.
-- [x] The Admins page previews it for each role ("Welcome note"), and its confirm
+- [x] The super admin hub previews it for each role under Notes, beside the thank-you's
+      preview, which moved there from `/admin` so only super admins have them
+      (`admin/hub/WelcomePreview.jsx`, `admin/hub/ThankYouPreview.jsx`). The Admins page's
       dialogs say a note will be waiting.
 
 **Rolling back part 9:** revert its commits. A `roleNotice` left on a row is harmless

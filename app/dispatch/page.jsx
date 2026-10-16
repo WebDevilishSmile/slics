@@ -4,8 +4,7 @@ import StaffHub from '@/components/admin/StaffHub';
 import PageContainer from '@/components/layout/PageContainer';
 import RedirectMessage from '@/components/layout/RedirectMessage';
 import SoftNotice from '@/components/utility/SoftNotice';
-import { STAFF_AREA_KEYS } from '@/constants';
-import { getSession, hasArea, isSuperAdmin } from '@/lib/authz';
+import { areasOf, getSession, isSuperAdmin } from '@/lib/authz';
 import { getRoleAreas } from '@/lib/db/appSettings';
 import { areasFor } from '@/lib/staffAreas';
 import theme from '@/theme';
@@ -38,7 +37,7 @@ export default async function DispatchPage() {
   // A dispatcher's own tools; for a super admin, the Dispatch role's.
   const areas = superAdmin
     ? areasFor({ role: 'dispatch' }, await getRoleAreas())
-    : STAFF_AREA_KEYS.filter((key) => hasArea(session, key));
+    : areasOf(session);
 
   return (
     <PageContainer>

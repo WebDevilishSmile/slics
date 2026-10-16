@@ -270,8 +270,10 @@ export const PUSH_OPEN = false;
 // show. Choices are per account (`users.pushPrefs[key]`); a key the account
 // never set means `defaultOn`. `audience` says who's offered and sent a kind:
 // 'driver' everyone `canUsePush` lets in (lib/authz.js), 'admin' admins,
-// 'superAdmin' super admins. The wording of each notification is in
-// lib/pushEvents.js.
+// 'superAdmin' super admins. An admin kind's `area` is the tool it's about
+// (STAFF_AREAS below, docs/STAFF-ROLES.md): it's offered and sent only to
+// admins whose role has that tool, and always to super admins. The wording of
+// each notification is in lib/pushEvents.js.
 export const PUSH_TYPES = [
   // A driver has opted in by turning the device on, so these start on: with
   // them off, a device that's on would get nothing.
@@ -293,6 +295,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'jobChanges',
+    area: 'jobs',
     group: 'On-call sheet',
     label: 'Job changes',
     description: 'Jobs added, removed or changed on the Jobs tab.',
@@ -301,6 +304,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'coverJobs',
+    area: 'covers',
     group: 'On-call sheet',
     label: 'Cover jobs',
     description: "Cover jobs added, removed or changed on a week's tab, and new weeks posted.",
@@ -309,6 +313,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'coverPicks',
+    area: 'covers',
     group: 'On-call sheet',
     label: 'Cover picks',
     description: "Drivers' picks changed on a cover week.",
@@ -317,6 +322,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'slicReports',
+    area: 'reports',
     group: 'Drivers',
     label: 'SLIC reports',
     description: 'A driver reports something wrong with a SLIC.',
@@ -325,6 +331,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'tips',
+    area: 'comments',
     group: 'Drivers',
     label: 'Tips',
     description: 'New tips and replies on any SLIC.',
@@ -333,6 +340,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'driverClaims',
+    area: 'driverClaims',
     group: 'Drivers',
     label: 'Driver claims',
     description: 'A driver asks to be verified for Covers.',
@@ -341,6 +349,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'coverDisputes',
+    area: 'driverClaims',
     group: 'Drivers',
     label: 'Cover list disputes',
     description: "A verified driver says they should be on the week's cover list.",
@@ -349,6 +358,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'signUps',
+    area: 'users',
     group: 'Drivers',
     label: 'Sign-ups',
     description: 'Someone makes a SLICs account.',
@@ -357,6 +367,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'places',
+    area: 'comments',
     group: 'Drivers',
     label: 'Places',
     description: 'A new place, or a comment on one.',
@@ -365,6 +376,7 @@ export const PUSH_TYPES = [
   },
   {
     key: 'slicEdits',
+    area: 'slics',
     group: 'Admins',
     label: 'SLIC edits',
     description: 'Another admin or a dispatcher adds, edits or deletes a SLIC.',

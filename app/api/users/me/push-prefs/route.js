@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { PUSH_TYPES } from '@/constants';
-import { isSuperAdmin, requirePush } from '@/lib/authz';
+import { areasOf, isSuperAdmin, requirePush } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { getPushPrefs, setPushPref } from '@/lib/db/users';
 
@@ -46,7 +46,9 @@ export async function PATCH(request) {
   }
   const admin = session.user.role === 'admin';
   const superAdmin = isSuperAdmin(session);
-  if (type.audience === 'admin' && !admin) {
+  // An admin kind only for an admin with its tool (docs/STAFF-ROLES.md).
+  const areas = areasOf(session);
+  if (type.audience === 'admin' && (!admin || (type.area && !areas.includes(type.area)))) {
     return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
   }
   if (type.audience === 'superAdmin' && !superAdmin) {
@@ -57,7 +59,7 @@ export async function PATCH(request) {
     await setPushPref(session.user.id, type.key, body.on);
     return NextResponse.json({
       success: true,
-      data: await getPushPrefs(session.user.id, { admin, superAdmin }),
+      data: await getPushPrefs(session.user.id, { admin, superAdmin, areas }),
     });
   } catch (error) {
     console.error('Error saving a notification setting:', error);

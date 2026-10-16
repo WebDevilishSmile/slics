@@ -1,7 +1,6 @@
 import { Typography, Paper } from '@mui/material';
 import { redirect } from 'next/navigation';
-import { STAFF_AREA_KEYS } from '@/constants';
-import { getSession, hasArea, isStaff, isSuperAdmin } from '@/lib/authz';
+import { areasOf, getSession, isStaff, isSuperAdmin } from '@/lib/authz';
 import StaffHub from '@/components/admin/StaffHub';
 import ThankYouPreview from '@/components/admin/ThankYouPreview';
 
@@ -13,15 +12,13 @@ async function AdminPage() {
   if (!isStaff(session)) return null;
   if (session.user.role !== 'admin') redirect('/dispatch');
 
-  const areas = STAFF_AREA_KEYS.filter((key) => hasArea(session, key));
-
   return (
     <>
       <Typography variant='sectionHeading'>Admin</Typography>
 
       <Paper variant='panel' sx={{ gap: 3 }}>
         <StaffHub
-          areas={areas}
+          areas={areasOf(session)}
           userId={session.user.id}
           // Admins and Supporters live under it (lib/authz.js).
           extraLinks={isSuperAdmin(session) ? [{ href: '/admin/super', label: 'Super Admin' }] : []}

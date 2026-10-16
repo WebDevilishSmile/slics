@@ -1,4 +1,11 @@
-import { canUseCovers, canUsePush, getSession, isSuperAdmin, isVerifiedDriver } from '@/lib/authz';
+import {
+  areasOf,
+  canUseCovers,
+  canUsePush,
+  getSession,
+  isSuperAdmin,
+  isVerifiedDriver,
+} from '@/lib/authz';
 import { getCommentsByUserId } from '@/lib/db/comments';
 import { getPushPrefs, getUserById, userHasPassword } from '@/lib/db/users';
 import { getSupporterSince } from '@/lib/db/bmcEvents';
@@ -63,6 +70,8 @@ async function ProfilePage({ params }) {
       ? getPushPrefs(id, {
           admin: session.user.role === 'admin',
           superAdmin: isSuperAdmin(session),
+          // Admin kinds only for the tools this admin has (docs/STAFF-ROLES.md).
+          areas: areasOf(session),
         }).catch(() => null)
       : null,
     // A verified driver's job this week and next, from the saved on-call

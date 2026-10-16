@@ -4,7 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from '@/components/utility/NextLink';
 import dayjs from 'dayjs';
-import { ExpandLess, ExpandMore, PersonAddAlt1Outlined, VerifiedUser } from '@mui/icons-material';
+import {
+  CheckOutlined,
+  ExpandLess,
+  ExpandMore,
+  PersonAddAlt1Outlined,
+  VerifiedUser,
+} from '@mui/icons-material';
 import {
   Alert,
   Autocomplete,
@@ -397,14 +403,18 @@ export default function AdminsView({ admins, candidates, roleAreas: initialRoleA
             )}
           />
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-            {/* Which role they get. Pressed in, and blue, while chosen. */}
+            {/* Which role they get: pressed in, blue and checked while chosen. */}
             <Box role='group' aria-label='Role' sx={{ display: 'flex', gap: 1, flex: 1 }}>
               {STAFF_ROLES.map((role) => (
                 <Button
                   key={role}
                   aria-pressed={pickedRole === role}
                   onClick={() => setPickedRole(role)}
-                  sx={[softToggleSx, { px: 2.5, minHeight: '3rem', borderRadius: 999 }]}
+                  startIcon={pickedRole === role ? <CheckOutlined /> : null}
+                  sx={[
+                    softToggleSx,
+                    { px: 2.5, minHeight: '3rem', borderRadius: 999, color: 'text.primary' },
+                  ]}
                 >
                   {ROLE_LABELS[role]}
                 </Button>
@@ -415,7 +425,8 @@ export default function AdminsView({ admins, candidates, roleAreas: initialRoleA
               onClick={askAdd}
               disabled={!picked}
               startIcon={<PersonAddAlt1Outlined />}
-              sx={[softContainedSx, { px: 3, minHeight: '3rem', flexShrink: 0 }]}
+              // Right-aligned when a phone wraps it under the chips.
+              sx={[softContainedSx, { px: 3, minHeight: '3rem', flexShrink: 0, ml: 'auto' }]}
             >
               Add
             </Button>

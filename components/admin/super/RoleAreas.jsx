@@ -8,7 +8,7 @@ import { apiRequest } from '@/lib/apiRequest';
 import { tapHaptic } from '@/lib/haptics';
 import { softRaised } from '@/components/utility/soft';
 
-const columns = `minmax(0, 1fr) repeat(${STAFF_ROLES.length}, 4.5rem)`;
+const columns = `minmax(0, 1fr) repeat(${STAFF_ROLES.length}, 4rem)`;
 
 // The switches for which tools each staff role may use (docs/STAFF-ROLES.md):
 // a row per tool, a column per role. A tap saves at once (PATCH

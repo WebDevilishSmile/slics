@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-import { isSuperAdmin, requireAdmin } from '@/lib/authz';
+import { STAFF_ROLES } from '@/constants';
+import { isSuperAdmin, requireArea } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { recordAdminAction } from '@/lib/db/adminAudit';
 import { createPasswordReset, resetUrl } from '@/lib/db/passwordResets';
@@ -23,7 +24,7 @@ const LINK_TTL_MS = 24 * 60 * 60 * 1000;
 // nobody for a super admin, so no admin can take over another's account.
 // Super admins use scripts/passwordResetLink.mjs.
 export async function POST(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('users');
   if (denied) return denied;
 
   const { id } = await params;
@@ -66,7 +67,8 @@ export async function POST(request, { params }) {
         { status: 400 },
       );
     }
-    if (user.superAdmin === true || (user.role === 'admin' && !isSuperAdmin(session))) {
+    // A staff account (admin or dispatch, STAFF_ROLES) only from a super admin.
+    if (user.superAdmin === true || (STAFF_ROLES.includes(user.role) && !isSuperAdmin(session))) {
       return NextResponse.json(
         { error: "You can't make a reset link for this account." },
         { status: 403 },

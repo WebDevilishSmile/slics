@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { createGym, validateGym } from '@/lib/db/gyms';
 
@@ -7,7 +7,7 @@ import { createGym, validateGym } from '@/lib/db/gyms';
 
 // POST a new gym
 export async function POST(request) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('gyms');
   if (denied) return denied;
 
   let body;

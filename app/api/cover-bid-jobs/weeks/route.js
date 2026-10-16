@@ -1,11 +1,11 @@
 import { getCoverBidJobWeeks } from '@/lib/db/coverBidJobs';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
 
 export async function GET() {
   try {
-    const { denied } = await requireAdmin();
+    const { denied } = await requireArea('covers');
     if (denied) return denied;
 
     const weeks = await getCoverBidJobWeeks();

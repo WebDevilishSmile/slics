@@ -1,5 +1,5 @@
 import { after, NextResponse } from 'next/server';
-import { requireAdmin, requireCovers } from '@/lib/authz';
+import { requireArea, requireCovers } from '@/lib/authz';
 import { notifyDriverClaim } from '@/lib/pushEvents';
 import { checkRateLimit } from '@/lib/rateLimit';
 import {
@@ -64,7 +64,7 @@ export async function POST(request) {
 // GET: how many claims are waiting, for the admin menu badge
 // (lib/driverClaimsStore.js): `{ success, data: { count } }`.
 export async function GET() {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('driverClaims');
   if (denied) return denied;
 
   try {

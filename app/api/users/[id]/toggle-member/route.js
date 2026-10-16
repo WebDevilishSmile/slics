@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { recordAdminAction } from '@/lib/db/adminAudit';
 import client from '@/lib/db/client';
 
@@ -11,7 +11,7 @@ export const runtime = 'nodejs';
 // Admins page.
 export async function PATCH(req, { params }) {
   try {
-    const { session, denied } = await requireAdmin();
+    const { session, denied } = await requireArea('users');
     if (denied) return denied;
 
     const usersCollection = client.db().collection('users');

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { deleteDriver, updateDriver, validateDriverFields } from '@/lib/db/drivers';
 
 // PATCH any of `{ name, employeeId, seniorityDate, phone }` on a roster row.
 // Nothing else in the body is written (SECURITY.md #10). Admin only.
 export async function PATCH(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('drivers');
   if (denied) return denied;
 
   const { id } = await params;
@@ -35,7 +35,7 @@ export async function PATCH(request, { params }) {
 
 // DELETE a roster row. Admin only.
 export async function DELETE(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('drivers');
   if (denied) return denied;
 
   const { id } = await params;

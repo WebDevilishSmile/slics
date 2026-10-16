@@ -1,4 +1,4 @@
-import { requireAdmin, requireUser } from '@/lib/authz';
+import { requireArea, requireUser } from '@/lib/authz';
 import { after, NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
 import { createSlic, getAllSlics } from '@/lib/db/slics';
@@ -27,7 +27,7 @@ export async function GET() {
 // POST — create a slic (admin only). Was /api/newSlic until 2026-10-08.
 export async function POST(request) {
   try {
-    const { session, denied } = await requireAdmin();
+    const { session, denied } = await requireArea('slics');
     if (denied) return denied;
 
     const body = await request.json();

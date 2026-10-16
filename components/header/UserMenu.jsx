@@ -45,6 +45,7 @@ import { useJobChangesCount } from '@/lib/jobChangesStore';
 import { useCoverJobChangesCount } from '@/lib/coverJobChangesStore';
 import { turnOffThisDevice } from '@/lib/pushDevice';
 import { useOpenReportsCount } from '@/lib/slicReportsStore';
+import { userHasArea } from '@/lib/staffAreas';
 
 import InstallMenuItem from '@/components/install/InstallMenuItem';
 import ModeSwitch from '@/components/layout/ModeSwitch';
@@ -159,10 +160,10 @@ function UserMenu({ user, features, signOutAction }) {
     if (!isAdmin) return;
     refreshAdminAlerts();
   }, [isAdmin, pathname]);
-  // Covers is admin-only while it's tested, until the super admin's switch
-  // opens it (canUseCovers in lib/authz.js).
+  // Covers is for staff with the Covers area while it's tested, until the
+  // super admin's switch opens it (canUseCovers in lib/authz.js).
   const coversOpen = features?.coversOpen ?? COVERS_OPEN;
-  const canUseCovers = Boolean(user) && (coversOpen || isAdmin);
+  const canUseCovers = Boolean(user) && (coversOpen || userHasArea(user, 'covers'));
   // Places opened to everyone on 2026-10-12; its row says "New" until the
   // date the super admin set.
   const placesIsNew = new Date().toISOString() < (features?.placesNewUntil ?? PLACES_NEW_UNTIL);

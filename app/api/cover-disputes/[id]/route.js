@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { closeCoverDispute, validateDisputeNote } from '@/lib/db/coverDisputes';
 
 // PATCH `{ status: 'closed', reply? }`: an admin closes a driver's "This is a
 // mistake" message, with an optional answer the driver sees on /covers. The
 // fix itself is the sheet's, or the account's link on its admin user page.
 export async function PATCH(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('driverClaims');
   if (denied) return denied;
 
   const { id } = await params;

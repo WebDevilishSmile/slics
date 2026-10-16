@@ -1,5 +1,5 @@
 import { after, NextResponse } from 'next/server';
-import { requireAdmin, requireUser } from '@/lib/authz';
+import { requireArea, requireUser } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { notifySlicReport } from '@/lib/pushEvents';
 import {
@@ -65,7 +65,7 @@ export async function POST(request) {
 // GET: the open reports' count and SLICs, for the admin menu badge
 // (lib/slicReportsStore.js): `{ success, data: { count, slics } }`.
 export async function GET() {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('reports');
   if (denied) return denied;
 
   try {

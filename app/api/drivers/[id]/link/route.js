@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { linkDriver, unlinkDriver } from '@/lib/db/drivers';
 
 // A roster row's link to a driver on the on-call sheet (lib/driverRoster.js),
@@ -29,7 +29,7 @@ async function respond(action) {
 
 // PUT `{ name }`: this roster row is that driver on the sheet.
 export async function PUT(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('drivers');
   if (denied) return denied;
   const { id } = await params;
   const name = await readName(request);
@@ -40,7 +40,7 @@ export async function PUT(request, { params }) {
 // DELETE `{ name }`: not that driver. Unlinks, and stops the pair from
 // matching or being suggested again.
 export async function DELETE(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('drivers');
   if (denied) return denied;
   const { id } = await params;
   const name = await readName(request);

@@ -1,4 +1,4 @@
-import { requireUser } from '@/lib/authz';
+import { hasArea, requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -21,7 +21,8 @@ async function loadManageable(params, session) {
     return { response: NextResponse.json({ error: 'Comment not found' }, { status: 404 }) };
 
   const isOwner = comment.userId?.toString() === session.user.id?.toString();
-  if (!isOwner && session.user.role !== 'admin')
+  // Staff with the Comments area moderate (docs/STAFF-ROLES.md).
+  if (!isOwner && !hasArea(session, 'comments'))
     return { response: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
 
   return { comment };

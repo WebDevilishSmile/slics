@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { decideDriverClaim } from '@/lib/db/driverClaims';
 
 // PATCH `{ status: 'approved', name }` (link the account to `name`, the
@@ -7,7 +7,7 @@ import { decideDriverClaim } from '@/lib/db/driverClaims';
 // the driver sees). Admin only, and never on your own claim unless you're the
 // super admin (lib/db/driverClaims.js).
 export async function PATCH(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('driverClaims');
   if (denied) return denied;
 
   const { id } = await params;

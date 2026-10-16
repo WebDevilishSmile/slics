@@ -5,13 +5,13 @@ import {
   serializeCoverBidJobs,
 } from '@/lib/db/coverBidJobs';
 import { getWeekHides } from '@/lib/db/coverBidJobHides';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
 
 export async function GET(request) {
   try {
-    const { denied } = await requireAdmin();
+    const { denied } = await requireArea('covers');
     if (denied) return denied;
 
     const { searchParams } = new URL(request.url);
@@ -43,7 +43,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    const { session, denied } = await requireAdmin();
+    const { session, denied } = await requireArea('covers');
     if (denied) return denied;
 
     const { weekEnding, rows } = await request.json();
@@ -65,7 +65,7 @@ export async function POST(request) {
 
 export async function DELETE(request) {
   try {
-    const { denied } = await requireAdmin();
+    const { denied } = await requireArea('covers');
     if (denied) return denied;
 
     const { searchParams } = new URL(request.url);

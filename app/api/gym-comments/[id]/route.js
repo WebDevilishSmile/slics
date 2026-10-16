@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -12,7 +12,7 @@ import {
 
 // PATCH a comment's text: `{ content }`
 export async function PATCH(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('gyms');
   if (denied) return denied;
 
   const { id } = await params;
@@ -46,7 +46,7 @@ export async function PATCH(request, { params }) {
 
 // DELETE a comment
 export async function DELETE(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('gyms');
   if (denied) return denied;
 
   const { id } = await params;

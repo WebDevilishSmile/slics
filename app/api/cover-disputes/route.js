@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { after, NextResponse } from 'next/server';
 
-import { requireAdmin, requireVerifiedDriver } from '@/lib/authz';
+import { requireArea, requireVerifiedDriver } from '@/lib/authz';
 import { offListWeeks } from '@/lib/coverDrivers';
 import { getUpcomingSaturday } from '@/lib/format';
 import { todayInNewYork } from '@/lib/onCallSheet';
@@ -85,7 +85,7 @@ export async function POST(request) {
 // GET: how many disputes are open, for the admin menu badge
 // (lib/coverDisputesStore.js): `{ success, data: { count } }`.
 export async function GET() {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('driverClaims');
   if (denied) return denied;
 
   try {

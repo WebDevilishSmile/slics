@@ -1,5 +1,5 @@
 import { Link, Typography } from '@mui/material';
-import { getSession } from '@/lib/authz';
+import { getSession, hasArea } from '@/lib/authz';
 import theme from '@/theme';
 import { getPlaces } from '@/lib/db/places';
 import { getAllSlics } from '@/lib/db/slics';
@@ -18,8 +18,10 @@ export const metadata = {
 // the data lives in lib/db/places.js and the UI in components/places/.
 export default async function PlacesPage() {
   const session = await getSession();
+  // `canModerate`: staff with the Comments area may edit or delete any place
+  // or comment (docs/STAFF-ROLES.md); the routes check the same.
   const user = session?.user
-    ? { id: session.user.id, role: session.user.role ?? 'user' }
+    ? { id: session.user.id, canModerate: hasArea(session, 'comments') }
     : null;
 
   const [places, slics] = await Promise.all([

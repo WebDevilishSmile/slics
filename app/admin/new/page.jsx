@@ -1,9 +1,10 @@
 import SlicForm from '@/components/slicForm/SlicForm';
 import { Typography } from '@mui/material';
-import { getAdminSession } from '@/lib/authz';
+import NoAccess from '@/components/admin/NoAccess';
+import { getAreaSession } from '@/lib/authz';
 
 async function NewSlicPage() {
-  if (!(await getAdminSession())) return null;
+  if (!(await getAreaSession('slics'))) return <NoAccess />;
 
   return (
     <>

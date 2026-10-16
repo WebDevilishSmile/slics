@@ -7,11 +7,11 @@ import { softPressSx, softRaised } from '@/components/utility/soft';
 
 // A client component because the soft sx helpers are functions, which can't
 // be passed from a server page into MUI.
-export default function AdminLinks({ links }) {
+export default function AdminLinks({ links, label = 'Admin sections' }) {
   return (
     <Box
       component='nav'
-      aria-label='Admin sections'
+      aria-label={label}
       sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2.5 }}
     >
       {links.map(({ href, label }, index) => (

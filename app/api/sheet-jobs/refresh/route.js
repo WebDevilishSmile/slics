@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { refreshJobsTab } from '@/lib/onCallSheetSync';
 
@@ -9,7 +9,7 @@ const STATUS = { 'no-tab': 404, format: 422 };
 // (refreshJobsTab, docs/ON-CALL-SHEET-SYNC.md stage 2). The first refresh is a
 // baseline and records no changes.
 export async function POST() {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('jobs');
   if (denied) return denied;
 
   const limit = await checkRateLimit({

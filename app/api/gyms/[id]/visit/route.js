@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { markGymVisited } from '@/lib/db/gyms';
@@ -6,7 +6,7 @@ import { markGymVisited } from '@/lib/db/gyms';
 // POST — stamp the gym's lastVisited with the server's current time.
 // Admin-only, like every /api/gyms* route.
 export async function POST(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('gyms');
   if (denied) return denied;
 
   const { id } = await params;

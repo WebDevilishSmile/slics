@@ -1,6 +1,7 @@
 import { Box, Paper, Typography } from '@mui/material';
 
-import { getAdminSession } from '@/lib/authz';
+import NoAccess from '@/components/admin/NoAccess';
+import { getAreaSession } from '@/lib/authz';
 import HydrationGuard from '@/components/utility/HydrationGuard';
 import JobsRefreshButton from '@/components/admin/sheetJobs/JobsRefreshButton';
 import SheetJobsView from '@/components/admin/sheetJobs/SheetJobsView';
@@ -24,8 +25,8 @@ const CHANGES_PAGE = 100;
 // Refresh button reads the sheet. Under it, whether the sheet's notifier and
 // the automatic reads are working (stage 3).
 async function Jobs() {
-  const session = await getAdminSession();
-  if (!session) return null;
+  const session = await getAreaSession('jobs');
+  if (!session) return <NoAccess />;
 
   const [jobs, changes, syncState, health, seenAt] = await Promise.all([
     getSheetJobs(),

@@ -4,13 +4,14 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 import { getAllGyms } from '@/lib/db/gyms';
 import { getAllSlics } from '@/lib/db/slics';
 import { serializeGyms } from '@/lib/serializers';
-import { getAdminSession } from '@/lib/authz';
+import NoAccess from '@/components/admin/NoAccess';
+import { getAreaSession } from '@/lib/authz';
 
 // Admin-only: truck-accessible Planet Fitness gyms, found by the SLIC you're
 // coming from / going to or by distance from where you are, with your own
 // comments on each.
 export default async function PlanetFitnessPage() {
-  if (!(await getAdminSession())) return null;
+  if (!(await getAreaSession('gyms'))) return <NoAccess />;
 
   const [gyms, slics] = await Promise.all([getAllGyms(), getAllSlics()]);
 

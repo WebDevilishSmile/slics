@@ -3,7 +3,8 @@ import { getUserById } from '@/lib/db/users';
 import { getSupporterSince } from '@/lib/db/bmcEvents';
 import { getSlicViewsByUserId } from '@/lib/db/slicViews';
 import { getAllSlics } from '@/lib/db/slics';
-import { getAdminSession } from '@/lib/authz';
+import NoAccess from '@/components/admin/NoAccess';
+import { getAreaSession } from '@/lib/authz';
 import { getClaimableDriverNames } from '@/lib/db/driverClaims';
 import { Box, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
@@ -15,7 +16,7 @@ import UserDriver from '@/components/admin/users/UserDriver';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
 
 async function UserPage({ params }) {
-  if (!(await getAdminSession())) return null;
+  if (!(await getAreaSession('users'))) return <NoAccess />;
 
   const { id } = await params;
   const user = await getUserById(id); // Assuming you have a function to get user by ID

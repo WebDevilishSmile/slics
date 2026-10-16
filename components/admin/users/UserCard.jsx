@@ -24,6 +24,7 @@ import UserMembership from './UserMembership';
 import UserPhone from './UserPhone';
 import UserRole from './UserRole';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
+import { STAFF_ROLES } from '@/constants';
 
 function UserCard({ user: initialUser, viewCount = 0 }) {
   const [user, setUser] = useState(initialUser);
@@ -35,13 +36,13 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
   const canChangeRole =
     session?.user?.superAdmin === true && !isProtected && user?.superAdmin !== true;
   // Reset links (docs/PASSWORD-RESET.md): password accounts only, never your
-  // own; an admin's only from a super admin, and never a super admin's. The
-  // route checks the same.
+  // own; a staff account's (admin or dispatch) only from a super admin, and
+  // never a super admin's. The route checks the same.
   const canResetPassword =
     user?.hasPassword === true &&
     !isProtected &&
     user?.superAdmin !== true &&
-    (user?.role !== 'admin' || session?.user?.superAdmin === true);
+    (!STAFF_ROLES.includes(user?.role) || session?.user?.superAdmin === true);
   const [resetOpen, setResetOpen] = useState(false);
 
   if (!user) {

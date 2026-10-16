@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { errorResponse } from '@/lib/httpError';
 import { coverListDemand, coverListStatus } from '@/lib/coverList';
 import { coverSpots } from '@/lib/coverDrivers';
@@ -31,7 +31,7 @@ function pickOrder(spot) {
 }
 
 export async function GET(request) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('covers');
   if (denied) return denied;
 
   const weekEnding = new URL(request.url).searchParams.get('week');

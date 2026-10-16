@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { after, NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
@@ -20,7 +20,7 @@ function isPdfFile(file) {
 
 // POST: upload (or replace) the PDF for a slic
 export async function POST(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('slics');
   if (denied) return denied;
 
   const { id } = await params;
@@ -84,7 +84,7 @@ export async function POST(request, { params }) {
 
 // DELETE: remove the PDF from a slic
 export async function DELETE(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('slics');
   if (denied) return denied;
 
   const { id } = await params;

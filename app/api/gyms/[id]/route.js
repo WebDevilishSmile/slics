@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { deleteGym, updateGym, validateGym } from '@/lib/db/gyms';
@@ -7,7 +7,7 @@ import { deleteGym, updateGym, validateGym } from '@/lib/db/gyms';
 
 // PATCH (replace the editable fields of) a gym
 export async function PATCH(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('gyms');
   if (denied) return denied;
 
   const { id } = await params;
@@ -41,7 +41,7 @@ export async function PATCH(request, { params }) {
 
 // DELETE a gym and its comments
 export async function DELETE(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('gyms');
   if (denied) return denied;
 
   const { id } = await params;

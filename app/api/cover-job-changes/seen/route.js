@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { markCoverChangesSeen } from '@/lib/db/users';
 
 // Exactly what toISOString() writes, which is how every change's seenAt is stored.
@@ -9,7 +9,7 @@ const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 // of the newest change /admin/cover/jobs showed, not "now", so a change that
 // arrives while the page is open isn't cleared unseen. Body: { upTo: ISO string }.
 export async function POST(request) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('covers');
   if (denied) return denied;
 
   let body;

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { errorResponse } from '@/lib/httpError';
 import { isSaturday } from '@/lib/onCallSheet';
 import { hideCoverBidJob, showCoverBidJob } from '@/lib/db/coverBidJobHides';
@@ -23,7 +23,7 @@ async function readBody(request) {
 }
 
 export async function PUT(request) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('covers');
   if (denied) return denied;
 
   try {
@@ -39,7 +39,7 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('covers');
   if (denied) return denied;
 
   try {

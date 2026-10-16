@@ -1,4 +1,4 @@
-import { requireUser } from '@/lib/authz';
+import { hasArea, requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -9,11 +9,13 @@ import {
   validatePlace,
 } from '@/lib/db/places';
 
-// `[id]` is the place's MongoDB _id. Only the driver who added a place, or an
-// admin, may edit or delete it.
+// `[id]` is the place's MongoDB _id. Only the driver who added a place, or
+// staff with the Comments area (docs/STAFF-ROLES.md), may edit or delete it.
 
-function canManage(place, user) {
-  return user.role === 'admin' || (!!place.createdBy && place.createdBy === user.id);
+function canManage(place, session) {
+  return (
+    hasArea(session, 'comments') || (!!place.createdBy && place.createdBy === session.user.id)
+  );
 }
 
 // PATCH (replace the editable fields of) a place
@@ -40,7 +42,7 @@ export async function PATCH(request, { params }) {
     const existing = await getPlaceById(id);
     if (!existing)
       return NextResponse.json({ error: 'Place not found' }, { status: 404 });
-    if (!canManage(existing, session.user))
+    if (!canManage(existing, session))
       return NextResponse.json(
         { error: 'Only the driver who added this place can edit it.' },
         { status: 403 },
@@ -72,13 +74,13 @@ export async function DELETE(request, { params }) {
     const existing = await getPlaceById(id);
     if (!existing)
       return NextResponse.json({ error: 'Place not found' }, { status: 404 });
-    if (!canManage(existing, session.user))
+    if (!canManage(existing, session))
       return NextResponse.json(
         { error: 'Only the driver who added this place can delete it.' },
         { status: 403 },
       );
 
-    if (session.user.role !== 'admin') {
+    if (!hasArea(session, 'comments')) {
       const others = await countOtherDriversComments(id, session.user.id);
       if (others > 0)
         return NextResponse.json(

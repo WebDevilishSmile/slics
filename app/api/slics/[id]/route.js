@@ -1,4 +1,4 @@
-import { requireAdmin, requireUser } from '@/lib/authz';
+import { requireArea, requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { after, NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
@@ -37,7 +37,7 @@ export async function GET(request, { params }) {
 
 // PATCH (update) a slic
 export async function PATCH(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('slics');
   if (denied) return denied;
 
   const { id } = await params;
@@ -64,7 +64,7 @@ export async function PATCH(request, { params }) {
 
 // DELETE a slic
 export async function DELETE(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('slics');
   if (denied) return denied;
 
   const { id } = await params;

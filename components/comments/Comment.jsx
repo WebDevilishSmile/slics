@@ -31,6 +31,7 @@ import {
 
 import { apiRequest } from '@/lib/apiRequest';
 import { tapHaptic } from '@/lib/haptics';
+import { userHasArea } from '@/lib/staffAreas';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/constants';
 
 import CommentComposer from './CommentComposer';
@@ -91,8 +92,9 @@ function Comment({
     });
   }, [comment._id, justPosted]);
 
-  const canManage = comment.isMine || user?.role === 'admin';
-  const canViewVoters = Boolean(user?.bmcMember || user?.role === 'admin');
+  // Staff with the Comments area moderate (docs/STAFF-ROLES.md).
+  const canManage = comment.isMine || userHasArea(user, 'comments');
+  const canViewVoters = Boolean(user?.bmcMember || userHasArea(user, 'comments'));
   const authorName = comment.author?.firstName ?? 'Former driver';
   const hasReplies = !isReply && comment.replies?.length > 0;
   const posted = dayjs(comment.created_at);

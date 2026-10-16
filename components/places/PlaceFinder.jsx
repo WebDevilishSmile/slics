@@ -30,7 +30,7 @@ function emptyMessage({ placeCount, selectedSlics }) {
 // Places: every place arrives server-rendered (getPlaces), and the
 // SLIC, category and distance filtering happens here. Place mutations call
 // the shared refresh() to re-render the list; each thread fetches itself.
-// `user` is `{ id, role }` for the signed-in driver.
+// `user` is `{ id, canModerate }` for the signed-in driver.
 function PlaceFinder({ places, slics, user }) {
   const [selectedSlics, setSelectedSlics] = useState([]);
   const [categories, setCategories] = useState([]); // none selected = all
@@ -72,7 +72,7 @@ function PlaceFinder({ places, slics, user }) {
         : [...current, value],
     );
 
-  const canManage = (place) => place.addedByMe || user?.role === 'admin';
+  const canManage = (place) => place.addedByMe || user?.canModerate === true;
 
   return (
     <CommentRefreshProvider>

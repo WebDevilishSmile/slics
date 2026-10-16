@@ -1,4 +1,5 @@
-import { getAdminSession } from '@/lib/authz';
+import NoAccess from '@/components/admin/NoAccess';
+import { getAreaSession } from '@/lib/authz';
 import { serializeSlics } from '@/lib/serializers';
 import { getAllSlics } from '@/lib/db/slics';
 
@@ -7,7 +8,7 @@ import SlicsTable from '@/components/admin/slics/SlicsTable';
 
 async function SlicsTablePage() {
   // app/admin/layout.jsx shows everyone else the redirect message.
-  if (!(await getAdminSession())) return null;
+  if (!(await getAreaSession('slics'))) return <NoAccess />;
 
   const slics = await getAllSlics();
 

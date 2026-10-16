@@ -2,7 +2,8 @@ import { serializeSlic, serializeSlicHistory } from '@/lib/serializers';
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getSlicHistory } from '@/lib/db/slicHistory';
 import { getOpenSlicReport } from '@/lib/db/slicReports';
-import { getAdminSession } from '@/lib/authz';
+import NoAccess from '@/components/admin/NoAccess';
+import { getAreaSession } from '@/lib/authz';
 
 import SlicForm from '@/components/slicForm/SlicForm';
 import SlicAuditInfo from '@/components/slicForm/SlicAuditInfo';
@@ -13,7 +14,7 @@ import { Typography } from '@mui/material';
 // `?report=<id>`: opened from a driver report's Fix (/admin/reports). Saving
 // then resolves that report.
 async function EditPage({ params, searchParams }) {
-  if (!(await getAdminSession())) return null;
+  if (!(await getAreaSession('slics'))) return <NoAccess />;
 
   const { slic } = await params;
   const { report: reportId } = await searchParams;

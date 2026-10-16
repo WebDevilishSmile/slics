@@ -1,13 +1,14 @@
 import { toAdminUser } from '@/lib/serializers';
 import { getPasswordUserIds, getSlicViewCounts, getUsers } from '@/lib/db/users';
-import { getAdminSession } from '@/lib/authz';
+import NoAccess from '@/components/admin/NoAccess';
+import { getAreaSession } from '@/lib/authz';
 
 import UserList from '@/components/admin/users/UserList';
 import { Typography } from '@mui/material';
 import HydrationGuard from '@/components/utility/HydrationGuard';
 
 async function UsersPage() {
-  if (!(await getAdminSession())) return null;
+  if (!(await getAreaSession('users'))) return <NoAccess />;
 
   const [users, viewCounts, passwordIds] = await Promise.all([
     getUsers(),

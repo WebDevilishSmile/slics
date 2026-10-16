@@ -64,7 +64,7 @@ function PlaceComment({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const busy = saving || isRefreshing;
-  const canManage = comment.isMine || user?.role === 'admin';
+  const canManage = comment.isMine || user?.canModerate === true;
   const authorName = comment.author?.firstName ?? 'Former driver';
   const hasReplies = !isReply && comment.replies.length > 0;
 

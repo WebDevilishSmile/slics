@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { getUnseenJobChanges } from '@/lib/db/sheetJobs';
 import { getJobChangesSeenAt } from '@/lib/db/users';
 
 // Jobs-tab changes the signed-in admin hasn't seen yet, for the menu badge
 // (lib/jobChangesStore.js): { count, jobs, latest }. Reads MongoDB only.
 export async function GET() {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('jobs');
   if (denied) return denied;
 
   try {

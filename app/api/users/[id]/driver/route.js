@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { clearUserDriver, setUserDriver } from '@/lib/db/driverClaims';
 
 // An account's driver verification, from the admin user page
@@ -15,7 +15,7 @@ const driverOf = (user) => ({
 // name, or change the spelling (the sheet changed it). Verifies without a
 // claim, e.g. someone the admin checked in person.
 export async function PUT(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('driverClaims');
   if (denied) return denied;
 
   const { id } = await params;
@@ -40,7 +40,7 @@ export async function PUT(request, { params }) {
 
 // DELETE: take the verification away.
 export async function DELETE(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('driverClaims');
   if (denied) return denied;
 
   const { id } = await params;

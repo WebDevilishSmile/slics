@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { createDriver, validateDriverFields } from '@/lib/db/drivers';
 
 // POST `{ name, employeeId, seniorityDate, phone, sheetName? }`: a roster row
 // (admin only). `sheetName` links it to that driver on the on-call sheet
 // ("Add details" on /admin/drivers).
 export async function POST(request) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('drivers');
   if (denied) return denied;
 
   let body;

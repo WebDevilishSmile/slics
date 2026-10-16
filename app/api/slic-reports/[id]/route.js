@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { recordAdminAction } from '@/lib/db/adminAudit';
 import { deleteSlicReport, getSlicReportSummary, setSlicReportStatus } from '@/lib/db/slicReports';
 
 // PATCH `{ status }`: 'resolved' (the edit form saved a fix), 'dismissed'
 // (nothing to change) or 'open' (reopen). Admin only.
 export async function PATCH(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('reports');
   if (denied) return denied;
 
   const { id } = await params;
@@ -33,7 +33,7 @@ export async function PATCH(request, { params }) {
 // ones filed by mistake. Written to `admin_audit` first (`report.deleted`,
 // `from` its SLIC, kind and date; never the note or who filed it). Admin only.
 export async function DELETE(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('reports');
   if (denied) return denied;
 
   const { id } = await params;

@@ -1,12 +1,14 @@
 import PageContainer from '@/components/layout/PageContainer';
 import RedirectMessage from '@/components/layout/RedirectMessage';
-import { getSession } from '@/lib/authz';
+import { getSession, isStaff } from '@/lib/authz';
 
 // Every page under /admin renders inside this check. It's the friendly
 // redirect, not the boundary: a layout doesn't re-run on client navigation,
-// and a page segment can be requested on its own. So every page calls
-// getAdminSession() before reading anything, and every API route calls
-// requireAdmin() (docs/SECURITY.md #7).
+// and a page segment can be requested on its own. So every page checks its
+// own area (getAreaSession) before reading anything, and every API route
+// calls requireArea() (docs/SECURITY.md #7, docs/STAFF-ROLES.md). Any staff
+// account gets past here: a dispatcher has only some areas, and a page
+// outside them shows admin/NoAccess.jsx.
 export default async function AdminLayout({ children }) {
   const session = await getSession();
 
@@ -20,9 +22,9 @@ export default async function AdminLayout({ children }) {
     );
   }
 
-  // `role` is fresh: auth.js's jwt callback re-reads the user row on every
-  // request, so there's no second lookup by email.
-  if (session.user.role !== 'admin') {
+  // `role` and `areas` are fresh: auth.js's jwt callback re-reads the user
+  // row on every request, so there's no second lookup by email.
+  if (!isStaff(session)) {
     return (
       <RedirectMessage
         heading='You must be an administrator to access this content.'

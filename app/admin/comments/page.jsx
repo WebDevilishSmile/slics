@@ -1,4 +1,5 @@
-import { getAdminSession } from '@/lib/authz';
+import NoAccess from '@/components/admin/NoAccess';
+import { getAreaSession } from '@/lib/authz';
 import { getAllSlics } from '@/lib/db/slics';
 
 import CommentsSection from '@/components/admin/comments/CommentsSection';
@@ -12,7 +13,7 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 
 async function CommentsPage() {
   // app/admin/layout.jsx shows everyone else the redirect message.
-  if (!(await getAdminSession())) return null;
+  if (!(await getAreaSession('comments'))) return <NoAccess />;
 
   const comments = await getAllComments();
 

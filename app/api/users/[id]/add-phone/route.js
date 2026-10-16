@@ -1,4 +1,4 @@
-import { requireUser } from '@/lib/authz';
+import { hasArea, requireUser } from '@/lib/authz';
 import clientPromise from '@/lib/db/client'; // Use clientPromise for consistency and safety
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
@@ -91,9 +91,10 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    // The session's id and role are fresh (auth.js re-reads the user row on
-    // every request), so there's no second lookup by email.
-    const isAdmin = session.user.role === 'admin';
+    // The session's id and areas are fresh (auth.js re-reads the user row on
+    // every request), so there's no second lookup by email. Staff with the
+    // Users area edit anyone's phone (docs/STAFF-ROLES.md).
+    const isAdmin = hasArea(session, 'users');
     const isUpdatingOwnProfile = session.user.id === userId;
 
     if (!isAdmin && !isUpdatingOwnProfile) {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { isSaturday } from '@/lib/onCallSheet';
 import {
   getCoverBidPickEvents,
@@ -11,7 +11,7 @@ import {
 // A week's saved picks and their recent changes. Reads MongoDB only; the sheet
 // is read by POST /api/cover-bid-jobs/refresh.
 export async function GET(request) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('covers');
   if (denied) return denied;
 
   const weekEnding = new URL(request.url).searchParams.get('weekEnding');

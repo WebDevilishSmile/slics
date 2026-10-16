@@ -1,10 +1,10 @@
 import { updateCoverBidJob, deleteCoverBidJob } from '@/lib/db/coverBidJobs';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
 
 export async function PATCH(request, { params }) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('covers');
   if (denied) return denied;
 
   const { id } = await params;
@@ -21,7 +21,7 @@ export async function PATCH(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const { denied } = await requireAdmin();
+  const { denied } = await requireArea('covers');
   if (denied) return denied;
 
   const { id } = await params;

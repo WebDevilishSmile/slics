@@ -1,5 +1,6 @@
 import { Typography } from '@mui/material';
-import { getAdminSession } from '@/lib/authz';
+import NoAccess from '@/components/admin/NoAccess';
+import { getAreaSession } from '@/lib/authz';
 import { getClaimableDriverNames, getDriverClaims } from '@/lib/db/driverClaims';
 import { getCoverDisputes } from '@/lib/db/coverDisputes';
 import { getDriverRoster } from '@/lib/db/drivers';
@@ -15,7 +16,7 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // ("This is a mistake" on /covers, lib/db/coverDisputes.js), when there are
 // any.
 export default async function DriverClaimsPage() {
-  if (!(await getAdminSession())) return null;
+  if (!(await getAreaSession('driverClaims'))) return <NoAccess />;
 
   const [{ pending, decided }, names, { drivers }, disputes] = await Promise.all([
     getDriverClaims(),

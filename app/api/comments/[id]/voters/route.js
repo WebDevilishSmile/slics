@@ -1,15 +1,16 @@
-import { requireUser } from '@/lib/authz';
+import { hasArea, requireUser } from '@/lib/authz';
 import { getCommentVoters } from '@/lib/db/comments';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 
-// Who upvoted / downvoted a comment. Members-only (or admin) — the response
-// names other drivers, and viewing that is a membership perk.
+// Who upvoted / downvoted a comment. Members-only (or staff with the Comments
+// area) — the response names other drivers, and viewing that is a membership
+// perk.
 export async function GET(_request, { params }) {
   const { session, denied } = await requireUser();
   if (denied) return denied;
 
-  if (!session.user.bmcMember && session.user.role !== 'admin')
+  if (!session.user.bmcMember && !hasArea(session, 'comments'))
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { id: commentId } = await params;

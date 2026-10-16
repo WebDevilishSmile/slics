@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { getCoverJobChanges, serializeCoverJobChanges } from '@/lib/db/coverJobChanges';
 import { getCoverChangesSeenAt } from '@/lib/db/users';
 
@@ -12,7 +12,7 @@ const PAGE = 10;
 // → { changes, more, seenAt }. `seenAt` is the admin's mark from before this
 // visit (null: all new), sent with the first page only.
 export async function GET(request) {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('covers');
   if (denied) return denied;
 
   const params = new URL(request.url).searchParams;

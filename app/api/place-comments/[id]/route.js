@@ -1,4 +1,4 @@
-import { requireUser } from '@/lib/authz';
+import { hasArea, requireUser } from '@/lib/authz';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 import {
@@ -8,11 +8,13 @@ import {
   validatePlaceComment,
 } from '@/lib/db/places';
 
-// `[id]` is the place comment's MongoDB _id. Only its author or an admin may
-// edit or delete it.
+// `[id]` is the place comment's MongoDB _id. Only its author or staff with the
+// Comments area (docs/STAFF-ROLES.md) may edit or delete it.
 
-function canManage(comment, user) {
-  return user.role === 'admin' || (!!comment.userId && comment.userId === user.id);
+function canManage(comment, session) {
+  return (
+    hasArea(session, 'comments') || (!!comment.userId && comment.userId === session.user.id)
+  );
 }
 
 // PATCH a comment's text: `{ content }`
@@ -39,7 +41,7 @@ export async function PATCH(request, { params }) {
     const comment = await getPlaceCommentById(id);
     if (!comment)
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
-    if (!canManage(comment, session.user))
+    if (!canManage(comment, session))
       return NextResponse.json(
         { error: 'You can only edit your own comments.' },
         { status: 403 },
@@ -70,7 +72,7 @@ export async function DELETE(request, { params }) {
     const comment = await getPlaceCommentById(id);
     if (!comment)
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
-    if (!canManage(comment, session.user))
+    if (!canManage(comment, session))
       return NextResponse.json(
         { error: 'You can only delete your own comments.' },
         { status: 403 },

@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/authz';
+import { requireArea } from '@/lib/authz';
 import { getUnseenCoverJobChanges } from '@/lib/db/coverJobChanges';
 import { getCoverChangesSeenAt } from '@/lib/db/users';
 
 // Cover-tab changes the signed-in admin hasn't seen yet, for the menu badge
 // (lib/coverJobChangesStore.js): { count, latest, week }. Reads MongoDB only.
 export async function GET() {
-  const { session, denied } = await requireAdmin();
+  const { session, denied } = await requireArea('covers');
   if (denied) return denied;
 
   try {

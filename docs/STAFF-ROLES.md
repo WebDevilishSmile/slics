@@ -20,7 +20,7 @@ by default.
 
 | To undo | How |
 |---|---|
-| A stage | `git revert` its commit ("Staff roles, part 1" to "part 7", plus the part 4 follow-up; part 6 is the docs) |
+| A stage | `git revert` its commit ("Staff roles, part 1" to "part 8", plus the part 4 follow-up; part 6 is the docs) |
 | Saved switches | Delete the `app-settings` document `{ _id: 'roles' }`; the defaults come back |
 | A dispatcher's access | Set their role to User on `/admin/super/admins` (or `/admin/users`) |
 
@@ -125,7 +125,8 @@ Decided:
       `PATCH /api/admins/[id]`, `toggle-role` takes `{ role }` (a bodyless toggle never
       promotes a dispatcher).
 - [x] `/dispatch` (`app/dispatch/page.jsx`) and the Dispatch row in the header menu;
-      alerts and the badge for any staff account.
+      alerts and the badge for any staff account with a tool that has alerts (Jobs,
+      Covers, SLIC reports, Driver claims; part 8), so SLICs alone makes no call.
 - [x] SLIC pages for a dispatcher: `?report=` only with SLIC reports; editors by name only
       (`withNamedStamps`, `withNamedUser` in `lib/serializers.js`); the PATCH route keeps
       only the form's seven fields.

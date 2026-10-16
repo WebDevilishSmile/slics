@@ -80,6 +80,10 @@ Use absolute dates.
       renewal's retry goes through (`BMC-SUPPORT.md` → "Renewals")
 - [ ] **Buy Me a Coffee:** fix the membership mismatches by hand in Users, or leave them
       (`BMC-SUPPORT.md` → "History import" has the list, re-checked 2026-10-10)
+- [ ] **Staff roles** (built 2026-10-16): after the deploy, the live checks in
+      `STAFF-ROLES.md` → "Verifying": every admin tool still on `/admin` and the switches
+      on `/admin/super/admins`; then `claude-test@slics.app` made Dispatch sees only SLICs
+      (`/dispatch`, "No access" elsewhere, 403s), and is set back to User
 
 ---
 
@@ -187,6 +191,13 @@ Effort: S = an evening or two · M = a few evenings · L = a project with stages
 - **A data-health page** (S, #12): SLICs with no PDF or phone, stale ones, duplicates
 - **An admin audit log page** (S, #14): who changed what, on one page. `admin_audit` and
   the super admin's Activity page cover part of it; the rest is `SECURITY.md` #17
+- **Notifications for dispatchers** (`STAFF-ROLES.md` → "Follow-ups"): `canUsePush` and
+  the admin push kinds still go by the admin role, so a dispatcher with SLIC reports gets
+  no reports push
+- **Per-person tool exceptions** (`STAFF-ROLES.md`): tools are per role today; add
+  overrides on an account if one dispatcher ever needs a tool the others don't
+- **Leaving as a dispatcher** (`STAFF-ROLES.md`): only admins are refused self-service
+  account deletion; decide whether a dispatcher should need a super admin too
 
 ### Platform
 

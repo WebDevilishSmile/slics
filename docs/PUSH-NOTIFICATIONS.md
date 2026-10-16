@@ -157,6 +157,9 @@ see in the app. The super admin's view of all of it is `/admin/super/notificatio
       changed for anyone. Every new kind is off until an admin turns it on, so no admin was
       flooded. Buy Me a Coffee is `audience: 'superAdmin'`, offered and sent to super admins
       only.
+      **Since 2026-10-16** each admin kind also names its `area`, the admin tool it's about
+      (`STAFF-ROLES.md`): it's offered and sent to admins only while the Admin role has
+      that tool, and always to super admins. Dispatchers get no notifications yet.
 - [x] **Per account, not per device:** `users.pushPrefs[key]`, missing meaning the default.
       `getPushAudience(key)` (`lib/db/users.js`) is one query for the admins who get a kind;
       `sendPushToAdmins(type, payload, { except })` uses it.

@@ -5,6 +5,11 @@ covers the numbers, usage over time, everything happening, push notifications, t
 system's health and the feature switches. Admins and Supporters stay where they were, as
 cards on the hub. Built in stages; check items off as they ship.
 
+Since 2026-10-16 the Admins page is also where staff roles are managed
+(`STAFF-ROLES.md`): a switch per admin tool for the Admin and Dispatch roles, admins and
+dispatchers listed apart, and adding someone as either. The hub's Admins card counts
+dispatchers too.
+
 **How to use this:** each stage can be deployed on its own, in order. Feature switches are
 last because they touch the Covers gate. Run `npm run build` in a scratch copy, never while
 `next dev` runs, before shipping any of it. The app is used daily in production.

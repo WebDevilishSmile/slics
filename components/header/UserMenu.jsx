@@ -38,7 +38,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 
-import { BMC_URL, COVERS_OPEN, PLACES_NEW_UNTIL, STAFF_AREA_KEYS } from '@/constants';
+import { BMC_URL, COVERS_OPEN, PLACES_NEW_UNTIL } from '@/constants';
 import { refreshAdminAlerts } from '@/lib/adminAlertsStore';
 import { useOpenDisputesCount } from '@/lib/coverDisputesStore';
 import { usePendingClaimsCount } from '@/lib/driverClaimsStore';
@@ -55,6 +55,10 @@ import { softListItemSx } from '@/components/utility/soft';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
 
 const MENU_ID = 'app-menu';
+
+// The tools whose counts are in the menu's alerts (GET /api/admin-alerts):
+// jobs, cover jobs, SLIC reports, and claims with disputes.
+const ALERT_AREAS = ['jobs', 'covers', 'reports', 'driverClaims'];
 
 // Every row is at least 48px tall — a driver's thumb, maybe gloved, in a cab
 // (UI-SUGGESTIONS.md "Design target"). Soft rows (utility/soft.js): the
@@ -144,7 +148,8 @@ function UserMenu({ user, features, signOutAction }) {
   // most once a minute (lib/adminAlertsStore.js). Each count is 0 outside the
   // account's tools, so a dispatcher with SLICs alone never has a badge.
   const isAdmin = user?.role === 'admin';
-  const isStaff = STAFF_AREA_KEYS.some((key) => userHasArea(user, key));
+  // Only the tools with alerts: a dispatcher with SLICs alone makes no call.
+  const hasAlerts = ALERT_AREAS.some((key) => userHasArea(user, key));
   // The Dispatch row: dispatchers, and super admins to see what Dispatch sees.
   const isDispatch = user?.role === 'dispatch';
   const showDispatch = isDispatch || (isAdmin && user?.superAdmin === true);
@@ -164,9 +169,9 @@ function UserMenu({ user, features, signOutAction }) {
     .filter(Boolean)
     .join(', ');
   useEffect(() => {
-    if (!isStaff) return;
+    if (!hasAlerts) return;
     refreshAdminAlerts();
-  }, [isStaff, pathname]);
+  }, [hasAlerts, pathname]);
   // Covers is for staff with the Covers area while it's tested, until the
   // super admin's switch opens it (canUseCovers in lib/authz.js).
   const coversOpen = features?.coversOpen ?? COVERS_OPEN;
@@ -197,11 +202,11 @@ function UserMenu({ user, features, signOutAction }) {
         // On the blue header the focus outline takes the icon's color.
         sx={{ color: 'text.light', '&.Mui-focusVisible': { outlineColor: 'currentColor' } }}
         onClick={handleOpen}
-        aria-label={isStaff && alerts ? `Open menu, ${alertsText}` : 'Open menu'}
+        aria-label={hasAlerts && alerts ? `Open menu, ${alertsText}` : 'Open menu'}
         aria-expanded={open}
         aria-controls={MENU_ID}
       >
-        <Badge variant='dot' color='error' invisible={!isStaff || !alerts}>
+        <Badge variant='dot' color='error' invisible={!hasAlerts || !alerts}>
           <MenuOutlined />
         </Badge>
       </IconButton>

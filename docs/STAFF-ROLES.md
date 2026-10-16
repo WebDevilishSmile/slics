@@ -20,11 +20,12 @@ by default.
 
 | To undo | How |
 |---|---|
-| A stage | `git revert` its commit (part 1 to part 5, plus the part 4 follow-up) |
+| A stage | `git revert` its commit ("Staff roles, part 1" to "part 7", plus the part 4 follow-up; part 6 is the docs) |
 | Saved switches | Delete the `app-settings` document `{ _id: 'roles' }`; the defaults come back |
 | A dispatcher's access | Set their role to User on `/admin/super/admins` (or `/admin/users`) |
 
-Reverting part 1 needs every later part reverted first. A dispatcher's row left behind
+Reverting part 1 needs every later part reverted first, and part 2 needs part 7 reverted
+first (it brings back `getAdminSession`). A dispatcher's row left behind
 by a full revert is harmless: every gate then checks `role === 'admin'` again, so
 `dispatch` is a driver.
 
@@ -103,7 +104,7 @@ Decided:
 - [x] `auth.js` sets `token.areas` / `session.user.areas`; `auth.config.js` and
       `layout/SessionSync.jsx` carry it.
 - [x] `lib/authz.js`: `hasArea`, `areasOf`, `isStaff`, `getAreaSession`, `requireArea`,
-      `requireStaff`.
+      `requireStaff`. (`getAdminSession`, unused after part 2, was removed in part 7.)
 
 ### Part 2: every admin gate checks its area (no change for admins)
 

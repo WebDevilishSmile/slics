@@ -401,3 +401,81 @@ export const ACTIVITY_KINDS = [
   { key: 'admin', label: 'Admin actions' },
   { key: 'push', label: 'Notifications' },
 ];
+
+// Staff roles and the admin tools ("areas") each may use (docs/STAFF-ROLES.md).
+// A role is `users.role`: 'user' (every driver), 'dispatch' or 'admin'. Which
+// areas a staff role has is the super admin's choice on /admin/super/admins
+// (lib/db/appSettings.js); these are only the defaults. A super admin has
+// every area whatever is saved. Every admin page and route checks its area
+// (`getAreaSession` / `requireArea`, lib/authz.js), so a new admin page or
+// route belongs to one of these, or to a new one added here.
+export const STAFF_ROLES = ['admin', 'dispatch'];
+export const ROLE_LABELS = { user: 'User', dispatch: 'Dispatch', admin: 'Admin' };
+
+// In the order the /admin and /dispatch hubs list their links.
+export const STAFF_AREAS = [
+  {
+    key: 'slics',
+    label: 'SLICs',
+    description: 'Add, edit and delete SLICs and their PDFs.',
+    links: [{ href: '/admin/slics', label: 'SLICs' }],
+  },
+  {
+    key: 'reports',
+    label: 'SLIC reports',
+    description: 'Fix or close what drivers report wrong with a SLIC.',
+    links: [{ href: '/admin/reports', label: 'SLIC Reports' }],
+  },
+  {
+    key: 'driverClaims',
+    label: 'Driver claims',
+    description: 'Verify drivers for Covers and answer cover list disputes.',
+    links: [{ href: '/admin/driver-claims', label: 'Driver Claims' }],
+  },
+  {
+    key: 'comments',
+    label: 'Comments',
+    description: 'Every tip on one page. Edit or delete any tip, place or place comment.',
+    links: [{ href: '/admin/comments', label: 'Comments' }],
+  },
+  {
+    key: 'users',
+    label: 'Users',
+    description: 'Every account: membership, phone and password reset links.',
+    links: [{ href: '/admin/users', label: 'Users' }],
+  },
+  {
+    key: 'jobs',
+    label: 'Jobs',
+    description: 'The Jobs tab of the on-call sheet and its changes.',
+    links: [{ href: '/admin/jobs', label: 'Jobs' }],
+  },
+  {
+    key: 'covers',
+    label: 'Covers',
+    description: 'Cover jobs, drivers and lists, and Covers before it opens to every driver.',
+    links: [
+      { href: '/admin/cover/drivers', label: 'Cover Drivers' },
+      { href: '/admin/cover/jobs', label: 'Cover Jobs' },
+      { href: '/admin/cover/lists', label: 'Cover Lists' },
+    ],
+  },
+  {
+    key: 'drivers',
+    label: 'Drivers',
+    description: 'The driver roster: employee IDs, seniority dates and phones.',
+    links: [{ href: '/admin/drivers', label: 'Drivers' }],
+  },
+  {
+    key: 'gyms',
+    label: 'Planet Fitness',
+    description: 'The list of truck-accessible gyms.',
+    links: [{ href: '/admin/planet-fitness', label: 'Planet Fitness' }],
+  },
+];
+export const STAFF_AREA_KEYS = STAFF_AREAS.map((area) => area.key);
+// Admins start with every area, Dispatch with SLICs only.
+export const ROLE_AREA_DEFAULTS = {
+  admin: STAFF_AREA_KEYS,
+  dispatch: ['slics'],
+};

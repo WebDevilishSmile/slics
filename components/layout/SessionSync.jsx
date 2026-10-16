@@ -13,6 +13,7 @@ const sessionKey = (session) =>
         session.user.bmcMember,
         session.user.superAdmin,
         session.user.driverVerified,
+        session.user.areas,
         session.features,
       ])
     : '';

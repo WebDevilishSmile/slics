@@ -4,9 +4,11 @@ import { useId } from 'react';
 import { Box } from '@mui/material';
 import { keyframes } from '@mui/material/styles';
 
-// The thank-you envelope (docs/BMC-SUPPORT.md stage 3): brand-blue paper,
-// shaded as if lit from the top left, shut with an amber wax seal that has the
-// coffee cup pressed into it. `stage` drives it:
+// The note envelope (the thank-you, docs/BMC-SUPPORT.md stage 3, and the
+// welcome note, docs/STAFF-ROLES.md): brand-blue paper, shaded as if lit from
+// the top left, shut with an amber wax seal with an icon pressed into it
+// (`seal`, a 24px icon path: the coffee cup unless told otherwise). `stage`
+// drives it:
 //   closed  – sealed; `wiggle` gives it a small nudge every few seconds
 //   opening – the seal comes away and the flap swings up toward the viewer
 //   peek    – the flap has gone behind the letter, which slides most of the
@@ -34,13 +36,15 @@ const fill = (token) => ({ fill: `var(--mui-palette-${token})` });
 const WAX =
   'M96.9 50C97.5 52.7 98.3 55.8 97.7 58.4C97.2 61.1 95.2 63.6 93.6 65.9C92 68.1 89.7 69.9 88.2 72.1C86.8 74.3 86 76.8 84.7 79.1C83.3 81.4 82 84.1 80 85.8C78 87.5 75.1 88.3 72.7 89.3C70.2 90.2 67.6 90.5 65.2 91.6C62.7 92.7 60.6 94.7 58.1 95.8C55.6 97 52.7 98.4 50 98.5C47.3 98.5 44.4 97.2 41.9 96.1C39.3 95.1 37.1 93.2 34.7 92.1C32.2 91 29.6 90.7 27.1 89.6C24.6 88.6 21.8 87.7 19.9 85.9C17.9 84.1 16.8 81.3 15.5 79C14.2 76.6 13.6 74.1 12.1 71.9C10.7 69.7 8.4 68 6.9 65.7C5.3 63.5 3.2 61 2.6 58.4C2 55.7 2.6 52.7 3.1 50C3.6 47.3 4.9 44.8 5.5 42.1C6 39.5 5.8 36.8 6.4 34.1C7 31.5 7.5 28.5 9 26.3C10.5 24.1 13.2 22.5 15.3 20.9C17.5 19.3 20.1 18.4 22.1 16.7C24.1 15 25.4 12.6 27.3 10.7C29.3 8.8 31.3 6.4 33.7 5.3C36.2 4.3 39.2 4.3 41.9 4.2C44.6 4.1 47.3 4.8 50 4.7C52.7 4.7 55.4 3.8 58.1 3.9C60.9 3.9 64 3.8 66.4 4.9C68.9 6 70.9 8.4 72.9 10.4C74.8 12.3 76.1 14.8 78.1 16.6C80 18.3 82.4 19.4 84.5 21C86.6 22.7 89.2 24.3 90.7 26.5C92.1 28.7 92.5 31.7 93.1 34.3C93.7 36.9 93.6 39.6 94.2 42.2C94.9 44.8 96.3 47.3 96.9 50Z';
 
-// The LocalCafe icon's path (@mui/icons-material), pressed into the wax.
-const CUP = 'M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.9 2-2V5c0-1.11-.89-2-2-2m0 5h-2V5h2zM4 19h16v2H4z';
+// Icon paths (@mui/icons-material) to press into the wax: LocalCafe for the
+// thank-you, Key for the welcome note.
+export const CUP = 'M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.9 2-2V5c0-1.11-.89-2-2-2m0 5h-2V5h2zM4 19h16v2H4z';
+export const KEY = 'M21 10h-8.35C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H13l2 2 2-2 2 2 4-4.04zM7 15c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3';
 
-// The seal: a domed blob of amber wax with a ring and the cup stamped into
+// The seal: a domed blob of amber wax with a ring and the icon stamped into
 // it. Each pressed shape is drawn twice, a pale copy a hair lower first, so
 // light catches the lower lip of the groove the way it does on real wax.
-function WaxSeal() {
+function WaxSeal({ icon }) {
   // Unique per envelope (the /home card and the note can both be on screen),
   // and plain enough for a url(#…) reference.
   const dome = `wax${useId().replace(/[^\w-]/g, '')}`;
@@ -58,8 +62,8 @@ function WaxSeal() {
       <circle cx='50' cy='51.2' r='33' fill='none' stroke='#fff' strokeOpacity='0.35' strokeWidth='2' />
       <circle cx='50' cy='50' r='33' fill='none' style={{ stroke: 'var(--mui-palette-warning-dark)' }} strokeWidth='2.5' />
       <g transform='translate(31 31) scale(1.583)'>
-        <path d={CUP} fill='#fff' fillOpacity='0.4' transform='translate(0 0.7)' />
-        <path d={CUP} style={fill('warning-dark')} />
+        <path d={icon} fill='#fff' fillOpacity='0.4' transform='translate(0 0.7)' />
+        <path d={icon} style={fill('warning-dark')} />
       </g>
     </Box>
   );
@@ -96,6 +100,7 @@ export default function Envelope({
   letter,
   letterScale = 1,
   name,
+  seal = CUP,
 }) {
   const opened = stage !== 'closed';
   const peek = stage === 'peek';
@@ -237,7 +242,7 @@ export default function Envelope({
           transition: 'scale 220ms var(--ease-out), opacity 220ms var(--ease-out)',
         }}
       >
-        <WaxSeal />
+        <WaxSeal icon={seal} />
       </Box>
     </Box>
   );

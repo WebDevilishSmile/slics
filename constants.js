@@ -367,7 +367,7 @@ export const PUSH_TYPES = [
     key: 'slicEdits',
     group: 'Admins',
     label: 'SLIC edits',
-    description: 'Another admin adds, edits or deletes a SLIC.',
+    description: 'Another admin or a dispatcher adds, edits or deletes a SLIC.',
     audience: 'admin',
     defaultOn: false,
   },

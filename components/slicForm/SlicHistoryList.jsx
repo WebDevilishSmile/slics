@@ -16,6 +16,10 @@ function formatFieldValue(value) {
   return String(value);
 }
 
+// A delete is on record since Dispatch can delete SLICs (lib/db/slics.js); it
+// shows here when a SLIC with the same number is added again.
+const ACTION_LABELS = { created: 'Created', updated: 'Updated', deleted: 'Deleted' };
+
 function SlicHistoryList({ history }) {
   if (!history || history.length === 0) return null;
 
@@ -31,7 +35,7 @@ function SlicHistoryList({ history }) {
           sx={[softInset, { mb: 2, p: 2 }]}
         >
           <Typography variant='body2'>
-            <strong>{entry.action === 'created' ? 'Created' : 'Updated'}</strong>{' '}
+            <strong>{ACTION_LABELS[entry.action] ?? 'Updated'}</strong>{' '}
             by {formatUser(entry.user)} on{' '}
             {dayjs(entry.timestamp).format('MM/DD/YY [at] h:mm A')}
           </Typography>

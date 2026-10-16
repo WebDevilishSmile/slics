@@ -67,7 +67,7 @@ export async function POST(request, { params }) {
     const { url } = await putSlicPdf(slic.alphaSlic, file);
 
     await updateSlic(id, { pdfUrl: url }, session.user);
-    after(() => notifySlicEdit({ numSlic: slic.numSlic, action: 'pdf', except: session.user.id }));
+    after(() => notifySlicEdit({ numSlic: slic.numSlic, action: 'pdf', except: session.user.id, byRole: session.user.role }));
 
     // Only after the new URL is saved, so a failed save never orphans the slic
     // pointing at a deleted blob.
@@ -100,7 +100,7 @@ export async function DELETE(request, { params }) {
     const { changed } = await updateSlic(id, { pdfUrl: null }, session.user);
     await deleteSlicPdf(previousUrl);
     if (changed) {
-      after(() => notifySlicEdit({ numSlic: slic.numSlic, action: 'pdf', except: session.user.id }));
+      after(() => notifySlicEdit({ numSlic: slic.numSlic, action: 'pdf', except: session.user.id, byRole: session.user.role }));
     }
 
     return NextResponse.json({ message: 'Slic PDF removed successfully' });

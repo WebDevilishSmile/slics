@@ -1,9 +1,14 @@
-import { serializeSlic, serializeSlicHistory } from '@/lib/serializers';
+import {
+  serializeSlic,
+  serializeSlicHistory,
+  withNamedStamps,
+  withNamedUser,
+} from '@/lib/serializers';
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getSlicHistory } from '@/lib/db/slicHistory';
 import { getOpenSlicReport } from '@/lib/db/slicReports';
 import NoAccess from '@/components/admin/NoAccess';
-import { getAreaSession } from '@/lib/authz';
+import { getAreaSession, hasArea } from '@/lib/authz';
 
 import SlicForm from '@/components/slicForm/SlicForm';
 import SlicAuditInfo from '@/components/slicForm/SlicAuditInfo';
@@ -12,17 +17,26 @@ import ReportBeingFixed from '@/components/admin/slicReports/ReportBeingFixed';
 import { Typography } from '@mui/material';
 
 // `?report=<id>`: opened from a driver report's Fix (/admin/reports). Saving
-// then resolves that report.
+// then resolves that report. Only for someone with the SLIC reports area
+// too: a dispatcher with SLICs alone edits without it (docs/STAFF-ROLES.md).
 async function EditPage({ params, searchParams }) {
-  if (!(await getAreaSession('slics'))) return <NoAccess />;
+  const session = await getAreaSession('slics');
+  if (!session) return <NoAccess />;
 
   const { slic } = await params;
   const { report: reportId } = await searchParams;
   const [slicData, history, report] = await Promise.all([
     getSlicByNumSlic(slic),
     getSlicHistory(slic),
-    reportId ? getOpenSlicReport(reportId, slic) : null,
+    reportId && hasArea(session, 'reports') ? getOpenSlicReport(reportId, slic) : null,
   ]);
+
+  // Editors by name only for anyone but an admin (lib/serializers.js).
+  const admin = session.user.role === 'admin';
+  const slicProps = admin ? serializeSlic(slicData) : withNamedStamps(serializeSlic(slicData));
+  const historyProps = admin
+    ? serializeSlicHistory(history)
+    : serializeSlicHistory(history).map(withNamedUser);
 
   return (
     <>
@@ -31,9 +45,9 @@ async function EditPage({ params, searchParams }) {
       </Typography>
 
       {report && <ReportBeingFixed report={report} />}
-      <SlicAuditInfo slic={serializeSlic(slicData)} />
-      <SlicForm initialData={serializeSlic(slicData)} mode='edit' reportId={report?._id} />
-      <SlicHistoryList history={serializeSlicHistory(history)} />
+      <SlicAuditInfo slic={slicProps} />
+      <SlicForm initialData={slicProps} mode='edit' reportId={report?._id} />
+      <SlicHistoryList history={historyProps} />
     </>
   );
 }

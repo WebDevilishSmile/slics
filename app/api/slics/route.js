@@ -34,7 +34,7 @@ export async function POST(request) {
     const newSlic = await createSlic(body, session.user);
     // A push to the other admins who chose SLIC edits, after the response.
     after(() =>
-      notifySlicEdit({ numSlic: newSlic.numSlic, action: 'created', except: session.user.id }),
+      notifySlicEdit({ numSlic: newSlic.numSlic, action: 'created', except: session.user.id, byRole: session.user.role }),
     );
 
     return NextResponse.json(

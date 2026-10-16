@@ -83,8 +83,11 @@ function cards({ notifications, activity, health, features, admins, support, mem
       icon: <AdminPanelSettingsOutlined />,
       title: 'Admins',
       lines: admins
-        ? [`${plural(admins.admins, 'admin')}, ${admins.superAdmins} super`, 'Add, remove, and what each has done.']
-        : ['Add, remove, and what each has done.'],
+        ? [
+            `${plural(admins.admins, 'admin')}, ${admins.superAdmins} super${admins.dispatch ? `, ${admins.dispatch} dispatch` : ''}`,
+            'Roles, the tools each can use, and what each has done.',
+          ]
+        : ['Roles, the tools each can use, and what each has done.'],
     },
     {
       href: '/admin/super/supporters',

@@ -1,17 +1,22 @@
 import { NextResponse } from 'next/server';
 import { requireSuperAdmin } from '@/lib/authz';
 import { getUserById } from '@/lib/db/users';
-import { setAdminRole } from '@/lib/db/admins';
+import { setUserRole } from '@/lib/db/admins';
 
 export const runtime = 'nodejs';
 
-// The role chip on /admin/users. Super-admin-only since the super admin role
-// (2026-10-10); every change is written to `admin_audit` first.
+// The role menu on /admin/users. Super-admin-only since the super admin role
+// (2026-10-10); every change is written to `admin_audit` first. Body:
+// { role } ('user', 'dispatch' or 'admin', docs/STAFF-ROLES.md). A page
+// opened before dispatch existed sends no body and means the old toggle: a
+// driver becomes an admin, anyone else goes back to a driver, so it can never
+// promote a dispatcher.
 export async function PATCH(req, { params }) {
   const { session, denied } = await requireSuperAdmin();
   if (denied) return denied;
 
   const { id: userId } = await params;
+  const body = await req.json().catch(() => null);
 
   try {
     const target = await getUserById(userId).catch(() => null);
@@ -19,7 +24,8 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const result = await setAdminRole(userId, target.role !== 'admin', session.user);
+    const role = body?.role ?? ((target.role || 'user') === 'user' ? 'admin' : 'user');
+    const result = await setUserRole(userId, role, session.user);
     if (result.error) {
       return NextResponse.json({ error: result.error }, { status: result.status });
     }

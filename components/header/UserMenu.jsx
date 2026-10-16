@@ -14,6 +14,7 @@ import {
   HubOutlined,
   InfoOutlined,
   LocalCafeOutlined,
+  LocalShippingOutlined,
   LoginOutlined,
   LogoutOutlined,
   MenuOutlined,
@@ -37,7 +38,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 
-import { BMC_URL, COVERS_OPEN, PLACES_NEW_UNTIL } from '@/constants';
+import { BMC_URL, COVERS_OPEN, PLACES_NEW_UNTIL, STAFF_AREA_KEYS } from '@/constants';
 import { refreshAdminAlerts } from '@/lib/adminAlertsStore';
 import { useOpenDisputesCount } from '@/lib/coverDisputesStore';
 import { usePendingClaimsCount } from '@/lib/driverClaimsStore';
@@ -134,13 +135,19 @@ function UserMenu({ user, features, signOutAction }) {
   };
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
-  // Admins: Jobs-tab and cover-tab changes they haven't seen (alerts,
-  // docs/ON-CALL-SHEET-SYNC.md; /admin/jobs and /admin/cover/jobs clear
-  // them), open SLIC reports (RECOMMENDATIONS.md #5; they count until closed
-  // on /admin/reports) and driver claims waiting for a decision and open
-  // cover list disputes (docs/COVER-BIDDING.md), rechecked on route changes
-  // with one call, at most once a minute (lib/adminAlertsStore.js).
+  // Staff (admins and dispatch, docs/STAFF-ROLES.md): Jobs-tab and cover-tab
+  // changes they haven't seen (alerts, docs/ON-CALL-SHEET-SYNC.md;
+  // /admin/jobs and /admin/cover/jobs clear them), open SLIC reports
+  // (RECOMMENDATIONS.md #5; they count until closed on /admin/reports) and
+  // driver claims waiting for a decision and open cover list disputes
+  // (docs/COVER-BIDDING.md), rechecked on route changes with one call, at
+  // most once a minute (lib/adminAlertsStore.js). Each count is 0 outside the
+  // account's tools, so a dispatcher with SLICs alone never has a badge.
   const isAdmin = user?.role === 'admin';
+  const isStaff = STAFF_AREA_KEYS.some((key) => userHasArea(user, key));
+  // The Dispatch row: dispatchers, and super admins to see what Dispatch sees.
+  const isDispatch = user?.role === 'dispatch';
+  const showDispatch = isDispatch || (isAdmin && user?.superAdmin === true);
   const jobChanges = useJobChangesCount();
   const coverJobChanges = useCoverJobChangesCount();
   const openReports = useOpenReportsCount();
@@ -157,9 +164,9 @@ function UserMenu({ user, features, signOutAction }) {
     .filter(Boolean)
     .join(', ');
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!isStaff) return;
     refreshAdminAlerts();
-  }, [isAdmin, pathname]);
+  }, [isStaff, pathname]);
   // Covers is for staff with the Covers area while it's tested, until the
   // super admin's switch opens it (canUseCovers in lib/authz.js).
   const coversOpen = features?.coversOpen ?? COVERS_OPEN;
@@ -190,11 +197,11 @@ function UserMenu({ user, features, signOutAction }) {
         // On the blue header the focus outline takes the icon's color.
         sx={{ color: 'text.light', '&.Mui-focusVisible': { outlineColor: 'currentColor' } }}
         onClick={handleOpen}
-        aria-label={isAdmin && alerts ? `Open menu, ${alertsText}` : 'Open menu'}
+        aria-label={isStaff && alerts ? `Open menu, ${alertsText}` : 'Open menu'}
         aria-expanded={open}
         aria-controls={MENU_ID}
       >
-        <Badge variant='dot' color='error' invisible={!isAdmin || !alerts}>
+        <Badge variant='dot' color='error' invisible={!isStaff || !alerts}>
           <MenuOutlined />
         </Badge>
       </IconButton>
@@ -341,6 +348,21 @@ function UserMenu({ user, features, signOutAction }) {
                 </Badge>
               }
               current={isCurrent('/admin', true)}
+            />
+          )}
+          {showDispatch && (
+            <NavItem
+              onClick={handleClose}
+              href='/dispatch'
+              label='Dispatch'
+              secondary={!isDispatch ? 'What Dispatch sees' : alerts ? alertsText : 'Dispatch only'}
+              icon={
+                // A super admin's alerts are on the Admin row.
+                <Badge badgeContent={isDispatch ? alerts : 0} color='error' max={99}>
+                  <LocalShippingOutlined />
+                </Badge>
+              }
+              current={isCurrent('/dispatch')}
             />
           )}
           <InstallMenuItem />

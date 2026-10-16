@@ -34,6 +34,7 @@ const PAGE_TITLES = [
   ['/terms', 'Terms of Service'],
   ['/covers', 'Covers'],
   ['/places', 'Places'],
+  ['/dispatch', 'Dispatch'],
   ['/admin/slics', 'SLICs'],
   ['/admin/new', 'New SLIC'],
   ['/admin/edit', 'Edit SLIC'],

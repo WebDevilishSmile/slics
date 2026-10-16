@@ -24,7 +24,7 @@ import UserMembership from './UserMembership';
 import UserPhone from './UserPhone';
 import UserRole from './UserRole';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
-import { STAFF_ROLES } from '@/constants';
+import { ROLE_LABELS, STAFF_ROLES } from '@/constants';
 
 function UserCard({ user: initialUser, viewCount = 0 }) {
   const [user, setUser] = useState(initialUser);
@@ -72,11 +72,12 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
     }
   }
 
-  async function handleRoleToggle() {
+  async function handleRoleChange(role) {
     try {
       const response = await fetch(`/api/users/${user._id}/toggle-role`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role }),
       });
       const data = await response.json();
       if (!response.ok)
@@ -154,22 +155,22 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           {/* Spacer */}
           <Box sx={{ flexGrow: 1 }} />
 
-          {/* Role chip — hidden on xs, rendered as div to avoid nested <button> */}
+          {/* Role chip — hidden on xs. Changing it is in the details below
+              (UserRole), so a tap while scrolling can't. */}
           <Chip
             component='div'
-            label={user.superAdmin ? 'super admin' : user.role}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (canChangeRole) handleRoleToggle();
-            }}
+            label={
+              user.superAdmin
+                ? 'super admin'
+                : (ROLE_LABELS[user.role || 'user'] ?? String(user.role)).toLowerCase()
+            }
             sx={[
               softRaisedSmall,
               {
                 flexShrink: 0,
-                cursor: canChangeRole ? 'pointer' : 'default',
                 display: { xs: 'none', sm: 'flex' },
-                color: user.role === 'admin' ? 'primary.main' : 'text.primary',
-                fontWeight: user.role === 'admin' ? 600 : 400,
+                color: STAFF_ROLES.includes(user.role) ? 'primary.main' : 'text.primary',
+                fontWeight: STAFF_ROLES.includes(user.role) ? 600 : 400,
               },
             ]}
           />
@@ -243,7 +244,7 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
         </Typography>
         <UserMembership user={user} onToggle={handleMemberToggle} disabled={isProtected} />
-        <UserRole user={user} onToggle={handleRoleToggle} canToggle={canChangeRole} />
+        <UserRole user={user} onChange={handleRoleChange} canChange={canChangeRole} />
         <UserEmail email={user.email} />
         {user.phone ? (
           <UserPhone phone={user.phone} />

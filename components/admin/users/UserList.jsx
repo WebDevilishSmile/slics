@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { softInputSx, softToggleSx } from '@/components/utility/soft';
+import { STAFF_ROLES } from '@/constants';
 import UserCard from './UserCard';
 
 const USERS_PER_PAGE = 10;
@@ -74,7 +75,9 @@ function UserList({ users, viewCounts = {} }) {
   const filteredUsers = users.filter(
     (user) =>
       (view.members ? user.bmcMember : true) &&
-      (view.admins ? user.role === 'admin' : true) &&
+      // `admins`: staff, admins and dispatch (docs/STAFF-ROLES.md); the URL
+      // keeps its old name so saved links still work.
+      (view.admins ? STAFF_ROLES.includes(user.role) : true) &&
       (view.verified ? user.driverVerified : true) &&
       user.name.toLowerCase().includes(view.q.toLowerCase()),
   );
@@ -152,7 +155,7 @@ function UserList({ users, viewCounts = {} }) {
           />
           <Chip
             size='medium'
-            label='Admins only'
+            label='Staff only'
             clickable
             aria-pressed={view.admins}
             sx={softToggleSx}

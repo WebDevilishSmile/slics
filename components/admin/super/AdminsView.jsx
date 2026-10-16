@@ -23,7 +23,9 @@ import {
   createFilterOptions,
 } from '@mui/material';
 
+import { ROLE_LABELS, STAFF_ROLES } from '@/constants';
 import { apiRequest } from '@/lib/apiRequest';
+import { areaEntries } from '@/lib/staffAreas';
 import {
   softContainedSx,
   softInputSx,
@@ -31,7 +33,9 @@ import {
   softPressSx,
   softRaised,
   softRaisedSmall,
+  softToggleSx,
 } from '@/components/utility/soft';
+import RoleAreas from './RoleAreas';
 
 const COUNT_LABELS = [
   ['slicEdits', 'SLIC change', 'SLIC changes'],
@@ -60,8 +64,9 @@ function Section({ id, title, count, children }) {
   );
 }
 
-// One shared confirm dialog for adding and removing (drivers/DeleteDriverDialog.jsx
-// layout). `confirm` is { title, body, action, run } or null.
+// One shared confirm dialog for adding, moving and removing
+// (drivers/DeleteDriverDialog.jsx layout). `confirm` is { title, body, action,
+// run } or null.
 function ConfirmDialog({ confirm, onClose }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -113,10 +118,15 @@ function ConfirmDialog({ confirm, onClose }) {
   );
 }
 
-function AdminCard({ admin, isMe, index, onRemove }) {
+// The other staff role: where "Make dispatch" / "Make admin" moves someone.
+const otherRole = (role) => (role === 'admin' ? 'dispatch' : 'admin');
+
+function AdminCard({ admin, isMe, index, onMove, onRemove }) {
   const [open, setOpen] = useState(false);
   const counts = COUNT_LABELS.filter(([key]) => admin.counts[key] > 0);
   const listId = `admin-activity-${admin._id}`;
+  // Never a super admin, and never yourself (lib/db/admins.js refuses both).
+  const changeable = !admin.superAdmin && !isMe;
 
   return (
     <Box
@@ -151,9 +161,7 @@ function AdminCard({ admin, isMe, index, onRemove }) {
       </Box>
 
       <Typography variant='body2' sx={{ mt: 1.5 }}>
-        {admin.lastActiveAt
-          ? `Last admin activity ${when(admin.lastActiveAt)}`
-          : 'No recorded admin activity'}
+        {admin.lastActiveAt ? `Last activity ${when(admin.lastActiveAt)}` : 'No recorded activity'}
       </Typography>
       <Typography variant='body2' color='text.secondary'>
         {admin.lookups} lookup{admin.lookups === 1 ? '' : 's'}
@@ -187,13 +195,21 @@ function AdminCard({ admin, isMe, index, onRemove }) {
             Recent activity
           </Button>
         )}
-        {!admin.superAdmin && !isMe && (
+        {changeable && (
+          <Button
+            onClick={() => onMove(admin)}
+            sx={[softRaisedSmall, softPressSx, { px: 2.5, minHeight: '3rem' }]}
+          >
+            {otherRole(admin.role) === 'admin' ? 'Make admin' : 'Move to Dispatch'}
+          </Button>
+        )}
+        {changeable && (
           <Button
             color='error'
             onClick={() => onRemove(admin)}
             sx={[softRaisedSmall, softPressSx, { px: 2.5, minHeight: '3rem' }]}
           >
-            Remove admin
+            Remove
           </Button>
         )}
       </Box>
@@ -229,34 +245,94 @@ function AdminCard({ admin, isMe, index, onRemove }) {
   );
 }
 
+function StaffList({ staff, myId, onMove, onRemove }) {
+  return (
+    <Stack component='ul' spacing={2} sx={{ listStyle: 'none', m: 0, p: 0 }}>
+      {staff.map((admin, index) => (
+        <AdminCard
+          key={admin._id}
+          admin={admin}
+          index={index}
+          isMe={admin._id === myId}
+          onMove={onMove}
+          onRemove={onRemove}
+        />
+      ))}
+    </Stack>
+  );
+}
+
 const filterOptions = createFilterOptions({
   stringify: (user) => `${user.name} ${user.email}`,
   limit: 50,
 });
 
-// The super admin's Admins page: every admin with what the app recorded them
-// doing, and adding or removing one. Every change goes to `admin_audit`.
-export default function AdminsView({ admins, candidates, myId }) {
+// "They'll have the tools turned on for Dispatch: SLICs and Jobs.", for the
+// confirm dialogs.
+function toolsSentence(role, roleAreas) {
+  const labels = areaEntries(roleAreas[role]).map((area) => area.label);
+  if (labels.length === 0) return `No tools are turned on for ${ROLE_LABELS[role]} yet.`;
+  const list =
+    labels.length === 1 ? labels[0] : `${labels.slice(0, -1).join(', ')} and ${labels.at(-1)}`;
+  return `They'll have the tools turned on for ${ROLE_LABELS[role]}: ${list}.`;
+}
+
+// Where each role finds its tools, for the add dialog.
+const FIND_THEM = {
+  admin: 'They’ll find them under Admin in the menu, without Super Admin.',
+  dispatch: 'They’ll find them under Dispatch in the menu.',
+};
+
+// The super admin's Admins page (docs/STAFF-ROLES.md): which tools each staff
+// role may use, every admin and dispatcher with what the app recorded them
+// doing, and adding, moving or removing one. Every change goes to
+// `admin_audit`. `roleAreas` is { areas, changed } (getRoleAreasFresh).
+export default function AdminsView({ admins, candidates, roleAreas: initialRoleAreas, myId }) {
+  const [roleAreas, setRoleAreas] = useState(initialRoleAreas.areas);
   const [picked, setPicked] = useState(null);
+  const [pickedRole, setPickedRole] = useState('admin');
   const [confirm, setConfirm] = useState(null);
+
+  const adminRows = admins.filter((admin) => admin.role === 'admin');
+  const dispatchRows = admins.filter((admin) => admin.role === 'dispatch');
+  const nameOf = (user) => user.name || user.email;
+  const becomes = (role) => (role === 'admin' ? 'an admin' : 'a dispatcher');
 
   const askAdd = () =>
     setConfirm({
-      title: 'Make an admin?',
-      body: `${picked.name || picked.email} will be able to edit SLICs, cover jobs, drivers and comments, and see every user's account. They won't see Supporters or this page.`,
-      action: 'Make admin',
+      title: pickedRole === 'admin' ? 'Make an admin?' : 'Add to Dispatch?',
+      body: `${nameOf(picked)} becomes ${becomes(pickedRole)}. ${toolsSentence(pickedRole, roleAreas)} ${FIND_THEM[pickedRole]}`,
+      action: pickedRole === 'admin' ? 'Make admin' : 'Add to Dispatch',
       run: async () => {
-        const { error } = await apiRequest('/api/admins', { body: { userId: picked._id } });
+        const { error } = await apiRequest('/api/admins', {
+          body: { userId: picked._id, role: pickedRole },
+        });
         if (error) throw new Error(error);
         setPicked(null);
       },
     });
 
+  const askMove = (admin) => {
+    const role = otherRole(admin.role);
+    setConfirm({
+      title: role === 'admin' ? 'Make an admin?' : 'Move to Dispatch?',
+      body: `${nameOf(admin)} becomes ${becomes(role)}. ${toolsSentence(role, roleAreas)} What they did before stays on record.`,
+      action: role === 'admin' ? 'Make admin' : 'Move to Dispatch',
+      run: async () => {
+        const { error } = await apiRequest(`/api/admins/${admin._id}`, {
+          method: 'PATCH',
+          body: { role },
+        });
+        if (error) throw new Error(error);
+      },
+    });
+  };
+
   const askRemove = (admin) =>
     setConfirm({
-      title: 'Remove this admin?',
-      body: `${admin.name || admin.email} goes back to a regular driver account. What they did as an admin stays on record.`,
-      action: 'Remove admin',
+      title: admin.role === 'admin' ? 'Remove this admin?' : 'Remove from Dispatch?',
+      body: `${nameOf(admin)} goes back to a regular driver account. What they did stays on record.`,
+      action: 'Remove',
       danger: true,
       run: async () => {
         const { error } = await apiRequest(`/api/admins/${admin._id}`, { method: 'DELETE' });
@@ -266,22 +342,26 @@ export default function AdminsView({ admins, candidates, myId }) {
 
   return (
     <Stack spacing={4} sx={{ width: '100%' }}>
-      <Section id='admins-list' title='Admins' count={admins.length}>
-        <Stack component='ul' spacing={2} sx={{ listStyle: 'none', m: 0, p: 0 }}>
-          {admins.map((admin, index) => (
-            <AdminCard
-              key={admin._id}
-              admin={admin}
-              index={index}
-              isMe={admin._id === myId}
-              onRemove={askRemove}
-            />
-          ))}
-        </Stack>
+      <Section id='admins-roles' title='What each role can use'>
+        <RoleAreas areas={roleAreas} onChange={setRoleAreas} />
       </Section>
 
-      <Section id='admins-add' title='Add an admin'>
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1.5 }}>
+      <Section id='admins-list' title='Admins' count={adminRows.length}>
+        <StaffList staff={adminRows} myId={myId} onMove={askMove} onRemove={askRemove} />
+      </Section>
+
+      <Section id='admins-dispatch' title='Dispatch' count={dispatchRows.length}>
+        {dispatchRows.length > 0 ? (
+          <StaffList staff={dispatchRows} myId={myId} onMove={askMove} onRemove={askRemove} />
+        ) : (
+          <Typography variant='body2' color='text.secondary'>
+            Nobody yet. Add someone below as Dispatch.
+          </Typography>
+        )}
+      </Section>
+
+      <Section id='admins-add' title='Add someone'>
+        <Stack spacing={1.5}>
           <Autocomplete
             options={candidates}
             value={picked}
@@ -307,33 +387,47 @@ export default function AdminsView({ admins, candidates, myId }) {
                 sx: [softRaised, { mt: 1, borderRadius: 4, '& .MuiAutocomplete-option': { minHeight: '3rem' } }],
               },
             }}
-            sx={{ flex: 1 }}
             renderInput={(params) => (
               <TextField
                 {...params}
                 placeholder='Search by name or email'
-                slotProps={{ htmlInput: { ...params.inputProps, 'aria-label': 'User to make an admin' } }}
+                slotProps={{ htmlInput: { ...params.inputProps, 'aria-label': 'User to add' } }}
                 sx={softInputSx}
               />
             )}
           />
-          <Button
-            variant='contained'
-            onClick={askAdd}
-            disabled={!picked}
-            startIcon={<PersonAddAlt1Outlined />}
-            sx={[softContainedSx, { px: 3, minHeight: '3rem', flexShrink: 0 }]}
-          >
-            Make admin
-          </Button>
-        </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+            {/* Which role they get. Pressed in, and blue, while chosen. */}
+            <Box role='group' aria-label='Role' sx={{ display: 'flex', gap: 1, flex: 1 }}>
+              {STAFF_ROLES.map((role) => (
+                <Button
+                  key={role}
+                  aria-pressed={pickedRole === role}
+                  onClick={() => setPickedRole(role)}
+                  sx={[softToggleSx, { px: 2.5, minHeight: '3rem', borderRadius: 999 }]}
+                >
+                  {ROLE_LABELS[role]}
+                </Button>
+              ))}
+            </Box>
+            <Button
+              variant='contained'
+              onClick={askAdd}
+              disabled={!picked}
+              startIcon={<PersonAddAlt1Outlined />}
+              sx={[softContainedSx, { px: 3, minHeight: '3rem', flexShrink: 0 }]}
+            >
+              Add
+            </Button>
+          </Box>
+        </Stack>
       </Section>
 
       <Typography variant='body2' color='text.secondary'>
-        Activity is what the app records with a name on it: SLIC changes, cover jobs, gyms,
-        cover-week refreshes, and (from October 10, 2026) role and membership changes. Deleted
-        comments and driver-roster edits aren&apos;t recorded yet. A super admin can only be
-        changed with <code>scripts/setSuperAdmin.mjs</code>.
+        Activity is what the app records with a name on it: SLIC changes (deletes from October 16,
+        2026), cover jobs, gyms, cover-week refreshes, and (from October 10, 2026) role and
+        membership changes. Deleted comments and driver-roster edits aren&apos;t recorded yet. A
+        super admin can only be changed with <code>scripts/setSuperAdmin.mjs</code>.
       </Typography>
 
       <ConfirmDialog confirm={confirm} onClose={() => setConfirm(null)} />

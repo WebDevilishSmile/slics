@@ -31,7 +31,7 @@ import {
 
 import { ROLE_LABELS, STAFF_ROLES } from '@/constants';
 import { apiRequest } from '@/lib/apiRequest';
-import { areaEntries } from '@/lib/staffAreas';
+import { areaList } from '@/lib/staffAreas';
 import {
   softContainedSx,
   softInputSx,
@@ -42,6 +42,7 @@ import {
   softToggleSx,
 } from '@/components/utility/soft';
 import RoleAreas from './RoleAreas';
+import WelcomePreview from './WelcomePreview';
 
 const COUNT_LABELS = [
   ['slicEdits', 'SLIC change', 'SLIC changes'],
@@ -276,11 +277,8 @@ const filterOptions = createFilterOptions({
 // "They'll have the tools turned on for Dispatch: SLICs and Jobs.", for the
 // confirm dialogs.
 function toolsSentence(role, roleAreas) {
-  const labels = areaEntries(roleAreas[role]).map((area) => area.label);
-  if (labels.length === 0) return `No tools are turned on for ${ROLE_LABELS[role]} yet.`;
-  const list =
-    labels.length === 1 ? labels[0] : `${labels.slice(0, -1).join(', ')} and ${labels.at(-1)}`;
-  return `They'll have the tools turned on for ${ROLE_LABELS[role]}: ${list}.`;
+  if (roleAreas[role].length === 0) return `No tools are turned on for ${ROLE_LABELS[role]} yet.`;
+  return `They'll have the tools turned on for ${ROLE_LABELS[role]}: ${areaList(roleAreas[role])}.`;
 }
 
 // Where each role finds its tools, for the add dialog.
@@ -293,7 +291,13 @@ const FIND_THEM = {
 // role may use, every admin and dispatcher with what the app recorded them
 // doing, and adding, moving or removing one. Every change goes to
 // `admin_audit`. `roleAreas` is { areas, changed } (getRoleAreasFresh).
-export default function AdminsView({ admins, candidates, roleAreas: initialRoleAreas, myId }) {
+export default function AdminsView({
+  admins,
+  candidates,
+  roleAreas: initialRoleAreas,
+  myId,
+  firstName,
+}) {
   const [roleAreas, setRoleAreas] = useState(initialRoleAreas.areas);
   const [picked, setPicked] = useState(null);
   const [pickedRole, setPickedRole] = useState('admin');
@@ -307,7 +311,7 @@ export default function AdminsView({ admins, candidates, roleAreas: initialRoleA
   const askAdd = () =>
     setConfirm({
       title: pickedRole === 'admin' ? 'Make an admin?' : 'Add to Dispatch?',
-      body: `${nameOf(picked)} becomes ${becomes(pickedRole)}. ${toolsSentence(pickedRole, roleAreas)} ${FIND_THEM[pickedRole]}`,
+      body: `${nameOf(picked)} becomes ${becomes(pickedRole)}. ${toolsSentence(pickedRole, roleAreas)} ${FIND_THEM[pickedRole]} A welcome note will be waiting on /home.`,
       action: pickedRole === 'admin' ? 'Make admin' : 'Add to Dispatch',
       run: async () => {
         const { error } = await apiRequest('/api/admins', {
@@ -322,7 +326,8 @@ export default function AdminsView({ admins, candidates, roleAreas: initialRoleA
     const role = otherRole(admin.role);
     setConfirm({
       title: role === 'admin' ? 'Make an admin?' : 'Move to Dispatch?',
-      body: `${nameOf(admin)} becomes ${becomes(role)}. ${toolsSentence(role, roleAreas)} What they did before stays on record.`,
+      // Only a promotion leaves a welcome note (lib/db/admins.js).
+      body: `${nameOf(admin)} becomes ${becomes(role)}. ${toolsSentence(role, roleAreas)} ${role === 'admin' ? 'A welcome note will be waiting on /home. ' : ''}What they did before stays on record.`,
       action: role === 'admin' ? 'Make admin' : 'Move to Dispatch',
       run: async () => {
         const { error } = await apiRequest(`/api/admins/${admin._id}`, {
@@ -432,6 +437,10 @@ export default function AdminsView({ admins, candidates, roleAreas: initialRoleA
             </Button>
           </Box>
         </Stack>
+      </Section>
+
+      <Section id='admins-welcome' title='Welcome note'>
+        <WelcomePreview roleAreas={roleAreas} firstName={firstName} />
       </Section>
 
       <Typography variant='body2' color='text.secondary'>

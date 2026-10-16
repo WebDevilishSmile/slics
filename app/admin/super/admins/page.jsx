@@ -30,7 +30,11 @@ export default async function AdminsPage() {
         sx={{ maxWidth: theme.layout.width.prose, alignItems: 'stretch', px: { xs: 2, sm: 3 } }}
       >
         {overview ? (
-          <AdminsView {...overview} myId={session.user.id} />
+          <AdminsView
+            {...overview}
+            myId={session.user.id}
+            firstName={session.user.name?.split(' ')[0]}
+          />
         ) : (
           <Alert severity='error'>Couldn&apos;t load the admins. Try again in a moment.</Alert>
         )}

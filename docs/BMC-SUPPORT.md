@@ -165,7 +165,11 @@ to remove it).
   - The card reads "A note for you, John"; the note's words are `noteCopy` in
     `support/ThankYouNote.jsx`.
 - [x] The note (built 2026-10-10, redesigned 2026-10-12): the /home card holds a sealed
-      envelope (`support/Envelope.jsx`). Tapping it opens `support/ThankYouNote.jsx`:
+      envelope (`support/Envelope.jsx`). Tapping it opens `support/ThankYouNote.jsx`.
+      Since 2026-10-16 the envelope, the letter and the card are shared with the welcome
+      note new staff get (`support/LetterNote.jsx`, `support/NoteCard.jsx`,
+      `STAFF-ROLES.md`); `ThankYouNote.jsx` and `SupportThanks.jsx` hold only what's the
+      thank-you's (the words, the heart, the cup, the `thank-*` names):
   - The envelope flies out of the card to the middle of the screen. Its paper is
     shaded as if lit from the top left, like the app's soft shadows. Its amber wax seal
     (the coffee cup pressed in) lifts away, and the flap swings up.

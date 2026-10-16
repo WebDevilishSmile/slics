@@ -83,7 +83,8 @@ Use absolute dates.
 - [ ] **Staff roles** (built 2026-10-16): after the deploy, the live checks in
       `STAFF-ROLES.md` → "Verifying": every admin tool still on `/admin` and the switches
       on `/admin/super/admins`; then `claude-test@slics.app` made Dispatch sees only SLICs
-      (`/dispatch`, "No access" elsewhere, 403s), and is set back to User
+      (`/dispatch`, "No access" elsewhere, 403s) and gets the welcome note once on `/home`,
+      and is set back to User
 
 ---
 

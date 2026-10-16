@@ -20,7 +20,7 @@ by default.
 
 | To undo | How |
 |---|---|
-| A stage | `git revert` its commit ("Staff roles, part 1" to "part 8", plus the part 4 follow-up; part 6 is the docs) |
+| A stage | `git revert` its commit ("Staff roles, part 1" to "part 9", plus the follow-ups; part 6 is the docs) |
 | Saved switches | Delete the `app-settings` document `{ _id: 'roles' }`; the defaults come back |
 | A dispatcher's access | Set their role to User on `/admin/super/admins` (or `/admin/users`) |
 
@@ -147,6 +147,34 @@ Decided:
       `pushTypesFor` offers it only with the tool (`/profile`, push-prefs, the
       Notifications overview).
 
+### Part 9: a welcome note (2026-10-16, asked for after the first deploy)
+
+Tiago, 2026-10-16: "create a note similar to the thank you note that shows a user when
+they are provided with dispatch or admin privileges and a link to that particalar page.
+No heart tho. Maybe a new animated svg, that shows the S from just the dot."
+
+- [x] The thank-you's envelope, letter and `/home` card are shared pieces now
+      (`support/LetterNote.jsx`, `support/NoteCard.jsx`; the seal's icon is a prop of
+      `support/Envelope.jsx`). `ThankYouNote.jsx` and `SupportThanks.jsx` keep only what's
+      theirs, and play exactly as before.
+- [x] `AnimatedSlicsMark` `story='dot'`: the logo's dot alone in the middle takes a
+      breath, slides to the top of the S, draws it and lands on the logo. Its loop is
+      `public/slics-animated-dot-logo.svg`.
+- [x] `setUserRole` stores `users.roleNotice: { role, at }` on a promotion (to dispatch
+      from user, to admin from either) and removes it on any other change, so a move
+      down to Dispatch or out leaves nothing waiting.
+- [x] `/home` shows `staff/WelcomeCard.jsx` (an envelope with a key on its seal) to an
+      account whose notice is waiting and still its role (`getRoleNotice`, read only for
+      staff). The letter (`staff/WelcomeNote.jsx`) welcomes them to Admin or Dispatch,
+      names the role's tools, is signed "Glad to have you," and opens `/admin` or
+      `/dispatch`. Opening or dismissing it calls `POST /api/users/me/role-notice`, which
+      clears the notice.
+- [x] The Admins page previews it for each role ("Welcome note"), and its confirm
+      dialogs say a note will be waiting.
+
+**Rolling back part 9:** revert its commits. A `roleNotice` left on a row is harmless
+without the code; `$unset` it if it matters.
+
 ## Verifying
 
 Done before shipping (2026-10-16):
@@ -171,6 +199,10 @@ After deploying (there's no dev copy wired up yet, `DEV-DATABASE.md`):
       `/api/admin-alerts` is all zeros. Don't save a test SLIC (drivers see it). Then set
       it back to User.
 - [ ] A driver's menu and `/home` are unchanged.
+- [ ] The welcome note: make `claude-test@slics.app` Dispatch, sign in as it, and open the
+      card on `/home` on a phone. The letter names SLICs, "Open Dispatch" goes to
+      `/dispatch`, and the card doesn't come back. Then set it back to User; a second
+      promotion shows it once more.
 
 ## Follow-ups
 

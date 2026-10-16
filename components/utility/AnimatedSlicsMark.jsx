@@ -1,6 +1,6 @@
 import { SvgIcon } from '@mui/material';
 
-// The SLICs mark drawing itself, as one of two stories:
+// The SLICs mark drawing itself, as one of three stories:
 // - `question` (the default): its destination dot starts in the middle, draws
 //   a question mark, erases it, then draws the S and lands where the logo's
 //   dot sits. It plays once and stays on the logo (the 404 page); with `loop`
@@ -10,11 +10,16 @@ import { SvgIcon } from '@mui/material';
 //   of the heart's line, erases it and draws the S. It plays once, after
 //   Tiago signs the thank-you note (support/ThankYouNote.jsx), and stays on
 //   the logo.
-// For the places a question or a thank-you turns into SLICs, never the daily
-// lookup path. The glyphs are the ones in public/slics-question-icon.svg,
-// public/slics-icon.svg (SlicsMark.jsx) and public/slics-heart-icon.svg;
-// public/slics-animated-logo.svg and public/slics-animated-heart-logo.svg are
-// the looping versions as files, for use outside the app.
+// - `dot`: the logo's dot alone, in the middle. It takes a breath, then goes
+//   to the top of the S, draws it and lands where the logo's dot sits. It
+//   plays once, after Tiago signs the welcome note a new admin or dispatcher
+//   gets (staff/WelcomeNote.jsx), and stays on the logo.
+// For the places a question, a thank-you or a welcome turns into SLICs, never
+// the daily lookup path. The glyphs are the ones in
+// public/slics-question-icon.svg, public/slics-icon.svg (SlicsMark.jsx) and
+// public/slics-heart-icon.svg; public/slics-animated-logo.svg,
+// public/slics-animated-heart-logo.svg and public/slics-animated-dot-logo.svg
+// are the looping versions as files, for use outside the app.
 //
 // SVG animation (SMIL): one timeline, no JavaScript. The dot rides a single
 // motion path, and each glyph's stroke is revealed and erased by its dash
@@ -162,6 +167,28 @@ const HEART_LOOP = [
   { dur: 0.2, ease: SLIDE, r: STROKE_WIDTH / 2 },
 ];
 
+// The dot holds while the letter comes forward and Tiago signs it, like the
+// heart (staff/WelcomeNote.jsx), then takes a breath: it swells and settles.
+// It slides to the top of the S, draws it and lands where the logo's dot sits.
+const DOT_ONCE = [
+  { dur: 1.7, ease: HOLD },
+  { dur: 0.18, ease: HOP, r: DOT_R * 1.3 },
+  { dur: 0.24, ease: SLIDE, r: DOT_R },
+  { dur: 0.2, ease: HOLD },
+  { dur: 0.5, ease: SLIDE, to: S.start },
+  { dur: 1.4, ease: DRAW, draw: S },
+  { dur: 0.25, ease: HOP, to: S.dot },
+];
+// The loop goes on from the logo back to the dot alone: it erases the S and
+// slides back to the middle.
+const DOT_LOOP = [
+  ...DOT_ONCE,
+  { dur: 1.2, ease: HOLD },
+  { dur: 0.25, ease: HOP, to: S.end },
+  { dur: 1.1, ease: DRAW, erase: S },
+  { dur: 0.5, ease: SLIDE, to: MIDDLE },
+];
+
 // Where each story starts (the dot and its radius, and any glyph already
 // drawn), the glyphs it draws, its last frame (`still`, for reduced motion)
 // and the point it scales about.
@@ -184,6 +211,15 @@ const STORIES = {
     pivot: [50, 48],
     once: HEART_ONCE,
     loop: HEART_LOOP,
+  },
+  dot: {
+    start: MIDDLE,
+    startR: DOT_R,
+    drawn: [],
+    glyphs: [S],
+    still: S,
+    once: DOT_ONCE,
+    loop: DOT_LOOP,
   },
 };
 

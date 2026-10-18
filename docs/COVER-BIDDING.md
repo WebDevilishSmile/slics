@@ -30,6 +30,8 @@ The app is used daily in production.
   a posted week's pick list doesn't name can't keep a list for that week, and "This is a
   mistake" tells the admins (see the end of stage 2). Run `npm run db:indexes` once it's
   deployed (`cover-disputes`), then check it with "Verifying the read-only rule" below.
+- **Early access** (built 2026-10-17): the super admin can let one account into Covers
+  before it opens to everyone (see "Early access" under stage 1).
 - **Stages 3–4:** not started.
 
 ---
@@ -123,6 +125,31 @@ doesn't do covers never has to.
       Driver tips authors (`getSlicThread`'s `showVerified`, only for those who can use
       Covers until rollout), and the admin user list and page.
 - [x] **Account deletion** deletes the driver's claims (`deleteUserDriverClaims`).
+
+### Early access (built 2026-10-17)
+
+Tiago asked: "In the user page, I want to be able to choose which individuals have access
+to the cover jobs info. I want to be able to toggle that off and on for whomever I
+decide." So he can let chosen drivers test Covers before the switch opens it to everyone.
+
+- [x] **The switch:** "Covers early access" on each `/admin/users` card and a "Covers"
+      well on `/admin/users/[id]` (`components/admin/users/UserCoversAccess.jsx`). Only a
+      super admin flips it, like the "Covers for every driver" switch; other admins with
+      the Users tool see the state. Staff whose role has the Covers tool show "Has Covers
+      through their role" and get no switch. A "Covers early access" filter on
+      `/admin/users` lists everyone let in.
+- [x] **Data:** `users.coversAccess = { at, by: { id, name } }` while on, `$unset` when off,
+      through `setCoversAccess` (`lib/db/users.js`), which writes `coversAccess.granted` /
+      `.revoked` to `admin_audit` first. `PUT /api/users/[id]/covers-access` with
+      `{ on }` (`requireSuperAdmin()`).
+- [x] **The rule:** `canUseCovers` adds `session.user.coversAccess` (`auth.js` reads it
+      with the role on every request), so everything behind it follows: `/covers`, the
+      menu row ("Early access" under it), the claim, cover lists, the This week card and
+      the check mark on tips.
+- **Only adds.** Once Covers is open it changes nothing (the switch says so), and a grant
+  is kept, so it applies again if Covers closes. It never keeps anyone out.
+- **Rollback:** `git revert` the server commit; saved `coversAccess` fields then do
+  nothing and can stay. The `/help` This week guide still waits for the switch.
 
 ### Rolling stage 1 out to every driver
 

@@ -172,10 +172,13 @@ function UserMenu({ user, features, signOutAction }) {
     if (!hasAlerts) return;
     refreshAdminAlerts();
   }, [hasAlerts, pathname]);
-  // Covers is for staff with the Covers area while it's tested, until the
-  // super admin's switch opens it (canUseCovers in lib/authz.js).
+  // Covers is for staff with the Covers area while it's tested, and anyone the
+  // super admin gave early access, until the super admin's switch opens it
+  // (canUseCovers in lib/authz.js).
   const coversOpen = features?.coversOpen ?? COVERS_OPEN;
-  const canUseCovers = Boolean(user) && (coversOpen || userHasArea(user, 'covers'));
+  const coversByRole = userHasArea(user, 'covers');
+  const canUseCovers =
+    Boolean(user) && (coversOpen || coversByRole || user.coversAccess === true);
   // Places opened to everyone on 2026-10-12; its row says "New" until the
   // date the super admin set.
   const placesIsNew = new Date().toISOString() < (features?.placesNewUntil ?? PLACES_NEW_UNTIL);
@@ -308,7 +311,9 @@ function UserMenu({ user, features, signOutAction }) {
                   onClick={handleClose}
                   href='/covers'
                   label='Covers'
-                  secondary={coversOpen ? undefined : 'Admin only for now'}
+                  secondary={
+                    coversOpen ? undefined : coversByRole ? 'Admin only for now' : 'Early access'
+                  }
                   icon={<EventAvailableOutlined />}
                   current={isCurrent('/covers')}
                 />

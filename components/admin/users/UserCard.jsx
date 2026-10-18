@@ -19,6 +19,7 @@ import Link from '@/components/utility/NextLink';
 
 import { softPressSx, softRaised, softRaisedSmall } from '@/components/utility/soft';
 import ResetPasswordDialog from './ResetPasswordDialog';
+import UserCoversAccess from './UserCoversAccess';
 import UserEmail from './UserEmail';
 import UserMembership from './UserMembership';
 import UserPhone from './UserPhone';
@@ -26,7 +27,9 @@ import UserRole from './UserRole';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
 import { ROLE_LABELS, STAFF_ROLES } from '@/constants';
 
-function UserCard({ user: initialUser, viewCount = 0 }) {
+// `coversOpen`: the "Covers for every driver" switch, for the early access
+// line (UserCoversAccess).
+function UserCard({ user: initialUser, viewCount = 0, coversOpen = false }) {
   const [user, setUser] = useState(initialUser);
   const router = useRouter();
   const { data: session } = useSession();
@@ -244,6 +247,20 @@ function UserCard({ user: initialUser, viewCount = 0 }) {
           Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
         </Typography>
         <UserMembership user={user} onToggle={handleMemberToggle} disabled={isProtected} />
+        {/* Only a super admin gives early access, like the Covers switch. */}
+        <UserCoversAccess
+          userId={user._id}
+          name={user.name}
+          initial={user.coversAccess}
+          byRole={user.coversByRole}
+          coversOpen={coversOpen}
+          canChange={session?.user?.superAdmin === true}
+          onSaved={(coversAccess) => {
+            setUser((current) => ({ ...current, coversAccess }));
+            // The list's "Covers early access" filter reads the page's rows.
+            router.refresh();
+          }}
+        />
         <UserRole user={user} onChange={handleRoleChange} canChange={canChangeRole} />
         <UserEmail email={user.email} />
         {user.phone ? (

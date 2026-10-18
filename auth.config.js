@@ -49,6 +49,7 @@ export const authConfig = {
         session.user.bmcMember = token.bmcMember || false;
         session.user.superAdmin = token.superAdmin === true;
         session.user.driverVerified = token.driverVerified === true;
+        session.user.coversAccess = token.coversAccess === true;
         session.user.areas = token.areas ?? [];
         session.user.created_at = token.created_at || new Date();
       }

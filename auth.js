@@ -76,6 +76,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           bmcMember: user.bmcMember,
           superAdmin: user.superAdmin === true,
           driverVerified: Boolean(user.driver?.verifiedAt),
+          coversAccess: Boolean(user.coversAccess),
           sessionVersion: user.sessionVersion ?? 0,
           comments: user.comments,
           created_at: user.created_at,
@@ -135,6 +136,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // adapter user is the row itself.
         token.driverVerified =
           user.driverVerified === true || Boolean(user.driver?.verifiedAt);
+        // Covers early access (setCoversAccess, lib/db/users.js): a flag from
+        // authorize(), the `{ at, by }` itself on Google's row.
+        token.coversAccess = Boolean(user.coversAccess);
         // Google's adapter user is the row itself; credentials pass it from
         // authorize(). A missing version is 0.
         token.sessionVersion = user.sessionVersion ?? 0;
@@ -161,6 +165,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             // A verified driver (lib/db/driverClaims.js): an admin linked the
             // account to its name on the on-call sheet.
             token.driverVerified = Boolean(dbUser.driver?.verifiedAt);
+            // The super admin let this account into Covers before it opens
+            // (canUseCovers, lib/authz.js).
+            token.coversAccess = Boolean(dbUser.coversAccess);
             token.created_at = dbUser.created_at || new Date();
           } else {
             // The user row is gone (deleted account). Returning null makes
@@ -204,6 +211,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.bmcMember = token.bmcMember ?? false;
         session.user.superAdmin = token.superAdmin === true;
         session.user.driverVerified = token.driverVerified === true;
+        // Read by canUseCovers (lib/authz.js) and the header menu.
+        session.user.coversAccess = token.coversAccess === true;
         // Read by hasArea (lib/authz.js) and the header menu.
         session.user.areas = token.areas ?? [];
         session.user.created_at = token.created_at || new Date();

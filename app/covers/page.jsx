@@ -42,14 +42,15 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // picking once stage 3 comes), and "This is a mistake" tells the admins
 // (covers/CoverDispute.jsx). The cover list route checks the same rule.
 //
-// Admin-only while it's tested, until the Covers switch opens it
-// (canUseCovers), checked before anything is read (docs/SECURITY.md #7).
+// Admin-only while it's tested (plus anyone the super admin gave early
+// access), until the Covers switch opens it (canUseCovers), checked before
+// anything is read (docs/SECURITY.md #7).
 export default async function CoversPage() {
   const session = await getSession();
   if (!canUseCovers(session)) {
     return (
       <RedirectMessage
-        heading='Covers is admin-only for now.'
+        heading="Covers isn't open to every driver yet."
         subheading='Redirecting you to the home page…'
         redirect='/home'
       />

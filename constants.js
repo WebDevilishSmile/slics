@@ -259,17 +259,24 @@ export const SUPPORT_HOURS_ESTIMATE = 200;
 // Move it forward with the next icon change.
 export const ICON_CHANGED_AT = '2026-10-11T00:00:00.000Z';
 
-// Push notifications are admin-only until stage 2 rolls out to every driver
-// (docs/PUSH-NOTIFICATIONS.md): `canUsePush` in lib/authz.js reads this. Only
-// the default: the switch on /admin/super/features wins. Turning it off again
-// is the rollback, and it stops sends to drivers too.
+// Push notifications are for admins and verified cover drivers until stage 2
+// rolls out to every driver (docs/PUSH-NOTIFICATIONS.md): `canUsePush` in
+// lib/authz.js reads this. Only the default: the switch on
+// /admin/super/features wins. Turning it off again is the rollback, and it
+// stops sends to the other drivers too.
 export const PUSH_OPEN = false;
+// How long before their call-in time a verified driver can be reminded on bid
+// day (docs/PUSH-NOTIFICATIONS.md, stage 3), in minutes, as chips under "Call-in
+// reminder" on /profile (users.coverReminderLeads). Until they choose, the default.
+export const COVER_REMINDER_LEADS = [15, 30, 60, 120];
+export const COVER_REMINDER_DEFAULT_LEADS = [15];
 
 // The kinds of push notification a driver can choose on /profile
 // (docs/PUSH-NOTIFICATIONS.md, stages 1b and 2), in the order the switches
 // show. Choices are per account (`users.pushPrefs[key]`); a key the account
 // never set means `defaultOn`. `audience` says who's offered and sent a kind:
-// 'driver' everyone `canUsePush` lets in (lib/authz.js), 'admin' admins,
+// 'driver' everyone `canUsePush` lets in (lib/authz.js), 'coverDriver' verified
+// drivers who can use Covers (isVerifiedDriver), 'admin' admins,
 // 'superAdmin' super admins. An admin kind's `area` is the tool it's about
 // (STAFF_AREAS below, docs/STAFF-ROLES.md): it's offered and sent only to
 // admins whose role has that tool, and always to super admins. The wording of
@@ -291,6 +298,41 @@ export const PUSH_TYPES = [
     label: 'Comments',
     description: 'A comment on a place you added, or a reply after you in a thread.',
     audience: 'driver',
+    defaultOn: true,
+  },
+  // Verified cover drivers (docs/PUSH-NOTIFICATIONS.md, stage 3): on by
+  // default for the same reason. Each is about the driver's own place, time
+  // and list, never another driver.
+  {
+    key: 'coverReminder',
+    group: 'Covers',
+    label: 'Call-in reminder',
+    description: 'Before your call-in time on bid day.',
+    audience: 'coverDriver',
+    defaultOn: true,
+  },
+  {
+    key: 'coverListTaken',
+    group: 'Covers',
+    label: 'Your list',
+    description: 'A job on your cover list is taken.',
+    audience: 'coverDriver',
+    defaultOn: true,
+  },
+  {
+    key: 'coverCallIn',
+    group: 'Covers',
+    label: 'Your call-in time',
+    description: "A week's pick list names you, or your time, place or bid day changes.",
+    audience: 'coverDriver',
+    defaultOn: true,
+  },
+  {
+    key: 'coverWeekJobs',
+    group: 'Covers',
+    label: 'Cover jobs',
+    description: "A week's jobs are posted, or a job is added, removed or its times change.",
+    audience: 'coverDriver',
     defaultOn: true,
   },
   {

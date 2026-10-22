@@ -64,6 +64,7 @@ function Detail({ icon, label, children }) {
 // `supporterSince`: when they first supported the app on Buy Me a Coffee (an
 // ISO string, or null). Only they see this page, so it needs no opt-in.
 // `pushPrefs`: this account's notification kinds (`{ key: boolean }`), or null.
+// `reminderLeads`: a verified driver's call-in reminder times, or null.
 // `canUseCovers`, `canUsePush`: whether this account has Covers and
 // notifications (lib/authz.js), from the page. `driverWeek`: a verified
 // driver's This week card (toDriverWeek, lib/serializers.js), or null.
@@ -72,6 +73,7 @@ function ProfileData({
   commentCount,
   supporterSince = null,
   pushPrefs = null,
+  reminderLeads = null,
   canUseCovers = false,
   canUsePush = false,
   driverWeek = null,
@@ -160,9 +162,10 @@ function ProfileData({
         </SoftNotice>
       )}
 
-      {/* Admins only until the "Notifications for every driver" switch is on
-          (docs/PUSH-NOTIFICATIONS.md, stage 2); the routes check it too. */}
-      {canUsePush && <PushNotifications prefs={pushPrefs} />}
+      {/* Admins and verified cover drivers until the "Notifications for every
+          driver" switch is on (docs/PUSH-NOTIFICATIONS.md, stages 2 and 3);
+          the routes check it too. */}
+      {canUsePush && <PushNotifications prefs={pushPrefs} reminderLeads={reminderLeads} />}
 
       <Box component='section' aria-labelledby='account-heading' sx={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column', gap: 1 }}>
         <Typography

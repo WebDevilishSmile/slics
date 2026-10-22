@@ -6,6 +6,7 @@ import { Alert, Box, Switch, Typography } from '@mui/material';
 import { PUSH_TYPES } from '@/constants';
 import { apiRequest } from '@/lib/apiRequest';
 import { tapHaptic } from '@/lib/haptics';
+import CoverReminderLeads from './CoverReminderLeads';
 
 const PREFS_URL = '/api/users/me/push-prefs';
 
@@ -15,8 +16,9 @@ const PREFS_URL = '/api/users/me/push-prefs';
 // saves on its own: flipped at once, put back with an Alert if the save fails.
 // `prefs` is `{ key: boolean }` for the kinds this account may choose (a
 // super admin also sees Buy Me a Coffee). `onAnnounce` speaks the change in
-// the parent's live region.
-export default function PushTypeSwitches({ prefs: initialPrefs, onAnnounce }) {
+// the parent's live region. `reminderLeads`: a verified driver's call-in
+// reminder times (minutes), chips under "Call-in reminder" while it's on.
+export default function PushTypeSwitches({ prefs: initialPrefs, reminderLeads = null, onAnnounce }) {
   const [prefs, setPrefs] = useState(initialPrefs);
   const [pending, setPending] = useState(() => new Set());
   const [error, setError] = useState(null);
@@ -79,30 +81,34 @@ export default function PushTypeSwitches({ prefs: initialPrefs, onAnnounce }) {
             {group.name}
           </Typography>
           {group.types.map((type) => (
-            <Box
-              key={type.key}
-              component='label'
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.5,
-                minHeight: '3rem',
-                py: 0.5,
-                cursor: pending.has(type.key) ? 'default' : 'pointer',
-              }}
-            >
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography>{type.label}</Typography>
-                <Typography variant='body2' color='text.secondary'>
-                  {type.description}
-                </Typography>
+            <Box key={type.key}>
+              <Box
+                component='label'
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1.5,
+                  minHeight: '3rem',
+                  py: 0.5,
+                  cursor: pending.has(type.key) ? 'default' : 'pointer',
+                }}
+              >
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography>{type.label}</Typography>
+                  <Typography variant='body2' color='text.secondary'>
+                    {type.description}
+                  </Typography>
+                </Box>
+                <Switch
+                  edge='end'
+                  checked={Boolean(prefs[type.key])}
+                  disabled={pending.has(type.key)}
+                  onChange={() => toggle(type)}
+                />
               </Box>
-              <Switch
-                edge='end'
-                checked={Boolean(prefs[type.key])}
-                disabled={pending.has(type.key)}
-                onChange={() => toggle(type)}
-              />
+              {type.key === 'coverReminder' && prefs.coverReminder && reminderLeads && (
+                <CoverReminderLeads initialLeads={reminderLeads} onAnnounce={onAnnounce} />
+              )}
             </Box>
           ))}
         </Box>

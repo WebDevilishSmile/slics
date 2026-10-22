@@ -44,8 +44,9 @@ const NOTES = {
 // whoever `canUsePush` lets in: this device on or off. A pressed-in well like the details
 // above it. Once it's on, "Send a test" and the kinds to send
 // (PushTypeSwitches, per account; `prefs` from the page, or null to hide
-// them). Confirms in place (the button and a live region), not with a toast.
-export default function PushNotifications({ prefs = null }) {
+// them; `reminderLeads`, a verified driver's call-in reminder times). Confirms
+// in place (the button and a live region), not with a toast.
+export default function PushNotifications({ prefs = null, reminderLeads = null }) {
   const { state, busy, enable, disable } = usePushNotifications();
   const [error, setError] = useState(null);
   const [iosOpen, setIosOpen] = useState(false);
@@ -175,7 +176,9 @@ export default function PushNotifications({ prefs = null }) {
 
       {error && <Alert severity='error'>{error}</Alert>}
 
-      {on && prefs && <PushTypeSwitches prefs={prefs} onAnnounce={setAnnouncement} />}
+      {on && prefs && (
+        <PushTypeSwitches prefs={prefs} reminderLeads={reminderLeads} onAnnounce={setAnnouncement} />
+      )}
 
       <Box component='span' role='status' aria-live='polite' sx={visuallyHidden}>
         {announcement}

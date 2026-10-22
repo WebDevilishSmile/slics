@@ -7,7 +7,12 @@ import {
   isVerifiedDriver,
 } from '@/lib/authz';
 import { getCommentsByUserId } from '@/lib/db/comments';
-import { getPushPrefs, getUserById, userHasPassword } from '@/lib/db/users';
+import {
+  getCoverReminderLeads,
+  getPushPrefs,
+  getUserById,
+  userHasPassword,
+} from '@/lib/db/users';
 import { getSupporterSince } from '@/lib/db/bmcEvents';
 import { getDriverWeeks } from '@/lib/db/driverWeeks';
 import { todayInNewYork } from '@/lib/onCallSheet';
@@ -58,7 +63,8 @@ async function ProfilePage({ params }) {
     );
   }
 
-  const [comments, supporterSince, hasPassword, pushPrefs, driverWeek] = await Promise.all([
+  const coverDriver = isVerifiedDriver(session);
+  const [comments, supporterSince, hasPassword, pushPrefs, driverWeek, reminderLeads] = await Promise.all([
     getCommentsByUserId(id),
     // A failure only hides the line.
     getSupporterSince(userData._id).catch(() => null),
@@ -73,13 +79,13 @@ async function ProfilePage({ params }) {
           // Admin kinds only for the tools this admin has (docs/STAFF-ROLES.md).
           areas: areasOf(session),
           // The Covers kinds (reminders, their list) for a verified driver.
-          coverDriver: isVerifiedDriver(session),
+          coverDriver,
         }).catch(() => null)
       : null,
     // A verified driver's job this week and next, from the saved on-call
     // sheet (lib/db/driverWeeks.js); same gate as Covers. A failure only
     // hides the card.
-    isVerifiedDriver(session) && userData.driver?.key
+    coverDriver && userData.driver?.key
       ? getDriverWeeks(userData.driver.key, todayInNewYork())
           .then(toDriverWeek)
           .catch((error) => {
@@ -87,6 +93,9 @@ async function ProfilePage({ params }) {
             return null;
           })
       : null,
+    // How long before their call-in a verified driver is reminded
+    // (docs/PUSH-NOTIFICATIONS.md, stage 3). A failure only hides the chips.
+    coverDriver && canUsePush(session) ? getCoverReminderLeads(id).catch(() => null) : null,
   ]);
 
   return (
@@ -100,6 +109,7 @@ async function ProfilePage({ params }) {
             commentCount={comments.length}
             supporterSince={supporterSince}
             pushPrefs={pushPrefs}
+            reminderLeads={reminderLeads}
             canUseCovers={canUseCovers(session)}
             canUsePush={canUsePush(session)}
             driverWeek={driverWeek}

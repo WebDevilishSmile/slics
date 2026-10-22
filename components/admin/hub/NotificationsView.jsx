@@ -112,10 +112,11 @@ function KindRow({ kind, onSample, sampleState }) {
             {' '}
             · {kind.group}
             {kind.audience === 'superAdmin' ? ', super admins' : ''}
+            {kind.audience === 'coverDriver' ? ', verified drivers' : ''}
           </Box>
         </Typography>
         <Typography variant='body2' color='text.secondary'>
-          On for {kind.on} of {plural(kind.eligible, 'admin')}
+          On for {kind.on} of {plural(kind.eligible, kind.audience === 'coverDriver' ? 'verified driver' : 'admin')}
           {kind.on > 0 && ` (${kind.reachable} with a device)`} · {plural(kind.sentWeek, 'send')} this week
           {kind.lastAt ? ` · last ${formatWhen(kind.lastAt)}` : ' · never sent'}
         </Typography>

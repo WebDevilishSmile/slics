@@ -31,12 +31,13 @@ const PLAN = {
     'allHubs', 'slics', 'app-settings', 'places', 'placeComments', 'comments', 'gyms',
     'gymComments', 'slicViews', 'slic_history', 'slic-reports', 'admin_audit', 'push-log',
     'sync-state', 'cover-job-changes', 'cover-preferences', 'cover-bid-job-hides',
+    'cover-bid-days',
   ],
   scrub: ['users', 'drivers', 'sheet-jobs', 'sheet-job-changes', 'cover-bid-jobs', 'cover-bid-picks', 'cover-bid-pick-events'],
   drop: [
     'accounts', 'sessions', 'verification_tokens', 'push-subscriptions', 'password-resets',
     'rateLimits', 'bmc-events', 'driver-claims', 'cover-disputes', 'bid-drivers', 'bid-jobs',
-    'bid-sleepers', 'cover',
+    'bid-sleepers', 'cover', 'cover-notices',
   ],
 };
 

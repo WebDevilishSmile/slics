@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { Typography } from '@mui/material';
 
-import { canUseCovers, getSession, isVerifiedDriver } from '@/lib/authz';
+import { canUseCovers, getSession, isSuperAdmin, isVerifiedDriver } from '@/lib/authz';
 import { getUserById } from '@/lib/db/users';
 import { getMyDriverClaim } from '@/lib/db/driverClaims';
 import { getMyCoverDispute } from '@/lib/db/coverDisputes';
@@ -17,10 +17,11 @@ import { isJobHidden } from '@/lib/coverBidJobRow';
 import { coverListStatus } from '@/lib/coverList';
 import { myCoverSpot, offListWeeks } from '@/lib/coverDrivers';
 import { getUpcomingSaturday } from '@/lib/format';
-import { todayInNewYork } from '@/lib/onCallSheet';
+import { isSaturday, todayInNewYork } from '@/lib/onCallSheet';
 import { toDriverCoverJob } from '@/lib/serializers';
 import { COVER_BID_MONTHS_BACK, DISPATCH_NUM_SLIC } from '@/constants';
 import CoverBoard from '@/components/covers/CoverBoard';
+import { PreviewLink, PreviewNotice } from '@/components/covers/CoverPreview';
 import DriverVerification from '@/components/covers/DriverVerification';
 import MyCoverWeeks from '@/components/covers/MyCoverWeeks';
 import PageContainer from '@/components/layout/PageContainer';
@@ -47,7 +48,18 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // Admin-only while it's tested (plus anyone the super admin gave early
 // access), until the Covers switch opens it (canUseCovers), checked before
 // anything is read (docs/SECURITY.md #7).
-export default async function CoversPage() {
+//
+// `?week=YYYY-MM-DD` opens on that week (every Covers notification links
+// there). `?preview=driver` is the super admin's preview of the page as a
+// verified cover driver sees it, whether or not they're verified or on a
+// list: every posted week shows a placeholder place and call-in time
+// (PREVIEW_SPOT), never a real driver's row (only each week's date leaves
+// the picks), and the list stays in the page, unsaved. Ignored for anyone
+// else.
+
+const PREVIEW_SPOT = { kind: 'cover', position: null, status: 'preview', callIn: '' };
+
+export default async function CoversPage({ searchParams }) {
   const session = await getSession();
   if (!canUseCovers(session)) {
     return (
@@ -59,7 +71,13 @@ export default async function CoversPage() {
     );
   }
 
-  const verified = isVerifiedDriver(session);
+  const params = (await searchParams) ?? {};
+  const superAdmin = isSuperAdmin(session);
+  const preview = superAdmin && params.preview === 'driver';
+  const verified = isVerifiedDriver(session) && !preview;
+  // A verified driver's page: the jobs, their place and their list.
+  const driverView = verified || preview;
+  const initialWeek = isSaturday(params.week) ? params.week : null;
 
   // COVER_BID_MONTHS_BACK of weeks, snapped to a Saturday so the oldest
   // week loads whole.
@@ -70,32 +88,33 @@ export default async function CoversPage() {
 
   const [user, claim, jobs, hiddenKeys, pickWeeks, savedLists, dispatchPhone, dispute, bidDayOverrides] = await Promise.all([
     verified ? getUserById(session.user.id) : null,
-    verified ? null : getMyDriverClaim(session.user.id),
-    verified ? getCoverBidJobsSince(cutoffWeek) : [],
-    verified ? getHiddenJobKeys(cutoffWeek) : new Set(),
-    verified ? getCoverBidPicksSince(thisWeek) : [],
+    driverView ? null : getMyDriverClaim(session.user.id),
+    driverView ? getCoverBidJobsSince(cutoffWeek) : [],
+    driverView ? getHiddenJobKeys(cutoffWeek) : new Set(),
+    driverView ? getCoverBidPicksSince(thisWeek) : [],
     verified ? getMyCoverLists(session.user.id, cutoffWeek) : {},
     // The button just doesn't show if the hub's SLIC can't be read.
-    verified
+    driverView
       ? getSlicByNumSlic(DISPATCH_NUM_SLIC).then((slic) => slic.phone || null).catch(() => null)
       : null,
     verified ? getMyCoverDispute(session.user.id) : null,
     // Weeks an admin moved off the usual Thursday (lib/bidDay.js). A failure
     // only shows the usual day.
-    verified ? getBidDayOverrides(thisWeek).catch(() => ({})) : {},
+    driverView ? getBidDayOverrides(thisWeek).catch(() => ({})) : {},
   ]);
   const driverJobs = jobs
     .filter((job) => !isJobHidden(job, hiddenKeys))
     .map(toDriverCoverJob);
 
-  const weeks = pickWeeks.map((week) => ({
+  const posted = (week) => (week.rows?.length ?? 0) > 0;
+  const weeks = (preview ? pickWeeks.filter(posted) : pickWeeks).map((week) => ({
     weekEnding: week.weekEnding,
-    spot: myCoverSpot(week.rows ?? [], user?.driver?.key),
+    spot: preview ? PREVIEW_SPOT : myCoverSpot(week.rows ?? [], user?.driver?.key),
     bidDate: bidDateFor(week.weekEnding, bidDayOverrides),
   }));
   const bidDates = Object.fromEntries(weeks.map((week) => [week.weekEnding, week.bidDate]));
   const offWeeks = verified ? offListWeeks(pickWeeks, user?.driver?.key) : [];
-  const postedWeeks = pickWeeks.filter((week) => (week.rows?.length ?? 0) > 0).length;
+  const postedWeeks = pickWeeks.filter(posted).length;
   // The read-only notice names the job they hold on the Jobs tab. Only their
   // own; the notice just leaves it out if it can't be read.
   const jobCode =
@@ -106,7 +125,9 @@ export default async function CoversPage() {
         })
       : null;
   const callIns = Object.fromEntries(
-    weeks.filter((week) => week.spot?.callIn).map((week) => [week.weekEnding, week.spot.callIn]),
+    preview
+      ? weeks.map((week) => [week.weekEnding, 'your time'])
+      : weeks.filter((week) => week.spot?.callIn).map((week) => [week.weekEnding, week.spot.callIn]),
   );
   // Each saved list with where its jobs stand now (open, picked, gone).
   const lists = Object.fromEntries(
@@ -124,9 +145,11 @@ export default async function CoversPage() {
   return (
     <PageContainer>
       <Typography variant='sectionHeading'>Covers</Typography>
+      {preview && <PreviewNotice />}
+      {superAdmin && !preview && <PreviewLink />}
 
       <HydrationGuard>
-        {verified ? (
+        {driverView ? (
           <MyCoverWeeks
             name={session.user.name ?? ''}
             driverName={user?.driver?.name ?? ''}
@@ -135,13 +158,14 @@ export default async function CoversPage() {
             allOff={offWeeks.length > 0 && offWeeks.length === postedWeeks}
             dispute={dispute}
             jobCode={jobCode}
+            preview={preview}
           />
         ) : (
           <DriverVerification initialClaim={claim} />
         )}
       </HydrationGuard>
 
-      {verified && (
+      {driverView && (
         <CoverBoard
           jobs={driverJobs}
           minWeekEnding={cutoffWeek}
@@ -149,9 +173,11 @@ export default async function CoversPage() {
           callIns={callIns}
           bidDates={bidDates}
           dispatchPhone={dispatchPhone}
-          canList={verified}
+          canList={driverView}
           offListWeeks={offWeeks}
           thisWeek={thisWeek}
+          initialWeek={initialWeek}
+          preview={preview}
         />
       )}
     </PageContainer>

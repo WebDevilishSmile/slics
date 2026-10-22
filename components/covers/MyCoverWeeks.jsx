@@ -13,6 +13,8 @@ import { softInset, softRaised } from '@/components/utility/soft';
 // myCoverSpot): a headline and a quieter line under it.
 function describe(spot) {
   if (!spot) return { headline: 'Not on the list', detail: "You're not on this week's pick list." };
+  // The super admin's preview: no real driver's place.
+  if (spot.status === 'preview') return { headline: 'Cover #', detail: 'Your place on the pick list' };
   if (spot.kind === 'onCall') {
     return { headline: spot.order ? `On call #${spot.order}` : 'On call', detail: spot.job };
   }
@@ -27,7 +29,8 @@ function describe(spot) {
 
 function WeekTile({ weekEnding, spot, bidDate, index }) {
   const { headline, detail } = describe(spot);
-  const callIn = spot?.callIn;
+  const isPreview = spot?.status === 'preview';
+  const callIn = spot?.callIn || (isPreview ? 'Your time' : '');
 
   return (
     <Box
@@ -65,7 +68,11 @@ function WeekTile({ weekEnding, spot, bidDate, index }) {
           <Typography variant='caption' color='text.secondary' component='p'>
             Call in{bidDate ? ` ${formatBidDay(bidDate)}` : ''}
           </Typography>
-          <Typography variant='h6' component='p' sx={{ color: 'primary.main', fontWeight: 700 }}>
+          <Typography
+            variant='h6'
+            component='p'
+            sx={{ color: isPreview ? 'text.secondary' : 'primary.main', fontWeight: 700 }}
+          >
             {callIn}
           </Typography>
         </Box>
@@ -81,7 +88,8 @@ function WeekTile({ weekEnding, spot, bidDate, index }) {
 // `offWeeks` are the posted weeks they're not on, which are read only for
 // them, with "This is a mistake" (covers/CoverDispute.jsx); `dispute` is
 // their latest message about it, and `jobCode` the job they hold on the Jobs
-// tab, which the notice names.
+// tab, which the notice names. `preview`: the super admin's preview, with
+// placeholder places (app/covers/page.jsx).
 export default function MyCoverWeeks({
   name,
   driverName,
@@ -90,6 +98,7 @@ export default function MyCoverWeeks({
   allOff,
   dispute,
   jobCode,
+  preview = false,
 }) {
   return (
     <Paper variant='panel' className='enter' sx={{ minHeight: 0, alignItems: 'stretch', gap: 2.5 }}>
@@ -99,7 +108,7 @@ export default function MyCoverWeeks({
           <VerifiedBadge />
         </Typography>
         <Typography variant='body2' color='text.secondary'>
-          On the sheet as {driverName}
+          {preview ? 'On the sheet as your name, as the sheet spells it' : `On the sheet as ${driverName}`}
         </Typography>
       </Box>
 

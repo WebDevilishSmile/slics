@@ -59,6 +59,7 @@ const moveButtonSx = [softPressSx, { width: '2.75rem', height: '2.75rem' }];
 // - `callIn`: the driver's call-in time that week, when they're on the list.
 // - `bidDate`: the day they call in (lib/bidDay.js).
 // - `dispatchPhone`: BETPA's phone (DISPATCH_NUM_SLIC), or null.
+// - `preview`: the super admin's preview; the list isn't saved.
 export default function CoverList({
   weekEnding,
   entries,
@@ -71,6 +72,7 @@ export default function CoverList({
   callIn,
   bidDate,
   dispatchPhone,
+  preview = false,
   onMove,
   onRemove,
 }) {
@@ -98,6 +100,7 @@ export default function CoverList({
           : offList
             ? "You're not on this week's cover or on-call list, so your list is read only."
             : 'This week is over. Your list is kept for four weeks.'}
+        {preview && ' Preview: this list isn’t saved.'}
       </Typography>
 
       {error && (

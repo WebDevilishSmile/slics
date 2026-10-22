@@ -28,6 +28,10 @@ const NO_ENTRIES = [];
 //   offListWeeks). They're read only: a list saved before shows, but can't
 //   change, and none can be started.
 // - `thisWeek`: the current week's Saturday; earlier lists can't change.
+// - `initialWeek`: the week to open on (`?week=`, a notification's link), or
+//   null for next week.
+// - `preview`: the super admin's preview (app/covers/page.jsx): the list works
+//   but stays in the page, never saved or re-read.
 export default function CoverBoard({
   jobs,
   minWeekEnding,
@@ -38,9 +42,13 @@ export default function CoverBoard({
   canList,
   offListWeeks,
   thisWeek,
+  initialWeek = null,
+  preview = false,
 }) {
   // Next week: the week drivers bid on (as CoverBidJobsTable's own default).
-  const [selectedDay, setSelectedDay] = useState(() => dayjs().add(1, 'week'));
+  const [selectedDay, setSelectedDay] = useState(() =>
+    initialWeek ? dayjs(initialWeek) : dayjs().add(1, 'week'),
+  );
   const selectedWeek = getUpcomingSaturday(selectedDay).format('YYYY-MM-DD');
 
   const [lists, setLists] = useState(initialLists ?? {});
@@ -77,8 +85,10 @@ export default function CoverBoard({
     listsRef.current = { ...listsRef.current, [week]: next };
     setLists((current) => ({ ...current, [week]: next }));
     setError(null);
-    setSaving(true);
     setAnnouncement(message);
+    // A preview's list stays in the page.
+    if (preview) return;
+    setSaving(true);
     const seq = ++saveSeq.current;
     try {
       const res = await fetch('/api/users/me/cover-preferences', {
@@ -100,7 +110,7 @@ export default function CoverBoard({
     } finally {
       if (seq === saveSeq.current) setSaving(false);
     }
-  }, []);
+  }, [preview]);
 
   // Move a job past the next open job above or below it; taken jobs keep
   // their places in the saved list.
@@ -158,7 +168,7 @@ export default function CoverBoard({
   // Re-read the shown week's list when the driver comes back to the page:
   // jobs picked meanwhile (the sheet syncs within minutes) drop off.
   useEffect(() => {
-    if (!canList) return undefined;
+    if (!canList || preview) return undefined;
     const refresh = async () => {
       if (document.visibilityState !== 'visible') return;
       const seq = saveSeq.current;
@@ -174,7 +184,7 @@ export default function CoverBoard({
     };
     document.addEventListener('visibilitychange', refresh);
     return () => document.removeEventListener('visibilitychange', refresh);
-  }, [canList, selectedWeek]);
+  }, [canList, preview, selectedWeek]);
 
   const showList = canList && (entries.length > 0 || (weekJobs.length > 0 && !offList));
 
@@ -199,6 +209,7 @@ export default function CoverBoard({
             callIn={callIns?.[selectedWeek] ?? null}
             bidDate={bidDates?.[selectedWeek] ?? null}
             dispatchPhone={dispatchPhone}
+            preview={preview}
             onMove={move}
             onRemove={remove}
           />

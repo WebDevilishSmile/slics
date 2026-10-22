@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/on-call-sheet-sync",
       "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/cover-notifications",
+      "schedule": "* * * * *"
     }
   ]
 }

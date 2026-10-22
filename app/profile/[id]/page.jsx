@@ -72,6 +72,8 @@ async function ProfilePage({ params }) {
           superAdmin: isSuperAdmin(session),
           // Admin kinds only for the tools this admin has (docs/STAFF-ROLES.md).
           areas: areasOf(session),
+          // The Covers kinds (reminders, their list) for a verified driver.
+          coverDriver: isVerifiedDriver(session),
         }).catch(() => null)
       : null,
     // A verified driver's job this week and next, from the saved on-call

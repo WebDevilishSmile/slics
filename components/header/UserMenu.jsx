@@ -44,6 +44,7 @@ import { useOpenDisputesCount } from '@/lib/coverDisputesStore';
 import { usePendingClaimsCount } from '@/lib/driverClaimsStore';
 import { useJobChangesCount } from '@/lib/jobChangesStore';
 import { useCoverJobChangesCount } from '@/lib/coverJobChangesStore';
+import { coversAllowed } from '@/lib/featureAccess';
 import { turnOffThisDevice } from '@/lib/pushDevice';
 import { useOpenReportsCount } from '@/lib/slicReportsStore';
 import { userHasArea } from '@/lib/staffAreas';
@@ -174,11 +175,10 @@ function UserMenu({ user, features, signOutAction }) {
   }, [hasAlerts, pathname]);
   // Covers is for staff with the Covers area while it's tested, and anyone the
   // super admin gave early access, until the super admin's switch opens it
-  // (canUseCovers in lib/authz.js).
+  // (coversAllowed, the rule canUseCovers in lib/authz.js uses too).
   const coversOpen = features?.coversOpen ?? COVERS_OPEN;
   const coversByRole = userHasArea(user, 'covers');
-  const canUseCovers =
-    Boolean(user) && (coversOpen || coversByRole || user.coversAccess === true);
+  const canUseCovers = coversAllowed(user, features);
   // Places opened to everyone on 2026-10-12; its row says "New" until the
   // date the super admin set.
   const placesIsNew = new Date().toISOString() < (features?.placesNewUntil ?? PLACES_NEW_UNTIL);

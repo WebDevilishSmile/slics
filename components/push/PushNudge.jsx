@@ -5,8 +5,8 @@ import { useSession } from 'next-auth/react';
 import { NotificationsActive, NotificationsNoneOutlined } from '@mui/icons-material';
 import { Box, Button, CircularProgress } from '@mui/material';
 
-import { PUSH_OPEN } from '@/constants';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { pushAllowed } from '@/lib/featureAccess';
 import { tapHaptic } from '@/lib/haptics';
 
 import SoftNotice from '@/components/utility/SoftNotice';
@@ -35,7 +35,7 @@ function writeDismissed() {
 // 2.5), never on page load. The parent mounts it only after a post, so the
 // hook's check runs only then; the hook never registers the service worker
 // on its own, only `enable()` inside the tap does. Shown to whoever
-// `canUsePush` lets in (lib/authz.js), while this device is off and until
+// `canUsePush` lets in (pushAllowed, lib/featureAccess.js), while this device is off and until
 // they dismiss it on this device. A blocked, unsupported or iPhone-tab device
 // is left to /profile, which explains each. Turning on confirms in place.
 // `inset` draws it as a pressed-in well, for inside a raised card (a place's).
@@ -46,9 +46,7 @@ export default function PushNudge({ inset = false }) {
   // Set by the tap: what it led to stays on screen until dismissed.
   const [result, setResult] = useState(null); // null | 'on' | 'blocked' | 'error'
 
-  const user = session?.user;
-  const canUsePush =
-    Boolean(user?.id) && ((session?.features?.pushOpen ?? PUSH_OPEN) || user.role === 'admin');
+  const canUsePush = pushAllowed(session?.user, session?.features);
   if (!canUsePush || dismissed) return null;
   if (!result && state !== 'off') return null;
 

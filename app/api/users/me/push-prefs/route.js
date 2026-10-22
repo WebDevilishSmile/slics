@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 
 import { PUSH_TYPES } from '@/constants';
-import { areasOf, isSuperAdmin, requirePush } from '@/lib/authz';
+import { areasOf, isSuperAdmin, isVerifiedDriver, requirePush } from '@/lib/authz';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { getPushPrefs, setPushPref } from '@/lib/db/users';
 
 // The kinds of push notification the signed-in driver gets
 // (docs/PUSH-NOTIFICATIONS.md, stages 1b and 2; PUSH_TYPES in constants.js).
 // Per account, so a switch applies to every device they turned on. Behind the
-// same gate as the subscription routes (requirePush); an admin kind only for an
-// admin, a super-admin kind only for a super admin.
+// same gate as the subscription routes (requirePush); a Covers kind only for a
+// verified cover driver, an admin kind only for an admin, a super-admin kind
+// only for a super admin.
 
 // Per driver, generous: each switch saves on its own.
 const LIMIT = 120;
@@ -48,6 +49,13 @@ export async function PATCH(request) {
   const superAdmin = isSuperAdmin(session);
   // An admin kind only for an admin with its tool (docs/STAFF-ROLES.md).
   const areas = areasOf(session);
+  const coverDriver = isVerifiedDriver(session);
+  if (type.audience === 'coverDriver' && !coverDriver) {
+    return NextResponse.json(
+      { error: 'Only verified drivers get Covers notifications.' },
+      { status: 403 },
+    );
+  }
   if (type.audience === 'admin' && (!admin || (type.area && !areas.includes(type.area)))) {
     return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
   }
@@ -59,7 +67,7 @@ export async function PATCH(request) {
     await setPushPref(session.user.id, type.key, body.on);
     return NextResponse.json({
       success: true,
-      data: await getPushPrefs(session.user.id, { admin, superAdmin, areas }),
+      data: await getPushPrefs(session.user.id, { admin, superAdmin, areas, coverDriver }),
     });
   } catch (error) {
     console.error('Error saving a notification setting:', error);

@@ -16,6 +16,7 @@ import {
 } from '@mui/icons-material';
 import { visuallyHidden } from '@mui/utils';
 
+import { formatBidDay } from '@/lib/bidDay';
 import { DAY_FIELDS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 import { formatWeekEnding } from '@/lib/onCallSheet';
 import {
@@ -56,6 +57,7 @@ const moveButtonSx = [softPressSx, { width: '2.75rem', height: '2.75rem' }];
 // - `offList`: the driver isn't on this week's posted pick list, so the list
 //   is read only and there's no call to make.
 // - `callIn`: the driver's call-in time that week, when they're on the list.
+// - `bidDate`: the day they call in (lib/bidDay.js).
 // - `dispatchPhone`: BETPA's phone (DISPATCH_NUM_SLIC), or null.
 export default function CoverList({
   weekEnding,
@@ -67,6 +69,7 @@ export default function CoverList({
   error,
   announcement,
   callIn,
+  bidDate,
   dispatchPhone,
   onMove,
   onRemove,
@@ -208,7 +211,7 @@ export default function CoverList({
               <>
                 Your call-in:{' '}
                 <Box component='span' sx={{ color: 'text.primary', fontWeight: 700 }}>
-                  {callIn}
+                  {bidDate ? `${formatBidDay(bidDate)} at ${callIn}` : callIn}
                 </Box>
                 {' · '}
               </>

@@ -22,6 +22,7 @@ const NO_ENTRIES = [];
 // - `jobs`: driver rows (toDriverCoverJob), hidden jobs already left out.
 // - `initialLists`: { weekEnding: entries with status } (lib/coverList.js).
 // - `callIns`: { weekEnding: the driver's call-in time }.
+// - `bidDates`: { weekEnding: the day drivers call in } (lib/bidDay.js).
 // - `canList`: a verified driver; an admin who isn't sees the jobs only.
 // - `offListWeeks`: posted weeks the driver isn't on (lib/coverDrivers.js
 //   offListWeeks). They're read only: a list saved before shows, but can't
@@ -32,6 +33,7 @@ export default function CoverBoard({
   minWeekEnding,
   initialLists,
   callIns,
+  bidDates,
   dispatchPhone,
   canList,
   offListWeeks,
@@ -195,6 +197,7 @@ export default function CoverBoard({
             error={error}
             announcement={announcement}
             callIn={callIns?.[selectedWeek] ?? null}
+            bidDate={bidDates?.[selectedWeek] ?? null}
             dispatchPhone={dispatchPhone}
             onMove={move}
             onRemove={remove}

@@ -2,6 +2,7 @@
 
 import { Box, Paper, Typography } from '@mui/material';
 
+import { formatBidDay } from '@/lib/bidDay';
 import { formatWeekEnding } from '@/lib/onCallSheet';
 import CoverDispute from '@/components/covers/CoverDispute';
 import SoftNotice from '@/components/utility/SoftNotice';
@@ -24,7 +25,7 @@ function describe(spot) {
   return { headline: `Cover ${spot.position}`, detail: spot.job };
 }
 
-function WeekTile({ weekEnding, spot, index }) {
+function WeekTile({ weekEnding, spot, bidDate, index }) {
   const { headline, detail } = describe(spot);
   const callIn = spot?.callIn;
 
@@ -62,7 +63,7 @@ function WeekTile({ weekEnding, spot, index }) {
           ]}
         >
           <Typography variant='caption' color='text.secondary' component='p'>
-            Call in
+            Call in{bidDate ? ` ${formatBidDay(bidDate)}` : ''}
           </Typography>
           <Typography variant='h6' component='p' sx={{ color: 'primary.main', fontWeight: 700 }}>
             {callIn}
@@ -74,7 +75,8 @@ function WeekTile({ weekEnding, spot, index }) {
 }
 
 // A verified driver's own place on the cover list, one tile per posted week
-// from this one on: "Cover 7", their call-in (pick) time. Only their row:
+// from this one on: "Cover 7", their call-in (pick) time and the day of it
+// (`bidDate` on each week, lib/bidDay.js). Only their row:
 // nobody else's name, status or picks reach the page (docs/COVER-BIDDING.md).
 // `offWeeks` are the posted weeks they're not on, which are read only for
 // them, with "This is a mistake" (covers/CoverDispute.jsx); `dispute` is

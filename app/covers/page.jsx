@@ -8,9 +8,11 @@ import { getMyCoverDispute } from '@/lib/db/coverDisputes';
 import { getDriverJobName } from '@/lib/db/sheetJobs';
 import { getCoverBidJobsSince } from '@/lib/db/coverBidJobs';
 import { getCoverBidPicksSince } from '@/lib/db/coverBidPicks';
+import { getBidDayOverrides } from '@/lib/db/coverBidDays';
 import { getHiddenJobKeys } from '@/lib/db/coverBidJobHides';
 import { getMyCoverLists } from '@/lib/db/coverPreferences';
 import { getSlicByNumSlic } from '@/lib/db/slics';
+import { bidDateFor } from '@/lib/bidDay';
 import { isJobHidden } from '@/lib/coverBidJobRow';
 import { coverListStatus } from '@/lib/coverList';
 import { myCoverSpot, offListWeeks } from '@/lib/coverDrivers';
@@ -66,7 +68,7 @@ export default async function CoversPage() {
   ).format('YYYY-MM-DD');
   const thisWeek = getUpcomingSaturday(dayjs(todayInNewYork())).format('YYYY-MM-DD');
 
-  const [user, claim, jobs, hiddenKeys, pickWeeks, savedLists, dispatchPhone, dispute] = await Promise.all([
+  const [user, claim, jobs, hiddenKeys, pickWeeks, savedLists, dispatchPhone, dispute, bidDayOverrides] = await Promise.all([
     verified ? getUserById(session.user.id) : null,
     verified ? null : getMyDriverClaim(session.user.id),
     verified ? getCoverBidJobsSince(cutoffWeek) : [],
@@ -78,6 +80,9 @@ export default async function CoversPage() {
       ? getSlicByNumSlic(DISPATCH_NUM_SLIC).then((slic) => slic.phone || null).catch(() => null)
       : null,
     verified ? getMyCoverDispute(session.user.id) : null,
+    // Weeks an admin moved off the usual Thursday (lib/bidDay.js). A failure
+    // only shows the usual day.
+    verified ? getBidDayOverrides(thisWeek).catch(() => ({})) : {},
   ]);
   const driverJobs = jobs
     .filter((job) => !isJobHidden(job, hiddenKeys))
@@ -86,7 +91,9 @@ export default async function CoversPage() {
   const weeks = pickWeeks.map((week) => ({
     weekEnding: week.weekEnding,
     spot: myCoverSpot(week.rows ?? [], user?.driver?.key),
+    bidDate: bidDateFor(week.weekEnding, bidDayOverrides),
   }));
+  const bidDates = Object.fromEntries(weeks.map((week) => [week.weekEnding, week.bidDate]));
   const offWeeks = verified ? offListWeeks(pickWeeks, user?.driver?.key) : [];
   const postedWeeks = pickWeeks.filter((week) => (week.rows?.length ?? 0) > 0).length;
   // The read-only notice names the job they hold on the Jobs tab. Only their
@@ -140,6 +147,7 @@ export default async function CoversPage() {
           minWeekEnding={cutoffWeek}
           initialLists={lists}
           callIns={callIns}
+          bidDates={bidDates}
           dispatchPhone={dispatchPhone}
           canList={verified}
           offListWeeks={offWeeks}

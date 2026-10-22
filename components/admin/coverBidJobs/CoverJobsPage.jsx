@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import dayjs from 'dayjs';
 
 import CoverCalendar from '@/components/covers/Calendar';
+import BidDayControl from '@/components/admin/coverBidJobs/BidDayControl';
 import CoverBidJobsManager from '@/components/admin/coverBidJobs/CoverBidJobsManager';
 import CoverBidPicks from '@/components/admin/coverBidJobs/CoverBidPicks';
 import CoverJobChangesFeed from '@/components/admin/coverBidJobs/CoverJobChangesFeed';
@@ -97,6 +98,9 @@ function CoverJobsPage() {
           weekEndDate={weekEndDate}
           onRefreshed={handleRefreshed}
         />
+        {/* When drivers call in for it (lib/bidDay.js): the usual Thursday,
+            or the day an admin moved it to. */}
+        <BidDayControl key={`bid-${weekEndDate.format('YYYY-MM-DD')}`} weekEndDate={weekEndDate} />
         {/* Every week's changes, which the alerts point here for. */}
         <CoverJobChangesFeed
           refreshKey={refreshKey}

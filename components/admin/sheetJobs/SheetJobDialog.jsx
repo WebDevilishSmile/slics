@@ -25,6 +25,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
 import { softInset, softPressSx, softTableSx } from '@/components/utility/soft';
 import { describeJobChange } from './jobChangeText';
+import { displayName } from '@/lib/names';
 
 function Detail({ label, value }) {
   return (
@@ -96,7 +97,7 @@ export default function SheetJobDialog({ jobName, job, onClose }) {
           ) : (
             <>
               <Stack spacing={1.5} sx={[softInset, { p: 2, borderRadius: 3 }]}>
-                <Detail label='Driver' value={job.driver} />
+                <Detail label='Driver' value={displayName(job.driver)} />
                 <Detail label='Seniority' value={job.seniority} />
                 <Detail label='Hours for week' value={job.weekHours} />
               </Stack>

@@ -29,6 +29,7 @@ import {
   softPressSx,
   softRaisedSmall,
 } from '@/components/utility/soft';
+import { displayName } from '@/lib/names';
 
 // The letter after a seniority date: the order of drivers hired that day.
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -115,7 +116,7 @@ export default function DriverDetailsDialog({ driver, sheetName, editName = fals
               slotProps={{ htmlInput: { maxLength: DRIVER_NAME_MAX_LENGTH } }}
             />
           ) : (
-            <Typography sx={{ fontWeight: 600 }}>{sheetName ?? driver?.name}</Typography>
+            <Typography sx={{ fontWeight: 600 }}>{displayName(sheetName ?? driver?.name)}</Typography>
           )}
 
           <TextField

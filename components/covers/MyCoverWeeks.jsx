@@ -8,6 +8,7 @@ import CoverDispute from '@/components/covers/CoverDispute';
 import SoftNotice from '@/components/utility/SoftNotice';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
 import { softInset, softRaised } from '@/components/utility/soft';
+import { displayName } from '@/lib/names';
 
 // What a week's tile says about the driver's spot (lib/coverDrivers.js
 // myCoverSpot): a headline and a quieter line under it.
@@ -108,7 +109,7 @@ export default function MyCoverWeeks({
           <VerifiedBadge />
         </Typography>
         <Typography variant='body2' color='text.secondary'>
-          {preview ? 'On the sheet as your name, as the sheet spells it' : `On the sheet as ${driverName}`}
+          {preview ? 'On the sheet as your name, as the sheet spells it' : `On the sheet as ${displayName(driverName)}`}
         </Typography>
       </Box>
 
@@ -116,7 +117,7 @@ export default function MyCoverWeeks({
         <CoverDispute
           offWeeks={offWeeks}
           allOff={allOff}
-          driverName={driverName}
+          driverName={displayName(driverName)}
           jobCode={jobCode}
           initialDispute={dispute}
         />

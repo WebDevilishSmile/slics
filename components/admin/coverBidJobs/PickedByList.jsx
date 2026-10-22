@@ -4,6 +4,7 @@ import { Box, Typography } from '@mui/material';
 
 import { softInset } from '@/components/utility/soft';
 import { jobKey } from '@/lib/coverBidJobRow';
+import { displayName } from '@/lib/names';
 
 // job number (upper-cased) → [{ name, order, pick }], in the sheet's pick
 // order, from the week's saved picks (docs/ON-CALL-SHEET-SYNC.md).
@@ -49,7 +50,7 @@ export default function PickedByList({ entries }) {
         >
           {entries.map((entry, index) => (
             <Box component='li' key={`${entry.name}-${index}`} sx={{ typography: 'body2' }}>
-              {entry.name}
+              {displayName(entry.name)}
               <Box component='span' sx={{ color: 'text.secondary' }}>
                 {' '}· pick #{entry.pick}
                 {entry.order && ` · order ${entry.order}`}

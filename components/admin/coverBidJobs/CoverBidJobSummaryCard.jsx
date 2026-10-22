@@ -12,6 +12,7 @@ import {
   PickedLabel,
   pickedSx,
 } from '@/components/coverBidJobs/jobGrid';
+import { displayName } from '@/lib/names';
 
 // Route codes ("BETPA>VVSPA>…") have no spaces, so let lines break after
 // each ">" rather than mid-code.
@@ -39,7 +40,8 @@ export default function CoverBidJobSummaryCard({
   onOpen,
 }) {
   const issues = rowIssues(row, { duplicate });
-  const people = [row.assignedDriver, row.coverReason, row.name].filter(Boolean);
+  // Names capitalized (lib/names.js); the cover reason as the sheet writes it.
+  const people = [displayName(row.assignedDriver), row.coverReason, displayName(row.name)].filter(Boolean);
 
   return (
     <ButtonBase

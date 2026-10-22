@@ -21,6 +21,7 @@ import { softInset, softRaised, softTableSx } from '@/components/utility/soft';
 import { useCoverLists } from '@/hooks/useCoverLists';
 import { getUpcomingSaturday } from '@/lib/format';
 import theme from '@/theme';
+import { displayName } from '@/lib/names';
 
 // "Cover 3 · 7:30", "On call #2 · 8:00", or why there's no place.
 function spotLabel(spot) {
@@ -48,7 +49,7 @@ function DriverList({ list }) {
 
   return (
     <Box component='li' sx={[softRaised, { borderRadius: 4, p: 2.5, listStyle: 'none' }]}>
-      <Typography sx={{ fontWeight: 700 }}>{list.driverName || list.name || 'Unknown driver'}</Typography>
+      <Typography sx={{ fontWeight: 700 }}>{displayName(list.driverName) || list.name || 'Unknown driver'}</Typography>
       <Typography variant='body2' color='text.secondary'>
         {spotLabel(list.spot)}
         {list.name && list.driverName ? ` · ${list.name}` : ''}

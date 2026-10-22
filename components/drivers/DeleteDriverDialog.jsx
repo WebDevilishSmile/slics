@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 
 import { softContainedSx, softPressSx, softRaisedSmall } from '@/components/utility/soft';
+import { displayName } from '@/lib/names';
 
 export default function DeleteDriverDialog({
   openDialog,
@@ -86,7 +87,7 @@ export default function DeleteDriverDialog({
         }}
       >
         <Typography>
-          Are you sure you want to delete <strong>{driver?.name}</strong>? This
+          Are you sure you want to delete <strong>{displayName(driver?.name)}</strong>? This
           action cannot be undone.
         </Typography>
         {error && (

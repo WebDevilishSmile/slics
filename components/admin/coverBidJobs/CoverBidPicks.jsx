@@ -22,6 +22,7 @@ import {
   softRaisedSmall,
   softTableSx,
 } from '@/components/utility/soft';
+import { displayName } from '@/lib/names';
 
 const RECENT = 10;
 
@@ -78,7 +79,7 @@ export default function CoverBidPicks({ picks, events, loading, error }) {
           <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
             From tab {picks.sheetTab} · refreshed{' '}
             {dayjs(picks.refreshed_at).format('MMM D, h:mm A')}
-            {picks.refreshedBy?.name && ` by ${picks.refreshedBy.name}`}
+            {picks.refreshedBy?.name && ` by ${displayName(picks.refreshedBy.name)}`}
           </Typography>
 
           <Box sx={{ overflowX: 'auto', mt: 1.5 }}>
@@ -99,7 +100,7 @@ export default function CoverBidPicks({ picks, events, loading, error }) {
                   <TableRow key={`${row.name}-${index}`}>
                     <TableCell>{row.slot}</TableCell>
                     <TableCell>{row.order}</TableCell>
-                    <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.name}</TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>{displayName(row.name)}</TableCell>
                     <TableCell>{row.job}</TableCell>
                     {row.picks.slice(0, pickColumns).map((pick, pickIndex) => (
                       <TableCell key={pickIndex} sx={{ fontWeight: pick ? 600 : undefined }}>
@@ -138,7 +139,7 @@ export default function CoverBidPicks({ picks, events, loading, error }) {
                 <Box component='span' sx={{ color: 'text.secondary' }}>
                   {dayjs(event.seenAt).format('MMM D, h:mm A')} ·{' '}
                 </Box>
-                <strong>{event.name}</strong> {describe(event)}
+                <strong>{displayName(event.name)}</strong> {describe(event)}
               </Box>
             ))}
           </Box>

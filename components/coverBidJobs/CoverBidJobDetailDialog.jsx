@@ -14,6 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ListToggle from './ListToggle';
 import { softInset, softPressSx } from '@/components/utility/soft';
 import { DAY_FIELDS, DAY_LABELS, DAY_COLORS, formatDayValue } from '@/lib/dayFormat';
+import { displayName } from '@/lib/names';
 
 function DetailRow({ label, value }) {
   return (
@@ -58,8 +59,8 @@ export default function CoverBidJobDetailDialog({ job, open, onClose, list = nul
           <Stack spacing={2.5} sx={{ pb: 1 }}>
             {showWho && (
               <Stack spacing={1.5} sx={[softInset, { p: 2, borderRadius: 3 }]}>
-                <DetailRow label='Name' value={job.name} />
-                <DetailRow label='Assigned Driver' value={job.assignedDriver} />
+                <DetailRow label='Name' value={displayName(job.name)} />
+                <DetailRow label='Assigned Driver' value={displayName(job.assignedDriver)} />
                 <DetailRow label='Cover Reason' value={job.coverReason} />
               </Stack>
             )}

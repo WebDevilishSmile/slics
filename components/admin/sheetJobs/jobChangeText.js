@@ -1,4 +1,5 @@
 import { DAY_LABELS } from '@/lib/dayFormat';
+import { displayName } from '@/lib/names';
 
 const PART_LABELS = { start: 'start', hours: 'hours', miles: 'miles' };
 
@@ -10,11 +11,15 @@ export function fieldLabel(field) {
   return { driver: 'Driver', description: 'Description', weekHours: 'Week hours', seniority: 'Seniority' }[field] ?? field;
 }
 
-// One change as a line, without the job name: "Driver: Smith → Pope".
+// A value as the feed shows it: a driver's name capitalized (lib/names.js).
+const shown = (field, value) => (field === 'driver' ? displayName(value) : value);
+
+// One change as a line, without the job name: "Driver: Smith → Pope". An
+// added or removed job's value is its driver.
 export function describeJobChange(change) {
-  if (change.kind === 'added') return `added to the sheet${change.to ? ` (${change.to})` : ''}`;
-  if (change.kind === 'removed') return `removed from the sheet${change.from ? ` (was ${change.from})` : ''}`;
-  return `${fieldLabel(change.field)}: ${change.from || '—'} → ${change.to || '—'}`;
+  if (change.kind === 'added') return `added to the sheet${change.to ? ` (${displayName(change.to)})` : ''}`;
+  if (change.kind === 'removed') return `removed from the sheet${change.from ? ` (was ${displayName(change.from)})` : ''}`;
+  return `${fieldLabel(change.field)}: ${shown(change.field, change.from) || '—'} → ${shown(change.field, change.to) || '—'}`;
 }
 
 // The filter chips over the Changes feed: label → `group` in sheet-job-changes.

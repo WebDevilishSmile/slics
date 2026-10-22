@@ -35,6 +35,7 @@ import DeleteDriverDialog from './DeleteDriverDialog';
 import DriverDetailsDialog from './DriverDetailsDialog';
 import LinkRosterDialog from './LinkRosterDialog';
 import { coverLine, formatSeniority } from './seniority';
+import { displayName } from '@/lib/names';
 
 const smallButtonSx = [softRaisedSmall, softPressSx, { px: 1.5, minHeight: '2.5rem' }];
 
@@ -201,7 +202,7 @@ export default function DriversView({ drivers, rosterOnly, counts }) {
                 <TableCell>{driver.rank ?? ''}</TableCell>
                 <TableCell>
                   <Box component='span' sx={{ display: 'block', fontWeight: 600 }}>
-                    {driver.name}
+                    {displayName(driver.name)}
                   </Box>
                   <Box component='span' sx={{ display: 'block', color: 'text.secondary', typography: 'caption' }}>
                     {driverLine(driver)}
@@ -210,7 +211,7 @@ export default function DriversView({ drivers, rosterOnly, counts }) {
                   {driver.suggestion && (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mt: 1 }}>
                       <Typography variant='caption' sx={{ flexBasis: '100%' }}>
-                        Roster has <strong>{driver.suggestion.roster.name}</strong>,{' '}
+                        Roster has <strong>{displayName(driver.suggestion.roster.name)}</strong>,{' '}
                         {formatSeniority(driver.suggestion.roster.seniorityDate)}
                         {driver.suggestion.fitsRank === true && ' (fits the rank)'}
                         {driver.suggestion.fitsRank === false && " (doesn't fit the rank)"}
@@ -248,7 +249,7 @@ export default function DriversView({ drivers, rosterOnly, counts }) {
                 </TableCell>
                 <TableCell>
                   <OptionsMenu
-                    label={`Options for ${driver.name}`}
+                    label={`Options for ${displayName(driver.name)}`}
                     items={
                       driver.roster
                         ? [
@@ -308,7 +309,7 @@ export default function DriversView({ drivers, rosterOnly, counts }) {
                 <TableRow key={row._id}>
                   <TableCell>
                     <Box component='span' sx={{ display: 'block' }}>
-                      {row.name}
+                      {displayName(row.name)}
                     </Box>
                     {row.linkedTo && (
                       <Box component='span' sx={{ display: 'block', color: 'text.secondary', typography: 'caption' }}>
@@ -319,7 +320,7 @@ export default function DriversView({ drivers, rosterOnly, counts }) {
                   <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatSeniority(row.seniorityDate)}</TableCell>
                   <TableCell>
                     <OptionsMenu
-                      label={`Options for ${row.name}`}
+                      label={`Options for ${displayName(row.name)}`}
                       items={[
                         { label: 'Edit details', onClick: () => setDialog({ kind: 'details', driver: row, editName: true }) },
                         { label: 'Delete', onClick: () => setDialog({ kind: 'delete', driver: row }) },

@@ -76,9 +76,9 @@ function RosterHint({ roster, sheet }) {
         sx={{ color: roster.seniorityMatches ? 'primary.main' : 'warning.main', mt: 0.25 }}
       />
       <Typography variant='body2'>
-        Roster: <strong>{roster.name || 'no name'}</strong>, seniority {day(roster.seniorityDate)}
+        Roster: <strong>{displayName(roster.name) || 'no name'}</strong>, seniority {day(roster.seniorityDate)}
         {roster.seniorityMatches ? ' (matches)' : ' (differs)'}
-        {sheet && `; on the sheet as ${sheet.name}${sheet.rank ? ` (#${sheet.rank})` : ''}`}
+        {sheet && `; on the sheet as ${displayName(sheet.name)}${sheet.rank ? ` (#${sheet.rank})` : ''}`}
       </Typography>
     </Box>
   );

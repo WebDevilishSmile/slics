@@ -23,6 +23,7 @@ import { useCoverBidPicks } from '@/hooks/useCoverBidPicks';
 import { COVER_POSITIONS, coverDriversFromPicks } from '@/lib/coverDrivers';
 import { getUpcomingSaturday } from '@/lib/format';
 import theme from '@/theme';
+import { displayName } from '@/lib/names';
 
 // Cover rows → table rows. The line under a name is the job or status, or why
 // the row is empty.
@@ -78,7 +79,7 @@ function DriversTable({ id, title, rows }) {
                       component='span'
                       sx={{ display: 'block', color: row.muted ? 'text.secondary' : undefined }}
                     >
-                      {row.name}
+                      {displayName(row.name)}
                     </Box>
                   )}
                   {row.detail && (

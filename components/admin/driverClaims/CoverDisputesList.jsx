@@ -29,6 +29,7 @@ import {
   softRaised,
   softRaisedSmall,
 } from '@/components/utility/soft';
+import { displayName } from '@/lib/names';
 
 const when = (iso) => (iso ? dayjs(iso).format('MMM D, YYYY h:mm A') : '');
 const softButtonSx = [softRaisedSmall, softPressSx, { px: 2.5, minHeight: '3rem' }];
@@ -59,8 +60,8 @@ function OpenDispute({ dispute, index, busy, onClose }) {
 
       <Box sx={[softInset, { borderRadius: 3, p: 2, display: 'flex', flexDirection: 'column', gap: 1 }]}>
         <Typography variant='body2'>
-          Linked to <strong>{dispute.driverName}</strong>
-          {relinked && ` (now ${account.driverName})`}, not on {weekLabels(dispute.weeks)}.
+          Linked to <strong>{displayName(dispute.driverName)}</strong>
+          {relinked && ` (now ${displayName(account.driverName)})`}, not on {weekLabels(dispute.weeks)}.
         </Typography>
         <Typography variant='body2' color='text.secondary'>
           {dispute.jobName
@@ -236,7 +237,8 @@ export default function CoverDisputesList({ initialOpen, initialClosed }) {
             {closed.map((dispute) => (
               <Box component='li' key={dispute._id} sx={{ p: 1 }}>
                 <Typography variant='body2'>
-                  <strong>{dispute.account?.name || dispute.driverName}</strong> · {dispute.driverName}
+                  <strong>{dispute.account?.name || displayName(dispute.driverName)}</strong> ·{' '}
+                  {displayName(dispute.driverName)}
                 </Typography>
                 {dispute.reply && (
                   // Plain text, never HTML.

@@ -27,6 +27,7 @@ import {
 } from '@/components/utility/soft';
 import JobChangesFeed from './JobChangesFeed';
 import SheetJobDialog from './SheetJobDialog';
+import { displayName } from '@/lib/names';
 
 // "15:00" or "0:09" → minutes, for sorting start times; NaN when not a time.
 const minutes = (value) => {
@@ -93,7 +94,7 @@ function JobCard({ job, onOpen }) {
         </Typography>
       </Box>
       <Typography component='span' variant='body2'>
-        {job.driver || 'No driver'}
+        {displayName(job.driver) || 'No driver'}
         {job.weekHours && (
           <Box component='span' sx={{ color: 'text.secondary' }}>
             {' '}· {job.weekHours} h/week
@@ -233,7 +234,7 @@ export default function SheetJobsView({ jobs, changes, moreChanges, seenAt }) {
                         {job.jobName}
                       </ButtonBase>
                     </TableCell>
-                    <TableCell sx={{ whiteSpace: 'nowrap' }}>{job.driver || '—'}</TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>{displayName(job.driver) || '—'}</TableCell>
                     {DAY_FIELDS.map((day) => (
                       <TableCell key={day} sx={{ fontVariantNumeric: 'tabular-nums' }}>
                         {job.days[day].start}

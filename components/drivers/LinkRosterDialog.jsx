@@ -23,6 +23,7 @@ import {
   softRaisedSmall,
 } from '@/components/utility/soft';
 import { formatSeniority } from './seniority';
+import { displayName } from '@/lib/names';
 
 const softListSx = [
   softRaised,
@@ -54,7 +55,7 @@ export default function LinkRosterDialog({ driver, rosterOnly, onClose, onSaved 
 
   return (
     <Dialog open onClose={busy ? undefined : onClose} fullWidth maxWidth='xs'>
-      <DialogTitle>Link {driver.name}</DialogTitle>
+      <DialogTitle>Link {displayName(driver.name)}</DialogTitle>
       <DialogContent>
         <Box
           component='form'
@@ -80,7 +81,7 @@ export default function LinkRosterDialog({ driver, rosterOnly, onClose, onSaved 
               <Box component='li' key={key} {...props}>
                 <Box>
                   <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                    {option.name}
+                    {displayName(option.name)}
                   </Typography>
                   <Typography variant='caption' color='text.secondary'>
                     {formatSeniority(option.seniorityDate)}

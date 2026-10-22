@@ -22,6 +22,7 @@ import {
   softPressSx,
   softRaisedSmall,
 } from '@/components/utility/soft';
+import { displayName } from '@/lib/names';
 
 const softButtonSx = [softRaisedSmall, softPressSx, { px: 2.5, minHeight: '3rem' }];
 const actionsSx = { px: 3, pb: 3, gap: 1.5 };
@@ -68,7 +69,7 @@ export default function UserDriver({ userId, accountName, initial, names }) {
       {driver.driverVerified ? (
         <Box>
           <Typography sx={{ fontWeight: 600 }}>
-            {driver.driverName}
+            {displayName(driver.driverName)}
             <VerifiedBadge />
           </Typography>
           <Typography variant='caption' color='text.secondary'>

@@ -29,9 +29,6 @@ Use absolute dates.
   `push-subscriptions` rows stay, so a device signed out that way keeps getting its
   pushes until someone signs in on it. Delete them where `sessionVersion` is bumped?
   (found 2026-10-14 building Push stage 2, `PUSH-NOTIFICATIONS.md` → 2.4)
-- `/about` isn't in the middleware's `publicPaths`, but the signed-out menu links to it,
-  so a signed-out tap bounces to `/sign-in` (seen 2026-10-15 tracing CPU). Make it
-  public, or hide the row signed out?
 
 ---
 

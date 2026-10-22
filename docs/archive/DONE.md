@@ -217,6 +217,10 @@ sign in process should be in the /sign-in page.
 
 ## UI/UX
 
+- [x] `/about` isn't in the middleware's `publicPaths`, but the signed-out menu links to it,
+      so a signed-out tap bounces to `/sign-in` (seen 2026-10-15 tracing CPU). Make it
+      public, or hide the row signed out? (2026-10-22: made public. It shows who made the
+      app and two cached totals, nothing about anyone)
 - [x] The names of drivers should be uniformly capitalized. Some names are all upper case,
       some are all lower case, and some are properly capitalized. Standardize them to be
       consistently capitalized first letter. (Inbox, 2026-10-22: shown through

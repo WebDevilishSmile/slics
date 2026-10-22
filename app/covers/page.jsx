@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import { Typography } from '@mui/material';
 
-import { canUseCovers, getSession, isSuperAdmin, isVerifiedDriver } from '@/lib/authz';
-import { getUserById } from '@/lib/db/users';
+import { canUseCovers, canUsePush, getSession, isSuperAdmin, isVerifiedDriver } from '@/lib/authz';
+import { getUserById, resolveReminderLeads } from '@/lib/db/users';
 import { getMyDriverClaim } from '@/lib/db/driverClaims';
 import { getMyCoverDispute } from '@/lib/db/coverDisputes';
 import { getDriverJobName } from '@/lib/db/sheetJobs';
@@ -124,6 +124,10 @@ export default async function CoversPage({ searchParams }) {
           return null;
         })
       : null;
+  // The call-in reminder said under Call dispatch, when it's on
+  // (docs/PUSH-NOTIFICATIONS.md, stage 3); the default in a preview.
+  const reminderOn = preview || (canUsePush(session) && user?.pushPrefs?.coverReminder !== false);
+  const reminderLeads = reminderOn ? resolveReminderLeads(preview ? null : user?.coverReminderLeads) : null;
   const callIns = Object.fromEntries(
     preview
       ? weeks.map((week) => [week.weekEnding, 'your time'])
@@ -178,6 +182,8 @@ export default async function CoversPage({ searchParams }) {
           thisWeek={thisWeek}
           initialWeek={initialWeek}
           preview={preview}
+          reminderLeads={reminderLeads}
+          profileHref={`/profile/${session.user.id}`}
         />
       )}
     </PageContainer>

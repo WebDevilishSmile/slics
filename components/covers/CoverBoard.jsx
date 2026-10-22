@@ -9,6 +9,7 @@ import { getUpcomingSaturday } from '@/lib/format';
 import { tapHaptic } from '@/lib/haptics';
 import CoverBidJobsTable from '@/components/coverBidJobs/CoverBidJobsTable';
 import CoverList from '@/components/covers/CoverList';
+import PushNudge from '@/components/push/PushNudge';
 
 const NO_ENTRIES = [];
 
@@ -32,6 +33,11 @@ const NO_ENTRIES = [];
 //   null for next week.
 // - `preview`: the super admin's preview (app/covers/page.jsx): the list works
 //   but stays in the page, never saved or re-read.
+// - `reminderLeads`: the driver's call-in reminder times when that
+//   notification is on (minutes, users.coverReminderLeads), or null;
+//   `profileHref` their /profile, where it's changed.
+// After the driver's first save on this visit, a nudge offers notifications
+// (push/PushNudge.jsx, never on page load), if this device has them off.
 export default function CoverBoard({
   jobs,
   minWeekEnding,
@@ -44,6 +50,8 @@ export default function CoverBoard({
   thisWeek,
   initialWeek = null,
   preview = false,
+  reminderLeads = null,
+  profileHref = null,
 }) {
   // Next week: the week drivers bid on (as CoverBidJobsTable's own default).
   const [selectedDay, setSelectedDay] = useState(() =>
@@ -61,6 +69,8 @@ export default function CoverBoard({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [announcement, setAnnouncement] = useState('');
+  // Set by the first save that goes through: mounts the notifications nudge.
+  const [saved, setSaved] = useState(false);
   const saveSeq = useRef(0);
 
   const weekJobs = useMemo(
@@ -101,6 +111,7 @@ export default function CoverBoard({
       if (seq === saveSeq.current) {
         setLists((current) => ({ ...current, [week]: data.data.entries }));
       }
+      setSaved(true);
     } catch (err) {
       if (seq === saveSeq.current) {
         setLists((current) => ({ ...current, [week]: previous }));
@@ -210,8 +221,11 @@ export default function CoverBoard({
             bidDate={bidDates?.[selectedWeek] ?? null}
             dispatchPhone={dispatchPhone}
             preview={preview}
+            reminderLeads={reminderLeads}
+            profileHref={profileHref}
             onMove={move}
             onRemove={remove}
+            nudge={saved && <PushNudge topic='covers' inset />}
           />
         )
       }

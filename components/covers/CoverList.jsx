@@ -6,6 +6,7 @@ import {
   Button,
   CircularProgress,
   IconButton,
+  Link,
   Typography,
 } from '@mui/material';
 import {
@@ -16,7 +17,7 @@ import {
 } from '@mui/icons-material';
 import { visuallyHidden } from '@mui/utils';
 
-import { formatBidDay } from '@/lib/bidDay';
+import { formatBidDay, leadLabel } from '@/lib/bidDay';
 import { DAY_FIELDS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
 import { formatWeekEnding } from '@/lib/onCallSheet';
 import {
@@ -46,6 +47,9 @@ function daysSummary(job) {
 
 const moveButtonSx = [softPressSx, { width: '2.75rem', height: '2.75rem' }];
 
+const listFormat = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
+const listOf = (items) => listFormat.format(items);
+
 // A verified driver's list for one week on /covers (docs/COVER-BIDDING.md,
 // stage 2): the jobs they want, in order, ready to read off when they call
 // dispatch at their call-in time. Jobs someone took drop off the list (they
@@ -60,6 +64,10 @@ const moveButtonSx = [softPressSx, { width: '2.75rem', height: '2.75rem' }];
 // - `bidDate`: the day they call in (lib/bidDay.js).
 // - `dispatchPhone`: BETPA's phone (DISPATCH_NUM_SLIC), or null.
 // - `preview`: the super admin's preview; the list isn't saved.
+// - `reminderLeads`: the driver's call-in reminder times when that
+//   notification is on (minutes), said under Call dispatch, or null.
+// - `profileHref`: the driver's /profile, where the reminder is changed.
+// - `nudge`: the notifications suggestion, after a save (CoverBoard).
 export default function CoverList({
   weekEnding,
   entries,
@@ -73,6 +81,9 @@ export default function CoverList({
   bidDate,
   dispatchPhone,
   preview = false,
+  reminderLeads = null,
+  profileHref = null,
+  nudge = null,
   onMove,
   onRemove,
 }) {
@@ -223,6 +234,19 @@ export default function CoverList({
           </Typography>
         </Box>
       )}
+
+      {reminderLeads?.length > 0 && profileHref && callIn && !offList && editable && (
+        <Typography variant='body2' color='text.secondary' sx={{ mt: 1.5 }}>
+          Reminder {listOf(reminderLeads.map(leadLabel))} before your call-in, on each device with
+          notifications on. Change it in{' '}
+          <Link href={profileHref} sx={{ fontWeight: 600 }}>
+            Profile
+          </Link>
+          .
+        </Typography>
+      )}
+
+      {nudge && <Box sx={{ mt: 2 }}>{nudge}</Box>}
 
       <Box aria-live='polite' sx={visuallyHidden}>
         {announcement}

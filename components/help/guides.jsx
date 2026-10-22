@@ -1,5 +1,6 @@
 import {
   AddLocationAltOutlined,
+  AlarmOutlined,
   ChatBubbleOutline,
   ContentCopy,
   DirectionsOutlined,
@@ -496,6 +497,56 @@ export const HELP_SECTIONS = [
             It comes from the on-call sheet, so it&apos;s only as current as
             the sheet. It needs your account verified on <Tap>Covers</Tap>{' '}
             first.
+          </>,
+        ],
+      },
+      {
+        id: 'call-in-reminder',
+        feature: 'coversOpen',
+        title: 'Get a reminder before your call-in',
+        icon: AlarmOutlined,
+        intro:
+          'On bid day your phone reminds you before your call-in time, with the first jobs on your list.',
+        steps: [
+          <>
+            Open the menu (three lines at the top left) and tap{' '}
+            <Tap>Profile</Tap>.
+          </>,
+          <>
+            Turn on <Tap>Notifications</Tap>. When your phone asks, tap{' '}
+            <Tap>Allow</Tap>.
+          </>,
+          <>
+            Under <Tap>Covers</Tap>, keep <Tap>Call-in reminder</Tap> on and
+            pick how long before: <Tap>15 min</Tap>, <Tap>30 min</Tap>,{' '}
+            <Tap>1 hr</Tap> or <Tap>2 hr</Tap>. You can pick more than one.
+          </>,
+          <>
+            On bid day, tap the reminder to open <Tap>Covers</Tap> on that
+            week, with <Tap>Call dispatch</Tap> under your list.
+          </>,
+        ],
+        notes: [
+          <>
+            Bid day is usually the Thursday before the week.{' '}
+            <Tap>Covers</Tap> shows the day beside your call-in time.
+          </>,
+          <>
+            Also under <Tap>Covers</Tap>: <Tap>Your list</Tap> tells you when a
+            job on your list is taken, <Tap>Your call-in time</Tap> when the
+            pick list names you or your time changes, and{' '}
+            <Tap>Cover jobs</Tap> when a week&apos;s jobs are posted or
+            change. None of them ever says who took a job.
+          </>,
+          <>
+            <strong>iPhone:</strong> notifications only work in SLICs on your
+            home screen, not in Safari. See{' '}
+            <Link href='#install'>Put SLICs on your home screen</Link> first.
+          </>,
+          <>
+            A reminder is only a nudge. Your call-in time on{' '}
+            <Tap>Covers</Tap> is what counts. It needs your account verified
+            on <Tap>Covers</Tap> first.
           </>,
         ],
       },

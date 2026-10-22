@@ -14,21 +14,37 @@ import { softInset, softPressSx } from '@/components/utility/soft';
 
 const DISMISSED_KEY = 'slics.pushNudgeDismissed';
 
-function readDismissed() {
+function readDismissed(key) {
   try {
-    return window.localStorage.getItem(DISMISSED_KEY) === '1';
+    return window.localStorage.getItem(key) === '1';
   } catch {
     return false;
   }
 }
 
-function writeDismissed() {
+function writeDismissed(key) {
   try {
-    window.localStorage.setItem(DISMISSED_KEY, '1');
+    window.localStorage.setItem(key, '1');
   } catch {
     // Private mode or blocked storage: it just shows again next post.
   }
 }
+
+// What it says before and after the tap, for a reply (the default) or a
+// Covers list (`topic='covers'`, docs/PUSH-NOTIFICATIONS.md stage 3). Each is
+// dismissed on its own.
+const KINDS = {
+  replies: {
+    ask: 'Get a notification when someone replies.',
+    on: 'Notifications on. You’ll get one when someone replies.',
+    dismissedKey: DISMISSED_KEY,
+  },
+  covers: {
+    ask: 'Get a reminder before your call-in time, and know when a job on your list is taken.',
+    on: 'Notifications on. You’ll get a reminder before your call-in time.',
+    dismissedKey: 'slics.coversPushNudgeDismissed',
+  },
+};
 
 // "Get a notification when someone replies", offered right after a driver
 // posts a tip, a reply or a place comment (docs/PUSH-NOTIFICATIONS.md, stage
@@ -39,10 +55,13 @@ function writeDismissed() {
 // they dismiss it on this device. A blocked, unsupported or iPhone-tab device
 // is left to /profile, which explains each. Turning on confirms in place.
 // `inset` draws it as a pressed-in well, for inside a raised card (a place's).
-export default function PushNudge({ inset = false }) {
+// `topic`: 'replies' (after a post) or 'covers' (after a driver saves their
+// cover list, covers/CoverBoard.jsx).
+export default function PushNudge({ inset = false, topic = 'replies' }) {
+  const words = KINDS[topic] ?? KINDS.replies;
   const { data: session } = useSession();
   const { state, busy, enable } = usePushNotifications();
-  const [dismissed, setDismissed] = useState(readDismissed);
+  const [dismissed, setDismissed] = useState(() => readDismissed(words.dismissedKey));
   // Set by the tap: what it led to stays on screen until dismissed.
   const [result, setResult] = useState(null); // null | 'on' | 'blocked' | 'error'
 
@@ -51,7 +70,7 @@ export default function PushNudge({ inset = false }) {
   if (!result && state !== 'off') return null;
 
   const dismiss = () => {
-    writeDismissed();
+    writeDismissed(words.dismissedKey);
     setDismissed(true);
   };
 
@@ -68,10 +87,10 @@ export default function PushNudge({ inset = false }) {
   };
 
   const message = {
-    on: 'Notifications on. You’ll get one when someone replies.',
+    on: words.on,
     blocked: 'Notifications are blocked on this device. Profile → Notifications says how to allow them.',
     error: 'Couldn’t turn notifications on. Try again from Profile → Notifications.',
-  }[result] ?? 'Get a notification when someone replies.';
+  }[result] ?? words.ask;
 
   return (
     <SoftNotice

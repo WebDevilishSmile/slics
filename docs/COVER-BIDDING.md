@@ -8,7 +8,7 @@ then pick in the app when their time comes. Built in stages; check items off as 
 `npm run build` (in a scratch copy, never while `next dev` runs) before shipping any item.
 The app is used daily in production.
 
-## Status (2026-10-12)
+## Status (2026-10-22)
 
 - **Stage 1** (driver verification and the drivers' Covers page): built, **admin only**
   while it's tested (super admins only for a few hours on 2026-10-12). Until the "Covers
@@ -32,7 +32,13 @@ The app is used daily in production.
   deployed (`cover-disputes`), then check it with "Verifying the read-only rule" below.
 - **Early access** (built 2026-10-17): the super admin can let one account into Covers
   before it opens to everyone (see "Early access" under stage 1).
-- **Stages 3–4:** not started.
+- **Bid day, the super admin's preview and notifications** (built 2026-10-22, not
+  deployed yet): the day drivers call in is known and shown, the super admin can see
+  `/covers` as a cover driver does, and verified drivers get notifications (stage 3 of
+  `PUSH-NOTIFICATIONS.md`). Run `npm run db:indexes` once deployed (`cover-bid-days`,
+  `cover-notices`).
+- **Stage 3** (picking in the app): not started. **Stage 4:** the call-in reminder is
+  built; "your pick is up" waits for stage 3.
 
 ---
 
@@ -151,6 +157,25 @@ decide." So he can let chosen drivers test Covers before the switch opens it to 
 - **Rollback:** `git revert` the server commit; saved `coversAccess` fields then do
   nothing and can stay. The `/help` This week guide still waits for the switch.
 
+### The super admin's preview (built 2026-10-22)
+
+Tiago asked to "see the covers page like a cover driver would", knowing the call-in
+time from the sheet would have to be a placeholder: he isn't verified, and isn't on a
+pick list.
+
+- [x] **`/covers?preview=driver`**, honored only for `isSuperAdmin` (anyone else gets the
+      normal page). It loads what a verified driver's page loads (the jobs through
+      `toDriverCoverJob`, hidden jobs left out, BETPA's phone, the bid days), but from the
+      picks only each posted week's date: every tile is "Cover #", "Your place on the pick
+      list", with the real bid day and "Your time". No real driver's row reaches the page.
+- [x] **The list works but isn't saved:** `CoverBoard`'s `preview` keeps it in the page,
+      with no `PUT` and no re-read, and says "Preview: this list isn't saved."
+- [x] **In and out:** "See it as a cover driver" under the title, for the super admin
+      only, and a notice above the preview with Exit preview
+      (`components/covers/CoverPreview.jsx`).
+- The notifications themselves are previewed with "Send me a sample" on
+  `/admin/super/notifications`.
+
 ### Rolling stage 1 out to every driver
 
 - [ ] Tested on at least one other admin: claim, verify, the week tiles, turn down, remove.
@@ -205,8 +230,9 @@ calling dispatch at the call-in time; the list is what the driver reads off on t
       read-only.
 - [x] **Call dispatch** under the list dials the phone on SLIC `DISPATCH_NUM_SLIC`
       (BETPA, 1809), read at page load, beside the driver's call-in time for that week.
-      It's always the list's main action: the sheet gives call-in slots but not the bid
-      day, so it can't light up at the right moment yet.
+      It's always the list's main action. The sheet gives call-in slots but not the bid
+      day; since 2026-10-22 the bid day is a rule an admin can override (below), shown
+      beside the time ("Your call-in: Thu 10/22 at 9:15").
 - [x] **Admins see every list:** `/admin/cover/lists` (`components/admin/coverLists/`),
       each driver's list in pick order with their cover number or on-call order and
       call-in, taken jobs struck through, and the most wanted open jobs (first choice,
@@ -231,6 +257,26 @@ calling dispatch at the call-in time; the list is what the driver reads off on t
       `/admin/driver-claims` with an optional answer the driver sees on `/covers`. The fix
       is the sheet's, or the account's link on its admin user page.
 
+### Bid day (built 2026-10-22)
+
+Drivers call dispatch at their call-in slot (the pick section's column A, New York time)
+on the bid day. The sheet doesn't say which day that is. The saved picks showed W/E
+10/24/2026 picked on Thursday 10/15 from 7:00, and Tiago confirmed the rule: the Thursday
+9 days before the week ends, which an admin can move for a holiday (Thanksgiving, Thu
+11/26/2026, is the bid day for W/E 12/5).
+
+- [x] **The rule** is `lib/bidDay.js`, pure: `defaultBidDate`, `bidDateFor`,
+      `weeksBiddingOn`, `callInInstant` (a slot on a bid day to the moment, through
+      `Intl`, right across daylight saving).
+- [x] **Moving a week:** "Bid day: Thu 10/22 · Change" under Refresh on
+      `/admin/cover/jobs` (`coverBidJobs/BidDayControl.jsx`), a date between four weeks and
+      one week before the week starts, and "Use Thu …" to go back. `PUT
+      /api/cover-bid-days` (Covers area) writes `cover-bid-days` after `admin_audit`
+      (`coverBidDay.set` / `.reset`); going back deletes the doc.
+- [x] **Drivers see it** beside their call-in time: "Call in Thu 10/22" on each week's tile,
+      "Your call-in: Thu 10/22 at 9:15" under the list. The call-in reminders go out on it
+      (`PUSH-NOTIFICATIONS.md` stage 3).
+
 ## Stage 3: Picking in the app (not started)
 
 The driver on the clock picks in the app. When their time comes, their list's top
@@ -250,9 +296,12 @@ Open questions, to settle before building:
 - **On-call drivers** (after pick 20): do they bid too?
 - **Mistakes:** who can undo a pick, and how it's recorded.
 
-## Stage 4: "Your pick is up" (not started)
+## Stage 4: "Your pick is up" (part built 2026-10-22)
 
-A push notification when a driver's turn starts. It's stage 3 of `PUSH-NOTIFICATIONS.md`.
+A push notification when a driver's turn comes. The call-in reminder is built: on bid day,
+at the times the driver chose before their call-in, with the first jobs on their list
+(stage 3 of `PUSH-NOTIFICATIONS.md`). "Your pick is up", sent when the driver before them
+picks, waits for stage 3.
 
 ---
 

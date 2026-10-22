@@ -1,20 +1,24 @@
 # PUSH-NOTIFICATIONS.md
 
 Plan and checklist for web push notifications: the admin first, then drivers' tip
-replies, then cover bidding. Built in stages; check items off as they ship.
+replies, then verified cover drivers' reminders and lists. Built in stages; check items
+off as they ship.
 
 **How to use this:** stages go in order. Each item says where the code lives. Run
 `npm run build` (in a scratch copy, never while `next dev` runs) before shipping any item.
 The app is used daily in production.
 
-## Status (2026-10-14)
+## Status (2026-10-22)
 
 **Stage 1 live** for admins (working on the admin's phone as of 2026-10-12). **Stage 1b
 built 2026-10-12** and shipped with the super admin hub (`TODOS.md` checked it off
 2026-10-14): each admin chooses which kinds they get, with eight new kinds and a send
 log. **Stage 2 built and deployed 2026-10-14 with its switch off** (below): admins
 already get the two reply kinds; drivers get nothing until the super admin turns on
-"Notifications for every driver", after "Verifying stage 2". Stage 3 isn't started.
+"Notifications for every driver", after "Verifying stage 2". **Stage 3 built 2026-10-22**
+(below, not deployed yet): verified cover drivers can turn notifications on before that
+switch, and get call-in reminders on bid day, their list's jobs taken, their call-in
+time and the week's cover jobs. Its checks are "Verifying stage 3".
 
 ---
 
@@ -445,18 +449,116 @@ do, on phones:
 - **Rollback:** flip the switch off with a driver's device still on, then reply to their
   tip. No push goes out, and the `push-log` shows nothing for them.
 
-## Stage 3 — Cover bidding: "your pick is up"
+## Stage 3 — Verified cover drivers: reminders, their list and the week (built 2026-10-22)
 
-This waits on driver verification and in-app bidding (`COVER-BIDDING.md` stage 3).
+Tiago asked (2026-10-22):
 
-- [ ] **"Your pick is up":** when the driver before them picks, triggered by the event
-      itself. That's the sheet webhook (`syncFromSheet`) while picks happen in the sheet,
-      or the in-app pick once bidding moves here. No timer is needed.
-- [ ] **"Your pick is in about 10 minutes"** needs a scheduler. The Vercel cron here runs
-      once a day (`vercel.json`), and running every minute may need a paid plan. Decide
-      when stage 3 starts, or leave this one out.
-- [ ] The cover page stays the source of truth. A push that fails or arrives late never
-      changes anyone's turn.
+> I want to allow drivers that are verified and allowed to view covers to be able to turn
+> on their notifications. Notifications about job changes, if their interest list picks
+> are picked, when its their turn to bid (sometime prior 15min, 2hr, etc... ), and I (as
+> the superAdmin) want to be able to see the covers page like a cover driver would.
+> Obviously the bid time that comes from the Google Sheet would have to say something
+> generic or maybe a placeholder time.
+
+**Decided with Tiago (2026-10-22):**
+
+- **Bid day** is the Thursday 9 days before the week ends, which an admin can move. The
+  saved picks showed W/E 10/24/2026 picked on Thu 10/15 from 7:00, in 15-minute call-in
+  slots. Thanksgiving (Thu 11/26) is why it moves. Built in `COVER-BIDDING.md`, "Bid day".
+- **The timer is a Vercel Pro cron.** A Hobby cron runs once a day, which can't remind
+  anyone 15 minutes ahead. The team was already on Pro (checked 2026-10-22).
+- **"Job changes"** means the week's cover jobs and the driver's own call-in time, not the
+  Jobs tab.
+- **Verified cover drivers also get the reply kinds** while "Notifications for every
+  driver" is off: if you can turn notifications on, every switch you see works.
+- **The super admin's preview** of `/covers` is in `COVER-BIDDING.md`.
+
+**Built** in nine commits ("Covers notifications, part 1" to "part 9"):
+
+- [x] **The gate:** `pushAllowed` (`lib/featureAccess.js`) lets in admins and verified
+      cover drivers (`isCoverDriver`: verified, and Covers open to them), or everyone once
+      the switch is on. `canUsePush`, the push nudge and the header menu share it.
+      `pushAllowedFilter` / `coverDriverFilter` (`lib/db/users.js`) are the same rule as
+      queries, used by `getDriverPushAudience` and `getCoverDriverAudience`.
+- [x] **Four kinds** in `PUSH_TYPES`, `audience: 'coverDriver'`, group Covers, on by
+      default, offered only to verified cover drivers (`pushTypesFor({ coverDriver })`;
+      `push-prefs` answers 403 to anyone else). Every payload is in `lib/pushEvents.js` and
+      links `/covers?week=…`; one tag per week, so a newer one replaces the last.
+
+  | Kind | Sent | Says |
+  |---|---|---|
+  | `coverReminder` Call-in reminder | By the cron on bid day, at each time the driver chose before their call-in (`users.coverReminderLeads`: 15 min, 30 min, 1 hr, 2 hr; 15 min until they choose) | "Call in at 9:15, in 15 minutes" · "W/E 10/31/2026 · Cover 9. Your list: LV92, SH16, WA03." |
+  | `coverListTaken` Your list | At once, from `refreshCoverWeek`, when a job on their list for a week that isn't over is picked (its NAME fills) or removed. Not to the driver whose linked name took it | "A job on your list was taken" · "W/E 10/31/2026: LV92 was taken. Next up: SH16 (2 left)." |
+  | `coverCallIn` Your call-in time | By the cron, when a week's pick list first names them, or their place, time or bid day changes, or it drops them; only once the week's places have been quiet for 30 minutes, and not after their call-in has passed | "You're on the W/E 10/31/2026 pick list" · "Cover 9: call in Thu 10/22 at 9:00." |
+  | `coverWeekJobs` Cover jobs | By the cron, 10 minutes after a week's last job change: posted, added, removed, times or description changed. Never picks, assigned drivers, cover reasons or hidden jobs (in the sheet, sleeper, or an admin's hide). Not to drivers off that week's list, nor to admins who get the admin Cover jobs kind | "Cover jobs changed" · "W/E 10/31/2026: BE11 description changed and LV92 times changed." |
+
+- [x] **The lead times** are chips under "Call-in reminder" on `/profile`
+      (`profile/CoverReminderLeads.jsx`, `PUT /api/users/me/cover-reminders`, verified
+      drivers, rate-limited). The last one can't be unselected: the switch is the way to
+      have none.
+- [x] **The cron:** `GET /api/cron/cover-notifications` every minute (`vercel.json`,
+      `CRON_SECRET`; `?all=1` runs every part now). `lib/coverNotices.js` runs the
+      reminders every minute, and the call-in and cover-jobs notices every fifth. What
+      it has told is `cover-notices` (`lib/db/coverNotices.js`): a reminder is claimed by
+      inserting its unique key before it's sent, a change moves the last told state with
+      a compare-and-set, so a repeated or doubled run tells nobody twice. The week
+      notices' first run is a baseline (`weeks:baseline`): changes from before it aren't
+      told. Every due lead is claimed and one push says the nearest, so a late run never
+      sends two at once.
+- [x] **The renumbering cascade** (Tiago's Inbox note: renumbering driver 27 moves every
+      driver after them): nothing is sent when a slot changes. Reminders read the slot
+      when they're due, and the call-in notice waits until the week's places have been
+      quiet for 30 minutes (`cover-bid-picks.slotsChangedAt`), then sends each driver
+      whose place or time ended up different one notice with the final time.
+- [x] **The super admin's view:** samples of the four kinds on
+      `/admin/super/notifications`, which counts the Covers kinds over verified drivers
+      (counts only).
+- [x] **Discovery:** after a verified driver's first list save on `/covers`, the nudge
+      offers notifications inside the list card (`PushNudge topic='covers'`, never on page
+      load); under Call dispatch the list says the reminder when it's on; `/help` has "Get
+      a reminder before your call-in" (`feature: 'coversOpen'`).
+- [x] **Words:** the privacy page says what a Covers alert can show and that the record
+      of cover alerts sent is deleted four weeks after the week.
+
+Still not built:
+
+- [ ] **"Your pick is up"** when the driver before them picks waits for picking in the app
+      (`COVER-BIDDING.md` stage 3). Until then the call-in time is the turn.
+- The cover page stays the source of truth. A push that fails or arrives late never
+  changes anyone's turn.
+
+**Rollback**, each on its own:
+
+- Take the cron line out of `vercel.json`: no more reminders, call-in or cover-jobs
+  notices.
+- `git revert` "part 4": no more list-taken pushes.
+- `git revert` "part 1": verified drivers can't turn notifications on, and the Covers
+  kinds are offered to nobody. Saved prefs and lead times stay, doing nothing.
+- The data is all additive (`cover-bid-days`, `cover-notices`, `users.coverReminderLeads`,
+  `cover-bid-picks.slotsChangedAt`, `cover-job-changes.sheetHidden`) and can stay.
+
+### Verifying stage 3
+
+Done 2026-10-22, before deploying: lint and a build of every commit; the audience query
+and the JS rule agree on production (4 verified cover drivers: 3 admins and the
+early-access account); the list lookup read-only; the engine run on a stubbed store and
+stubbed sends against the real W/E 10/31 picks on its bid day (a reminder at 8:50 for a
+9:00 call-in, nothing on a second run or on a Wednesday, a moved slot waiting out the
+quiet window, a dropped driver told once, hidden, sleeper and pick changes left out, the
+admin and an off-list driver skipped); `/covers?preview=driver` at 390px in light and
+dark, with no pick names in the page and no list requests; the new routes answer 401
+signed out. Still to do:
+
+- Run `npm run db:indexes` once deployed (`cover-bid-days`, `cover-notices`).
+- `vercel crons ls` lists `/api/cron/cover-notifications`; `cover-notices` gets its
+  `weeks:baseline` within five minutes.
+- Super admin, on the iPhone home-screen app and on Android: "Send me a sample" for each
+  Covers kind on `/admin/super/notifications`.
+- A verified driver with a device on (the early-access account, or an admin verified on
+  the sheet): the Covers switches and the chips on `/profile`; on the next bid Thursday
+  the reminder arrives at the chosen time and `push-log` has a `coverReminder` row.
+- Move a week's bid day on `/admin/cover/jobs`, then back: `/covers` follows, and
+  `admin_audit` has `coverBidDay.set` and `.reset`.
 
 ---
 
@@ -470,9 +572,9 @@ This waits on driver verification and in-app bidding (`COVER-BIDDING.md` stage 3
   `localhost`.
 - **Turning off:** the row is gone from `push-subscriptions`, and
   `navigator.serviceWorker.getRegistrations()` is empty.
-- **While "Notifications for every driver" is off, as a driver account:** no toggle on
-  `/profile`, no service worker registered, and `POST /api/users/me/push-subscriptions`
-  answers 403.
+- **While "Notifications for every driver" is off, as a driver account that isn't a
+  verified cover driver:** no toggle on `/profile`, no service worker registered, and
+  `POST /api/users/me/push-subscriptions` answers 403.
 - **Expired subscriptions:** remove the home-screen app or revoke the permission, trigger
   a send, and check that the row was deleted.
 - **A failing send:** with a bad private key, a SLIC report still saves and answers

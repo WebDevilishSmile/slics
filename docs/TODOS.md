@@ -37,6 +37,11 @@ Use absolute dates.
 
 ## Now
 
+- [ ] **Covers notifications** (built 2026-10-22, not deployed): deploy (the cron needs
+      Vercel Pro, which the team is on), run `npm run db:indexes` (`cover-bid-days`,
+      `cover-notices`), then "Verifying stage 3" (`PUSH-NOTIFICATIONS.md`): the samples on
+      phones, the super admin's `/covers?preview=driver`, a verified driver's reminder on
+      the next bid Thursday, and moving a bid day and back
 - [ ] **Sheet sync:** one Refresh each (Jobs and a cover week) on the live site to confirm
       the deployment (`ON-CALL-SHEET-SYNC.md`)
 - [ ] **Cover-week alerts** (built 2026-10-14): after the deploy, run `npm run db:indexes`

@@ -67,18 +67,26 @@ to `.env`. In production the same keys are set on the Vercel project.
 | What | When | Where | Auth |
 |---|---|---|---|
 | Daily sheet re-read (Jobs + this week on) | 10:00 UTC daily (`vercel.json`), production only, sometime within that hour | `GET /api/cron/on-call-sheet-sync` | `Authorization: Bearer $CRON_SECRET`, sent by Vercel |
+| Covers notifications (call-in reminders; call-in and cover-jobs notices) | Every minute (`vercel.json`), production only. **Needs Vercel Pro** (the team has been on it since before 2026-10-22): a Hobby cron runs once a day, and a deploy with an every-minute one fails there | `GET /api/cron/cover-notifications` (`lib/coverNotices.js`); `?all=1` runs every part at once | `Authorization: Bearer $CRON_SECRET`, sent by Vercel |
 | Sheet notifier ping | When the sheet's `Jobs` tab or a dated tab is edited | `POST /api/webhooks/on-call-sheet` | `x-sheet-secret` = `ON_CALL_SHEET_WEBHOOK_SECRET` |
 | Buy Me a Coffee events | Every delivery (saved to `bmc-events`); membership started / cancelled also sets `bmcMember` | `POST /api/webhooks/buymeacoffee` | HMAC SHA-256 with `BMC_WEBHOOK_SECRET`, constant-time; repeats are no-ops (`BMC-SUPPORT.md`) |
 
 Push notifications go out from the request that caused them, after its response
 (`lib/pushEvents.js`, `PUSH-NOTIFICATIONS.md`): Jobs-tab and cover-week changes from a
 sheet read (each naming the jobs), SLIC reports, tips, claims, cover list disputes, sign-ups, Places, SLIC edits and Buy Me a Coffee events,
-each to the admins who chose that kind on `/profile`; and a reply on a tip or a comment on a
-place, to the drivers in that thread (or who added the place) who have a device on. Drivers
-get those only while "Notifications for every driver" is on (`/admin/super/features`);
-turning it off stops them at once, which is the rollback. Nothing is scheduled. With the VAPID
-keys unset, sends are skipped and logged ("Push is off"). Every send that reached a device
-is in `push-log` for 90 days, on `/admin/super/notifications`.
+each to the admins who chose that kind on `/profile`; a reply on a tip or a comment on a
+place, to the drivers in that thread (or who added the place) who have a device on; and a
+job taken off a verified driver's cover list, to that driver. Drivers get the reply kinds
+only while "Notifications for every driver" is on (`/admin/super/features`), unless
+they're verified for Covers; turning it off stops the rest at once, which is the rollback.
+The scheduled ones are the Covers notifications above (`PUSH-NOTIFICATIONS.md` stage 3):
+the cron reminds verified drivers before their call-in on bid day, and tells them about
+their place on a week's pick list and the week's jobs once the sheet has gone quiet. What
+it has told is in `cover-notices`, so a repeated run tells nobody twice. To check it by
+hand: `vercel crons run /api/cron/cover-notifications` (it sends for real). Removing its
+line from `vercel.json` stops it. With the VAPID keys unset, sends are skipped and logged
+("Push is off"). Every send that reached a device is in `push-log` for 90 days, on
+`/admin/super/notifications`.
 
 **`/admin/super/health`** (super admin) checks the rest at a glance: which keys are set
 (never their values), the sheet's last read and ping, push failures, the PDF migration,
@@ -127,7 +135,7 @@ sync, and the push keys (`PUSH-NOTIFICATIONS.md`). All live in Vercel's project 
 | `GOOGLE_SHEETS_API_KEY` | Reads of the sheet; quota use | Google Cloud → Credentials → regenerate. Keep it restricted to the Sheets API | None |
 | `ON_CALL_SHEET_ID` | **It's an edit key:** the sheet is shared "anyone with the link can edit" | Can't be rotated by the app. Tell the sheet's owner; only they can change its sharing | The owner's call |
 | `ON_CALL_SHEET_WEBHOOK_SECRET` | Anyone can trigger sheet re-reads (rate-limited; data still only comes from the sheet) | `openssl rand -hex 32` → Vercel, then the script's `APP_SECRET` property; run `testPing` | Pings get 403 until both match |
-| `CRON_SECRET` | Anyone can trigger the daily re-read | New value on Vercel, redeploy | None |
+| `CRON_SECRET` | Anyone can trigger the daily re-read, or run the Covers notifications early (they still send each notice once, at its time or after) | New value on Vercel, redeploy | None |
 | `BMC_WEBHOOK_SECRET` | Anyone can grant or revoke membership | BMC dashboard → new secret → Vercel | Events fail until both match |
 | `RESEND_API_KEY` | Anyone can send email as `@slics.app` (phishing your drivers from your domain) | Resend → API Keys → make a new "Sending access" key for slics.app, set it on Vercel, redeploy, delete the old key | None; resets requested mid-swap may not send |
 | Resend key `Gmail send-as` (in Gmail, not the app) | Same as above | Resend → API Keys → a new "Sending access" key for slics.app, paste it in Gmail → Settings → Accounts → "Send mail as" → edit info, delete the old key | Sending as `tiago@slics.app` fails until Gmail has the new key |

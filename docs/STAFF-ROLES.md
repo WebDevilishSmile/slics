@@ -72,7 +72,8 @@ Decided:
   (`session.user.areas`), read through a 5-minute shared cache that a switch drops
   (`revalidateTag`), so a change reaches staff on their next request.
 - **Dispatch is a driver everywhere else.** Every check that wasn't moved to an area still
-  says `role === 'admin'`, so a dispatcher has no notifications (`canUsePush`), can delete
+  says `role === 'admin'`, so a dispatcher has no notifications (`canUsePush`; since
+  2026-10-22, unless they're a verified cover driver, like any driver), can delete
   their own account like a driver, and gets no other admin power.
 - **Every change is audited first:** `role.changed` (`lib/db/admins.js`) and
   `roleArea.changed` (`lib/db/appSettings.js`) in `admin_audit`.
@@ -209,7 +210,8 @@ After deploying (there's no dev copy wired up yet, `DEV-DATABASE.md`):
 ## Follow-ups
 
 - Notifications for dispatchers: `canUsePush` and the admin kinds are still
-  `role === 'admin'`. Letting a dispatcher with SLIC reports get the reports push means
+  `role === 'admin'` (a dispatcher verified for Covers gets the driver and Covers kinds,
+  `PUSH-NOTIFICATIONS.md` stage 3). Letting a dispatcher with SLIC reports get the reports push means
   opening `canUsePush` to staff and querying `getPushAudience` by role areas.
 - Per-person exceptions, if one dispatcher ever needs a tool the others don't.
 - Account deletion is still refused only to admins (`DELETE /api/users/[id]`); decide

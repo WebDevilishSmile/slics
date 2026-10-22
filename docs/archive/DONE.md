@@ -87,6 +87,25 @@ The original ask is quoted in `COVER-BIDDING.md` → "Why".
 
 ## Push notifications (`PUSH-NOTIFICATIONS.md`)
 
+- [x] stage 3: verified drivers who can use Covers turn notifications on, and get call-in
+      reminders on bid day (15 min, 30 min, 1 hr, 2 hr before), their list's jobs taken,
+      their call-in time and the week's cover jobs; the super admin sees `/covers` as a
+      cover driver with placeholder times (built 2026-10-22; its live checks are in
+      `TODOS.md` → Now)
+- [x] Find a way to filter the notifications so that the change in bid times that causes a
+      cascade could be ignored. If driver 27 is changed to 28, then every driver after has
+      to be adjusted that 20+ notifications of driver time changes. Maybe we can group them
+      once one is changed, so that only a single notification is sent for the cascade
+      rather than one per driver. (Inbox, 2026-10-22: no push goes out when a time changes.
+      Reminders read the time when they're due, and the call-in notice waits until the
+      week's places have been quiet 30 minutes, then each driver whose time changed gets
+      one, with the final time. Stage 3, "The renumbering cascade")
+- [x] This Vercel limitation may turn out to be a pain in the ass. Right now, we only have
+      drivers looking up addresses but if 20+ drivers start using the cover job features
+      simultaneously, the server might hit its CPU limits, causing delays or failures in
+      session handling and other server-side operations. (Inbox, 2026-10-22: the team is on
+      Vercel Pro, checked 2026-10-22, which the every-minute Covers cron needs anyway.
+      Watch Usage when Covers opens to every driver)
 - [x] stage 1: admin-only. Notify the admin of Jobs-tab changes and new SLIC reports (the
       toggle on `/profile`, `public/sw.js`, `push-subscriptions`, `lib/push.js`; 2026-10-10)
 - [x] ship stage 1: set the three VAPID keys on Vercel, run `npm run db:indexes`, test on

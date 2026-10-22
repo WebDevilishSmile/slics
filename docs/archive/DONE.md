@@ -217,6 +217,13 @@ sign in process should be in the /sign-in page.
 
 ## UI/UX
 
+- [x] The names of drivers should be uniformly capitalized. Some names are all upper case,
+      some are all lower case, and some are properly capitalized. Standardize them to be
+      consistently capitalized first letter. (Inbox, 2026-10-22: shown through
+      `displayName`, `lib/names.js`, everywhere a person's name is shown: account names
+      ("jane doe" → "Jane Doe"; 21 of 194 changed) and the sheet's capitals ("DOE, JANE"
+      → "Doe, Jane"). A name typed in both cases ("McDonald") is kept; stored names don't
+      change)
 - [x] admin leftovers from the 2026-10-08 review (`archive/UI-SUGGESTIONS.md` #57). The
       phone check of these is in `TODOS.md` → Now:
   - [x] `/admin/users`: the lookup count and the member icon have no visible label

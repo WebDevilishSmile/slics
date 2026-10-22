@@ -25,6 +25,7 @@ import {
 import { apiRequest } from '@/lib/apiRequest';
 import { setPendingClaimsCount } from '@/lib/driverClaimsStore';
 import { driverNameKey, rankSheetNames } from '@/lib/driverNames';
+import { displayName } from '@/lib/names';
 import { DRIVER_CLAIM_NOTE_MAX_LENGTH } from '@/constants';
 import {
   softContainedSx,
@@ -114,7 +115,7 @@ function PendingClaim({ claim, index, names, onSheet, mine, busy, onApprove, onR
     >
       <Box>
         <Typography variant='h6' component='h3'>
-          {claim.name}
+          {displayName(claim.name)}
         </Typography>
         <Typography variant='caption' color='text.secondary' component='p'>
           Account: {account ? `${account.name || 'No name'} · ${account.email}` : 'deleted'}

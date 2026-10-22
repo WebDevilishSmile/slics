@@ -11,6 +11,7 @@ import { checkRateLimit, getClientIp } from './lib/rateLimit';
 import { notifySignUp } from './lib/pushEvents';
 import { FEATURE_DEFAULTS, getRoleAreas, getSessionFeatures } from './lib/db/appSettings';
 import { areasFor } from './lib/staffAreas';
+import { displayName } from './lib/names';
 
 // Password sign-in limits (docs/SECURITY.md #9). Per email, so guessing one
 // account's password stalls; per IP with more room, because a building of
@@ -206,6 +207,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // console.log('Main Auth.js Session Callback:', { session, token });
       if (session.user && token) {
         session.user.id = token.id;
+        // Capitalized however it was typed or came from Google ("jane doe" →
+        // "Jane Doe", lib/names.js), for every page that shows it.
+        session.user.name = displayName(session.user.name);
         session.user.role = token.role || 'user';
         session.user.comments = token.comments || [];
         session.user.bmcMember = token.bmcMember ?? false;

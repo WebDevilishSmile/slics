@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 
 import { softInset } from '@/components/utility/soft';
+import { displayFirstName } from '@/lib/names';
 
 function VoterList({ title, voters, emptyText }) {
   return (
@@ -34,7 +35,7 @@ function VoterList({ title, voters, emptyText }) {
               <ListItemAvatar>
                 <Avatar src={voter.image} alt='' sx={{ width: '2rem', height: '2rem' }} />
               </ListItemAvatar>
-              <ListItemText primary={voter.name?.split(' ').at(0)} />
+              <ListItemText primary={displayFirstName(voter.name)} />
             </ListItem>
           ))}
         </List>

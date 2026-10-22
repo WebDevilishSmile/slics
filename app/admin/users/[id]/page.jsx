@@ -8,6 +8,7 @@ import { getAreaSession, isSuperAdmin } from '@/lib/authz';
 import { getClaimableDriverNames } from '@/lib/db/driverClaims';
 import { getFeatures, getRoleAreas } from '@/lib/db/appSettings';
 import { areasFor } from '@/lib/staffAreas';
+import { displayName } from '@/lib/names';
 import { Box, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
 import {
@@ -57,14 +58,14 @@ async function UserPage({ params }) {
         >
           <Image
             src={user.image || '/default-avatar.png'}
-            alt={`${user.name}'s avatar`}
+            alt={`${displayName(user.name)}'s avatar`}
             fill
             style={{ objectFit: 'cover', borderRadius: '50%' }}
           />
         </Box>
 
         <Typography variant='h5'>
-          {user.name}
+          {displayName(user.name)}
           {user.driver?.verifiedAt && <VerifiedBadge />}
         </Typography>
         <Typography variant='subtitle1'>Email: {user.email}</Typography>
@@ -87,7 +88,7 @@ async function UserPage({ params }) {
         <UserCoversAccess
           framed
           userId={user._id.toString()}
-          name={user.name ?? ''}
+          name={displayName(user.name ?? '')}
           initial={toCoversAccess(user)}
           byRole={areasFor(user, roleAreas).includes('covers')}
           coversOpen={features.coversOpen}
@@ -96,7 +97,7 @@ async function UserPage({ params }) {
 
         <UserDriver
           userId={user._id.toString()}
-          accountName={user.name ?? ''}
+          accountName={displayName(user.name ?? '')}
           initial={{
             driverVerified: Boolean(user.driver?.verifiedAt),
             driverName: user.driver?.name ?? null,

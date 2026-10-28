@@ -112,10 +112,10 @@ doesn't do covers never has to.
   - [x] Not verified: `components/covers/DriverVerification.jsx`, the notice that only
         verified drivers see the cover list, then the claim in its state (none, pending
         with Edit, turned down with the admin's reason and Try again).
-  - [x] Verified: `components/covers/MyCoverWeeks.jsx`, one tile per posted week from
-        this one on (Cover 7, On call #23, Out this week, and the call-in time), then
-        `CoverBidJobsTable` with `toDriverCoverJob` rows. Admins see the jobs while
-        unverified too.
+  - [x] Verified: `components/covers/MyCoverWeeks.jsx`, one tile for the week bid on
+        this week (Cover 7, On call #23, Out this week, and the call-in time; see "One
+        week on /covers" below), then `CoverBidJobsTable` with `toDriverCoverJob` rows.
+        Admins see the jobs while unverified too.
 - [x] **Admin queue:** `/admin/driver-claims` (`components/admin/driverClaims/`). Each
       claim shows the account (with its join date, so a brand-new one stands out), the
       evidence, the roster hint, and a sheet-name picker (`SheetNameField.jsx`)
@@ -166,7 +166,7 @@ pick list.
 - [x] **`/covers?preview=driver`**, honored only for `isSuperAdmin` (anyone else gets the
       normal page). It loads what a verified driver's page loads (the jobs through
       `toDriverCoverJob`, hidden jobs left out, BETPA's phone, the bid days), but from the
-      picks only each posted week's date: every tile is "Cover #", "Your place on the pick
+      picks only each posted week's date: the tile is "Cover #", "Your place on the pick
       list", with the real bid day and "Your time". No real driver's row reaches the page.
 - [x] **The list works but isn't saved:** `CoverBoard`'s `preview` keeps it in the page,
       with no `PUT` and no re-read, and says "Preview: this list isn't saved."
@@ -175,6 +175,26 @@ pick list.
       (`components/covers/CoverPreview.jsx`).
 - The notifications themselves are previewed with "Send me a sample" on
   `/admin/super/notifications`.
+
+### One week on /covers (2026-10-28)
+
+Tiago: "having two Covers one for the week of and one for the following week is
+confusing. Let's just display one week and we will use Sunday as the threshold for
+showing the following week." `/covers` used to show a tile for every posted week from
+this one on, which was usually two (W/E 10/31 and W/E 11/7 on 10/28).
+
+- [x] **The week** is `currentBidWeek(today)` (`lib/bidDay.js`, New York's date): the
+      week whose usual Thursday bid day falls in today's Sunday–Saturday week, which is
+      always next week. On Sun 10/25/2026 it went from W/E 10/31 (bid Thu 10/22) to W/E
+      11/7 (bid Thu 10/29). A bid day moved for a holiday doesn't change it.
+- [x] **The tile** is that week's: the driver's place and call-in, or "Your place for the
+      week ending … shows once its pick list is posted" until it is.
+- [x] **The read-only notice and "This is a mistake"** are about that week only, on the
+      page and in `POST /api/cover-disputes`.
+- [x] **The calendar** opens on the same week (the server passes it as `initialWeek`;
+      `?week=` still wins), so it follows New York time, not the browser's or the server's
+      clock. The current week is still a tap away there, read only if the driver is off it.
+- **Rollback:** `git revert` the commit; nothing is stored.
 
 ### Rolling stage 1 out to every driver
 
@@ -246,12 +266,13 @@ calling dispatch at the call-in time; the list is what the driver reads off on t
       aren't posted isn't off: nobody knows yet. Stage 3's picking must check the same
       rule.
 - [x] **"This is a mistake"** (`covers/CoverDispute.jsx`): the read-only notice on
-      `/covers` names the weeks (or says the whole list) and the driver's current job
+      `/covers` names the week it shows (since 2026-10-28, only the week bid on this
+      week: "One week on /covers" under stage 1) and the driver's current job
       code from the Jobs tab ("Your current job code is BMEL", `getDriverJobName` in
       `lib/db/sheetJobs.js`, left out when they hold none), and its button sends the admins
       an optional note (`POST /api/cover-disputes`, 5 a day). The server records the
-      weeks and the linked sheet name itself, and refuses when the driver is on every
-      posted week. The dispute keeps their job code for the admin. One open dispute per driver (`cover-disputes`,
+      week and the linked sheet name itself, and refuses when the driver is on that
+      week's list or it isn't posted. The dispute keeps their job code for the admin. One open dispute per driver (`cover-disputes`,
       `lib/db/coverDisputes.js`); sending again edits it. Admins get a push (`coverDisputes`,
       on by default), the header-menu badge and the `/admin` banner, and close it on
       `/admin/driver-claims` with an optional answer the driver sees on `/covers`. The fix
@@ -273,7 +294,7 @@ on the bid day. The sheet doesn't say which day that is. The saved picks showed 
       one week before the week starts, and "Use Thu …" to go back. `PUT
       /api/cover-bid-days` (Covers area) writes `cover-bid-days` after `admin_audit`
       (`coverBidDay.set` / `.reset`); going back deletes the doc.
-- [x] **Drivers see it** beside their call-in time: "Call in Thu 10/22" on each week's tile,
+- [x] **Drivers see it** beside their call-in time: "Call in Thu 10/22" on the week's tile,
       "Your call-in: Thu 10/22 at 9:15" under the list. The call-in reminders go out on it
       (`PUSH-NOTIFICATIONS.md` stage 3).
 
@@ -328,7 +349,7 @@ super admin to review.
    dialog has a name, an assigned driver or a cover reason.
 5. **Turning down:** the tester sees the reason and Try again; the evidence is gone.
 6. **Removing** from the admin user page: the next request drops the check mark and the
-   tiles. Deleting the test account deletes its claims.
+   tile. Deleting the test account deletes its claims.
 
 ### Verifying stage 2
 
@@ -355,13 +376,13 @@ With a verified admin (the super admin can verify themselves) on a posted week:
 With a verified tester whose linked name isn't in a posted week's picks (re-link them on
 their admin user page to a name only on the Jobs tab, then link them back):
 
-1. **Read only:** `/covers` says the cover list is read only, naming the week (or not,
-   when they're off every posted week). That week has no list and no add buttons, and a
-   `PUT` for it answers 403. A week they're on still works.
+1. **Read only:** `/covers` says the cover list is read only, naming the week shown (the
+   one bid on this week). That week has no list and no add buttons, and a `PUT` for it
+   answers 403. A week they're on still works.
 2. **This is a mistake:** send it with a note. The notice says when it was sent and the
    button goes. The admins who chose "Cover list disputes" get a push with no name; the
    menu badge and the `/admin` banner count it; `/admin/driver-claims` shows the account,
-   the linked name, the weeks and the note. A tester on every posted week gets 409.
+   the linked name, the week and the note. A tester on the week shown gets 409.
 3. **Closing:** close it with an answer. The driver sees the answer on `/covers` and the
    button again; the badge drops.
 4. **Cleanup:** link the tester back. Deleting a test account deletes its disputes.

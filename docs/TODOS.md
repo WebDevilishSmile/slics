@@ -93,11 +93,11 @@ Use absolute dates.
 ## Waiting
 
 - [ ] **On or after 2026-10-17:** compare Vercel → Observability → Functions (last 12
-  hours) with 2026-10-15's, before the CPU fixes: ~2.6K calls, ~4 min of Active CPU (about
-  Hobby's 4 CPU-hours a month); `/home` 231 calls / 58s, `/` 130 / 36s, the auth route
-  489 / 31s, `/help` 155 / 11s, the 404 page 61 / 11s, `/sign-in` 101 / 10s,
-  `/api/users/me/views` 99 / 10s. Still close? Static public pages (Ideas → Platform)
-  or Pro. A cold `/home` went from 14 calls to 2 for an admin, 1 for a driver.
+      hours) with 2026-10-15's, before the CPU fixes: ~2.6K calls, ~4 min of Active CPU (about
+      Hobby's 4 CPU-hours a month); `/home` 231 calls / 58s, `/` 130 / 36s, the auth route
+      489 / 31s, `/help` 155 / 11s, the 404 page 61 / 11s, `/sign-in` 101 / 10s,
+      `/api/users/me/views` 99 / 10s. Still close? Static public pages (Ideas → Platform)
+      or Pro. A cold `/home` went from 14 calls to 2 for an admin, 1 for a driver.
 - [ ] **On or after 2026-10-21** (a week after it shipped): does the super admin hub
       replace checking the Vercel and Atlas dashboards day to day, and is anything missing
       from it? (`SUPER-ADMIN-HUB.md`)

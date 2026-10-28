@@ -62,6 +62,19 @@ export default function SignInPanel({ google, returnTo }) {
   // { severity, text, action?: { label, mode } }, shown above the form's button.
   const [notice, setNotice] = useState(null);
   const [loading, setLoading] = useState(false);
+  // Auth.js sends a Google sign-in that failed back here with `?error=`
+  // (AccessDenied, Configuration…). It used to land on the form with no word
+  // of why (docs/SECURITY.md #8). Read once, then dropped from the address, so
+  // a reload or a switch of form doesn't bring it back.
+  const [googleError] = useState(() => Boolean(searchParams.get('error')));
+  useEffect(() => {
+    if (!googleError) return;
+    const params = new URLSearchParams(window.location.search);
+    params.delete('error');
+    params.delete('code');
+    const query = params.toString();
+    window.history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
+  }, [googleError]);
 
   // A new form gets its heading focused, so keyboard and screen-reader users
   // land on (and hear) "Create your account" instead of on the page body; the
@@ -406,6 +419,12 @@ export default function SignInPanel({ google, returnTo }) {
           {/* Resetting a password has nothing to do with Google. */}
           {mode !== 'forgot' && (
             <Box sx={vt('google')}>
+              {googleError && (
+                <Alert severity='error' role='alert' sx={{ mb: 2 }}>
+                  Google sign-in didn&apos;t go through. Try again, or use your
+                  email and password below.
+                </Alert>
+              )}
               {google}
               {/* The landing page's promise, where the account is handed over. */}
               <Typography

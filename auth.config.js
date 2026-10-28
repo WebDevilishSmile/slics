@@ -13,6 +13,12 @@ export const authConfig = {
           prompt: 'select_account',
         },
       },
+      // Links a Google sign-in to an account that already has its email
+      // instead of refusing it (OAuthAccountNotLinked). Never on its own: the
+      // `signIn` callback in auth.js (lib/db/accountLinking.js) runs first,
+      // refuses an address Google hasn't verified, and removes a password
+      // nobody confirmed (docs/SECURITY.md #8).
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   session: {

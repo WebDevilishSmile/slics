@@ -12,6 +12,7 @@ import { notifySignUp } from './lib/pushEvents';
 import { FEATURE_DEFAULTS, getRoleAreas, getSessionFeatures } from './lib/db/appSettings';
 import { areasFor } from './lib/staffAreas';
 import { displayName } from './lib/names';
+import { prepareGoogleSignIn } from './lib/db/accountLinking';
 
 // Password sign-in limits (docs/SECURITY.md #9). Per email, so guessing one
 // account's password stalls; per IP with more room, because a building of
@@ -114,6 +115,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   callbacks: {
+    // A Google sign-in whose email already has an account is linked to it,
+    // guarded here first (lib/db/accountLinking.js, docs/SECURITY.md #8).
+    // Auth.js runs this before it links or creates anything. Password
+    // sign-in goes through authorize() above.
+    async signIn({ account, profile }) {
+      if (account?.provider !== 'google') return true;
+      return prepareGoogleSignIn({
+        providerAccountId: account.providerAccountId,
+        email: profile?.email,
+        emailVerified: profile?.email_verified === true,
+      });
+    },
+
     // IMPORTANT: Override the jwt callback from auth.config.js
     // to include the database lookup for fresh user data.
     // This JWT callback will ONLY run in a Node.js environment (e.g., API routes, getServerSideProps).

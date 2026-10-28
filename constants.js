@@ -222,6 +222,8 @@ export const PASSWORD_MAX_LENGTH = 128;
 // How long a reset link from "Forgot your password?" works
 // (app/api/auth/forgot-password, signIn/ForgotPassword.jsx).
 export const RESET_EMAIL_LINK_MINUTES = 30;
+// A first or last name at sign-up (lib/registration.js).
+export const ACCOUNT_NAME_MAX_LENGTH = 60;
 
 // Covers and driver verification (docs/COVER-BIDDING.md) are admin-only until
 // they roll out to every driver: `canUseCovers` in lib/authz.js and the menu

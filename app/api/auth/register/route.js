@@ -1,5 +1,6 @@
 import { after, NextResponse } from 'next/server';
-import { hashPassword, passwordProblem } from '@/lib/password';
+import { hashPassword } from '@/lib/password';
+import { registrationProblem } from '@/lib/registration';
 import client from '@/lib/db/client';
 import { notifySignUp } from '@/lib/pushEvents';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
@@ -10,8 +11,18 @@ import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 const REGISTER_LIMIT = 10;
 const REGISTER_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
+// The initials go inside SVG markup, so a name starting with `<` or `&`
+// can't break it (docs/SECURITY.md #8 step 5).
+const escapeXml = (value) =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
 function initialsAvatar(first, last) {
-  const initials = `${first[0].toUpperCase()}${last[0].toUpperCase()}`;
+  const initials = escapeXml(`${first[0].toUpperCase()}${last[0].toUpperCase()}`);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40"><rect width="40" height="40" rx="20" fill="#0288d1"/><text x="20" y="20" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="16" font-weight="bold" fill="white">${initials}</text></svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
@@ -31,30 +42,19 @@ export async function POST(request) {
     );
   }
 
+  let body;
   try {
-    const { email, firstName, lastName, password } = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+  }
+  // Every field typed and trimmed first: a name of only spaces used to pass
+  // and then fail on its initial (a 500).
+  const { fields, error } = registrationProblem(body);
+  if (error) return NextResponse.json({ error }, { status: 400 });
+  const { email: emailLower, firstName: firstTrimmed, lastName: lastTrimmed, password } = fields;
 
-    if (!email || !firstName || !lastName || !password) {
-      return NextResponse.json(
-        { error: 'All fields are required.' },
-        { status: 400 }
-      );
-    }
-
-    const emailLower = email.trim().toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(emailLower)) {
-      return NextResponse.json(
-        { error: 'Invalid email address.' },
-        { status: 400 }
-      );
-    }
-
-    const problem = passwordProblem(password);
-    if (problem) {
-      return NextResponse.json({ error: problem }, { status: 400 });
-    }
-
+  try {
     const db = client.db();
     const existing = await db
       .collection('users')
@@ -73,8 +73,6 @@ export async function POST(request) {
     }
 
     const hashedPassword = await hashPassword(password);
-    const firstTrimmed = firstName.trim();
-    const lastTrimmed = lastName.trim();
 
     await db.collection('users').insertOne({
       name: `${firstTrimmed} ${lastTrimmed}`,

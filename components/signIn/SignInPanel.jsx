@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from '@/constants';
+import { ACCOUNT_NAME_MAX_LENGTH, PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from '@/constants';
 import { withViewTransition } from '@/lib/viewTransition';
 import PasswordField from '@/components/form/PasswordField';
 import AnimatedHeight from '@/components/utility/AnimatedHeight';
@@ -316,6 +316,7 @@ export default function SignInPanel({ google, returnTo }) {
             sx={softInputSx}
             required
             autoComplete='given-name'
+            slotProps={{ htmlInput: { maxLength: ACCOUNT_NAME_MAX_LENGTH } }}
             value={signUp.firstName}
             onChange={(e) =>
               setSignUp((f) => ({ ...f, firstName: e.target.value }))
@@ -328,6 +329,7 @@ export default function SignInPanel({ google, returnTo }) {
             sx={softInputSx}
             required
             autoComplete='family-name'
+            slotProps={{ htmlInput: { maxLength: ACCOUNT_NAME_MAX_LENGTH } }}
             value={signUp.lastName}
             onChange={(e) =>
               setSignUp((f) => ({ ...f, lastName: e.target.value }))

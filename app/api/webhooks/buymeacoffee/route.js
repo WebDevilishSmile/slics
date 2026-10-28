@@ -2,7 +2,8 @@ import crypto from 'crypto';
 import { after, NextResponse } from 'next/server';
 
 import {
-  findUserIdByEmail,
+  findMemberAccount,
+  MEMBERSHIP_EVENTS,
   parseBmcEvent,
   recordBmcEvent,
   setBmcMember,
@@ -15,13 +16,11 @@ export const runtime = 'nodejs';
 
 // Buy Me a Coffee events (docs/BMC-SUPPORT.md, SECURITY.md #14). Every signed
 // delivery is saved to `bmc-events`; membership events also turn the matched
-// account's `bmcMember` on or off. A repeat of a body already seen (a retry,
-// or a captured request replayed later) is acknowledged and does nothing.
-const MEMBERSHIP = {
-  'membership.started': true,
-  'membership.cancelled': false,
-  'membership.canceled': false,
-};
+// account's `bmcMember` on or off, once the account has confirmed it owns the
+// email (SECURITY.md #8 step 4). Until then the membership waits in the event,
+// and confirming applies it (applyMembershipFromEvents). A repeat of a body
+// already seen (a retry, or a captured request replayed later) is acknowledged
+// and does nothing.
 
 // Pre-auth, so limited by IP. BMC sends a handful a day; this only stops a
 // flood of forged requests from reaching the HMAC and the database.
@@ -69,7 +68,7 @@ export async function POST(request) {
 
   try {
     const fields = parseBmcEvent(rawBody, body);
-    const userId = await findUserIdByEmail(fields.email);
+    const { userId, confirmed } = await findMemberAccount(fields.email);
     const { duplicate, event } = await recordBmcEvent({ ...fields, userId });
     if (duplicate) {
       return NextResponse.json({ message: 'Already processed' }, { status: 200 });
@@ -84,11 +83,15 @@ export async function POST(request) {
     );
 
     // Logs name the event and the account id, never the supporter's email.
-    const member = MEMBERSHIP[fields.type];
-    if (member !== undefined && userId) {
+    const member = MEMBERSHIP_EVENTS[fields.type];
+    if (member !== undefined && userId && confirmed) {
       const before = await setBmcMember(userId, member);
       console.log(
         `BMC webhook: ${fields.type} → user ${userId} bmcMember ${before} → ${member} (event ${event._id}).`,
+      );
+    } else if (member !== undefined && userId) {
+      console.log(
+        `BMC webhook: ${fields.type} saved as event ${event._id} for user ${userId}, whose email isn't confirmed; the membership waits.`,
       );
     } else {
       console.log(

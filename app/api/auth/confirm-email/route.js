@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { applyMembershipFromEvents } from '@/lib/db/bmcEvents';
 import { isConfirmToken, redeemEmailConfirmation } from '@/lib/db/emailConfirmations';
 
 // Per network: whoever opens the link may not be signed in. Room for a
@@ -40,6 +41,8 @@ export async function POST(request) {
   try {
     const result = await redeemEmailConfirmation(body.token);
     if (result.error) return NextResponse.json({ error: result.error }, { status: 400 });
+    // A Buy Me a Coffee membership that waited for this (lib/db/bmcEvents.js).
+    after(() => applyMembershipFromEvents(result.userId, result.email));
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error confirming an email:', error?.name, error?.code ?? '');

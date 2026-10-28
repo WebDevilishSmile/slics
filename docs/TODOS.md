@@ -230,8 +230,6 @@ order that file suggests:
       blocked loads; then step 2, nonces instead of `'unsafe-inline'` scripts
 - [ ] **#10** allowlist PATCH bodies (`updateSlic`; `drivers/[id]` done 2026-10-10;
       `cover/[position]` was deleted 2026-10-10)
-- [ ] **#9** left: Google-only or a second factor for admins, the breached-password check,
-      and the register route's 409 (the sign-in limit and the reset flow are done)
 - [ ] **#14** BMC webhook, mostly done 2026-10-10 (`emailVerified` 2026-10-28). Left: a
       freshness check and an `admin_audit` row (#17)
 - [ ] **#20** dev database for local work and previews (`DEV-DATABASE.md`). The seed

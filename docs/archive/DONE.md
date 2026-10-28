@@ -257,6 +257,10 @@ sign in process should be in the /sign-in page.
 
 ## Security (`SECURITY.md`)
 
+- [x] **#9** left: Google-only or a second factor for admins, the breached-password check,
+      and the register route's 409. Decided 2026-10-28: staff sign-in stays as it is (all
+      8 staff use Google, no password); no breached-password check; the 409 stays on
+      purpose (`SECURITY.md` #9 says why)
 - [x] **#8** decide the access model (open / invite code / approval) and write it in the
       README. 2026-10-28: open, written in the README, privacy and terms; sign-up emails a
       link that confirms a password account's address; a Google sign-in links to an

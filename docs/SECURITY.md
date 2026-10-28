@@ -46,7 +46,7 @@ names what's left.
 | 6 | Done | 2026-10-10. Users reach the browser through allowlist serializers (`toPublicUser`, `toSelfUser`, `toAdminUser` in `lib/serializers.js`) that pick fields instead of spreading. `getUsers`/`getUserById`/`getUserByEmail` leave out the hash by default. `add-phone` returns only the fields it edits and doesn't log the user; the role and membership toggles return `{ _id, role }` / `{ _id, bmcMember }`. 2026-10-15: SLICs too. `serializeSlic` spread the document, so `/home`, `/hubs` and `/home/[slic]` sent the `createdBy`/`updatedBy` stamps (an admin's id, name and email; 3 SLICs had them) to every driver. Those pages now use `toDriverSlic`, which names its fields; only admin pages keep the stamps. 2026-10-16: on the SLIC admin pages a dispatcher gets editor stamps by name only (`withNamedStamps`, `withNamedUser`). |
 | 7 | Done | 2026-10-10. Every server page under `app/admin/` calls `getAdminSession()` (`lib/authz.js`) before reading anything and renders nothing for anyone else; the layout keeps the redirect message. `/bids` was deleted. `/cover-bid-jobs` checks admin (admins only for now) before its read. The middleware matcher lost its dead `/dashboard` and `/protected` entries. 2026-10-16: the pages call `getAreaSession('<area>')` instead (`admin/NoAccess.jsx` without it), since the layout now lets in any staff account, dispatchers included; `/admin/cover/jobs` got the server gate it lacked. |
 | 8 | Done | 2026-10-28, see #8. **Open sign-up, decided** (README "Access", the privacy policy and terms say so). Sign-up emails a link that confirms a password account's address (`email-confirmations`, `/confirm-email`, "Send link" on `/profile`); confirming is soft. A Google sign-in now links to an account with the same email (`lib/db/accountLinking.js`), and a password nobody confirmed is removed with its sessions. A Buy Me a Coffee membership needs a confirmed email. Sign-up checks every field's type, trims names, caps them at 60 and escapes the avatar's initials. |
-| 9 | Partly | 2026-10-11: `authorize()` limits password sign-in to 10 tries per email and 50 per IP every 15 minutes (the form says "Too many sign-in attempts"), and an unknown email runs bcrypt against a dummy hash, so the timing no longer says which emails have accounts. Since 2026-10-11 there's a reset: an admin makes a one-time link on `/admin/users` (`PASSWORD-RESET.md` stage 1), and a reset signs the account out everywhere (`sessionVersion`, #27). Since 2026-10-12, "Forgot your password?" emails a 30-minute link (stage 3, via Resend from `slics.app`), always with the same answer, and using it sets `emailVerified` (#8 step 2). Since 2026-10-12 a signed-in driver can change their password on `/profile` (stage 2), checked against the current one, with every try counting toward the sign-in limit. **Left:** Google-only or a second factor for admins, the breached-password check, and the register route's 409. |
+| 9 | Done (decided 2026-10-28) | What was left is decided, see #9: staff sign-in stays as it is (all 8 staff use Google with no password, by habit, not by rule); no breached-password check (the 8-to-128 rule only); the register route's 409 stays on purpose. Before that: 2026-10-11: `authorize()` limits password sign-in to 10 tries per email and 50 per IP every 15 minutes (the form says "Too many sign-in attempts"), and an unknown email runs bcrypt against a dummy hash, so the timing no longer says which emails have accounts. Since 2026-10-11 there's a reset: an admin makes a one-time link on `/admin/users` (`PASSWORD-RESET.md` stage 1), and a reset signs the account out everywhere (`sessionVersion`, #27). Since 2026-10-12, "Forgot your password?" emails a 30-minute link (stage 3, via Resend from `slics.app`), always with the same answer, and using it sets `emailVerified` (#8 step 2). Since 2026-10-12 a signed-in driver can change their password on `/profile` (stage 2), checked against the current one, with every try counting toward the sign-in limit. |
 | 10 | Partly | `drivers/[id]` writes only name, employee ID, seniority date and phone, validated (`validateDriverFields`, 2026-10-10). `updateSlic` is left. (`cover/[position]` was deleted 2026-10-10 with the manual cover list.) |
 | 11 | Partly | Newer routes (tips, places, place comments, history notes, the sheet routes) validate their bodies. The older routes listed in #11 weren't re-checked one by one. |
 | 12 | Partly | Step 1 shipped 2026-10-10: `next.config.mjs` sends a CSP (scripts still `'unsafe-inline'`), `nosniff`, `Referrer-Policy`, `Permissions-Policy` and `X-Frame-Options: DENY` on every response. **Left:** step 2, nonces instead of `'unsafe-inline'` in `script-src`. |
@@ -688,7 +688,30 @@ Three things combine here:
 
 ---
 
-### [ ] 9. Password sign-in has no brute-force protection, no lockout, no reset, no MFA
+### [x] 9. Password sign-in has no brute-force protection, no lockout, no reset, no MFA
+
+**Done 2026-10-11/12, the rest decided 2026-10-28.** Built: the sign-in limit (10 per
+email, 50 per IP every 15 minutes) and a dummy-hash compare for unknown emails (fix step
+1), reset links from an admin or by email and a password change on `/profile`, each
+ending every session (step 2, `PASSWORD-RESET.md`). Tiago decided the three that were
+left:
+- **Staff sign-in stays as it is** (step 3: no Google-only rule and no second factor).
+  That day all 8 staff, 4 admins (the super admin included) and 4 dispatchers, signed in
+  with Google and had no password, so their accounts are as strong as their Google
+  accounts. That's habit, not a rule: nothing stops a password account from being made
+  staff. Reopen this if that happens, or after a phishing scare. The plan is step 3's
+  first option: `authorize()` refuses a password for staff, and `setUserRole` refuses to
+  promote an account without a Google link.
+- **No breached-password check** (step 4). New passwords keep the 8-to-128-character
+  rule only (`lib/password.js`).
+- **The register route's 409 stays, on purpose.** Its message ("use Continue with Google
+  if that's how you joined") is what helps a driver who forgot how they joined. Hiding it
+  wouldn't close the leak: sign-up is open and confirmation is soft (#8), so signing up
+  and then trying to sign in still tells whether an address was taken. Sign-up is
+  limited to 10 an hour per network, and the sign-in form gives nothing away (the same
+  answer, and the same timing, for an unknown email).
+
+What follows is the original finding.
 
 **Files:** `auth.js` (`authorize`), `app/api/auth/register/route.js`, `lib/rateLimit.js`
 
@@ -1450,7 +1473,7 @@ Extend it when a route is added; it is the list of routes.
 | 6 | Password hashes / emails sent to the browser | High | Small |
 | 7 | Layout-only auth for `/admin/*`; `/bids` middleware-only (done 2026-10-10) | High | Small |
 | 8 | Open registration, no email verification, account squatting (done 2026-10-28) | High | Decision + Medium |
-| 9 | No login rate limit / lockout / reset / MFA | High | Medium |
+| 9 | No login rate limit / lockout / reset / MFA (done 2026-10-28, decided) | High | Medium |
 | 10 | Mass assignment in PATCH routes | High | Small |
 | 11 | Ad hoc input validation | Medium | Medium |
 | 12 | No security headers / CSP (step 1 done 2026-10-10) | High | Small (step 1), Medium (nonces) |

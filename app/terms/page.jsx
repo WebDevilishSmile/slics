@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Terms of Service · SLICs',
 };
 
-const EFFECTIVE_DATE = 'October 12, 2026';
+const EFFECTIVE_DATE = 'October 28, 2026';
 
 // Every section's title, in page order, for the summary card's "On this
 // page" list. Keep it in step with the LegalSection titles below.
@@ -89,8 +89,8 @@ export default function TermsPage() {
         <LegalList
           items={[
             'You must be at least 18 years old.',
-            'The app is meant for working drivers and the people who support them. Please don’t create an account if you don’t need the information for your job.',
-            'Give us accurate information when you sign up, and keep your password to yourself. You are responsible for everything that happens under your account, so tell us right away if you think someone else has used it.',
+            'The app is meant for working drivers and the people who support them. Anyone can create an account, with no approval step, so please don’t create one if you don’t need the information for your job.',
+            'Sign up with an email address that is yours: we email it a link to confirm it. Give us accurate information when you sign up, and keep your password to yourself. You are responsible for everything that happens under your account, so tell us right away if you think someone else has used it.',
             'One account per person. Don’t share your login or let anyone else sign in as you.',
           ]}
         />

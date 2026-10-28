@@ -45,13 +45,13 @@ names what's left.
 | 5 | Done | `lib/db/comments.js` has no `'use server'`. The only two uses left are the inline sign-in/out actions. |
 | 6 | Done | 2026-10-10. Users reach the browser through allowlist serializers (`toPublicUser`, `toSelfUser`, `toAdminUser` in `lib/serializers.js`) that pick fields instead of spreading. `getUsers`/`getUserById`/`getUserByEmail` leave out the hash by default. `add-phone` returns only the fields it edits and doesn't log the user; the role and membership toggles return `{ _id, role }` / `{ _id, bmcMember }`. 2026-10-15: SLICs too. `serializeSlic` spread the document, so `/home`, `/hubs` and `/home/[slic]` sent the `createdBy`/`updatedBy` stamps (an admin's id, name and email; 3 SLICs had them) to every driver. Those pages now use `toDriverSlic`, which names its fields; only admin pages keep the stamps. 2026-10-16: on the SLIC admin pages a dispatcher gets editor stamps by name only (`withNamedStamps`, `withNamedUser`). |
 | 7 | Done | 2026-10-10. Every server page under `app/admin/` calls `getAdminSession()` (`lib/authz.js`) before reading anything and renders nothing for anyone else; the layout keeps the redirect message. `/bids` was deleted. `/cover-bid-jobs` checks admin (admins only for now) before its read. The middleware matcher lost its dead `/dashboard` and `/protected` entries. 2026-10-16: the pages call `getAreaSession('<area>')` instead (`admin/NoAccess.jsx` without it), since the layout now lets in any staff account, dispatchers included; `/admin/cover/jobs` got the server gate it lacked. |
-| 8 | Open | Access-model decision still to make. Since 2026-10-12 a reset from an emailed link sets `emailVerified` on a password account (step 2, `PASSWORD-RESET.md` stage 3); nothing requires it yet. |
+| 8 | Done | 2026-10-28, see #8. **Open sign-up, decided** (README "Access", the privacy policy and terms say so). Sign-up emails a link that confirms a password account's address (`email-confirmations`, `/confirm-email`, "Send link" on `/profile`); confirming is soft. A Google sign-in now links to an account with the same email (`lib/db/accountLinking.js`), and a password nobody confirmed is removed with its sessions. A Buy Me a Coffee membership needs a confirmed email. Sign-up checks every field's type, trims names, caps them at 60 and escapes the avatar's initials. |
 | 9 | Partly | 2026-10-11: `authorize()` limits password sign-in to 10 tries per email and 50 per IP every 15 minutes (the form says "Too many sign-in attempts"), and an unknown email runs bcrypt against a dummy hash, so the timing no longer says which emails have accounts. Since 2026-10-11 there's a reset: an admin makes a one-time link on `/admin/users` (`PASSWORD-RESET.md` stage 1), and a reset signs the account out everywhere (`sessionVersion`, #27). Since 2026-10-12, "Forgot your password?" emails a 30-minute link (stage 3, via Resend from `slics.app`), always with the same answer, and using it sets `emailVerified` (#8 step 2). Since 2026-10-12 a signed-in driver can change their password on `/profile` (stage 2), checked against the current one, with every try counting toward the sign-in limit. **Left:** Google-only or a second factor for admins, the breached-password check, and the register route's 409. |
 | 10 | Partly | `drivers/[id]` writes only name, employee ID, seniority date and phone, validated (`validateDriverFields`, 2026-10-10). `updateSlic` is left. (`cover/[position]` was deleted 2026-10-10 with the manual cover list.) |
 | 11 | Partly | Newer routes (tips, places, place comments, history notes, the sheet routes) validate their bodies. The older routes listed in #11 weren't re-checked one by one. |
 | 12 | Partly | Step 1 shipped 2026-10-10: `next.config.mjs` sends a CSP (scripts still `'unsafe-inline'`), `nosniff`, `Referrer-Policy`, `Permissions-Policy` and `X-Frame-Options: DENY` on every response. **Left:** step 2, nonces instead of `'unsafe-inline'` in `script-src`. |
 | 13 | Open | Blob uploads are `access: 'public'`, and the Supabase fallback is still live (migration in progress, per `CLAUDE.md`). |
-| 14 | Mostly done | 2026-10-10 (`BMC-SUPPORT.md` stage 1): constant-time compare, replay protection (unique hash of the body in `bmc-events`), case-insensitive email match then change by `_id`, IP rate limit, no emails in logs. **Left:** a freshness check (payload timestamp unknown), `emailVerified` (#8), an `admin_audit` row (#17). Run `npm run db:indexes` for the unique index. |
+| 14 | Mostly done | 2026-10-10 (`BMC-SUPPORT.md` stage 1): constant-time compare, replay protection (unique hash of the body in `bmc-events`), case-insensitive email match then change by `_id`, IP rate limit, no emails in logs. **Left:** a freshness check (payload timestamp unknown), an `admin_audit` row (#17). Run `npm run db:indexes` for the unique index. 2026-10-28: a membership flips only on an account that confirmed the email or signs in with Google (#8 step 4); otherwise it waits in the event and applies once the email is confirmed. |
 | 15 | Partly | The new sheet collections have unique indexes (`cover-bid-picks.weekEnding`, `sheet-jobs.jobName`). `drivers.employeeId` and `drivers.sheetKey` do since 2026-10-10. `users.email` and `slics.numSlic` still don't. |
 | 16 | Open | — |
 | 17 | Partly | 2026-10-10: `admin_audit` (`lib/db/adminAudit.js`), written *before* the change by `toggle-role`, `toggle-member`, `/api/admins` and `scripts/setSuperAdmin.mjs`; read on the super admin's Admins page (`/admin/super/admins`). **Left:** the BMC webhook's flips, admin comment deletion, driver edits, account deletion, and the transaction around slic history. 2026-10-16: `deleteSlic` writes a `deleted` history entry with the removed fields; `role.changed` and `roleArea.changed` join `admin_audit`. |
@@ -63,7 +63,7 @@ names what's left.
 | 23 | Done | 2026-10-11. No route returns a caught error's text. `lib/db/slics.js` and `lib/db/coverBidJobs.js` throw `HttpError(status, message)` (`lib/httpError.js`) for the messages meant for the admin (not found 404, already exists 409, bad field 400), and the routes answer through `errorResponse`, which passes those on and turns anything else into a 500 with a plain message. The messages are the same as before, so callers that match on `'not found'` still work. |
 | 24 | Partly | Limits added since: places, place comments, history edits, both sheet refreshes, the sheet webhook. Credentials sign-in since 2026-10-11 (#9). Still none on votes, `track-view`, `add-phone` or the BMC webhook. |
 | 25 | Mostly done | `crypto` and `lib/stripe.js` are gone and eslint matches Next (#3). Left: an `engines` field (`archive/STRUCTURE.md` #35). |
-| 26 | Done | Tips ship vote counts and `myVote`, with no user ids. `RequestAccess.jsx`, with the personal phone number, was deleted 2026-10-11 (the number is still in old commits). The privacy page's "who can register" line waits on #8. |
+| 26 | Done | Tips ship vote counts and `myVote`, with no user ids. `RequestAccess.jsx`, with the personal phone number, was deleted 2026-10-11 (the number is still in old commits). Since 2026-10-28 the privacy page says anyone can create an account (#8). |
 | 27 | Partly | 2026-10-11: `users.sessionVersion` is in the token, and the `jwt` callback ends a session whose version is older than the row's. A password reset or change bumps it. **Left:** bump it on demotion and an admin sign-out, and trim `comments` and `created_at` out of the token. |
 | 28 | Holds | Still no CORS headers; `vercel.json` only schedules the cron. |
 | 29 | Done (writing) | The inventory and rotation runbook is in `OPERATIONS.md`, updated for the sheet, webhook and cron secrets. |
@@ -601,7 +601,41 @@ has `getAdminSession()`: the session when the caller is an admin, otherwise `nul
 
 ---
 
-### [ ] 8. Open registration, no email verification, and the account-squatting it enables
+### [x] 8. Open registration, no email verification, and the account-squatting it enables
+
+**Done 2026-10-28.** Tiago's decisions: keep sign-up open; confirm emails softly (the
+account works without it); link Google to a same-email account. Against production that
+day: 207 accounts, 137 Google and 69 password, one of them confirmed, 39 of them Gmail.
+1. **Access model: open,** written in the README ("Access"), the privacy policy ("Other
+   drivers" is anyone signed in) and the terms ("no approval step"). Covers keeps its
+   own gate (driver verification, `COVER-BIDDING.md`).
+2. **Confirming a password account's email** (soft): sign-up emails a link
+   (`lib/emailConfirmationSend.js`, the reset emails' layout). Like a reset link, only
+   the token's hash is stored (`email-confirmations`, `lib/db/emailConfirmations.js`,
+   24 hours, TTL), and the token rides in the fragment of `/confirm-email`, which sets
+   `emailVerified` if the account still has that address. `/profile` shows "Not
+   confirmed" with Send link (`POST /api/users/me/email-confirmation`, 3 an hour).
+   Nothing is blocked while it's unconfirmed: the confirmation is what the app trusts
+   (steps 3 and 4), not a gate.
+3. **The squatting hole:** the Google provider links by email
+   (`allowDangerousEmailAccountLinking`), guarded by the `signIn` callback in `auth.js`
+   (`lib/db/accountLinking.js`), which Auth.js runs before it links. An address Google
+   hasn't verified never claims an account. Otherwise the account is linked and marked
+   confirmed, and a password set without the email ever being confirmed is removed
+   (`passwordRemovedAt`), its sessions ended (`sessionVersion`) and its reset links
+   deleted. A confirmed account keeps its password. `/sign-in` now says when Google
+   sign-in fails (`?error=`) instead of showing the form with no word.
+4. **BMC webhook:** `findMemberAccount` flips a membership only for an account that
+   confirmed the email or signs in with Google; otherwise it waits in the event and
+   `applyMembershipFromEvents` applies it once the email is confirmed (by link or by a
+   Google sign-in). One member that day had neither: an account with no password and no
+   Google link, so nobody can sign in to it. Its membership stays as it was.
+5. **Sign-up hardening:** `lib/registration.js` (types, trimmed names, 60-character
+   names, 254-character emails, the password rule), a 400 for a body that isn't JSON,
+   and escaped initials in the avatar SVG. The 409 for an email with an account is
+   #9's.
+
+What follows is the original finding.
 
 **Files:** `app/api/auth/register/route.js`, `auth.js` (Google provider, default
 `allowDangerousEmailAccountLinking: false`), `components/signIn/Membership.jsx`
@@ -1415,7 +1449,7 @@ Extend it when a route is added; it is the list of routes.
 | 5 | `'use server'` exposes `commentsApi` unauthenticated | Critical | Trivial |
 | 6 | Password hashes / emails sent to the browser | High | Small |
 | 7 | Layout-only auth for `/admin/*`; `/bids` middleware-only (done 2026-10-10) | High | Small |
-| 8 | Open registration, no email verification, account squatting | High | Decision + Medium |
+| 8 | Open registration, no email verification, account squatting (done 2026-10-28) | High | Decision + Medium |
 | 9 | No login rate limit / lockout / reset / MFA | High | Medium |
 | 10 | Mass assignment in PATCH routes | High | Small |
 | 11 | Ad hoc input validation | Medium | Medium |

@@ -36,6 +36,7 @@ _(Numbers pulled from Vercel Analytics + app database — update periodically ra
 - **Database:** MongoDB
 - **File storage:** Vercel Blob (per-destination directions PDFs)
 - **Auth:** Google sign-in / Email/password
+- **Access:** open sign-up, decided on purpose (2026-10-28): anyone can make an account and use the SLIC lookup, tips and places, with no approval step. Email/password accounts get a link to confirm their address, which is what lets the app trust it (a Buy Me a Coffee membership, linking a later Google sign-in). The weekly cover bid (Covers) has its own gate: an admin links the account to the driver's name on the on-call sheet.
 - **Hosting/Analytics:** Vercel
 
 ## Notable Engineering Details

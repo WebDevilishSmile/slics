@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Privacy Policy · SLICs',
 };
 
-const EFFECTIVE_DATE = 'October 22, 2026';
+const EFFECTIVE_DATE = 'October 28, 2026';
 
 // Every section's title, in page order, for the summary card's "On this
 // page" list. Keep it in step with the LegalSection titles below.
@@ -83,8 +83,12 @@ export default function PrivacyPage() {
               If you create an account with an email and password, we store
               your first name, last name and email address. Your password is
               stored only as a one-way hash, so it cannot be read back by us or
-              anyone else. If you reset your password from an emailed link, we
-              note that your email address is confirmed.
+              anyone else. We email you a link to confirm your address; using
+              it, or a password reset link we email you, notes that your email
+              address is confirmed. If you later sign in with Google using the
+              same email, Google confirms it: your account is linked to Google,
+              and a password set before the address was ever confirmed is
+              removed.
             </>,
             <>
               <strong>Profile details.</strong> You can optionally add a phone
@@ -220,12 +224,13 @@ export default function PrivacyPage() {
         <LegalList
           items={[
             <>
-              <strong>Other drivers.</strong> Any signed-in user can see your
-              display name, profile picture, tips, comments and the places you
-              add, and a check mark next to your name if you&apos;re a verified
-              driver. They see how many votes a tip or comment has, never who
-              voted. Your email, phone number, lookup history and
-              verification details are never shown to other drivers.
+              <strong>Other drivers.</strong> Anyone can create an account, so
+              this means anyone who is signed in. They can see your display
+              name, profile picture, tips, comments and the places you add, and
+              a check mark next to your name if you&apos;re a verified driver.
+              They see how many votes a tip or comment has, never who voted.
+              Your email, phone number, lookup history and verification
+              details are never shown to other drivers.
             </>,
             <>
               <strong>The administrator.</strong> As the person running the app,
@@ -240,13 +245,14 @@ export default function PrivacyPage() {
               (hosting, analytics and file storage for directions PDFs) and
               stores its data in MongoDB Atlas. Google handles Google sign-in.
               Resend sends our emails, which today are only password reset
-              emails: it receives your email address and the message when you
-              ask for one. If notifications are on, alerts reach your device
+              emails and the link that confirms your email address: it
+              receives your email address and the message. If notifications are on, alerts reach your device
               through your browser maker&apos;s push service (Google, Apple or
               Mozilla). Buy Me a Coffee processes supporter payments. For each one it tells
               us your email address and name, the amount, any message you leave
-              and when a membership starts or ends. We never receive your
-              payment details.
+              and when a membership starts or ends. A membership goes to the
+              account with that email once its address is confirmed (or it
+              signs in with Google). We never receive your payment details.
             </>,
             <>
               <strong>When the law requires it.</strong> We may disclose
@@ -299,6 +305,7 @@ export default function PrivacyPage() {
             "A record of each support or membership change you make through Buy Me a Coffee is kept as the app's record of support. If you delete your account it stays, no longer linked to you; ask us to remove it.",
             'Rate-limit records for signing up, signing in and password resets, which can hold the email address you typed, expire automatically within about an hour.',
             'A password reset link is kept only as a one-way hash, and only until it is used or expires: 30 minutes for a link sent by email, 24 hours for one from the administrator.',
+            'A link that confirms your email address is kept the same way, until it is used or after 24 hours.',
             'Session cookies expire after 30 days, or as soon as you sign out.',
           ]}
         />

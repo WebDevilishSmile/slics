@@ -88,6 +88,12 @@ export const HELP_SECTIONS = [
             Most phones stay signed in, so you may not need to.
           </>,
           <>
+            Made an account with your email? We send it a link: tap{' '}
+            <Tap>Confirm my email</Tap> in it. Nothing waits on it, but it
+            keeps anyone else from claiming your address. Lost it? Your profile
+            has <Tap>Send link</Tap>.
+          </>,
+          <>
             Can&apos;t get in? See{' '}
             <Link href='#forgot-password'>Forgot your password</Link>.
           </>,

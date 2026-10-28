@@ -230,12 +230,10 @@ order that file suggests:
       blocked loads; then step 2, nonces instead of `'unsafe-inline'` scripts
 - [ ] **#10** allowlist PATCH bodies (`updateSlic`; `drivers/[id]` done 2026-10-10;
       `cover/[position]` was deleted 2026-10-10)
-- [ ] **#8** decide the access model (open / invite code / approval) and write it in the
-      README
 - [ ] **#9** left: Google-only or a second factor for admins, the breached-password check,
       and the register route's 409 (the sign-in limit and the reset flow are done)
-- [ ] **#14** BMC webhook, mostly done 2026-10-10. Left: a freshness check, `emailVerified`
-      (#8) and an `admin_audit` row (#17)
+- [ ] **#14** BMC webhook, mostly done 2026-10-10 (`emailVerified` 2026-10-28). Left: a
+      freshness check and an `admin_audit` row (#17)
 - [ ] **#20** dev database for local work and previews (`DEV-DATABASE.md`). The seed
       script is built and dry-run checked (2026-10-14). Left: the `slics-dev` Atlas user
       and `DEV_MONGODB_URI` (stage 2), `.env.development.local` and the dev-time warning

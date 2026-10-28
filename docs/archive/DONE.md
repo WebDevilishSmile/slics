@@ -257,6 +257,12 @@ sign in process should be in the /sign-in page.
 
 ## Security (`SECURITY.md`)
 
+- [x] **#8** decide the access model (open / invite code / approval) and write it in the
+      README. 2026-10-28: open, written in the README, privacy and terms; sign-up emails a
+      link that confirms a password account's address; a Google sign-in links to an
+      account with the same email, removing a password nobody confirmed; sign-up hardened
+- [x] **#14** the webhook's `emailVerified`: a membership needs a confirmed email
+      (2026-10-28, with #8)
 - [x] **#2** 2026-10-10: no comment is parsed as HTML, `html-react-parser` is gone, and the
       43 old HTML comments are stored as text
 - [x] **#6** 2026-10-10: user serializers pick fields; `add-phone` and the toggles return

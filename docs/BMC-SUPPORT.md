@@ -67,7 +67,10 @@ signature check, no replay protection, and an exact-case email match.
 Not done from `SECURITY.md` #14:
 
 - **No freshness check.** The payload's timestamp field isn't known yet.
-- **No `emailVerified` requirement.** It waits on #8.
+- ~~**No `emailVerified` requirement.**~~ Done 2026-10-28 (`SECURITY.md` #8 step 4): a
+  membership flips only on an account that confirmed the email or signs in with Google
+  (`findMemberAccount`); otherwise it waits in the event, and `applyMembershipFromEvents`
+  applies it once the email is confirmed.
 - **No `admin_audit` row.** It waits on #17. The event row and the log line record the
   change in the meantime.
 

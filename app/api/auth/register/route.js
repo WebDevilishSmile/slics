@@ -2,8 +2,11 @@ import { after, NextResponse } from 'next/server';
 import { hashPassword } from '@/lib/password';
 import { registrationProblem } from '@/lib/registration';
 import client from '@/lib/db/client';
+import { sendEmailConfirmation } from '@/lib/emailConfirmationSend';
+import { displayName } from '@/lib/names';
 import { notifySignUp } from '@/lib/pushEvents';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { siteOrigin } from '@/lib/siteOrigin';
 
 // Generous on purpose: a whole building of drivers can share one egress IP,
 // so this has to stop scripted abuse without locking out a shift that signs
@@ -74,7 +77,7 @@ export async function POST(request) {
 
     const hashedPassword = await hashPassword(password);
 
-    await db.collection('users').insertOne({
+    const { insertedId } = await db.collection('users').insertOne({
       name: `${firstTrimmed} ${lastTrimmed}`,
       firstName: firstTrimmed,
       lastName: lastTrimmed,
@@ -91,6 +94,17 @@ export async function POST(request) {
     // A push to the admins who chose sign-ups, after the response. No name or
     // email on a lock screen.
     after(() => notifySignUp());
+    // The link that confirms the email (docs/SECURITY.md #8). The account
+    // works without it; it's what lets the app trust the address.
+    const origin = siteOrigin(request);
+    after(() =>
+      sendEmailConfirmation({
+        userId: insertedId,
+        email: emailLower,
+        firstName: displayName(firstTrimmed),
+        origin,
+      }),
+    );
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {

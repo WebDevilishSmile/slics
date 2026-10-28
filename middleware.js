@@ -50,6 +50,7 @@ export default auth((req) => {
     '/help',
     '/about',
     '/reset-password',
+    '/confirm-email',
     '/opengraph-image',
   ];
 

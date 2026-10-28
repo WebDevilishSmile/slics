@@ -224,6 +224,9 @@ export const PASSWORD_MAX_LENGTH = 128;
 export const RESET_EMAIL_LINK_MINUTES = 30;
 // A first or last name at sign-up (lib/registration.js).
 export const ACCOUNT_NAME_MAX_LENGTH = 60;
+// How long the link that confirms a password account's email works
+// (lib/db/emailConfirmations.js, docs/SECURITY.md #8).
+export const EMAIL_CONFIRM_LINK_HOURS = 24;
 
 // Covers and driver verification (docs/COVER-BIDDING.md) are admin-only until
 // they roll out to every driver: `canUseCovers` in lib/authz.js and the menu

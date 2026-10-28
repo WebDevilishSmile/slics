@@ -32,6 +32,7 @@ import BmcButton from '@/components/layout/BmcButton';
 import SoftNotice from '@/components/utility/SoftNotice';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
 import { softInset, softPressSx } from '@/components/utility/soft';
+import ConfirmEmailButton from './ConfirmEmailButton';
 import EditProfileDialog from './EditProfileDialog';
 import ProfileImage from './ProfileImage';
 import PushNotifications from './PushNotifications';
@@ -193,6 +194,13 @@ function ProfileData({
           <Detail icon={<EmailOutlined />} label='Email'>
             {userData.email}
           </Detail>
+          {/* A password account whose email isn't confirmed yet (docs/SECURITY.md
+              #8). Google accounts are confirmed by Google. */}
+          {userData.hasPassword && !userData.emailConfirmed && (
+            <Box sx={{ pl: 4.5, mt: -1.5 }}>
+              <ConfirmEmailButton />
+            </Box>
+          )}
           <Detail icon={<PhoneOutlined />} label='Phone'>
             {userData.phone || 'Not provided'}
           </Detail>

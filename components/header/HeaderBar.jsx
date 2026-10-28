@@ -26,6 +26,7 @@ const PAGE_TITLES = [
   ['/about', 'About'],
   ['/help', 'Help'],
   ['/reset-password', 'Reset Password'],
+  ['/confirm-email', 'Confirm Email'],
   ['/sign-in', 'Sign in'],
   ['/hubs', 'All Hubs'],
   ['/history', 'History'],

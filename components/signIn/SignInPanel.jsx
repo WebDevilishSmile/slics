@@ -344,6 +344,7 @@ export default function SignInPanel({ google, returnTo }) {
           sx={[softInputSx, vt('email')]}
           required
           autoComplete='email'
+          helperText='We’ll email you a link to confirm it.'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />

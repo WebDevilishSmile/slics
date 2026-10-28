@@ -29,8 +29,9 @@ const NO_ENTRIES = [];
 //   offListWeeks). They're read only: a list saved before shows, but can't
 //   change, and none can be started.
 // - `thisWeek`: the current week's Saturday; earlier lists can't change.
-// - `initialWeek`: the week to open on (`?week=`, a notification's link), or
-//   null for next week.
+// - `initialWeek`: the week to open on: `?week=` (a notification's link) or
+//   the week bid on this week (lib/bidDay.js currentBidWeek, New York time),
+//   or null for next week by this clock.
 // - `preview`: the super admin's preview (app/covers/page.jsx): the list works
 //   but stays in the page, never saved or re-read.
 // - `reminderLeads`: the driver's call-in reminder times when that

@@ -10,10 +10,10 @@ import VerifiedBadge from '@/components/utility/VerifiedBadge';
 import { softInset, softRaised } from '@/components/utility/soft';
 import { displayName } from '@/lib/names';
 
-// What a week's tile says about the driver's spot (lib/coverDrivers.js
+// What the week's tile says about the driver's spot (lib/coverDrivers.js
 // myCoverSpot): a headline and a quieter line under it.
 function describe(spot) {
-  if (!spot) return { headline: 'Not on the list', detail: "You're not on this week's pick list." };
+  if (!spot) return { headline: 'Not on the list', detail: "You're not on the pick list." };
   // The super admin's preview: no real driver's place.
   if (spot.status === 'preview') return { headline: 'Cover #', detail: 'Your place on the pick list' };
   if (spot.kind === 'onCall') {
@@ -28,18 +28,17 @@ function describe(spot) {
   return { headline: `Cover ${spot.position}`, detail: spot.job };
 }
 
-function WeekTile({ weekEnding, spot, bidDate, index }) {
+function WeekTile({ weekEnding, spot, bidDate }) {
   const { headline, detail } = describe(spot);
   const isPreview = spot?.status === 'preview';
   const callIn = spot?.callIn || (isPreview ? 'Your time' : '');
 
   return (
     <Box
-      component='li'
       className='enter'
       sx={[
         softRaised,
-        { '--i': index, borderRadius: 4, p: 2.5, display: 'flex', alignItems: 'center', gap: 2 },
+        { borderRadius: 4, p: 2.5, display: 'flex', alignItems: 'center', gap: 2 },
       ]}
     >
       <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -82,21 +81,22 @@ function WeekTile({ weekEnding, spot, bidDate, index }) {
   );
 }
 
-// A verified driver's own place on the cover list, one tile per posted week
-// from this one on: "Cover 7", their call-in (pick) time and the day of it
-// (`bidDate` on each week, lib/bidDay.js). Only their row:
-// nobody else's name, status or picks reach the page (docs/COVER-BIDDING.md).
-// `offWeeks` are the posted weeks they're not on, which are read only for
-// them, with "This is a mistake" (covers/CoverDispute.jsx); `dispute` is
-// their latest message about it, and `jobCode` the job they hold on the Jobs
-// tab, which the notice names. `preview`: the super admin's preview, with
-// placeholder places (app/covers/page.jsx).
+// A verified driver's own place on the cover list for one week, the one bid
+// on this week (`week.weekEnding`, lib/bidDay.js currentBidWeek: from Sunday,
+// next week's): "Cover 7", their call-in (pick) time and the day of it
+// (`week.bidDate`), or that its pick list isn't posted yet (`week.posted`).
+// Only their row: nobody else's name, status or picks reach the page
+// (docs/COVER-BIDDING.md). `offWeeks` is that week when they're not on it,
+// which makes it read only for them, with "This is a mistake"
+// (covers/CoverDispute.jsx); `dispute` is their latest message about it, and
+// `jobCode` the job they hold on the Jobs tab, which the notice names.
+// `preview`: the super admin's preview, with a placeholder place
+// (app/covers/page.jsx).
 export default function MyCoverWeeks({
   name,
   driverName,
-  weeks,
+  week,
   offWeeks,
-  allOff,
   dispute,
   jobCode,
   preview = false,
@@ -116,21 +116,19 @@ export default function MyCoverWeeks({
       {offWeeks.length > 0 && (
         <CoverDispute
           offWeeks={offWeeks}
-          allOff={allOff}
           driverName={displayName(driverName)}
           jobCode={jobCode}
           initialDispute={dispute}
         />
       )}
 
-      {weeks.length === 0 ? (
-        <SoftNotice>This week&apos;s pick list isn&apos;t posted yet.</SoftNotice>
+      {week.posted ? (
+        <WeekTile weekEnding={week.weekEnding} spot={week.spot} bidDate={week.bidDate} />
       ) : (
-        <Box component='ul' sx={{ listStyle: 'none', m: 0, p: 0, display: 'grid', gap: 2 }}>
-          {weeks.map((week, index) => (
-            <WeekTile key={week.weekEnding} index={index} {...week} />
-          ))}
-        </Box>
+        <SoftNotice>
+          Your place for the week ending {formatWeekEnding(week.weekEnding)} shows once its
+          pick list is posted.
+        </SoftNotice>
       )}
     </Paper>
   );

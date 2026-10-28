@@ -1,13 +1,12 @@
-import dayjs from 'dayjs';
 import { after, NextResponse } from 'next/server';
 
 import { requireArea, requireVerifiedDriver } from '@/lib/authz';
+import { currentBidWeek } from '@/lib/bidDay';
 import { offListWeeks } from '@/lib/coverDrivers';
-import { getUpcomingSaturday } from '@/lib/format';
 import { todayInNewYork } from '@/lib/onCallSheet';
 import { notifyCoverDispute } from '@/lib/pushEvents';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { getCoverBidPicksSince } from '@/lib/db/coverBidPicks';
+import { getCoverBidPicks } from '@/lib/db/coverBidPicks';
 import {
   createCoverDispute,
   getOpenDisputeCount,
@@ -47,12 +46,12 @@ export async function POST(request) {
   if (error) return NextResponse.json({ error }, { status: 400 });
 
   try {
-    const thisWeek = getUpcomingSaturday(dayjs(todayInNewYork())).format('YYYY-MM-DD');
-    const [user, pickWeeks] = await Promise.all([
+    // The week /covers shows, the one bid on this week, as the page's notice.
+    const [user, picks] = await Promise.all([
       getUserById(session.user.id),
-      getCoverBidPicksSince(thisWeek),
+      getCoverBidPicks(currentBidWeek(todayInNewYork())),
     ]);
-    const weeks = offListWeeks(pickWeeks, user?.driver?.key);
+    const weeks = offListWeeks(picks ? [picks] : [], user?.driver?.key);
     if (!user?.driver?.name || weeks.length === 0) {
       return NextResponse.json(
         { error: "You're on the posted cover list, so there's nothing to send." },

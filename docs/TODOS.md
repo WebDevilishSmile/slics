@@ -34,6 +34,12 @@ Use absolute dates.
 
 ## Now
 
+- [ ] **Covers hub and Cover History** (built 2026-11-07): deploy, run `npm run db:indexes`
+      (`cover-list-totals`), and the day after, check that the cron saved a row per week
+      with lists. Open `/admin/cover` and `/admin/cover/history` signed in, in both schemes,
+      and read "What stands out" against what you know of the weeks; tune a threshold in
+      `findPatterns` (`lib/coverHistory.js`) if one says something that isn't so
+      (`COVER-BIDDING.md` → "Covers hub and History")
 - [ ] **Covers for every driver** (ready 2026-11-07, after the trial): turn on "Covers for
       every driver" on `/admin/super/features`, then check it as a driver on a phone
       (`COVER-BIDDING.md` → "Rolling stage 1 out to every driver"). The `/help`

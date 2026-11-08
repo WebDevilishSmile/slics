@@ -329,6 +329,55 @@ picks, waits for stage 3.
 
 ---
 
+## Covers hub and History (built 2026-11-07)
+
+**The hub.** `/admin/cover` (it used to redirect to `/admin`) is the one place the cover
+tools open from. The Covers area's row on `/admin` and `/dispatch` is a single "Covers"
+link to it (`STAFF_AREAS` in `constants.js`), and every tool is a tile: `COVER_TOOLS` in
+`constants.js` (Cover Jobs, Cover Drivers, Cover Lists, Cover History). A new cover page is
+one entry there and a title in `HeaderBar.jsx` `PAGE_TITLES`; its page checks the Covers
+area itself. A tile's status line is about the week bid on now (`currentBidWeek`) and
+comes from `getCoverHubStatus` (`lib/db/coverHub.js`), keyed like `COVER_TOOLS`; a tool
+with no line there shows only its description, and a failed read drops only its line. The
+cover-tab changes banner shows on the hub as on `/admin`.
+
+**Cover History** (`/admin/cover/history`, Covers area) reads past weeks side by side, the
+weeks already bid on (`weekEnding <= currentBidWeek`), `?range=` 8, 12 (the default), 26,
+52 or all, and `?week=` the week shown up close. It's server-rendered on each visit:
+`getCoverHistory` (`lib/db/coverHistory.js`) loads the jobs, pick lists, hides, bid days,
+list totals and per-week change counts, and `lib/coverHistory.js` (pure) interprets them:
+
+- `readWeek`: one week as it closed: jobs shown, taken, open, hidden (by an admin, in the
+  sheet, sleeper), who covered each job and at which place, each pick-list row's outcome
+  (covering, on call, no job, out and why), changes, lists, a moved bid day.
+- `jobTrends` / `JOB_FILTERS`: each job number across the weeks: weeks posted, taken of
+  the weeks known, the average and best place that took it, how often an on-call driver
+  did, and list totals. Filters: recurring, taken early, left for on call, never taken,
+  on lists.
+- `driverTrends`: each driver on the pick lists: cover and on-call weeks, covers, weeks
+  with no job, weeks out by leave type, average place and how far they moved.
+- `findPatterns`: "What stands out", plain-language findings, each a rule with a
+  threshold, so it shows only when the weeks bear it out (volume ±15%, open jobs,
+  recurring jobs never taken, most and least wanted, how far down the list jobs went,
+  cover drivers left without a job, weeks unusually many were out or on call, churn after
+  posting, drivers who moved 10+ places over 4+ weeks, often out, list demand, bid days
+  moved, weeks with no pick list).
+
+What the saved data can say (checked against production 2026-11-07): **who covered a job
+comes from the pick list's "Job / status" column** (a row whose `job` is one of the week's
+job numbers), so a job's place is that row's. The sheet's pick columns (1–7) are empty,
+and a job's NAME column is often a last name only, so neither is used. Weeks from photo
+uploads (before 2026-10-09) have jobs but no pick list and no takers: their outcome is
+unknown, not open.
+
+**Cover list totals.** Cover lists are deleted 28 days after their week, so the daily cron
+(`GET /api/cron/on-call-sheet-sync`) also runs `snapshotCoverListTotals`
+(`lib/db/coverListTotals.js`), which recounts every week that still has lists into
+`cover-list-totals`: how many lists, and per job number on how many lists and how many as
+the #1 entry. No userId, no names, so a total can't say whose list it came from. A week
+whose lists are gone keeps its last count. The privacy page says so. Run
+`npm run db:indexes` once for its unique `weekEnding` index.
+
 ## Verifying
 
 Locally (`npm run dev`, which writes to the production database, so delete test data

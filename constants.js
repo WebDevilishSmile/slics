@@ -516,12 +516,9 @@ export const STAFF_AREAS = [
   {
     key: 'covers',
     label: 'Covers',
-    description: 'Cover jobs, drivers and lists, and Covers before it opens to every driver.',
-    links: [
-      { href: '/admin/cover/drivers', label: 'Cover Drivers' },
-      { href: '/admin/cover/jobs', label: 'Cover Jobs' },
-      { href: '/admin/cover/lists', label: 'Cover Lists' },
-    ],
+    description: 'Cover jobs, drivers, lists and history, and Covers before it opens to every driver.',
+    // One row to the Covers hub, which lists its tools (COVER_TOOLS below).
+    links: [{ href: '/admin/cover', label: 'Covers' }],
   },
   {
     key: 'drivers',
@@ -536,6 +533,37 @@ export const STAFF_AREAS = [
     links: [{ href: '/admin/planet-fitness', label: 'Planet Fitness' }],
   },
 ];
+// The Covers hub's tools (/admin/cover, docs/COVER-BIDDING.md "Covers hub and
+// History"), in order. A new cover page is one entry here; its status line is
+// keyed by `key` in lib/db/coverHub.js, and a tool without one shows only its
+// description. Every page under /admin/cover checks the Covers area itself.
+export const COVER_TOOLS = [
+  {
+    key: 'jobs',
+    href: '/admin/cover/jobs',
+    label: 'Cover Jobs',
+    description: "A week's cover jobs from the sheet: refresh, hide, bid day and changes.",
+  },
+  {
+    key: 'drivers',
+    href: '/admin/cover/drivers',
+    label: 'Cover Drivers',
+    description: "A week's cover and on-call drivers, in pick order.",
+  },
+  {
+    key: 'lists',
+    href: '/admin/cover/lists',
+    label: 'Cover Lists',
+    description: "Every verified driver's cover list for a week, and the most wanted jobs.",
+  },
+  {
+    key: 'history',
+    href: '/admin/cover/history',
+    label: 'Cover History',
+    description: 'Past weeks side by side: jobs, demand, drivers and what stands out.',
+  },
+];
+
 export const STAFF_AREA_KEYS = STAFF_AREAS.map((area) => area.key);
 // Admins start with every area, Dispatch with SLICs only.
 export const ROLE_AREA_DEFAULTS = {

@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Privacy Policy · SLICs',
 };
 
-const EFFECTIVE_DATE = 'October 28, 2026';
+const EFFECTIVE_DATE = 'November 7, 2026';
 
 // Every section's title, in page order, for the summary card's "On this
 // page" list. Keep it in step with the LegalSection titles below.
@@ -116,6 +116,14 @@ export default function PrivacyPage() {
               administrator decides your request. Nothing is sent to your UPS
               email. Once you&apos;re verified, your account is linked to your
               name as the on-call sheet writes it.
+            </>,
+            <>
+              <strong>Your cover list.</strong> If you&apos;re verified for
+              covers, the jobs you add to your list on the Covers page are
+              stored with your account, in your order, for each week. If you
+              tell us &quot;This is a mistake&quot; about the cover list, your
+              note, the week and your job code from the on-call sheet are
+              stored with your account, with the administrator&apos;s answer.
             </>,
             <>
               <strong>Notifications.</strong> If you turn on notifications on
@@ -236,9 +244,10 @@ export default function PrivacyPage() {
               <strong>The administrator.</strong> As the person running the app,
               Tiago Davila can see account details (including your email and
               phone number if you added one), tips and comments, reports about
-              SLICs, lookup history and driver verification requests in order
-              to keep the app working, moderate what drivers post and verify
-              drivers, and the support you send through Buy Me a Coffee.
+              SLICs, lookup history, driver verification requests, cover lists
+              and messages about the cover list in order to keep the app
+              working, moderate what drivers post, verify drivers and run the
+              cover bid, and the support you send through Buy Me a Coffee.
             </>,
             <>
               <strong>Service providers.</strong> The app runs on Vercel
@@ -289,6 +298,12 @@ export default function PrivacyPage() {
           working, with its days, start times and route. Neither ever shows you
           another driver&apos;s picks or why they are off.
         </LegalText>
+        <LegalText>
+          Your cover list is yours: other drivers never see it, or that you
+          have one. The administrator sees every driver&apos;s list, to see
+          which jobs drivers want before the bid. A list isn&apos;t a bid;
+          you still pick by calling dispatch at your call-in time.
+        </LegalText>
       </LegalSection>
 
       <LegalSection title='How long we keep information'>
@@ -302,6 +317,7 @@ export default function PrivacyPage() {
             'Reports about a SLIC are kept after they are dealt with, as a record of what was fixed. If you delete your account they stay, no longer linked to you.',
             'Lookup history is kept while your account exists. Removing an entry from the History page hides it there, but it still counts toward your lookup total. All of it is deleted with your account.',
             'A driver verification request keeps your employee ID and seniority date only until the administrator decides it; then they are deleted. The request is deleted with your account. Your verification lasts until your account is deleted or the administrator removes it.',
+            'Your cover list for a week is deleted four weeks after that week ends, or with your account. A message about the cover list is kept until your account is deleted.',
             "A record of each support or membership change you make through Buy Me a Coffee is kept as the app's record of support. If you delete your account it stays, no longer linked to you; ask us to remove it.",
             'Rate-limit records for signing up, signing in and password resets, which can hold the email address you typed, expire automatically within about an hour.',
             'A password reset link is kept only as a one-way hash, and only until it is used or expires: 30 minutes for a link sent by email, 24 hours for one from the administrator.',

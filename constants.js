@@ -232,6 +232,10 @@ export const EMAIL_CONFIRM_LINK_HOURS = 24;
 // they roll out to every driver: `canUseCovers` in lib/authz.js and the menu
 // read this. Only the default: the switch on /admin/super/features wins. Flip it with the rollout checklist in that doc.
 export const COVERS_OPEN = false;
+// Once the switch opens Covers, its header-menu row says "New" for this many
+// days from the moment it was turned on (`coversOpenedAt`, lib/db/appSettings.js
+// getSessionFeatures; header/UserMenu.jsx).
+export const COVERS_NEW_DAYS = 21;
 // A verified driver's cover list (docs/COVER-BIDDING.md, stage 2): the jobs
 // they want for a week, in order. At most this many per week, and a week's
 // lists are deleted this many days after the week ends (a TTL index).

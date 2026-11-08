@@ -240,6 +240,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // beside it.
       session.features = token?.features ?? {
         coversOpen: FEATURE_DEFAULTS.coversOpen,
+        coversOpenedAt: null,
         pushOpen: FEATURE_DEFAULTS.pushOpen,
         placesNewUntil: FEATURE_DEFAULTS.placesNewUntil,
       };

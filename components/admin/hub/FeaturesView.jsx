@@ -95,7 +95,7 @@ export default function FeaturesView({ initial }) {
             <Typography variant='body2' color='text.secondary'>
               {features.coversOpen
                 ? 'On: every signed-in driver has Covers.'
-                : 'Off: only admins have Covers while it’s tested.'}
+                : 'Off: only admins and early access have Covers while it’s tested.'}
             </Typography>
           </Box>
           <Switch
@@ -108,7 +108,7 @@ export default function FeaturesView({ initial }) {
                   ? {
                       title: 'Open Covers to every driver?',
                       body:
-                        'Every signed-in driver gets /covers and its menu item, can ask to be verified, and sees the check mark on verified drivers’ tips. Go through the rollout checklist in docs/COVER-BIDDING.md first.',
+                        'Every signed-in driver gets /covers and its menu item, which says New for three weeks, can ask to be verified, and sees the check mark on verified drivers’ tips. Go through the rollout checklist in docs/COVER-BIDDING.md first.',
                       action: 'Open Covers',
                       key: 'coversOpen',
                       value: true,

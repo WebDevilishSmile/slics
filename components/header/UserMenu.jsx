@@ -38,7 +38,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 
-import { BMC_URL, COVERS_OPEN, PLACES_NEW_UNTIL } from '@/constants';
+import { BMC_URL, COVERS_NEW_DAYS, COVERS_OPEN, PLACES_NEW_UNTIL } from '@/constants';
 import { refreshAdminAlerts } from '@/lib/adminAlertsStore';
 import { useOpenDisputesCount } from '@/lib/coverDisputesStore';
 import { usePendingClaimsCount } from '@/lib/driverClaimsStore';
@@ -179,6 +179,9 @@ function UserMenu({ user, features, signOutAction }) {
   const coversOpen = features?.coversOpen ?? COVERS_OPEN;
   const coversByRole = userHasArea(user, 'covers');
   const canUseCovers = coversAllowed(user, features);
+  // Once it's open, the row says "New" for COVERS_NEW_DAYS after the switch.
+  const coversOpenedAt = coversOpen ? Date.parse(features?.coversOpenedAt ?? '') : NaN;
+  const coversIsNew = Date.now() < coversOpenedAt + COVERS_NEW_DAYS * 24 * 60 * 60 * 1000;
   // Places opened to everyone on 2026-10-12; its row says "New" until the
   // date the super admin set.
   const placesIsNew = new Date().toISOString() < (features?.placesNewUntil ?? PLACES_NEW_UNTIL);
@@ -312,7 +315,13 @@ function UserMenu({ user, features, signOutAction }) {
                   href='/covers'
                   label='Covers'
                   secondary={
-                    coversOpen ? undefined : coversByRole ? 'Admin only for now' : 'Early access'
+                    coversOpen
+                      ? coversIsNew
+                        ? 'New · Cover jobs and your call-in'
+                        : undefined
+                      : coversByRole
+                        ? 'Admin only for now'
+                        : 'Early access'
                   }
                   icon={<EventAvailableOutlined />}
                   current={isCurrent('/covers')}

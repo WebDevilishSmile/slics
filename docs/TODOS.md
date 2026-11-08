@@ -34,6 +34,10 @@ Use absolute dates.
 
 ## Now
 
+- [ ] **Cover reports** (built 2026-11-07): deploy, run `npm run db:indexes`
+      (`cover-reports`), then send one test report from `/covers` on a phone, check the push,
+      the menu badge, the `/admin` banner and `/admin/cover/reports`, and Delete it
+      (`COVER-BIDDING.md` → "Reference only and cover reports")
 - [ ] **Covers hub and Cover History** (built 2026-11-07): deploy, run `npm run db:indexes`
       (`cover-list-totals`), and the day after, check that the cron saved a row per week
       with lists. Open `/admin/cover` and `/admin/cover/history` signed in, in both schemes,

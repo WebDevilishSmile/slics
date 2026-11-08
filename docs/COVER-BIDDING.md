@@ -378,6 +378,33 @@ the #1 entry. No userId, no names, so a total can't say whose list it came from.
 whose lists are gone keeps its last count. The privacy page says so. Run
 `npm run db:indexes` once for its unique `weekEnding` index.
 
+## Reference only and cover reports (built 2026-11-07)
+
+**The note.** Every visit to `/covers` shows a note above the jobs (`covers/CoversDisclaimer.jsx`,
+through `CoverBidJobsTable`'s `beforeJobs` in `CoverBoard.jsx`), with no dismiss: "For
+reference only. Covers is read from the on-call sheet and can be wrong or behind. Calling
+dispatch at your call-in time and asking what's available is up to you, and so is checking
+your own covers." The "Keep a cover list" guide on `/help` and the Terms ("Accuracy of the
+information", effective November 7, 2026) say the same.
+
+**Report a problem.** The note's button opens `covers/CoverReport.jsx` for the week on
+screen: what's wrong (`COVER_REPORT_KINDS`: a job wrong or missing, wrong start times,
+taken or open shown wrongly, my place or call-in time, something else with a note), an
+optional job number and a plain-text note. `POST /api/cover-reports` (`requireCovers()`, 5 an
+hour per driver) saves it in `cover-reports` (`lib/db/coverReports.js`) with the sheet name
+the account is linked to, read on the server; the same open report again only updates its
+note. A new one pushes `coverReports` to admins with the Covers area: the week and the kind,
+never the driver, job or note. In the super admin's preview nothing is sent.
+
+**The admin side** (the Covers area): the Cover Reports tile on the hub ("N open"), the
+queue at `/admin/cover/reports` (`admin/coverReports/CoverReportsQueue.jsx`: open oldest
+first, Open week → `/admin/cover/jobs?week=`, Dismiss, Fixed, and Delete for test reports,
+written to `admin_audit` first as `coverReport.deleted` with the week, job, kind and date),
+a banner on `/admin` and the hub (`CoverReportsNotice.jsx`), and the header-menu badge
+(`lib/coverReportsStore.js`, `openCoverReports` in `GET /api/admin-alerts`). Reports count
+until closed. Account deletion unlinks them (`unlinkUserCoverReports`) and drops the linked
+name. Run `npm run db:indexes` once for their indexes.
+
 ## Verifying
 
 Locally (`npm run dev`, which writes to the production database, so delete test data

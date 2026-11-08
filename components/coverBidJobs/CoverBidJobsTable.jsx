@@ -152,12 +152,7 @@ function CoverBidJobsTable({
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <SoftNotice sx={{ maxWidth: 'none', mt: 3, mb: 3 }}>
-        This is a work in progress. I&apos;m working to see if I can show the
-        weekly cover bid jobs effectively. If you have some suggestions or
-        feedback, please let me know.
-      </SoftNotice>
+    <Box sx={{ width: '100%', mt: 3 }}>
       <Box sx={filterBarSx}>
         <CoverCalendar
           value={selectedDay}

@@ -23,19 +23,9 @@ import {
   softTableSx,
 } from '@/components/utility/soft';
 import { displayName } from '@/lib/names';
+import { describePickEvent as describe } from './pickEventText';
 
 const RECENT = 10;
-
-function fieldLabel(field) {
-  if (field.startsWith('pick')) return `Pick #${field.slice(4)}`;
-  return { slot: 'Time', order: 'Order', job: 'Job / status' }[field] ?? field;
-}
-
-function describe(event) {
-  if (event.field === 'added') return 'added to the list';
-  if (event.field === 'removed') return 'removed from the list';
-  return `${fieldLabel(event.field)}: ${event.from || '—'} → ${event.to || '—'}`;
-}
 
 // The pick section of the week's cover tab, as saved by the last refresh
 // (docs/ON-CALL-SHEET-SYNC.md), and what changed between refreshes.

@@ -13,10 +13,12 @@ import {
   OutlinedFlag,
   PhoneOutlined,
   PictureAsPdfOutlined,
+  PlaylistAdd,
   RateReviewOutlined,
   SearchOutlined,
   SignpostOutlined,
   ThumbUpOutlined,
+  VerifiedOutlined,
   WorkOutline,
 } from '@mui/icons-material';
 import { Box, Link } from '@mui/material';
@@ -465,9 +467,103 @@ export const HELP_SECTIONS = [
     ],
   },
   {
-    id: 'your-job',
-    title: 'Your job',
+    id: 'covers',
+    title: 'Covers & your job',
     guides: [
+      {
+        id: 'verify',
+        feature: 'coversOpen',
+        title: 'Verify you’re a driver',
+        icon: VerifiedOutlined,
+        intro:
+          'Covers shows the week’s cover jobs and your place on the pick list. It’s for drivers on the on-call sheet, so you verify once.',
+        steps: [
+          <>
+            Open the menu (three lines at the top left) and tap{' '}
+            <Tap>Covers</Tap>.
+          </>,
+          <>
+            Tap <Tap>Verify I&apos;m a driver</Tap>.
+          </>,
+          <>
+            Type your <Tap>Name</Tap> the way the on-call sheet writes it, your{' '}
+            <Tap>UPS email</Tap> (your employee ID @ups.com) and your{' '}
+            <Tap>Seniority date</Tap>.
+          </>,
+          <>
+            Tap <Tap>Send</Tap>. An admin checks it against the on-call sheet.
+          </>,
+          <>
+            Once you&apos;re verified, <Tap>Covers</Tap> shows your place on
+            the pick list, your call-in time and the jobs. A check mark shows
+            next to your name.
+          </>,
+        ],
+        notes: [
+          <>
+            Nothing is sent to your UPS email. Only admins see what you send,
+            and your employee ID and seniority date are deleted once an admin
+            decides.
+          </>,
+          <>
+            Made a mistake? Tap <Tap>Edit claim</Tap> while it waits. If an
+            admin can&apos;t verify you, <Tap>Covers</Tap> says why, and{' '}
+            <Tap>Try again</Tap> sends a new one.
+          </>,
+          <>Not doing covers? Nothing else in SLICs needs this.</>,
+        ],
+      },
+      {
+        id: 'cover-list',
+        feature: 'coversOpen',
+        title: 'Keep a cover list',
+        icon: PlaylistAdd,
+        intro:
+          'Line up the jobs you want, in order, so you’re ready when you call dispatch. Jobs that get taken drop off on their own.',
+        steps: [
+          <>
+            Open <Tap>Covers</Tap>. The top shows your place on the pick list
+            and your call-in time for the week.
+          </>,
+          <>
+            In the jobs below <Tap>Your list</Tap>, tap <Tap>+</Tap> next to a
+            job you want, or open the job and tap <Tap>Add to my list</Tap>.
+            Search by job number or a stop to find one.
+          </>,
+          <>
+            Use the arrows to put your first choice on top. The{' '}
+            <Tap>×</Tap> takes a job off.
+          </>,
+          <>
+            On bid day, at your call-in time, tap <Tap>Call dispatch</Tap>{' '}
+            under your list and read off your jobs in order.
+          </>,
+        ],
+        notes: [
+          <>
+            Your list isn&apos;t a bid. You still pick by calling dispatch at
+            your call-in time.
+          </>,
+          <>
+            Your list saves as you go. Other drivers never see it, and nobody
+            sees who took a job. Admins can see lists.
+          </>,
+          <>
+            When a job on your list is taken, it moves under{' '}
+            <Tap>Taken since you added it</Tap>. It comes back if it opens up
+            again.
+          </>,
+          <>
+            Not a cover or on-call driver that week? The list is read only. If
+            that&apos;s wrong, tap <Tap>This is a mistake</Tap> to tell an
+            admin.
+          </>,
+          <>
+            Want a nudge before your call-in? See{' '}
+            <Link href='#call-in-reminder'>Get a reminder before your call-in</Link>.
+          </>,
+        ],
+      },
       {
         id: 'this-week',
         feature: 'coversOpen',
@@ -501,8 +597,8 @@ export const HELP_SECTIONS = [
           </>,
           <>
             It comes from the on-call sheet, so it&apos;s only as current as
-            the sheet. It needs your account verified on <Tap>Covers</Tap>{' '}
-            first.
+            the sheet. It needs your account verified first: see{' '}
+            <Link href='#verify'>Verify you’re a driver</Link>.
           </>,
         ],
       },
@@ -550,9 +646,10 @@ export const HELP_SECTIONS = [
             <Link href='#install'>Put SLICs on your home screen</Link> first.
           </>,
           <>
-            A reminder is only a nudge. Your call-in time on{' '}
-            <Tap>Covers</Tap> is what counts. It needs your account verified
-            on <Tap>Covers</Tap> first.
+            A reminder is only a nudge. Your call-in time on the on-call sheet
+            is what counts, and <Tap>Covers</Tap> shows it. It needs your
+            account verified first: see{' '}
+            <Link href='#verify'>Verify you’re a driver</Link>.
           </>,
         ],
       },

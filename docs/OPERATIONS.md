@@ -66,7 +66,7 @@ to `.env`. In production the same keys are set on the Vercel project.
 
 | What | When | Where | Auth |
 |---|---|---|---|
-| Daily sheet re-read (Jobs + this week on) | 10:00 UTC daily (`vercel.json`), production only, sometime within that hour | `GET /api/cron/on-call-sheet-sync` | `Authorization: Bearer $CRON_SECRET`, sent by Vercel |
+| Daily sheet re-read (Jobs + this week on), then the cover lists' anonymous weekly totals (`snapshotCoverListTotals`, `cover-list-totals`) | 10:00 UTC daily (`vercel.json`), production only, sometime within that hour | `GET /api/cron/on-call-sheet-sync` | `Authorization: Bearer $CRON_SECRET`, sent by Vercel |
 | Covers notifications (call-in reminders; call-in and cover-jobs notices) | Every minute (`vercel.json`), production only. **Needs Vercel Pro** (the team has been on it since before 2026-10-22): a Hobby cron runs once a day, and a deploy with an every-minute one fails there | `GET /api/cron/cover-notifications` (`lib/coverNotices.js`); `?all=1` runs every part at once | `Authorization: Bearer $CRON_SECRET`, sent by Vercel |
 | Sheet notifier ping | When the sheet's `Jobs` tab or a dated tab is edited | `POST /api/webhooks/on-call-sheet` | `x-sheet-secret` = `ON_CALL_SHEET_WEBHOOK_SECRET` |
 | Buy Me a Coffee events | Every delivery (saved to `bmc-events`); membership started / cancelled also sets `bmcMember` | `POST /api/webhooks/buymeacoffee` | HMAC SHA-256 with `BMC_WEBHOOK_SECRET`, constant-time; repeats are no-ops (`BMC-SUPPORT.md`) |

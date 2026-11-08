@@ -317,7 +317,7 @@ export default function PrivacyPage() {
             'Reports about a SLIC are kept after they are dealt with, as a record of what was fixed. If you delete your account they stay, no longer linked to you.',
             'Lookup history is kept while your account exists. Removing an entry from the History page hides it there, but it still counts toward your lookup total. All of it is deleted with your account.',
             'A driver verification request keeps your employee ID and seniority date only until the administrator decides it; then they are deleted. The request is deleted with your account. Your verification lasts until your account is deleted or the administrator removes it.',
-            'Your cover list for a week is deleted four weeks after that week ends, or with your account. A message about the cover list is kept until your account is deleted.',
+            'Your cover list for a week is deleted four weeks after that week ends, or with your account. After that the app keeps only anonymous counts for the week, like how many lists a job was on, which can’t be traced to you. A message about the cover list is kept until your account is deleted.',
             "A record of each support or membership change you make through Buy Me a Coffee is kept as the app's record of support. If you delete your account it stays, no longer linked to you; ask us to remove it.",
             'Rate-limit records for signing up, signing in and password resets, which can hold the email address you typed, expire automatically within about an hour.',
             'A password reset link is kept only as a one-way hash, and only until it is used or expires: 30 minutes for a link sent by email, 24 hours for one from the administrator.',

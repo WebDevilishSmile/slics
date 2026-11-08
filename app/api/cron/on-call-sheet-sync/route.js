@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { secretsMatch } from '@/lib/secretsMatch';
 import { syncFromSheet } from '@/lib/onCallSheetSync';
+import { snapshotCoverListTotals } from '@/lib/db/coverListTotals';
 
 export const runtime = 'nodejs';
 // Reads Jobs plus every current week.
@@ -31,7 +32,16 @@ export async function GET(request) {
     if (failed.length) {
       console.error('On-call sheet cron sync had errors:', failed);
     }
-    return NextResponse.json({ success: true, data: { results } });
+    // Save the cover lists' anonymous weekly totals before the TTL deletes
+    // the lists (lib/db/coverListTotals.js). Its own try: it never fails the
+    // sync.
+    let listTotals = null;
+    try {
+      listTotals = await snapshotCoverListTotals();
+    } catch (error) {
+      console.error('Error saving cover list totals in the cron:', error);
+    }
+    return NextResponse.json({ success: true, data: { results, listTotals } });
   } catch (error) {
     console.error('Error in the on-call sheet cron sync:', error);
     return NextResponse.json({ error: "Couldn't read the sheet." }, { status: 502 });

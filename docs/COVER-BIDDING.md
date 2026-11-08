@@ -8,35 +8,20 @@ then pick in the app when their time comes. Built in stages; check items off as 
 `npm run build` (in a scratch copy, never while `next dev` runs) before shipping any item.
 The app is used daily in production.
 
-## Status (2026-10-22)
+## Status (2026-11-07)
 
-- **Stage 1** (driver verification and the drivers' Covers page): built, **admin only**
-  while it's tested (super admins only for a few hours on 2026-10-12). Until the "Covers
-  for every driver" switch on `/admin/super/features` opens it (`COVERS_OPEN` in
-  `constants.js` is only the default), only admins see `/covers`, the menu item and the
-  check mark on Driver tips, and only they can file a claim or keep a list
-  (`canUseCovers`, `lib/authz.js`). Admins are the testers, so `/covers` shows them
-  exactly what a driver will get: unverified, only the claim; verified, their place, the
-  jobs and their list, read only on a week they're off. Their admin view is the admin
-  pages (`/admin/cover/*`, `/admin/driver-claims`). Test it, then follow the rollout
-  checklist below.
-- **Indexes:** run `npm run db:indexes` once stage 1 is deployed (two of its indexes are
-  unique, see "Data").
-- **Stage 2** (cover lists): built 2026-10-12 behind the same gate, so admin only
-  too.
-  Run `npm run db:indexes` once it's deployed (`cover-preferences`, including its TTL),
-  then check it with "Verifying stage 2" below.
-- **Off the list, read only** (built 2026-10-12, behind the same gate): a verified driver
-  a posted week's pick list doesn't name can't keep a list for that week, and "This is a
-  mistake" tells the admins (see the end of stage 2). Run `npm run db:indexes` once it's
-  deployed (`cover-disputes`), then check it with "Verifying the read-only rule" below.
-- **Early access** (built 2026-10-17): the super admin can let one account into Covers
-  before it opens to everyone (see "Early access" under stage 1).
-- **Bid day, the super admin's preview and notifications** (built 2026-10-22, not
-  deployed yet): the day drivers call in is known and shown, the super admin can see
-  `/covers` as a cover driver does, and verified drivers get notifications (stage 3 of
-  `PUSH-NOTIFICATIONS.md`). Run `npm run db:indexes` once deployed (`cover-bid-days`,
-  `cover-notices`).
+- **Stages 1 and 2** (driver verification, `/covers`, cover lists, the read-only rule) are
+  built, deployed and tested: by admins since 2026-10-12, and by drivers given early
+  access since 2026-10-17. Tiago, 2026-11-07: "The trial works great. We have high praise
+  from our guinea pigs and test rats." The rollout checklist under stage 1 is done but its
+  last step, the "Covers for every driver" switch on `/admin/super/features`
+  (`COVERS_OPEN` in `constants.js` is only the default). Until it's on, only admins and
+  early access see `/covers`, the menu item and the check mark on Driver tips, and only
+  they can file a claim or keep a list (`canUseCovers`, `lib/authz.js`).
+- **Early access** (2026-10-17), **bid day, the super admin's preview and Covers
+  notifications** (2026-10-22) are deployed too.
+- **Indexes:** every index in `lib/db/indexSpecs.mjs` exists in production (checked
+  2026-11-07), so nothing here waits on `npm run db:indexes`.
 - **Stage 3** (picking in the app): not started. **Stage 4:** the call-in reminder is
   built; "your pick is up" waits for stage 3.
 
@@ -104,7 +89,7 @@ doesn't do covers never has to.
 
 ---
 
-## Stage 1: Verification and the drivers' Covers page (built, admin only while tested)
+## Stage 1: Verification and the drivers' Covers page (built; for every driver once the switch is on)
 
 - [x] **Claim:** `POST /api/driver-claims` (`requireCovers()`, 5 a day per driver), checked
       by `validateDriverClaim`. The form is `components/covers/DriverClaimDialog.jsx`.
@@ -198,17 +183,35 @@ this one on, which was usually two (W/E 10/31 and W/E 11/7 on 10/28).
 
 ### Rolling stage 1 out to every driver
 
-- [ ] Tested on at least one other admin: claim, verify, the week tiles, turn down, remove.
-- [ ] Set `COVERS_OPEN = true` in `constants.js`. That opens `/covers`, the menu item, the
-      claim route and the check mark on tips to every signed-in driver.
-- [ ] Add a "Verify you're a driver" guide to `/help` (`components/help/guides.jsx`).
-- [ ] Re-read the privacy page's "Driver verification" section, and add the cover lists
-      to it: which jobs a driver wants, seen by admins only, deleted four weeks after the
-      week (and with the account).
-- [ ] Add a "Keep a cover list" guide to `/help` beside "Verify you're a driver".
-- [ ] Update the line about rollout in `CLAUDE.md`.
-- [ ] Drop the "This is a work in progress" notice from `CoverBidJobsTable`, or reword it
-      for drivers.
+Stage 2's cover lists sit behind the same switch, so they open with it. The checklist was
+done on 2026-11-07, after the trial, all but the switch itself.
+
+- [x] Tested on at least one other admin: claim, verify, the week tiles, turn down, remove.
+      Since 2026-10-17 drivers with early access tested it too (10 verified accounts and 8
+      early-access grants on 2026-11-07).
+- [x] Add a "Verify you're a driver" guide to `/help` (`verify`, in the section "Covers &
+      your job", which was "Your job", in `components/help/guides.jsx`).
+- [x] Re-read the privacy page's "Driver verification" section, and add the cover lists
+      to it: "Your cover list" under what you give us (with "This is a mistake"
+      messages), who sees a list under Covers (the driver and the admins), and how long
+      both are kept (effective November 7, 2026).
+- [x] Add a "Keep a cover list" guide to `/help` beside "Verify you're a driver"
+      (`cover-list`). The This week and call-in reminder guides link to `verify`.
+- [x] Update the line about rollout in `CLAUDE.md`.
+- [x] Drop the "This is a work in progress" notice from `CoverBidJobsTable`.
+- [x] The menu row says "New · Cover jobs and your call-in" for three weeks after the
+      switch is turned on (`COVERS_NEW_DAYS` in `constants.js`, from the switch's
+      `changed.coversOpen.at` through `getSessionFeatures`), with no date to set.
+- [ ] **Turn on "Covers for every driver"** on `/admin/super/features`. Since 2026-10-12
+      the switch opens Covers, not `COVERS_OPEN` in `constants.js`, which is only the
+      default and stays `false` (like `PUSH_OPEN`). It opens `/covers`, the menu item, the
+      claim, cover lists, the This week card, the Covers guides on `/help` and the check
+      mark on tips to every signed-in driver, on their next request (the switches are
+      cached for up to 5 minutes). **Rollback:** turn it off. Drivers lose `/covers` and
+      the menu item; their claims, verifications and lists are kept.
+- [ ] Then, as a driver account that isn't staff, on a phone: the menu row says New,
+      `/help` shows the four Covers guides, and a claim reaches `/admin/driver-claims`
+      with the badge and the `driverClaims` push.
 
 ### This week on the profile (built 2026-10-14)
 
@@ -223,7 +226,7 @@ they're off (`toDriverWeek`).
 
 ---
 
-## Stage 2: A preference list (built 2026-10-12, admin only while tested)
+## Stage 2: A preference list (built 2026-10-12; opens with stage 1)
 
 A verified driver lists the jobs they want, in order. As jobs are picked (by anyone, on
 the sheet or later in the app), they drop off everyone's list. Picks still happen by

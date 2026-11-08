@@ -34,6 +34,10 @@ Use absolute dates.
 
 ## Now
 
+- [ ] **Covers for every driver** (ready 2026-11-07, after the trial): turn on "Covers for
+      every driver" on `/admin/super/features`, then check it as a driver on a phone
+      (`COVER-BIDDING.md` → "Rolling stage 1 out to every driver"). The `/help`
+      guides and the menu's "New" wait on the switch
 - [ ] **Covers notifications** (built 2026-10-22, not deployed): deploy (the cron needs
       Vercel Pro, which the team is on), run `npm run db:indexes` (`cover-bid-days`,
       `cover-notices`), then "Verifying stage 3" (`PUSH-NOTIFICATIONS.md`): the samples on
@@ -131,8 +135,6 @@ The system health page counts the two collections (`lib/systemHealth.js`).
 
 ## Next
 
-- [ ] **Covers for every driver:** roll stage 1 out (`COVER-BIDDING.md` → "Rolling stage
-      1 out to every driver"), including a "Verify you're a driver" guide on `/help`
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open
       questions first, starting with what the source of truth is once the app can't write
       the sheet (`COVER-BIDDING.md` → "Stage 3")

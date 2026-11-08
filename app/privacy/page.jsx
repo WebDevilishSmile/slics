@@ -126,6 +126,13 @@ export default function PrivacyPage() {
               stored with your account, with the administrator&apos;s answer.
             </>,
             <>
+              <strong>Reports about Covers.</strong> If you use &quot;Report a
+              problem&quot; on the Covers page, what you pick, the week, any job
+              number and note you write, and the name your account is linked to
+              are stored with your account, so the administrator can check it.
+              Other drivers never see reports.
+            </>,
+            <>
               <strong>Notifications.</strong> If you turn on notifications on
               your profile page, we store the address your browser&apos;s push
               service gives that device, so the app can send it alerts, and
@@ -315,6 +322,7 @@ export default function PrivacyPage() {
             'Tips and comments are kept until you delete them, or until your account is deleted. Delete a tip from the SLIC or your profile page, and a comment on a place from the place itself.',
             'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
             'Reports about a SLIC are kept after they are dealt with, as a record of what was fixed. If you delete your account they stay, no longer linked to you.',
+            'Reports about Covers are kept the same way: after they are dealt with, and without your account or linked name once you delete your account.',
             'Lookup history is kept while your account exists. Removing an entry from the History page hides it there, but it still counts toward your lookup total. All of it is deleted with your account.',
             'A driver verification request keeps your employee ID and seniority date only until the administrator decides it; then they are deleted. The request is deleted with your account. Your verification lasts until your account is deleted or the administrator removes it.',
             'Your cover list for a week is deleted four weeks after that week ends, or with your account. After that the app keeps only anonymous counts for the week, like how many lists a job was on, which can’t be traced to you. A message about the cover list is kept until your account is deleted.',

@@ -541,6 +541,16 @@ export const HELP_SECTIONS = [
         ],
         notes: [
           <>
+            Covers is for reference only. It&apos;s read from the on-call sheet
+            and can be wrong or behind. Calling dispatch at your call-in time
+            and asking what&apos;s available is up to you, and so is checking
+            your own covers.
+          </>,
+          <>
+            Something doesn&apos;t match the sheet or dispatch? Tap{' '}
+            <Tap>Report a problem</Tap> above the jobs to tell an admin.
+          </>,
+          <>
             Your list isn&apos;t a bid. You still pick by calling dispatch at
             your call-in time.
           </>,

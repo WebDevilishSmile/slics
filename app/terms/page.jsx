@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Terms of Service · SLICs',
 };
 
-const EFFECTIVE_DATE = 'October 28, 2026';
+const EFFECTIVE_DATE = 'November 7, 2026';
 
 // Every section's title, in page order, for the summary card's "On this
 // page" list. Keep it in step with the LegalSection titles below.
@@ -120,6 +120,14 @@ export default function TermsPage() {
           Treat the app as a convenience, not a source of truth. If something
           looks wrong, or if the app and your dispatcher disagree, go with
           dispatch, and let us know so we can fix it.
+        </LegalText>
+        <LegalText>
+          The same goes for Covers. The cover jobs, pick list, call-in times
+          and your cover list are read from the on-call sheet for reference
+          only, and can be wrong or behind. Calling dispatch at your call-in
+          time, asking what&apos;s available and checking your own covers are
+          your responsibility. If something doesn&apos;t match, use
+          &quot;Report a problem&quot; on the Covers page.
         </LegalText>
       </LegalSection>
 

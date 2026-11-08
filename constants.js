@@ -253,6 +253,18 @@ export const DRIVER_CLAIM_NOTE_MAX_LENGTH = 300;
 // (lib/db/coverDisputes.js), and the admin's answer, which the driver sees.
 export const COVER_DISPUTE_NOTE_MAX_LENGTH = 300;
 
+// "Report a problem" on /covers (lib/db/coverReports.js): what a driver can
+// say is off about a week's covers, in the order the form shows them.
+// `needsNote`: "other" says nothing on its own.
+export const COVER_REPORT_KINDS = [
+  { value: 'job', label: 'A job is wrong or missing' },
+  { value: 'times', label: 'Wrong start times' },
+  { value: 'taken', label: 'Shows taken or open wrongly' },
+  { value: 'myPlace', label: 'My place or call-in time is wrong' },
+  { value: 'other', label: 'Something else', needsNote: true },
+];
+export const COVER_REPORT_NOTE_MAX_LENGTH = 500;
+
 // The hours on the "What it takes" card (/about, support/WhatItTakes.jsx), a
 // floor estimated 2026-10-10: git shows about 60 work sessions since May 2025
 // at roughly 2.5 hours each (about 150 hours; most 2025 sessions left only one
@@ -397,6 +409,15 @@ export const PUSH_TYPES = [
     description: 'A driver asks to be verified for Covers.',
     audience: 'admin',
     defaultOn: false,
+  },
+  {
+    key: 'coverReports',
+    area: 'covers',
+    group: 'Drivers',
+    label: 'Cover reports',
+    description: 'A driver reports something wrong on Covers.',
+    audience: 'admin',
+    defaultOn: true,
   },
   {
     key: 'coverDisputes',
@@ -561,6 +582,12 @@ export const COVER_TOOLS = [
     href: '/admin/cover/history',
     label: 'Cover History',
     description: 'Past weeks side by side: jobs, demand, drivers and what stands out.',
+  },
+  {
+    key: 'reports',
+    href: '/admin/cover/reports',
+    label: 'Cover Reports',
+    description: 'What drivers report wrong on Covers: check it, then mark it fixed or dismiss it.',
   },
 ];
 

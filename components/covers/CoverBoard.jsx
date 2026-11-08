@@ -9,6 +9,7 @@ import { getUpcomingSaturday } from '@/lib/format';
 import { tapHaptic } from '@/lib/haptics';
 import CoverBidJobsTable from '@/components/coverBidJobs/CoverBidJobsTable';
 import CoverList from '@/components/covers/CoverList';
+import CoversDisclaimer from '@/components/covers/CoversDisclaimer';
 import PushNudge from '@/components/push/PushNudge';
 
 const NO_ENTRIES = [];
@@ -208,7 +209,10 @@ export default function CoverBoard({
       onSelectDay={setSelectedDay}
       list={listControls}
       beforeJobs={
-        showList && (
+        <>
+          {/* "For reference only" and Report a problem, for the week shown. */}
+          <CoversDisclaimer key={selectedWeek} weekEnding={selectedWeek} preview={preview} />
+          {showList && (
           <CoverList
             weekEnding={selectedWeek}
             entries={entries}
@@ -228,7 +232,8 @@ export default function CoverBoard({
             onRemove={remove}
             nudge={saved && <PushNudge topic='covers' inset />}
           />
-        )
+          )}
+        </>
       }
     />
   );

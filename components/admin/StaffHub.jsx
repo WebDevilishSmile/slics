@@ -1,9 +1,11 @@
 import AdminLinks from '@/components/admin/AdminLinks';
 import CoverJobChangesNotice from '@/components/admin/coverBidJobs/CoverJobChangesNotice';
+import CoverReportsNotice from '@/components/admin/coverReports/CoverReportsNotice';
 import DriverClaimsNotice from '@/components/admin/driverClaims/DriverClaimsNotice';
 import JobChangesNotice from '@/components/admin/sheetJobs/JobChangesNotice';
 import SlicReportsNotice from '@/components/admin/slicReports/SlicReportsNotice';
 import { getOpenDisputeCount } from '@/lib/db/coverDisputes';
+import { getOpenCoverReportSummary } from '@/lib/db/coverReports';
 import { getUnseenCoverJobChanges } from '@/lib/db/coverJobChanges';
 import { getPendingClaimCount } from '@/lib/db/driverClaims';
 import { getUnseenJobChanges } from '@/lib/db/sheetJobs';
@@ -43,6 +45,16 @@ async function openReports() {
   }
 }
 
+// Open driver reports on Covers, for their banner. Same rule.
+async function openCoverReports() {
+  try {
+    return await getOpenCoverReportSummary();
+  } catch (error) {
+    console.error('Error loading open cover reports for a staff hub:', error);
+    return { count: 0, weeks: [] };
+  }
+}
+
 // Driver claims waiting for a decision, for their banner. Same rule.
 async function pendingClaims() {
   try {
@@ -69,18 +81,20 @@ async function openDisputes() {
 // `extraLinks` go last (the super admin's hub link).
 export default async function StaffHub({ areas, userId, extraLinks = [], label }) {
   const has = (key) => areas.includes(key);
-  const [jobChanges, coverJobChanges, reports, claims, disputes] = await Promise.all([
+  const [jobChanges, coverJobChanges, reports, claims, disputes, coverReports] = await Promise.all([
     has('jobs') ? unseenJobChanges(userId) : null,
     has('covers') ? unseenCoverJobChanges(userId) : null,
     has('reports') ? openReports() : null,
     has('driverClaims') ? pendingClaims() : 0,
     has('driverClaims') ? openDisputes() : 0,
+    has('covers') ? openCoverReports() : null,
   ]);
   const links = [...areaEntries(areas).flatMap((area) => area.links), ...extraLinks];
 
   return (
     <>
       {reports && <SlicReportsNotice {...reports} />}
+      {coverReports && <CoverReportsNotice {...coverReports} />}
       {has('driverClaims') && <DriverClaimsNotice count={claims} disputes={disputes} />}
       {jobChanges && <JobChangesNotice {...jobChanges} />}
       {coverJobChanges && <CoverJobChangesNotice {...coverJobChanges} />}

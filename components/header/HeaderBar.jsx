@@ -55,6 +55,7 @@ const PAGE_TITLES = [
   ['/admin/cover/jobs', 'Cover Jobs'],
   ['/admin/cover/lists', 'Cover Lists'],
   ['/admin/cover/history', 'Cover History'],
+  ['/admin/cover/reports', 'Cover Reports'],
   ['/admin/cover', 'Covers'],
   ['/admin/jobs', 'Jobs'],
   ['/admin/planet-fitness', 'Planet Fitness'],

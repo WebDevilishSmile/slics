@@ -47,6 +47,7 @@ import { useCoverJobChangesCount } from '@/lib/coverJobChangesStore';
 import { coversAllowed } from '@/lib/featureAccess';
 import { turnOffThisDevice } from '@/lib/pushDevice';
 import { useOpenReportsCount } from '@/lib/slicReportsStore';
+import { useOpenCoverReportsCount } from '@/lib/coverReportsStore';
 import { userHasArea } from '@/lib/staffAreas';
 
 import InstallMenuItem from '@/components/install/InstallMenuItem';
@@ -58,7 +59,7 @@ import VerifiedBadge from '@/components/utility/VerifiedBadge';
 const MENU_ID = 'app-menu';
 
 // The tools whose counts are in the menu's alerts (GET /api/admin-alerts):
-// jobs, cover jobs, SLIC reports, and claims with disputes.
+// jobs, cover jobs and cover reports, SLIC reports, and claims with disputes.
 const ALERT_AREAS = ['jobs', 'covers', 'reports', 'driverClaims'];
 
 // Every row is at least 48px tall — a driver's thumb, maybe gloved, in a cab
@@ -159,13 +160,16 @@ function UserMenu({ user, features, signOutAction }) {
   const openReports = useOpenReportsCount();
   const pendingClaims = usePendingClaimsCount();
   const openDisputes = useOpenDisputesCount();
-  const alerts = jobChanges + coverJobChanges + openReports + pendingClaims + openDisputes;
+  const openCoverReports = useOpenCoverReportsCount();
+  const alerts =
+    jobChanges + coverJobChanges + openReports + pendingClaims + openDisputes + openCoverReports;
   const alertsText = [
     jobChanges && `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`,
     coverJobChanges && `${coverJobChanges} cover job change${coverJobChanges === 1 ? '' : 's'}`,
     openReports && `${openReports} SLIC report${openReports === 1 ? '' : 's'}`,
     pendingClaims && `${pendingClaims} driver claim${pendingClaims === 1 ? '' : 's'}`,
     openDisputes && `${openDisputes} cover list dispute${openDisputes === 1 ? '' : 's'}`,
+    openCoverReports && `${openCoverReports} cover report${openCoverReports === 1 ? '' : 's'}`,
   ]
     .filter(Boolean)
     .join(', ');

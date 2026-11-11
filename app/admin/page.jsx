@@ -20,8 +20,16 @@ async function AdminPage() {
         <StaffHub
           areas={areasOf(session)}
           userId={session.user.id}
-          // Admins and Supporters live under it (lib/authz.js).
-          extraLinks={isSuperAdmin(session) ? [{ href: '/admin/super', label: 'Super Admin' }] : []}
+          // Admins and Supporters live under the hub (lib/authz.js). Email is
+          // its page too, linked here as well so it's one tap from /admin.
+          extraLinks={
+            isSuperAdmin(session)
+              ? [
+                  { href: '/admin/super/email', label: 'Email' },
+                  { href: '/admin/super', label: 'Super Admin' },
+                ]
+              : []
+          }
         />
       </Paper>
     </>

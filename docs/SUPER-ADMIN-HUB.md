@@ -251,7 +251,8 @@ address, but its compose box rewrites pasted HTML, so the look doesn't survive.
       message), and gets `failed: true` if Resend turns it down.
 - [x] **Sent:** the page lists the last 25 (`getSentEmails`), and the activity feed shows
       them as admin actions. The message itself is only in Resend's dashboard.
-- [x] A card on the hub opens it.
+- [x] A card on the hub opens it, and an Email row on `/admin` (super admin only, beside
+      "Super Admin"), since the card is a level down.
 
 ---
 

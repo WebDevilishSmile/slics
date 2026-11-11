@@ -253,6 +253,12 @@ address, but its compose box rewrites pasted HTML, so the look doesn't survive.
       them as admin actions. The message itself is only in Resend's dashboard.
 - [x] A card on the hub opens it, and an Email row on `/admin` (super admin only, beside
       "Super Admin"), since the card is a level down.
+- [x] **The app icon in the header** (2026-11-11, every email, the account ones too): the
+      home-screen icon (`/android-chrome-192x192.png`, transparent corners) at 40px beside the
+      SLICs wordmark, hosted on the site since Gmail and Outlook show no SVG and Gmail drops
+      `data:` images. The word stays, so an email whose images are blocked still says SLICs;
+      `alt` is empty so a screen reader doesn't say it twice. Nothing logs when it loads. The
+      compose preview shows it only where the site serves the file (not in local testing).
 
 ---
 

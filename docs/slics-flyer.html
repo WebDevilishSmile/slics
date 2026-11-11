@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SLICs: the Feeder binder, on your phone</title>
+<!--
+  The general one-page flyer for drivers: addresses and driver tips
+  (docs/SLICS-FLYER.pdf is this page printed to PDF with headless Chrome:
+  -headless=new -no-pdf-header-footer -print-to-pdf=…, each flag with two
+  dashes). It's the companion of covers-for-drivers.html and shares its look.
+  The QR code opens https://www.slics.app, the public landing page. It was
+  made once with the `qrcode` package (level Q) and checked by decoding a
+  screenshot of this page; make it again the same way if the address changes.
+  The phone shows the made-up SLIC the landing page and /help use (OAKHB,
+  landing/ProductPreview.jsx), never a real one, and the words are the app's
+  own (help/guides.jsx, comments/CommentComposer.jsx): rename a button there
+  and this needs the new label too. "More than 350" was 360 SLICs on
+  2026-11-11.
+-->
+<style>
+  @page { size: Letter; margin: 0.5in 0.55in; }
+  * { box-sizing: border-box; }
+  html { font: 10.4pt/1.4 "Segoe UI", Arial, Helvetica, sans-serif; color: #10151a; }
+  /* Sized to fit one Letter page: the type is about 9pt on paper. */
+  body { margin: 0; zoom: 0.86; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root { --blue: #0172b5; --deep: #01579b; --tint: #edf3fc; --line: #c5d3e3; }
+  h1 { font-size: 27pt; line-height: 1.05; margin: 0; letter-spacing: -0.02em; font-weight: 800; }
+  h2 { font-size: 13pt; margin: 0 0 6pt; font-weight: 800; letter-spacing: -0.01em; }
+  p { margin: 0 0 5pt; }
+  .top { display: grid; grid-template-columns: minmax(0, 1fr) 2.05in; gap: 20pt; align-items: center; padding-bottom: 10pt; border-bottom: 2.4pt solid #10151a; }
+  .brand { display: flex; align-items: center; gap: 8pt; margin-bottom: 8pt; font-weight: 800; font-size: 13pt; color: var(--deep); }
+  .brand svg { width: 26pt; height: 26pt; border-radius: 6pt; }
+  .lead { font-size: 12pt; line-height: 1.38; margin-top: 8pt; }
+  .qr { text-align: center; }
+  .qr .code { border: 1.6pt solid #10151a; border-radius: 10pt; padding: 9pt; background: #fff; }
+  .qr svg { display: block; width: 100%; height: auto; }
+  .qr .scan { font-weight: 800; font-size: 12pt; margin-top: 6pt; }
+  .qr .url { font: 600 10.5pt Consolas, "Courier New", monospace; color: var(--deep); }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) 2.55in; gap: 20pt; margin-top: 13pt; }
+  ol.steps { list-style: none; margin: 0 0 4pt; padding: 0; counter-reset: s; }
+  ol.steps li { counter-increment: s; position: relative; padding-left: 26pt; margin-bottom: 6pt; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 0; top: -0.5pt; width: 17pt; height: 17pt; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 800; font-size: 9.5pt; line-height: 17pt; text-align: center; }
+  .tap { font-weight: 700; white-space: nowrap; }
+  ul { margin: 0; padding-left: 13pt; }
+  li { margin-bottom: 4pt; }
+  .block { margin-top: 11pt; }
+  .post { margin-top: 8pt; background: var(--tint); border-left: 3.2pt solid var(--blue); border-radius: 0 8pt 8pt 0; padding: 7pt 11pt 5pt; }
+  .post h2 { font-size: 11.5pt; margin-bottom: 3pt; }
+  .also { margin-top: 12pt; border: 1.2pt solid #10151a; border-radius: 8pt; padding: 8pt 11pt 6pt; }
+  .also h2 { font-size: 11.5pt; margin-bottom: 5pt; }
+  .also .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 14pt; font-size: 9.6pt; }
+  .also b { display: block; }
+  .foot { margin-top: 7pt; font-size: 8.6pt; color: #37424d; display: flex; justify-content: space-between; gap: 12pt; }
+
+  /* The phone: the made-up SLIC card, in the app's own words. */
+  .phone { border: 2pt solid #10151a; border-radius: 22pt; padding: 9pt 8pt 10pt; background: var(--tint); font-size: 7.8pt; line-height: 1.3; }
+  .search { background: #fff; border: 0.6pt solid var(--line); border-radius: 12pt; padding: 4.5pt 10pt; color: #4a5560; margin-bottom: 7pt; display: flex; gap: 6pt; align-items: center; }
+  .search i { width: 7pt; height: 7pt; border: 1.2pt solid #4a5560; border-radius: 50%; display: inline-block; }
+  .card { background: #fff; border: 0.6pt solid var(--line); border-radius: 10pt; padding: 8pt 9pt; margin-bottom: 6pt; }
+  .name { display: flex; justify-content: space-between; align-items: flex-start; }
+  .name .big { font-size: 15pt; font-weight: 800; line-height: 1.05; }
+  .muted { color: #4a5560; }
+  .kind { border: 0.7pt solid var(--blue); color: var(--blue); border-radius: 9pt; padding: 0.5pt 6pt; font-weight: 700; }
+  .addr { background: var(--tint); border-radius: 8pt; padding: 5pt 8pt; margin-top: 6pt; display: flex; gap: 6pt; align-items: center; font-size: 8.6pt; }
+  .pin { width: 7pt; height: 7pt; border-radius: 50% 50% 50% 0; background: var(--blue); transform: rotate(-45deg); display: inline-block; flex: none; }
+  .nav { background: var(--blue); color: #fff; border-radius: 7pt; padding: 5pt 9pt; font-weight: 700; font-size: 9pt; margin-top: 7pt; display: flex; justify-content: space-between; }
+  .nav small { font-weight: 400; font-size: 7.4pt; opacity: 0.92; align-self: center; }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5pt; margin-top: 6pt; }
+  .tiles div { border: 0.6pt solid var(--line); border-radius: 8pt; padding: 5pt 0; text-align: center; color: var(--blue); font-weight: 700; position: relative; }
+  .badge { position: absolute; top: -3.5pt; right: 5pt; background: #c62828; color: #fff; border-radius: 7pt; font-size: 6.4pt; padding: 0 3.5pt; line-height: 9pt; }
+  .tipshead { font-weight: 800; font-size: 9pt; margin-bottom: 4pt; display: flex; justify-content: space-between; }
+  .tipshead span { font-weight: 600; font-size: 7.2pt; color: #4a5560; }
+  .who { display: flex; align-items: center; gap: 5pt; margin-bottom: 3pt; }
+  .av { width: 14pt; height: 14pt; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; text-align: center; line-height: 14pt; font-size: 7.6pt; }
+  .tipfoot { display: flex; gap: 6pt; align-items: center; margin-top: 4pt; }
+  .pill { border: 0.7pt solid var(--blue); color: var(--blue); border-radius: 8pt; padding: 0.5pt 6pt; font-weight: 700; display: inline-flex; gap: 4pt; align-items: center; }
+  .pill .pin { width: 5pt; height: 5pt; }
+  .tip2 { border-top: 0.5pt solid #e3eaf2; margin-top: 6pt; padding-top: 5pt; }
+  .cap { text-align: center; font-size: 8pt; color: #37424d; margin-top: 4pt; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <div class="brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true">
+        <defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#29b6f6"/><stop offset="0.55" stop-color="#0884cc"/><stop offset="1" stop-color="#01579b"/></linearGradient></defs>
+        <rect width="100" height="100" fill="url(#b)"/>
+        <path d="M60.09 25.92A12.8 12.8 0 1 0 50 46.6A14 14 0 1 1 49.51 74.59" fill="none" stroke="#fff" stroke-width="9.5" stroke-linecap="round"/>
+        <circle cx="37.64" cy="67.17" r="6.4" fill="#fff"/>
+      </svg>
+      SLICs
+    </div>
+    <h1>The Feeder binder, on your phone</h1>
+    <p class="lead">Type the SLIC of any hub or customer and get its address, directions and phone number, plus tips from drivers who've been there. More than 350 locations, and free to use.</p>
+  </div>
+  <div class="qr">
+    <div class="code"><svg role="img" aria-label="QR code for https://www.slics.app" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h29v29H0z"/><path stroke="#000000" d="M0 0.5h7m2 0h1m4 0h1m1 0h2m1 0h2m1 0h7M0 1.5h1m5 0h1m1 0h2m2 0h3m2 0h1m1 0h1m2 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m4 0h1m2 0h3m2 0h1m2 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h3m4 0h2m3 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m1 0h2m4 0h1m1 0h2m2 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m7 0h1m5 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h3m1 0h3m2 0h2M1 8.5h1m1 0h4m1 0h1m2 0h3m2 0h1m2 0h1m1 0h2m1 0h2m1 0h1M1 9.5h4m4 0h10m3 0h2m1 0h1m1 0h1M0 10.5h7m2 0h2m1 0h1m1 0h1m4 0h5M1 11.5h1m3 0h1m2 0h1m2 0h1m1 0h1m1 0h6m4 0h1m2 0h1M0 12.5h2m2 0h4m1 0h2m3 0h1m1 0h1m4 0h2m2 0h1m1 0h1M2 13.5h4m2 0h3m2 0h3m6 0h1m1 0h1m1 0h1m1 0h1M1 14.5h1m1 0h5m2 0h1m1 0h4m2 0h6m1 0h1m1 0h2M1 15.5h5m3 0h3m1 0h2m1 0h1m2 0h1m1 0h2m1 0h4M2 16.5h5m1 0h3m2 0h3m1 0h2m2 0h1m1 0h3m1 0h1M0 17.5h4m1 0h1m1 0h1m3 0h1m2 0h1m2 0h1m3 0h4M0 18.5h2m3 0h4m2 0h1m1 0h2m1 0h1m1 0h2m3 0h2m1 0h1m1 0h1M0 19.5h4m1 0h1m1 0h1m2 0h2m2 0h3m2 0h4m1 0h1m1 0h2M0 20.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h2m1 0h6m1 0h1m1 0h1M8 21.5h3m1 0h1m2 0h1m1 0h4m3 0h4M0 22.5h7m3 0h1m1 0h1m2 0h2m2 0h2m1 0h1m1 0h1m1 0h1M0 23.5h1m5 0h1m1 0h3m3 0h1m1 0h1m1 0h3m3 0h2m1 0h1M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m3 0h1m1 0h6m2 0h2M0 25.5h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h1m2 0h2m4 0h1m1 0h3M0 26.5h1m1 0h3m1 0h1m2 0h2m4 0h1m4 0h2m1 0h3m1 0h2M0 27.5h1m5 0h1m1 0h2m1 0h1m1 0h1m2 0h1m1 0h1m1 0h2m2 0h3m1 0h1M0 28.5h7m3 0h2m1 0h3m3 0h1m1 0h5"/></svg></div>
+    <div class="scan">Scan to open SLICs</div>
+    <div class="url">www.slics.app</div>
+  </div>
+</div>
+
+<div class="cols">
+  <div>
+    <h2>Look up a SLIC</h2>
+    <ol class="steps">
+      <li><b>Scan the code</b> and tap <span class="tap">Sign in or sign up</span>. <span class="tap">Continue with Google</span> sets you up, or tap <span class="tap">Create one</span> to use an email and password. There's nothing to download.</li>
+      <li><b>Tap the search bar,</b> <span class="tap">SLIC, code or name</span>, and type the SLIC number dispatch gave you. The letter code, the customer's name or the town work too.</li>
+      <li><b>Tap <span class="tap">Navigate</span>.</b> The address opens in Google Maps, or Apple Maps on an iPhone. No typing it in.</li>
+    </ol>
+
+    <div class="block">
+      <h2>On every card</h2>
+      <ul>
+        <li><span class="tap">Call</span> dials that building's dispatch. UPS buildings have it.</li>
+        <li><span class="tap">PDF</span> opens the printed directions sheet, for the SLICs that have one.</li>
+        <li><b>The copy button</b> next to the address, to paste it anywhere.</li>
+        <li><span class="tap">Something wrong with this SLIC?</span> Report a wrong address or phone number and it's fixed for everyone.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h2>Driver tips: read them before you leave</h2>
+      <p>Notes from drivers who've been there: where to park, which door, the gate that's really the entrance, the low bridge on the way in.</p>
+      <ul>
+        <li>Tap <span class="tap">Tips</span> on the card. A red number means new tips since you last looked.</li>
+        <li>Each tip says how long ago it was posted. A gate code from last year may not work anymore.</li>
+        <li>Thumbs up a tip that helped, thumbs down one that's wrong, or tap <span class="tap">Reply</span>: "still true as of today".</li>
+      </ul>
+      <div class="post">
+        <h2>Know something? Post it.</h2>
+        <p>Scroll to "Driver tips" and tap a topic to start: <b>Gate / guard</b>, <b>Parking</b>, <b>Dock / door</b>, <b>Hours</b>, <b>Contact</b>, <b>Heads-up</b> or <b>Directions</b>. Keep it short and tap <span class="tap">Post tip</span>. Standing at the hidden gate? <span class="tap">Add pin</span>, then <span class="tap">Use my location</span>, marks the exact spot on the map.</p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="phone" aria-label="A made-up example of a SLIC card">
+      <div class="search"><i></i>SLIC, code or name</div>
+      <div class="card">
+        <div class="name">
+          <div><div class="big">OAKHB</div><div class="muted">SLIC 1234 · Oakdale Hub</div></div>
+          <span class="kind">Center</span>
+        </div>
+        <div class="addr"><span class="pin"></span><div>100 Example Road<br>Oakdale, PA 15071</div></div>
+        <div class="nav"><span>Navigate</span><small>Google Maps</small></div>
+        <div class="tiles"><div>Call</div><div>PDF</div><div>Tips<span class="badge">2</span></div></div>
+      </div>
+      <div class="card">
+        <div class="tipshead">Driver tips <span>Top · Newest</span></div>
+        <div class="who"><span class="av">D</span><div><b>Dave</b> <span class="muted">· 2 days ago</span></div></div>
+        <div>Feeders use the north gate. Check in at the guard shack, then doors 14–20.</div>
+        <div class="tipfoot"><span class="pill"><span class="pin"></span>Pinned spot</span><span class="muted"><svg viewBox="0 0 24 24" width="9" height="9" aria-hidden="true" style="vertical-align:-1px"><path fill="#0172b5" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg> 6</span><span class="muted">Reply</span></div>
+        <div class="tip2">
+          <div class="who"><span class="av">M</span><div><b>Maria</b> <span class="muted">· 3 weeks ago</span></div></div>
+          <div>Parking: drop lot is behind building C. Don't block the fuel island.</div>
+          <div class="tipfoot"><span class="muted"><svg viewBox="0 0 24 24" width="9" height="9" aria-hidden="true" style="vertical-align:-1px"><path fill="#0172b5" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg> 3</span><span class="muted">Reply</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">An example: the SLIC, drivers and tips are made up.</div>
+  </div>
+</div>
+
+<div class="also">
+  <h2>Also in SLICs</h2>
+  <div class="grid">
+    <div><b>Places on your run</b>Fuel, food, restrooms and truck parking drivers have found, and whether a trailer fits.</div>
+    <div><b>All Hubs</b>The lookup with only the UPS buildings in its list.</div>
+    <div><b>Covers</b>The week's cover jobs and your call-in time, for drivers on the on-call sheet.</div>
+    <div><b>On your home screen</b>iPhone: in Safari, Share, then Add to Home Screen. Android: menu, then Install app.</div>
+  </div>
+</div>
+
+<div class="foot"><span>Step-by-step help in the app: menu → Help.</span><span>SLICs is an independent project by a Feeder driver, not made or endorsed by UPS. · www.slics.app</span></div>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Covers in SLICs: a one-page guide for drivers</title>
+<!--
+  The one-page flyer for drivers (docs/COVERS-FOR-DRIVERS.pdf is this page
+  printed to PDF with headless Chrome: -headless=new -no-pdf-header-footer
+  -print-to-pdf=…, each flag with two dashes). The QR code opens
+  https://www.slics.app/covers, which sends a signed-out driver to sign-in and
+  back. It was made once with the `qrcode` package (level Q) and checked by
+  decoding a screenshot of this page; make it again the same way if the
+  address ever changes. Every name, place and job on the phone is made up, and
+  its words are the page's own (components/covers/, help/guides.jsx): rename a
+  button there and this needs the new label too.
+-->
+<style>
+  @page { size: Letter; margin: 0.5in 0.55in; }
+  * { box-sizing: border-box; }
+  html { font: 10.4pt/1.4 "Segoe UI", Arial, Helvetica, sans-serif; color: #10151a; }
+  /* Sized to fit one Letter page: the type is about 9pt on paper. */
+  body { margin: 0; zoom: 0.86; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root { --blue: #0172b5; --deep: #01579b; --tint: #edf3fc; --line: #c5d3e3; }
+  h1 { font-size: 27pt; line-height: 1.05; margin: 0; letter-spacing: -0.02em; font-weight: 800; }
+  h2 { font-size: 13pt; margin: 0 0 6pt; font-weight: 800; letter-spacing: -0.01em; }
+  p { margin: 0 0 5pt; }
+  .top { display: grid; grid-template-columns: minmax(0, 1fr) 2.05in; gap: 20pt; align-items: center; padding-bottom: 10pt; border-bottom: 2.4pt solid #10151a; }
+  .brand { display: flex; align-items: center; gap: 8pt; margin-bottom: 8pt; font-weight: 800; font-size: 13pt; color: var(--deep); }
+  .brand svg { width: 26pt; height: 26pt; border-radius: 6pt; }
+  .lead { font-size: 12pt; line-height: 1.38; margin-top: 8pt; }
+  .qr { text-align: center; }
+  .qr .code { border: 1.6pt solid #10151a; border-radius: 10pt; padding: 9pt; background: #fff; }
+  .qr svg { display: block; width: 100%; height: auto; }
+  .qr .scan { font-weight: 800; font-size: 12pt; margin-top: 6pt; }
+  .qr .url { font: 600 10.5pt Consolas, "Courier New", monospace; color: var(--deep); }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) 2.55in; gap: 20pt; margin-top: 13pt; }
+  ol.steps { list-style: none; margin: 0 0 4pt; padding: 0; counter-reset: s; }
+  ol.steps li { counter-increment: s; position: relative; padding-left: 26pt; margin-bottom: 6.5pt; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 0; top: -0.5pt; width: 17pt; height: 17pt; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 800; font-size: 9.5pt; line-height: 17pt; text-align: center; }
+  .tap { font-weight: 700; white-space: nowrap; }
+  .fine { font-size: 8.9pt; color: #37424d; }
+  ul { margin: 0; padding-left: 13pt; }
+  li { margin-bottom: 4.5pt; }
+  .see { margin-top: 12pt; }
+  .know { margin-top: 11pt; border: 1.2pt solid #10151a; border-radius: 8pt; padding: 8pt 11pt 5pt; }
+  .know h2 { font-size: 11.5pt; margin-bottom: 4pt; }
+  .know li { margin-bottom: 3.5pt; }
+  .foot { margin-top: 7pt; font-size: 8.6pt; color: #37424d; display: flex; justify-content: space-between; gap: 12pt; }
+
+  /* The phone: a made-up Covers page, in the app's own words. */
+  .phone { border: 2pt solid #10151a; border-radius: 22pt; padding: 9pt 8pt 10pt; background: var(--tint); font-size: 7.6pt; line-height: 1.3; }
+  .phone .bar { background: var(--blue); color: #fff; border-radius: 12pt 12pt 4pt 4pt; padding: 5pt 9pt; font-weight: 700; font-size: 9pt; display: flex; justify-content: space-between; margin-bottom: 7pt; }
+  .card { background: #fff; border: 0.6pt solid var(--line); border-radius: 9pt; padding: 6pt 8pt; margin-bottom: 6pt; }
+  .who { text-align: center; font-weight: 700; font-size: 9pt; }
+  .who small { display: block; font-weight: 400; font-size: 7pt; color: #4a5560; }
+  .check { display: inline-block; width: 8.5pt; height: 8.5pt; border-radius: 50%; background: var(--blue); color: #fff; font-size: 6.4pt; line-height: 8.5pt; text-align: center; vertical-align: 1pt; margin-left: 2pt; }
+  .spot { display: flex; align-items: center; gap: 6pt; }
+  .spot .big { font-size: 13.5pt; font-weight: 800; line-height: 1.1; }
+  .spot .call { margin-left: auto; text-align: center; background: var(--tint); border-radius: 7pt; padding: 3pt 8pt; }
+  .spot .call b { display: block; font-size: 11.5pt; color: var(--blue); }
+  .muted { color: #4a5560; }
+  .note { font-size: 6.9pt; }
+  .head { font-weight: 800; font-size: 8.6pt; margin-bottom: 3pt; display: flex; justify-content: space-between; align-items: center; }
+  .row { display: flex; align-items: center; gap: 5pt; padding: 2.4pt 0; border-top: 0.5pt solid #e3eaf2; }
+  .row:first-of-type { border-top: 0; }
+  .row .n { width: 9pt; font-weight: 800; color: var(--blue); }
+  .row .job { font-weight: 800; width: 27pt; }
+  .row .when { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; }
+  .btn { background: var(--blue); color: #fff; border-radius: 9pt; padding: 3pt 8pt; font-weight: 700; text-align: center; margin-top: 4pt; }
+  .pill { border: 0.7pt solid var(--blue); color: var(--blue); border-radius: 8pt; padding: 0 4.5pt; font-weight: 800; }
+  .taken { opacity: 0.5; }
+  .taken .pill { border-color: #4a5560; color: #4a5560; font-weight: 600; }
+  .cap { text-align: center; font-size: 8pt; color: #37424d; margin-top: 4pt; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <div class="brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true">
+        <defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#29b6f6"/><stop offset="0.55" stop-color="#0884cc"/><stop offset="1" stop-color="#01579b"/></linearGradient></defs>
+        <rect width="100" height="100" fill="url(#b)"/>
+        <path d="M60.09 25.92A12.8 12.8 0 1 0 50 46.6A14 14 0 1 1 49.51 74.59" fill="none" stroke="#fff" stroke-width="9.5" stroke-linecap="round"/>
+        <circle cx="37.64" cy="67.17" r="6.4" fill="#fff"/>
+      </svg>
+      SLICs
+    </div>
+    <h1>Covers, on your phone</h1>
+    <p class="lead">The week's cover jobs, your place on the pick list and your call-in time, in the SLICs app. It's read from the on-call sheet, so you can look any time without opening the sheet.</p>
+  </div>
+  <div class="qr">
+    <div class="code"><svg role="img" aria-label="QR code for https://www.slics.app/covers" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h29v29H0z"/><path stroke="#000000" d="M0 0.5h7m1 0h1m2 0h1m2 0h3m2 0h1m2 0h7M0 1.5h1m5 0h1m1 0h1m2 0h1m1 0h3m2 0h2m2 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h1m1 0h2m3 0h2m2 0h2m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h1m1 0h2m2 0h2m1 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m1 0h3m2 0h1m2 0h2m2 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m4 0h3m1 0h1m3 0h2m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h1m3 0h1m3 0h3m1 0h1M1 8.5h2m1 0h1m1 0h2m1 0h1m1 0h6m1 0h1m3 0h1m1 0h5M1 9.5h2m1 0h2m4 0h4m2 0h1m3 0h3m3 0h1m1 0h1M1 10.5h1m1 0h5m1 0h1m1 0h1m1 0h1m1 0h3m5 0h1m3 0h2M1 11.5h4m3 0h2m1 0h4m1 0h2m1 0h4m1 0h1m2 0h1M0 12.5h2m1 0h1m2 0h1m1 0h2m7 0h1m4 0h2M0 13.5h2m1 0h2m4 0h1m3 0h1m1 0h2m1 0h1m1 0h4m3 0h2M0 14.5h2m1 0h1m1 0h2m5 0h1m4 0h1m4 0h2m2 0h1m1 0h1M0 15.5h1m1 0h3m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1m3 0h1m1 0h2m4 0h1M1 16.5h4m1 0h1m1 0h1m3 0h2m1 0h1m4 0h3m2 0h1m2 0h1M1 17.5h1m3 0h1m2 0h1m1 0h1m1 0h1m2 0h1m1 0h1m2 0h4m1 0h1m1 0h2M0 18.5h1m1 0h2m2 0h5m2 0h1m3 0h2m1 0h2m2 0h5M1 19.5h2m2 0h1m1 0h3m3 0h1m1 0h1m1 0h2m1 0h1m1 0h2m3 0h1M0 20.5h1m2 0h2m1 0h2m1 0h1m1 0h1m1 0h1m2 0h2m2 0h6m1 0h1M8 21.5h1m1 0h1m2 0h2m1 0h2m2 0h1m3 0h1m3 0h1M0 22.5h7m1 0h1m1 0h1m1 0h2m4 0h3m1 0h1m1 0h1m1 0h3M0 23.5h1m5 0h1m3 0h1m4 0h1m1 0h2m1 0h1m3 0h1m3 0h1M0 24.5h1m1 0h3m1 0h1m1 0h2m2 0h1m2 0h2m1 0h1m1 0h6m2 0h1M0 25.5h1m1 0h3m1 0h1m2 0h1m1 0h2m2 0h2m1 0h1m1 0h2m2 0h2M0 26.5h1m1 0h3m1 0h1m1 0h5m1 0h3m2 0h1m3 0h2m1 0h1m1 0h1M0 27.5h1m5 0h1m1 0h3m2 0h1m2 0h2m2 0h1m1 0h2m3 0h1M0 28.5h7m2 0h1m4 0h4m1 0h3m2 0h2m1 0h2"/></svg></div>
+    <div class="scan">Scan to open Covers</div>
+    <div class="url">www.slics.app/covers</div>
+  </div>
+</div>
+
+<div class="cols">
+  <div>
+    <h2>Get verified, once</h2>
+    <p>Covers is for drivers on the on-call sheet, so an admin checks who you are before it opens.</p>
+    <ol class="steps">
+      <li><b>Scan the code and sign in.</b> New to SLICs? <span class="tap">Continue with Google</span> sets you up, or tap <span class="tap">Create one</span> to use an email and password. It's free and there's nothing to download.</li>
+      <li>You land on <span class="tap">Covers</span>. If you don't, open the menu (three lines, top left) and tap it. Then tap <span class="tap">Verify I'm a driver</span>.</li>
+      <li>Type your <span class="tap">Name</span> the way the on-call sheet writes it, your <span class="tap">UPS email</span> (your employee ID @ups.com) and your <span class="tap">Seniority date</span>. Tap <span class="tap">Send</span>.</li>
+      <li>An admin checks it against the on-call sheet. Once you're verified, <span class="tap">Covers</span> opens and a check mark shows next to your name.</li>
+    </ol>
+    <p class="fine">Nothing is sent to your UPS email. Only admins see what you send, and your employee ID and seniority date are deleted once an admin decides.</p>
+
+    <div class="see">
+      <h2>What you'll see</h2>
+      <ul>
+        <li><b>Your place and call-in time</b> for the week being bid, like "Cover 7, call in Thu at 9:15".</li>
+        <li><b>Every cover job you can bid on,</b> with each day's start time and the route. Taken jobs are grayed out. Nobody sees who took a job.</li>
+        <li><b>Your list.</b> Tap <span class="tap">+</span> on the jobs you want and put them in order. Taken ones drop off on their own. At your call-in time, tap <span class="tap">Call dispatch</span> and read it off.</li>
+        <li><b>Reminders, if you want them:</b> before your call-in, when a job on your list is taken, and when the week's jobs are posted or change. Turn on <span class="tap">Notifications</span> in your profile.</li>
+        <li><b>Your week,</b> on your profile: the job you're working or covering, with start times and route.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div>
+    <div class="phone" aria-label="A made-up example of the Covers page">
+      <div class="bar"><span>☰&nbsp; Covers</span><span></span></div>
+      <div class="card who">Jane Doe<span class="check">✓</span><small>On the sheet as Doe, Jane</small></div>
+      <div class="card spot">
+        <div>
+          <div class="muted" style="white-space:nowrap">Week ending 11/28/2026</div>
+          <div class="big">Cover 7</div>
+        </div>
+        <div class="call"><span class="muted">Call in Thu 11/19</span><b>9:15</b></div>
+      </div>
+      <div class="card">
+        <div class="head">Your list</div>
+        <div class="row"><span class="n">1</span><span class="job">LV57</span><span class="when muted">Mon–Fri 07:00</span></div>
+        <div class="row"><span class="n">2</span><span class="job">BE11</span><span class="when muted">Sun–Thu 21:30</span></div>
+        <div class="row"><span class="n">3</span><span class="job">XTR4</span><span class="when muted">Mon–Fri 10:00</span></div>
+        <div class="btn">Call dispatch</div>
+      </div>
+      <div class="card note"><b>For reference only.</b> Covers is read from the on-call sheet and can be wrong or behind.</div>
+      <div class="card">
+        <div class="head">Jobs</div>
+        <div class="row"><span class="job">LV57</span><span class="when muted">BETPA&gt;LANPA&gt;BETPA</span><span class="pill">✓</span></div>
+        <div class="row"><span class="job">PK12</span><span class="when muted">BETPA&gt;NEWPA&gt;BETPA</span><span class="pill">+</span></div>
+        <div class="row taken"><span class="job">LV20</span><span class="when muted">BETPA&gt;AILPA&gt;BETPA</span><span class="pill">Picked</span></div>
+        <div class="row"><span class="job">BE11</span><span class="when muted">BETPA&gt;NEWPA&gt;BETPA</span><span class="pill">✓</span></div>
+      </div>
+    </div>
+    <div class="cap">An example: every name, job and time is made up.</div>
+  </div>
+</div>
+
+<div class="know">
+  <h2>Good to know</h2>
+  <ul>
+    <li><b>Covers is for reference only.</b> It's read from the on-call sheet and can be wrong or behind. Your list isn't a bid: you still pick by calling dispatch at your call-in time.</li>
+    <li><b>It's private.</b> Other drivers never see your list, your place or your status.</li>
+    <li><b>Something doesn't match the sheet or dispatch?</b> Tap <span class="tap">Report a problem</span> above the jobs. Not on the week's list and should be? Tap <span class="tap">This is a mistake</span>.</li>
+    <li><b>iPhone:</b> reminders only work with SLICs on your home screen. In Safari, tap Share, then <span class="tap">Add to Home Screen</span>.</li>
+  </ul>
+</div>
+
+<div class="foot"><span>More help in the app: menu → Help.</span><span>SLICs · www.slics.app · November 2026</span></div>
+
+</body>
+</html>

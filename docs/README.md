@@ -42,6 +42,8 @@ a line for each open stage and links here.
 | [`SECURITY.md`](SECURITY.md) | Threat model, findings (with a re-checked status table), and the standing rules | Touching auth, an API route, the data layer or a new collection |
 | [`on-call-sheet-apps-script.md`](on-call-sheet-apps-script.md) | The admin's guide to installing the sheet notifier (Apps Script) | Setting up or fixing the sheet's pings |
 | [`ON-CALL-SHEET-CONVENTIONS.pdf`](ON-CALL-SHEET-CONVENTIONS.pdf) | The printable for dispatch, staff and cover drivers: how to keep the sheet so the app reads it right (source: `on-call-sheet-conventions.html`; what it's based on is in `ON-CALL-SHEET-SYNC.md` → "Conventions for the sheet") | Handing the conventions to someone, or revising them after the parsers change |
+| [`COVERS-FOR-DRIVERS.pdf`](COVERS-FOR-DRIVERS.pdf) | The one-page flyer for drivers: a QR code to `www.slics.app/covers`, what Covers is, how to get verified and what the page shows (source: `covers-for-drivers.html`, whose top comment says how the QR code was made and checked) | Printing it for the board, or after a Covers button is renamed |
+| [`SLICS-FLYER.pdf`](SLICS-FLYER.pdf) | The general one-page flyer for drivers: a QR code to `www.slics.app`, looking up a SLIC, what's on its card, and reading and posting driver tips (source: `slics-flyer.html`, the companion of the Covers flyer) | Printing it for the board, or after a lookup or tip button is renamed |
 | [`tutorials/VIDEO-SCRIPTS.md`](tutorials/VIDEO-SCRIPTS.md) | Shot-by-shot scripts for the driver tutorial videos, one per `/help` guide (`components/help/guides.jsx`) | Recording a tutorial |
 
 ## Archive

@@ -1,12 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Alert,
   Box,
   Button,
+  ButtonBase,
   CircularProgress,
   IconButton,
   Link,
+  ListSubheader,
+  Menu,
+  MenuItem,
   Typography,
 } from '@mui/material';
 import {
@@ -23,6 +28,7 @@ import { formatWeekEnding } from '@/lib/onCallSheet';
 import {
   softContainedSx,
   softInset,
+  softListItemSx,
   softPressSx,
   softRaised,
   softRaisedSmall,
@@ -47,14 +53,97 @@ function daysSummary(job) {
 
 const moveButtonSx = [softPressSx, { width: '2.75rem', height: '2.75rem' }];
 
+const badgeSx = [
+  softRaisedSmall,
+  {
+    width: '2.75rem',
+    height: '2.75rem',
+    borderRadius: '50%',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'primary.main',
+    typography: 'body2',
+    fontWeight: 800,
+  },
+];
+
+// A row's choice number. On a list the driver can change, it's a button that
+// opens "Move 1234A to": every open place with the job there now, so they see
+// what they'd push down. Picking one moves the job there in one save.
+function ChoiceBadge({ entry, index, open, movable, onMoveTo }) {
+  const [anchor, setAnchor] = useState(null);
+  const menuId = `cover-move-${index}`;
+
+  if (!movable) {
+    return (
+      <Box aria-hidden='true' sx={badgeSx}>
+        {index + 1}
+      </Box>
+    );
+  }
+
+  const close = () => setAnchor(null);
+  return (
+    <>
+      <ButtonBase
+        aria-label={`Choice ${index + 1}, ${entry.jobNumber}. Move to another place`}
+        aria-haspopup='menu'
+        aria-expanded={anchor ? 'true' : undefined}
+        aria-controls={anchor ? menuId : undefined}
+        onClick={(event) => setAnchor(event.currentTarget)}
+        sx={[...badgeSx, softPressSx]}
+      >
+        {index + 1}
+      </ButtonBase>
+      <Menu
+        id={menuId}
+        anchorEl={anchor}
+        open={Boolean(anchor)}
+        onClose={close}
+        slotProps={{ paper: { sx: { maxHeight: '60vh', minWidth: '12rem' } } }}
+      >
+        <ListSubheader sx={{ bgcolor: 'transparent', position: 'static', lineHeight: 2.5, fontWeight: 700 }}>
+          Move {entry.jobNumber} to
+        </ListSubheader>
+        {open.map((other, place) => (
+          <MenuItem
+            key={other.jobKey}
+            selected={place === index}
+            onClick={() => {
+              close();
+              if (place !== index) onMoveTo(entry.jobKey, place + 1);
+            }}
+            sx={[softListItemSx, { minHeight: '2.75rem', gap: 1 }]}
+          >
+            <Box component='span' sx={{ fontWeight: 800, minWidth: '1.5rem' }}>
+              {place + 1}
+            </Box>
+            <Box component='span' sx={{ color: place === index ? 'inherit' : 'text.secondary' }}>
+              {other.jobNumber}
+            </Box>
+            {place === index && (
+              <Box component='span' sx={visuallyHidden}>
+                (its place now)
+              </Box>
+            )}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
+}
+
 const listFormat = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
 const listOf = (items) => listFormat.format(items);
 
 // A verified driver's list for one week on /covers (docs/COVER-BIDDING.md,
 // stage 2): the jobs they want, in order, ready to read off when they call
 // dispatch at their call-in time. Jobs someone took drop off the list (they
-// show quietly under it, and come back if they open up again). Move up, move
-// down and remove save at once (CoverBoard does the saving).
+// show quietly under it, and come back if they open up again). Moving (tap the
+// choice number and pick a place, or move up/down) and removing save at once
+// (CoverBoard does the saving).
 // - `entries`: [{ jobKey, jobNumber, status }] (lib/coverList.js).
 // - `jobsByKey`: the week's driver rows by jobKey, for each job's days.
 // - `editable`: false for a week that's over, or one the driver is off.
@@ -85,6 +174,7 @@ export default function CoverList({
   profileHref = null,
   nudge = null,
   onMove,
+  onMoveTo,
   onRemove,
 }) {
   const open = entries.filter((entry) => entry.status === 'open');
@@ -135,26 +225,13 @@ export default function CoverList({
                   key={entry.jobKey}
                   sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 1, py: 0.75 }}
                 >
-                  <Box
-                    aria-hidden='true'
-                    sx={[
-                      softRaisedSmall,
-                      {
-                        width: '2rem',
-                        height: '2rem',
-                        borderRadius: '50%',
-                        flexShrink: 0,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'primary.main',
-                        typography: 'body2',
-                        fontWeight: 800,
-                      },
-                    ]}
-                  >
-                    {index + 1}
-                  </Box>
+                  <ChoiceBadge
+                    entry={entry}
+                    index={index}
+                    open={open}
+                    movable={editable && open.length > 1}
+                    onMoveTo={onMoveTo}
+                  />
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography sx={{ fontWeight: 700 }}>
                       <Box component='span' sx={visuallyHidden}>

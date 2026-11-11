@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 
 import { COVER_LIST_MAX } from '@/constants';
 import { isPicked, jobKey } from '@/lib/coverBidJobRow';
+import { moveToPlace } from '@/lib/coverList';
 import { getUpcomingSaturday } from '@/lib/format';
 import { tapHaptic } from '@/lib/haptics';
 import CoverBidJobsTable from '@/components/coverBidJobs/CoverBidJobsTable';
@@ -141,6 +142,18 @@ export default function CoverBoard({
     save(selectedWeek, next, `${list[from].jobNumber} is now choice ${place}.`);
   };
 
+  // Move a job to an open place (1-based), the others shifting to make room:
+  // the number picker on each row (lib/coverList.js moveToPlace).
+  const moveTo = (key, place) => {
+    const list = listsRef.current[selectedWeek] ?? [];
+    const next = moveToPlace(list, key, place);
+    if (next === list) return;
+    const entry = list.find((item) => item.jobKey === key);
+    const now = next.filter((item) => item.status === 'open').findIndex((item) => item.jobKey === key) + 1;
+    tapHaptic();
+    save(selectedWeek, next, `${entry.jobNumber} is now choice ${now}.`);
+  };
+
   const remove = (key) => {
     const list = listsRef.current[selectedWeek] ?? [];
     const entry = list.find((item) => item.jobKey === key);
@@ -229,6 +242,7 @@ export default function CoverBoard({
             reminderLeads={reminderLeads}
             profileHref={profileHref}
             onMove={move}
+            onMoveTo={moveTo}
             onRemove={remove}
             nudge={saved && <PushNudge topic='covers' inset />}
           />

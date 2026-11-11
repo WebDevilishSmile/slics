@@ -537,6 +537,69 @@ Still not built:
 - The data is all additive (`cover-bid-days`, `cover-notices`, `users.coverReminderLeads`,
   `cover-bid-picks.slotsChangedAt`, `cover-job-changes.sheetHidden`) and can stay.
 
+## Sheet digests: the admins' on-call sheet kinds (built 2026-11-11)
+
+Tiago asked (2026-11-11): "there are too many change notifications that ring my phone …
+Fine tune it so my phone is not dinging 100+ times when dispatch is making changes."
+
+**What was happening.** The three admin kinds about the sheet (`jobChanges`, `coverJobs`,
+`coverPicks`) sent a push on every sheet read that changed something, and the sheet pings
+the app after every cell. `push-log`, 2026-10-12 to 11-11: 538 Cover jobs, 299 Cover picks
+and 186 Job changes sends, out of 1,196 in all; 49 in one hour on 11/10. The change logs
+showed why:
+
+- A new job is typed in one cell at a time (number, reason, five start times,
+  description): 8 reads, 8 pushes.
+- Inserting a row left a blank row in the job list, which ended the job section, so every
+  job under it left the week and came back when the first cell was typed: 17 jobs
+  "removed" and "added", several times over, and drivers were told a job on their list was
+  removed.
+- On bid day every pick fills a job's NAME, and each was a "Cover jobs changed".
+- A push listed every unseen row, so a job that left and came back read as "added".
+
+**What changed:**
+
+- [x] **Digests.** A sheet read sends the admins nothing. `runSheetNotices`
+      (`lib/sheetNotices.js`), in the every-fifth-minute part of the Covers cron, sends
+      each kind once its part of the sheet has been quiet for `SHEET_NOTICE_QUIET_MINUTES`
+      (15), or, while edits keep coming, once the oldest untold change is
+      `SHEET_NOTICE_MAX_WAIT_MINUTES` (60) old (`digestDue`, pure). How far each kind has
+      been told is a marker in `cover-notices` (`sheet:jobChanges`, `sheet:coverJobs`,
+      `sheet:coverPicks`; `through`), moved with a compare-and-set before sending. A kind's
+      first run only sets its marker. The banners and badges don't wait.
+- [x] **Where things ended up, not every step** (`lib/sheetChangeWords.js`, pure): each
+      job's rows are replayed in order. A job typed in and deleted, one that left and came
+      back, and a field changed and changed back say nothing; a job typed in cell by cell
+      is "added". A notification with nothing left to say isn't sent. The drivers' Cover
+      jobs notice words itself the same way.
+- [x] **Picks are their own kind.** A job's NAME changing (`isPickRow`,
+      `lib/db/coverJobChanges.js`) is left out of Cover jobs and counted in Cover picks
+      (off by default): "W/E 11/21/2026: 6 jobs picked or released, pick list changed for
+      12 drivers." One tag for every week.
+- [x] **Still "what you haven't seen".** Cover jobs and Job changes carry each admin's
+      unseen changes (their `coverChangesSeenAt` / `jobChangesSeenAt`), now only for weeks
+      that aren't over, and skip an admin who has opened the page since the newest change.
+      That replaces "not to the admin who pressed Refresh".
+- [x] **A blank row no longer ends the job list** (`parseJobs`, `lib/coverSheetParser.js`):
+      with a pick header on the tab, the jobs run up to it and blank rows are skipped.
+      Every tab from 7/11/2026 on parses exactly as before; the nine older ones, which had
+      no blank row before the pick list, no longer read pick rows as jobs.
+- Not changed: the drivers' kinds. "Your list" still goes at once (a taken job matters on
+  bid day), Cover jobs after 10 quiet minutes, the call-in notice after 30.
+
+**Replayed over the same month** (the cron's 5-minute step, the same change logs): Cover
+jobs 508 reads → 52 digests at most (8 on the busiest day), Job changes 186 → 9, Cover
+picks 327 → 93 (16 on a bid day, for those who turn it on). The blank-row fix and the
+"nothing to say" rule take more off, which the replay can't count.
+
+**Rollback:** `SHEET_PUSH_DIGEST = false` in `constants.js` and redeploy: every sheet read
+notifies at once again (the wording stays the new one). The markers can stay.
+
+**Verifying:** after the deploy, the cron's first run answers `sheet: { … 'baseline' }`
+(`vercel crons run /api/cron/cover-notifications`, or `?all=1`). Then the next time
+dispatch edits a week: no push while they type, one "Cover jobs changed" about 15 to 20
+minutes after they stop, and `push-log` shows one send for the burst.
+
 ### Verifying stage 3
 
 Done 2026-10-22, before deploying: lint and a build of every commit; the audience query

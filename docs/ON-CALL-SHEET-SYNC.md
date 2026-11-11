@@ -107,6 +107,41 @@ same alerts there, after a job added to a week went unnoticed ("Alerts" in stage
 Parsers find headers by their text, never by fixed row or column numbers, so an inserted
 row or column doesn't break them.
 
+**A blank row inside the job list is skipped (since 2026-11-11).** The job section runs
+from its header to the pick header, not to the first blank row. Dispatch adds a job by
+inserting a row, which is blank until they type in it, and a blank row used to end the
+section: every job under it left the week for a few seconds (`PUSH-NOTIFICATIONS.md` →
+"Sheet digests"). A row with text only outside the job's own columns isn't a job. A tab
+with no pick header still ends its jobs at the first blank row.
+
+## Conventions for the sheet (2026-11-11)
+
+`ON-CALL-SHEET-CONVENTIONS.pdf` is a four-page printable for the people who keep the
+sheet, SLICs staff and cover drivers: a posting checklist, what to write in each column
+and why, the standard words for the status column, and how a change travels to drivers'
+phones. Its source is `on-call-sheet-conventions.html`; print it again with headless
+Chrome (`--headless=new --no-pdf-header-footer --print-to-pdf=…`). Every name in it is
+made up, and it must never carry the sheet's link.
+
+It was written from a read-only survey: the 30 dated tabs from 5/2 to 11/21/2026 (through
+`lib/googleSheets.js`, names never printed) and the change logs from 10/14 to 11/11
+(`cover-job-changes` 1,800 rows, `cover-bid-pick-events` 1,306, `sheet-job-changes`
+2,508). What it found, for whoever revises it:
+
+- **Kept well:** both header rows identical in all 30 tabs; all 2,456 day cells since
+  August valid 24-hour times; 122 drivers on the pick lists, none spelled two ways.
+- **Stops a week from saving:** 2 tabs with no title row (5/16, 8/15) and 2 whose title
+  said another date (7/4, 8/22).
+- **Puts drivers in the wrong place:** a pick number repeated in 7 of 15 weeks since
+  August (none since 10/10); one driver listed twice in 4 weeks.
+- **Free text:** a job's NAME is a last name only 61% of the time, so 4 to 11 a week
+  can't be matched to a pick-list name; nearly 50 wordings of Cover Reason and more than
+  70 of the status column for about a dozen meanings each.
+- **How dispatch works:** a week is built Sunday to Wednesday before bid Thursday (72%
+  of job-list edits), one cell at a time, in the dated tab itself; W/E 11/21 took 166
+  jobs added and 142 removed to reach 51. On 11/3 the Jobs tab's Driver and Seniority
+  columns changed for all 298 jobs and changed back within 67 seconds.
+
 **Hidden rows are read on purpose (decided 2026-10-10).** The sheet's owner hides rows
 with "Hide row": on 10/17/2026, the picked jobs SH16, WA09 and SH12, and pick rows for
 drivers with no picks. The 10/10 and 10/24 tabs hide pick rows the same way. The
@@ -313,7 +348,10 @@ alert, and since 2026-10-14 so do cover weeks.
       dot ("Open menu, 3 job changes") were checked at 390px, light and dark.
   - **The push** names what changed: "LV93 driver changed and LV57 times changed", or
     "7 jobs added, 1 removed, 2 changed" past three jobs (`lib/pushEvents.js`). Job codes
-    and the kind of field only, never a value: a value can be a driver's name.
+    and the kind of field only, never a value: a value can be a driver's name. Since
+    2026-11-11 it's a digest, sent once the sheet has gone quiet, that says where each
+    job ended up (`PUSH-NOTIFICATIONS.md` → "Sheet digests"); the same for cover weeks
+    below, whose picks moved to the Cover picks kind.
 - [x] **Alerts for cover weeks** (2026-10-14). Until then a week's jobs were replaced
   without a record of what changed, and the only alert was a push that's off by default
   and that Apple refused (`PUSH-NOTIFICATIONS.md`, "Worth knowing"), so a job added to

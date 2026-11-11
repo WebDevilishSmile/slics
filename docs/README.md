@@ -41,6 +41,7 @@ a line for each open stage and links here.
 | [`OPERATIONS.md`](OPERATIONS.md) | Deploying, configuration, cron and webhooks, scripts, secret rotation, what to do when something breaks | Shipping, rotating a secret, or something's down |
 | [`SECURITY.md`](SECURITY.md) | Threat model, findings (with a re-checked status table), and the standing rules | Touching auth, an API route, the data layer or a new collection |
 | [`on-call-sheet-apps-script.md`](on-call-sheet-apps-script.md) | The admin's guide to installing the sheet notifier (Apps Script) | Setting up or fixing the sheet's pings |
+| [`ON-CALL-SHEET-CONVENTIONS.pdf`](ON-CALL-SHEET-CONVENTIONS.pdf) | The printable for dispatch, staff and cover drivers: how to keep the sheet so the app reads it right (source: `on-call-sheet-conventions.html`; what it's based on is in `ON-CALL-SHEET-SYNC.md` → "Conventions for the sheet") | Handing the conventions to someone, or revising them after the parsers change |
 | [`tutorials/VIDEO-SCRIPTS.md`](tutorials/VIDEO-SCRIPTS.md) | Shot-by-shot scripts for the driver tutorial videos, one per `/help` guide (`components/help/guides.jsx`) | Recording a tutorial |
 
 ## Archive

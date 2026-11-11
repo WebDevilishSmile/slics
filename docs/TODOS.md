@@ -34,6 +34,12 @@ Use absolute dates.
 
 ## Now
 
+- [ ] **Sheet digests and the sheet conventions** (built 2026-11-11): deploy, check the
+      cron's first run says `baseline` for the three sheet kinds, then watch dispatch's
+      next edits arrive as one push about 15 minutes after they stop
+      (`PUSH-NOTIFICATIONS.md` → "Sheet digests"). Print `ON-CALL-SHEET-CONVENTIONS.pdf`
+      for dispatch only after the deploy: it says the app reads past a blank row and
+      sends digests, which is true from then on
 - [ ] **Cover reports** (built 2026-11-07): deploy, run `npm run db:indexes`
       (`cover-reports`), then send one test report from `/covers` on a phone, check the push,
       the menu badge, the `/admin` banner and `/admin/cover/reports`, and Delete it

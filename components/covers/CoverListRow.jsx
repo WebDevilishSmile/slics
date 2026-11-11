@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
   Box,
+  Button,
   ButtonBase,
   IconButton,
   ListSubheader,
@@ -12,7 +13,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-import { CloseOutlined, DragIndicator } from '@mui/icons-material';
+import { CloseOutlined, DragIndicator, UndoOutlined } from '@mui/icons-material';
 import { visuallyHidden } from '@mui/utils';
 
 import { DAY_FIELDS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
@@ -127,6 +128,41 @@ function ChoiceBadge({ entry, index, open, movable, onMoveTo }) {
         ))}
       </Menu>
     </>
+  );
+}
+
+// Where a job removed with × was, for a few seconds: its number and Undo,
+// which puts it back in its place (CoverBoard). Removing it took focus away
+// with the ×, so focus lands on Undo when nothing else holds it.
+// `component`: 'li' inside the list, 'div' under the empty-list message.
+export function UndoRow({ jobNumber, onUndo, component = 'li' }) {
+  const undoRef = useRef(null);
+  useEffect(() => {
+    if (!document.activeElement || document.activeElement === document.body) undoRef.current?.focus();
+  }, []);
+
+  return (
+    <Box
+      component={component}
+      className='enter'
+      sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 1, py: 0.75, minHeight: '3.5rem' }}
+    >
+      <Typography variant='body2' color='text.secondary' sx={{ flex: 1, minWidth: 0, pl: 1 }}>
+        <Box component='span' sx={{ fontWeight: 700 }}>
+          {jobNumber}
+        </Box>{' '}
+        removed
+      </Typography>
+      <Button
+        ref={undoRef}
+        startIcon={<UndoOutlined />}
+        onClick={onUndo}
+        aria-label={`Undo: put ${jobNumber} back on your list`}
+        sx={[softRaisedSmall, softPressSx, { minHeight: '2.75rem', px: 2, flexShrink: 0 }]}
+      >
+        Undo
+      </Button>
+    </Box>
   );
 }
 

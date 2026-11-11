@@ -21,7 +21,7 @@ import { visuallyHidden } from '@mui/utils';
 import { formatBidDay, leadLabel } from '@/lib/bidDay';
 import { tapHaptic } from '@/lib/haptics';
 import { formatWeekEnding } from '@/lib/onCallSheet';
-import CoverListRow from '@/components/covers/CoverListRow';
+import CoverListRow, { UndoRow } from '@/components/covers/CoverListRow';
 import { softContainedSx, softInset, softRaised } from '@/components/utility/soft';
 
 const listFormat = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
@@ -57,6 +57,8 @@ const SCREEN_READER_INSTRUCTIONS = {
 //   (1-based); `drag` when it was dropped there.
 // - `lastMoved`: { key, n } for the job that just moved, which glows where it
 //   landed; `onMovedShown` when the glow is done.
+// - `undo`: { jobNumber, place } while a job just removed with × can be put
+//   back: its slot shows Undo (`onUndo`) where it was, `place` open jobs down.
 export default function CoverList({
   weekEnding,
   entries,
@@ -77,6 +79,8 @@ export default function CoverList({
   onRemove,
   lastMoved = null,
   onMovedShown,
+  undo = null,
+  onUndo,
 }) {
   const open = entries.filter((entry) => entry.status === 'open');
   const taken = entries.filter((entry) => entry.status !== 'open');
@@ -139,9 +143,12 @@ export default function CoverList({
 
       <Box sx={[softInset, { mt: 2, borderRadius: 3, p: 1 }]}>
         {open.length === 0 ? (
-          <Typography color='text.secondary' sx={{ p: 1.5 }}>
-            {taken.length > 0 ? 'Every job on your list has been taken.' : 'No jobs on your list yet.'}
-          </Typography>
+          <>
+            <Typography color='text.secondary' sx={{ p: 1.5 }}>
+              {taken.length > 0 ? 'Every job on your list has been taken.' : 'No jobs on your list yet.'}
+            </Typography>
+            {undo && <UndoRow component='div' jobNumber={undo.jobNumber} onUndo={onUndo} />}
+          </>
         ) : (
           <DndContext
             id='cover-list-dnd'
@@ -154,7 +161,11 @@ export default function CoverList({
           >
             <SortableContext items={open.map((entry) => entry.jobKey)} strategy={verticalListSortingStrategy}>
               <Box component='ol' sx={{ listStyle: 'none', m: 0, p: 0 }}>
-                {open.map((entry, index) => (
+                {/* One flat keyed list, so a row that moves keeps its state. */}
+                {open.flatMap((entry, index) => [
+                  ...(undo?.place === index
+                    ? [<UndoRow key='undo' jobNumber={undo.jobNumber} onUndo={onUndo} />]
+                    : []),
                   <CoverListRow
                     key={entry.jobKey}
                     entry={entry}
@@ -167,8 +178,11 @@ export default function CoverList({
                     onRemove={onRemove}
                     moved={lastMoved?.key === entry.jobKey ? lastMoved.n : null}
                     onMovedShown={onMovedShown}
-                  />
-                ))}
+                  />,
+                ])}
+                {undo && undo.place >= open.length && (
+                  <UndoRow key='undo' jobNumber={undo.jobNumber} onUndo={onUndo} />
+                )}
               </Box>
             </SortableContext>
           </DndContext>

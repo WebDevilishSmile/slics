@@ -62,6 +62,9 @@
 
 The original ask is quoted in `COVER-BIDDING.md` → "Why".
 
+- [x] reorder list, either drag and drop or number input (2026-11-11): tap a job's choice
+      number and pick its place, or drag its handle; Undo after ×, and the moved job glows
+      where it lands
 - [x] stage 1: driver verification and the drivers' Covers page (2026-10-10). Claims, the
       `/admin/driver-claims` queue, the check mark, `/covers` with the driver's own cover
       number and call-in time and the job list without names. Admin-only (`COVERS_OPEN`)

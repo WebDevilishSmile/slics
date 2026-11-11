@@ -15,6 +15,8 @@ import CoversDisclaimer from '@/components/covers/CoversDisclaimer';
 import PushNudge from '@/components/push/PushNudge';
 
 const NO_ENTRIES = [];
+// How long a removed job's Undo stays.
+const UNDO_MS = 6000;
 
 // The week's jobs on /covers and, for a verified driver, their list for the
 // week picked on the calendar (docs/COVER-BIDDING.md, stage 2). The calendar
@@ -79,6 +81,11 @@ export default function CoverBoard({
   // The job that just moved, for its glow: { key, n }, `n` counting moves so
   // a second move of the same job glows again. Cleared when the glow ends.
   const [lastMoved, setLastMoved] = useState(null);
+  // The job just removed with ×, while its Undo shows: { entry, index (in
+  // the stored list), week, place (open jobs above it) }.
+  const [pendingUndo, setPendingUndo] = useState(null);
+  const undoTimer = useRef(null);
+  useEffect(() => () => clearTimeout(undoTimer.current), []);
 
   const weekJobs = useMemo(
     () => jobs.filter((job) => job.weekEnding === selectedWeek),
@@ -104,7 +111,7 @@ export default function CoverBoard({
     setError(null);
     setAnnouncement(message);
     // A preview's list stays in the page.
-    if (preview) return;
+    if (preview) return true;
     setSaving(true);
     const seq = ++saveSeq.current;
     try {
@@ -119,12 +126,14 @@ export default function CoverBoard({
         setLists((current) => ({ ...current, [week]: data.data.entries }));
       }
       setSaved(true);
+      return true;
     } catch (err) {
       if (seq === saveSeq.current) {
         setLists((current) => ({ ...current, [week]: previous }));
         setError(err.message || "Couldn't save your list.");
         setAnnouncement('');
       }
+      return false;
     } finally {
       if (seq === saveSeq.current) setSaving(false);
     }
@@ -151,12 +160,54 @@ export default function CoverBoard({
     else withViewTransition(update);
   };
 
+  // × on a row: the job comes off at once, and its slot offers Undo for a few
+  // seconds (`pendingUndo`), which puts it back where it was. A failed save
+  // brings the job back by itself, so its Undo goes.
   const remove = (key) => {
     const list = listsRef.current[selectedWeek] ?? [];
-    const entry = list.find((item) => item.jobKey === key);
-    if (!entry) return;
-    save(selectedWeek, list.filter((item) => item.jobKey !== key), `${entry.jobNumber} removed from your list.`);
+    const index = list.findIndex((item) => item.jobKey === key);
+    if (index < 0) return;
+    const entry = list[index];
+    const week = selectedWeek;
+    const pending = {
+      entry,
+      index,
+      week,
+      // Where the slot shows: how many open jobs were above it.
+      place: list.slice(0, index).filter((item) => item.status === 'open').length,
+    };
+    clearTimeout(undoTimer.current);
+    setPendingUndo(pending);
+    undoTimer.current = setTimeout(() => setPendingUndo(null), UNDO_MS);
+    save(week, list.filter((item) => item.jobKey !== key), `${entry.jobNumber} removed from your list. Undo puts it back.`).then(
+      (ok) => {
+        if (!ok) setPendingUndo((current) => (current === pending ? null : current));
+      },
+    );
   };
+
+  const undoRemove = () => {
+    const pending = pendingUndo;
+    if (!pending) return;
+    clearTimeout(undoTimer.current);
+    setPendingUndo(null);
+    const list = listsRef.current[pending.week] ?? [];
+    const key = pending.entry.jobKey;
+    if (list.some((item) => item.jobKey === key) || list.length >= COVER_LIST_MAX) return;
+    const next = [...list];
+    next.splice(Math.min(pending.index, list.length), 0, pending.entry);
+    const now = next.filter((item) => item.status === 'open').findIndex((item) => item.jobKey === key) + 1;
+    tapHaptic();
+    setLastMoved((current) => ({ key, n: (current?.n ?? 0) + 1 }));
+    save(pending.week, next, `${pending.entry.jobNumber} is back on your list as choice ${now}.`);
+  };
+
+  // The Undo for the week shown, while its job is still off the list (the
+  // jobs below can add it back too).
+  const undo =
+    pendingUndo && pendingUndo.week === selectedWeek && !entries.some((item) => item.jobKey === pendingUndo.entry.jobKey)
+      ? { jobNumber: pendingUndo.entry.jobNumber, place: pendingUndo.place }
+      : null;
 
   const isFull = entries.length >= COVER_LIST_MAX;
 
@@ -241,6 +292,8 @@ export default function CoverBoard({
             onMoveTo={moveTo}
             lastMoved={lastMoved}
             onMovedShown={() => setLastMoved(null)}
+            undo={undo}
+            onUndo={undoRemove}
             onRemove={remove}
             nudge={saved && <PushNudge topic='covers' inset />}
           />

@@ -538,7 +538,8 @@ export const HELP_SECTIONS = [
           <>
             Put your first choice on top: tap a job&apos;s number and pick
             its new place, or hold <Tap>⋮⋮</Tap> and drag it. The{' '}
-            <Tap>×</Tap> takes a job off.
+            <Tap>×</Tap> takes a job off, and <Tap>Undo</Tap> right after puts
+            it back.
           </>,
           <>
             On bid day, at your call-in time, tap <Tap>Call dispatch</Tap>{' '}

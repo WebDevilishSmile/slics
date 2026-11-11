@@ -29,6 +29,9 @@ script with `--dry-run` and a reverse twin, one commit per step.
   - Gmail's "Send mail as" for `tiago@slics.app` sends through Resend's SMTP
     (`smtp.resend.com:587`, user `resend`) with its own `Gmail send-as` key, so it signs
     with slics.app's DKIM like the app's emails.
+  - An email in the app's look goes from `/admin/super/email` (super admin, since
+    2026-11-11): Resend's API with `RESEND_API_KEY`, from `tiago@slics.app`, replies to the
+    same address. It isn't in Gmail's Sent folder; "Send me a copy" BCCs the inbox.
 - **The gate is `npm run build`**, run in a scratch copy of the repo, never while
   `next dev` is running in the same folder (both write `.next/`). `npm run lint` and
   `npm run lint:dead` (knip) also work. There's no test suite.

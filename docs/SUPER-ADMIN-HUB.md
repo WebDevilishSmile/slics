@@ -41,8 +41,8 @@ for managing and reading data and features in our entire app" (2026-10-12).
   `isSuperAdmin(await getSession())` before reading anything. The layout's redirect isn't
   the boundary (`SECURITY.md` #7). Every new route starts with `requireSuperAdmin()`.
 - **Read-only, except what's named.** The only writes are samples and written notifications
-  (Stage C) and the feature switches (Stage F). Each written notification and each switch
-  goes to `admin_audit` before it happens.
+  (Stage C), the feature switches (Stage F) and written emails ("Email"). Each written
+  notification, switch and email goes to `admin_audit` before it happens.
 - **One section failing never breaks the page.** Each hub part loads on its own and shows an
   inline Alert in its place. A health check that throws becomes an error in its own card.
 - **Keys are set or not set, never values.** The health page is HTML like any other. Not even
@@ -224,6 +224,34 @@ The detail is in `PUSH-NOTIFICATIONS.md` stage 1b.
 - [x] **`PATCH /api/features { key, value }`:** `requireSuperAdmin()`, validated
       (`validateFeature`), rate-limited.
 - [ ] The landing page still leaves Covers off by hand. Opening Covers doesn't add it there.
+
+## Email (`/admin/super/email`, built 2026-11-11)
+
+The super admin asked to send a one-off email from `tiago@slics.app` that looks like the
+sign-up and password emails (2026-11-11). Gmail's "Send mail as" already sends from that
+address, but its compose box rewrites pasted HTML, so the look doesn't survive.
+
+- [x] **One look, shared.** The layout moved from `lib/passwordResetEmails.js` to
+      `lib/emailLayout.js` (pure, no imports). Its greeting and button are optional now,
+      and it takes `signOff` lines. The three account emails render the same as before
+      (checked against their old output; one differs by a blank line).
+- [x] **`lib/composedEmail.js`** (pure): `validateComposedEmail` and `composedEmail`. The
+      page's live preview and `POST /api/emails` both use them, so what's previewed is what's
+      sent. Everything typed is plain text, escaped: a blank line is a new paragraph, a web
+      address becomes a link, the button takes `https://` links only.
+- [x] **The page:** To, Subject, Heading, Message, a button (words and link), a note, the
+      sign-off and "Send me a copy" (a BCC to `tiago@slics.app`, since a Resend send isn't in
+      Gmail's Sent folder, on by default). The preview is a sandboxed `iframe` with a
+      Light/Dark switch (`color-scheme` on the frame sets its `prefers-color-scheme`). Send
+      asks first. The draft is kept in the browser's `localStorage` until it's sent.
+- [x] **`POST /api/emails`:** `requireSuperAdmin()`, 20 an hour, validated again. It goes from
+      `Tiago from SLICs <tiago@slics.app>` (`COMPOSE_EMAIL_FROM_NAME`, `CONTACT_EMAIL`)
+      with that address as reply-to, so replies reach the same inbox through ImprovMX.
+      `email.sent` goes to `admin_audit` first (the address and subject, never the
+      message), and gets `failed: true` if Resend turns it down.
+- [x] **Sent:** the page lists the last 25 (`getSentEmails`), and the activity feed shows
+      them as admin actions. The message itself is only in Resend's dashboard.
+- [x] A card on the hub opens it.
 
 ---
 

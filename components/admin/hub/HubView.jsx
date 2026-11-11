@@ -3,6 +3,7 @@
 import {
   AdminPanelSettingsOutlined,
   LocalCafeOutlined,
+  MailOutlined,
   MonitorHeartOutlined,
   NotificationsOutlined,
   TimelineOutlined,
@@ -10,6 +11,7 @@ import {
 } from '@mui/icons-material';
 import { Alert, Box } from '@mui/material';
 
+import { CONTACT_EMAIL } from '@/constants';
 import ActivityList from './ActivityList';
 import HubCard from './HubCard';
 import HubSection from './HubSection';
@@ -90,6 +92,12 @@ function cards({ notifications, activity, health, features, admins, support, mem
             'Roles, the tools each can use, and what each has done.',
           ]
         : ['Roles, the tools each can use, and what each has done.'],
+    },
+    {
+      href: '/admin/super/email',
+      icon: <MailOutlined />,
+      title: 'Email',
+      lines: [`Write an email from ${CONTACT_EMAIL} in the SLICs look, with a preview.`],
     },
     {
       href: '/admin/super/supporters',

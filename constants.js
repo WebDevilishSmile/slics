@@ -480,6 +480,22 @@ export const PUSH_TYPES = [
 export const PUSH_COMPOSE_TITLE_MAX = 60;
 export const PUSH_COMPOSE_BODY_MAX = 180;
 
+// An email the super admin writes on /admin/super/email (lib/composedEmail.js):
+// sent through Resend from CONTACT_EMAIL, so a reply comes back to the same
+// inbox. The name is what the recipient's mail app shows as the sender.
+export const COMPOSE_EMAIL_FROM_NAME = 'Tiago from SLICs';
+export const COMPOSE_EMAIL_LIMITS = {
+  subject: 150,
+  heading: 120,
+  message: 5000,
+  buttonLabel: 40,
+  buttonUrl: 500,
+  note: 600,
+  signOff: 200,
+};
+// Default sign-off for a new email; the field can change it.
+export const COMPOSE_EMAIL_SIGN_OFF = 'Tiago';
+
 // The kinds of row in the super admin's activity feed (/admin/super/activity,
 // lib/db/activity.js), in the order the filter chips show.
 export const ACTIVITY_KINDS = [

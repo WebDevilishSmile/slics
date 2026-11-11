@@ -49,6 +49,7 @@ const PAGE_TITLES = [
   ['/admin/super/activity', 'Activity'],
   ['/admin/super/health', 'System Health'],
   ['/admin/super/features', 'Features'],
+  ['/admin/super/email', 'Email'],
   ['/admin/super', 'Super Admin'],
   ['/admin/drivers', 'Drivers'],
   ['/admin/cover/drivers', 'Cover Drivers'],

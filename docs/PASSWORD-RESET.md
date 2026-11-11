@@ -19,7 +19,8 @@ afterwards.
 through Resend from `no-reply@slics.app`. "Setting up Resend" below is done: production
 has `RESEND_API_KEY`, and a test from the live form was delivered. That test went to a
 Google account, so an emailed reset link to a password account is still unchecked.
-The emails share the app's soft look (`lib/passwordResetEmails.js`). Without
+The emails share the app's soft look (`lib/passwordResetEmails.js`, drawn by
+`lib/emailLayout.js` since 2026-11-11). Without
 `RESEND_API_KEY` the form still answers normally but sends nothing.
 
 **Stage 2 live 2026-10-12.** Tested on the local dev server against the real database

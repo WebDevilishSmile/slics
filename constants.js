@@ -291,6 +291,17 @@ export const PUSH_OPEN = false;
 // reminder" on /profile (users.coverReminderLeads). Until they choose, the default.
 export const COVER_REMINDER_LEADS = [15, 30, 60, 120];
 export const COVER_REMINDER_DEFAULT_LEADS = [15];
+// The admins' on-call sheet notifications (Job changes, Cover jobs, Cover
+// picks) are digests since 2026-11-11 (lib/sheetNotices.js,
+// docs/PUSH-NOTIFICATIONS.md "Sheet digests"): dispatch types a job in cell by
+// cell, and each cell was a notification (88 "Cover jobs changed" on
+// 2026-11-10). One goes out once the sheet has been quiet this long, or, while
+// the edits keep coming, once the oldest untold change has waited the second
+// number. `false` is the rollback: every sheet read that changed something
+// notifies at once again, as before.
+export const SHEET_PUSH_DIGEST = true;
+export const SHEET_NOTICE_QUIET_MINUTES = 15;
+export const SHEET_NOTICE_MAX_WAIT_MINUTES = 60;
 
 // The kinds of push notification a driver can choose on /profile
 // (docs/PUSH-NOTIFICATIONS.md, stages 1b and 2), in the order the switches
@@ -370,7 +381,7 @@ export const PUSH_TYPES = [
     area: 'covers',
     group: 'On-call sheet',
     label: 'Cover jobs',
-    description: "Cover jobs added, removed or changed on a week's tab, and new weeks posted.",
+    description: "Cover jobs added, removed or changed on a week's tab, and new weeks posted. Not who picked them.",
     audience: 'admin',
     defaultOn: true,
   },
@@ -379,7 +390,7 @@ export const PUSH_TYPES = [
     area: 'covers',
     group: 'On-call sheet',
     label: 'Cover picks',
-    description: "Drivers' picks changed on a cover week.",
+    description: "Jobs picked or released, and drivers' places, call-in times or picks changed on a cover week.",
     audience: 'admin',
     defaultOn: false,
   },

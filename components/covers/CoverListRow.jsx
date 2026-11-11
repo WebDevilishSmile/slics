@@ -13,6 +13,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { CloseOutlined, DragIndicator, UndoOutlined } from '@mui/icons-material';
 import { visuallyHidden } from '@mui/utils';
 
@@ -198,12 +199,19 @@ export default function CoverListRow({
     transition,
     isDragging,
   } = useSortable({ id: entry.jobKey, disabled: !movable });
+  const theme = useTheme();
+  // dnd-kit's own transition is for `transform` (or none while this row is
+  // dragged); the lift on press eases in beside it.
+  const lift = `${theme.transitions.duration.shortest}ms var(--ease-out)`;
 
   return (
     <Box
       component='li'
       ref={setNodeRef}
-      style={{ transform: CSS.Translate.toString(transform), transition }}
+      style={{
+        transform: CSS.Translate.toString(transform),
+        transition: [transition, `box-shadow ${lift}`, `scale ${lift}`].filter(Boolean).join(', '),
+      }}
       sx={[
         {
           position: 'relative',
@@ -217,7 +225,9 @@ export default function CoverListRow({
           // (withViewTransition in CoverBoard). One name per row.
           viewTransitionName: `cover-row-${transitionId(entry.jobKey)}`,
         },
-        isDragging && ((theme) => ({ ...softRaised(theme), zIndex: 1 })),
+        // Floats from the moment the handle is pressed (CoverList's sensor
+        // starts the drag on press), so the driver knows they've got it.
+        isDragging && ((t) => ({ ...softRaised(t), zIndex: 1, scale: '1.02' })),
       ]}
     >
       {moved !== null && (
@@ -252,7 +262,14 @@ export default function CoverListRow({
           aria-label={`Reorder ${entry.jobNumber}`}
           sx={[
             ...iconButtonSx,
-            { touchAction: 'none', cursor: isDragging ? 'grabbing' : 'grab' },
+            {
+              touchAction: 'none',
+              cursor: isDragging ? 'grabbing' : 'grab',
+              // A long press on iOS must not select text or open a callout.
+              WebkitUserSelect: 'none',
+              userSelect: 'none',
+              WebkitTouchCallout: 'none',
+            },
           ]}
         >
           <DragIndicator fontSize='small' />

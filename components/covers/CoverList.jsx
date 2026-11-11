@@ -86,10 +86,11 @@ export default function CoverList({
   const taken = entries.filter((entry) => entry.status !== 'open');
   const movable = editable && open.length > 1;
 
-  // Only the handle starts a drag (it has `touch-action: none`), so a few
-  // pixels of movement is enough to tell a drag from a tap.
+  // Only the handle starts a drag, and it has `touch-action: none`, so there's
+  // no scroll to tell apart: the job lifts the moment the handle is pressed,
+  // and a press that doesn't move drops it where it was.
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 

@@ -34,7 +34,7 @@ export const metadata = {
   openGraph: {
     type: 'website',
     siteName: 'SLICs',
-    title: 'SLICs: the Feeder binder, on your phone',
+    title: 'SLICs: Address Look-up, on your phone',
     description,
     url: '/',
   },

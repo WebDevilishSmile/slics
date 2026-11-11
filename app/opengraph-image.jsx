@@ -7,7 +7,7 @@ import { ImageResponse } from 'next/og';
 // colors (`tokens` in theme.js). Rendered once at build time. Its path,
 // /opengraph-image, is public in middleware.js, or crawlers would get the
 // sign-in redirect.
-export const alt = 'SLICs: the Feeder binder, on your phone';
+export const alt = 'SLICs: Address Look-up, on your phone';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -43,7 +43,7 @@ export default async function OpenGraphImage() {
             SLICs
           </div>
           <div style={{ fontSize: 44, color: '#0172b5' }}>
-            The Feeder binder, on your phone.
+            Address Look-up, on your phone.
           </div>
           <div
             style={{ fontSize: 30, color: 'rgba(0, 0, 0, 0.6)', marginTop: 8 }}

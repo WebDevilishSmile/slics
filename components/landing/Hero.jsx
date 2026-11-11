@@ -40,7 +40,7 @@ export default function Hero({ signedIn }) {
           SLICs
         </Typography>
         <Typography variant='h5' component='p'>
-          The Feeder binder, on your phone.
+          Address Look-up, on your phone.
         </Typography>
         <Typography variant='body1' color='text.secondary'>
           A lookup app for UPS Feeder drivers, made by one. Type the SLIC code

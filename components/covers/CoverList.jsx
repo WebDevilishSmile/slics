@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   DndContext,
   KeyboardSensor,
@@ -21,6 +22,7 @@ import { visuallyHidden } from '@mui/utils';
 import { formatBidDay, leadLabel } from '@/lib/bidDay';
 import { tapHaptic } from '@/lib/haptics';
 import { formatWeekEnding } from '@/lib/onCallSheet';
+import CoverBidJobDetailDialog from '@/components/coverBidJobs/CoverBidJobDetailDialog';
 import CoverListRow, { UndoRow } from '@/components/covers/CoverListRow';
 import { softContainedSx, softInset, softRaised } from '@/components/utility/soft';
 
@@ -37,9 +39,11 @@ const SCREEN_READER_INSTRUCTIONS = {
 // A verified driver's list for one week on /covers (docs/COVER-BIDDING.md,
 // stage 2): the jobs they want, in order, ready to read off when they call
 // dispatch at their call-in time. Jobs someone took drop off the list (they
-// show quietly under it, and come back if they open up again). A job moves by
-// its choice number (pick a place) or its drag handle; moving and removing
-// save at once (CoverBoard does the saving). Each row is CoverListRow.
+// show quietly under it, and come back if they open up again). Tapping a job
+// opens its schedule and description (CoverBidJobDetailDialog), since jobs
+// with the same start times differ only there. A job moves by its choice
+// number (pick a place) or its drag handle; moving and removing save at once
+// (CoverBoard does the saving). Each row is CoverListRow.
 // - `entries`: [{ jobKey, jobNumber, status }] (lib/coverList.js).
 // - `jobsByKey`: the week's driver rows by jobKey, for each job's days.
 // - `editable`: false for a week that's over, or one the driver is off.
@@ -85,6 +89,11 @@ export default function CoverList({
   const open = entries.filter((entry) => entry.status === 'open');
   const taken = entries.filter((entry) => entry.status !== 'open');
   const movable = editable && open.length > 1;
+  // The job whose details show (tapped on its row), by jobKey. The key stays
+  // after closing, so the dialog keeps its content while it fades out.
+  const [detail, setDetail] = useState({ key: null, open: false });
+  const detailJob = detail.key ? jobsByKey.get(detail.key) : undefined;
+  const showDetails = (key) => setDetail({ key, open: true });
 
   // Only the handle starts a drag, and it has `touch-action: none`, so there's
   // no scroll to tell apart: the job lifts the moment the handle is pressed,
@@ -129,7 +138,7 @@ export default function CoverList({
       </Box>
       <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
         {editable
-          ? 'The jobs you want, in order. Add them with + in the jobs below. Tap a number or drag to reorder. Taken jobs drop off.'
+          ? 'The jobs you want, in order. Add them with + in the jobs below. Tap a job for its description; tap its number or drag to reorder. Taken jobs drop off.'
           : offList
             ? "You're not on this week's cover or on-call list, so your list is read only."
             : 'This week is over. Your list is kept for four weeks.'}
@@ -179,6 +188,7 @@ export default function CoverList({
                     onRemove={onRemove}
                     moved={lastMoved?.key === entry.jobKey ? lastMoved.n : null}
                     onMovedShown={onMovedShown}
+                    onShowDetails={showDetails}
                   />,
                 ])}
                 {undo && undo.place >= open.length && (
@@ -237,6 +247,14 @@ export default function CoverList({
       )}
 
       {nudge && <Box sx={{ mt: 2 }}>{nudge}</Box>}
+
+      {/* A tapped job's schedule and description, the same dialog the jobs
+          below open. No add/remove in it: × on the row (with Undo) does that. */}
+      <CoverBidJobDetailDialog
+        job={detailJob}
+        open={detail.open && Boolean(detailJob)}
+        onClose={() => setDetail((current) => ({ ...current, open: false }))}
+      />
 
       <Box aria-live='polite' sx={visuallyHidden}>
         {announcement}

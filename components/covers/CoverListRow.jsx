@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { CloseOutlined, DragIndicator, UndoOutlined } from '@mui/icons-material';
+import { ChevronRight, CloseOutlined, DragIndicator, UndoOutlined } from '@mui/icons-material';
 import { visuallyHidden } from '@mui/utils';
 
 import { DAY_FIELDS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
@@ -176,6 +176,8 @@ export function UndoRow({ jobNumber, onUndo, component = 'li' }) {
 // - `job`: the week's driver row for this entry (its days), or undefined.
 // - `editable`: the remove button shows; `movable` (editable, and more than
 //   one open job) adds the picker and the handle.
+// - `onShowDetails(jobKey)`: tapping the job (its number and days) opens its
+//   details, read-only weeks included.
 // - `moved`: a number while this job glows where it just landed (a new one
 //   replays the glow), else null; `onMovedShown` when the glow ends.
 export default function CoverListRow({
@@ -189,6 +191,7 @@ export default function CoverListRow({
   onRemove,
   moved = null,
   onMovedShown,
+  onShowDetails,
 }) {
   const {
     attributes,
@@ -243,17 +246,39 @@ export default function CoverListRow({
         />
       )}
       <ChoiceBadge entry={entry} index={index} open={open} movable={movable} onMoveTo={onMoveTo} />
-      <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography sx={{ fontWeight: 700 }}>
+      {/* The job itself opens its details (CoverBidJobDetailDialog, in
+          CoverList): jobs with the same start times differ only there. */}
+      <ButtonBase
+        aria-haspopup='dialog'
+        onClick={() => onShowDetails?.(entry.jobKey)}
+        sx={[
+          softPressSx,
+          {
+            flex: 1,
+            minWidth: 0,
+            display: 'block',
+            textAlign: 'left',
+            borderRadius: 2,
+            px: 1,
+            py: 0.5,
+            mx: -1,
+          },
+        ]}
+      >
+        <Typography component='span' sx={{ display: 'flex', alignItems: 'center', gap: 0.25, fontWeight: 700 }}>
           <Box component='span' sx={visuallyHidden}>
             Choice {index + 1}:{' '}
           </Box>
           {entry.jobNumber}
+          <ChevronRight fontSize='small' aria-hidden='true' sx={{ color: 'text.secondary' }} />
+          <Box component='span' sx={visuallyHidden}>
+            {' '}Show description
+          </Box>
         </Typography>
-        <Typography variant='body2' color='text.secondary'>
+        <Typography component='span' variant='body2' color='text.secondary' sx={{ display: 'block' }}>
           {daysSummary(job)}
         </Typography>
-      </Box>
+      </ButtonBase>
       {movable && (
         <IconButton
           ref={setActivatorNodeRef}

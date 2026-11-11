@@ -248,7 +248,9 @@ calling dispatch at the call-in time; the list is what the driver reads off on t
       number (tap it and pick a place; `moveToPlace`, `lib/coverList.js`) or its drag
       handle (`covers/CoverListRow.jsx`, dnd-kit, from the keyboard too), one save each
       (since 2026-11-11; it was move up and move down), and × removes it, its slot offering
-      Undo for six seconds; each job in the table, card and dialog has an add/remove button
+      Undo for six seconds. Tapping a job on the list opens its schedule and description
+      (`CoverBidJobDetailDialog`, since 2026-11-11): jobs with the same start times
+      differ only there. Each job in the table, card and dialog has an add/remove button
       (`coverBidJobs/ListToggle.jsx`; a taken job can't be added, 30 at most). A taken
       or hidden job leaves the list on read (`coverListStatus`, `lib/coverList.js`) but
       stays stored, so it comes back if it reopens; the list names the taken ones. The

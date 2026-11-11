@@ -3,6 +3,7 @@
 import { Box, Chip, Tooltip, Typography } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
+import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { softRaised } from '@/components/utility/soft';
 import { DAY_COLORS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
@@ -82,10 +83,13 @@ function JobLabel({ icon: Icon, children, sx }) {
 }
 
 // The words that go with the gray, so "picked" isn't told by color alone.
-export function PickedLabel({ sx }) {
+// `note`: the job's NAME is dispatch's note, not a driver (isNameNote,
+// lib/nameNote.js). Only admin rows can say so: a driver's copy of a job has
+// no name, and reads "Picked" as it does for a cut job.
+export function PickedLabel({ note = false, sx }) {
   return (
-    <JobLabel icon={CheckCircleOutlineIcon} sx={sx}>
-      Picked
+    <JobLabel icon={note ? StickyNote2OutlinedIcon : CheckCircleOutlineIcon} sx={sx}>
+      {note ? 'Note' : 'Picked'}
     </JobLabel>
   );
 }

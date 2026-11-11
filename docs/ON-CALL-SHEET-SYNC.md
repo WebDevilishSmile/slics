@@ -114,6 +114,24 @@ section: every job under it left the week for a few seconds (`PUSH-NOTIFICATIONS
 "Sheet digests"). A row with text only outside the job's own columns isn't a job. A tab
 with no pick header still ends its jobs at the first blank row.
 
+**A NAME that starts with an asterisk is a note, not a driver (since 2026-11-11,
+`lib/nameNote.js`; a `#` works too).** Tiago asked for a way for dispatch to mark the
+notes they put under NAME. The 19 tabs from 7/11 to 11/21/2026 had about a dozen ("COVER
+DAY-BY-DAY", "NO PT … TO COVER. FDR COVERING"), every one on a job that wasn't up for
+picking, and one `VACANT` row in a pick list; none started with `*` or `#`, so nothing
+saved reads differently.
+
+- **On a job's row** the job is spoken for all the same (`isPicked`): drivers see it as
+  taken, as they did before, and never the note. Admins see "Note" instead of "Picked"
+  (`PickedLabel`) and the words as "Note: …" (`displayJobName`, `lib/names.js`) on Cover
+  Jobs, the job dialog and Cover History. A note for drivers about an open job belongs in
+  Description.
+- **In the pick list** the row isn't a driver: `parsePicks` skips it, so it has no place
+  and nobody's account can match it.
+- If a noted job should ever stay open for drivers instead, that's `isPicked`
+  (`lib/coverBidJobRow.js`) and `picked` in `toDriverCoverJob`; ask before changing it,
+  since every note seen so far closed the job.
+
 ## Conventions for the sheet (2026-11-11)
 
 `ON-CALL-SHEET-CONVENTIONS.pdf` is a four-page printable for the people who keep the
@@ -134,6 +152,8 @@ It was written from a read-only survey: the 30 dated tabs from 5/2 to 11/21/2026
   said another date (7/4, 8/22).
 - **Puts drivers in the wrong place:** a pick number repeated in 7 of 15 weeks since
   August (none since 10/10); one driver listed twice in 4 weeks.
+- **Notes under NAME:** about a dozen in 19 weeks, unmarked, each read as a driver by that
+  name. The PDF asks for a leading asterisk (above).
 - **Free text:** a job's NAME is a last name only 61% of the time, so 4 to 11 a week
   can't be matched to a pick-list name; nearly 50 wordings of Cover Reason and more than
   70 of the status column for about a dozen meanings each.

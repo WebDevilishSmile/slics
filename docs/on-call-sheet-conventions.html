@@ -86,7 +86,7 @@
         <li>The two header rows are as they've always been (<code>Job #</code> … <code>Description</code>, and <code>NAME</code> … <code>PICK #7</code>).</li>
         <li>Every job row has its <b>Job #</b>, in capitals, listed once.</li>
         <li>Start times are 24-hour <code>HH:MM</code>. A day the job doesn't run is left blank.</li>
-        <li><b>NAME</b> on a job row is blank while the job is open. Once taken: the driver's name as the pick list spells it, or <code>CUT</code>.</li>
+        <li><b>NAME</b> on a job row is blank while the job is open. Once taken: the driver's name as the pick list spells it, or <code>CUT</code>. A note starts with an asterisk: <code>*COVER DAY-BY-DAY</code></li>
         <li>Pick list: every driver once, <code>LAST, FIRST</code>, spelled as last week.</li>
         <li>Pick numbers run 1, 2, 3… down the list with no repeats. 1 to 20 are the cover drivers. Everyone after number 20 is on call.</li>
         <li>A cover driver who's out keeps their row, with no call-in time and no number. Their number is skipped.</li>
@@ -119,11 +119,13 @@
     <tr><td>LV57</td><td>DOE, JANE</td><td>SMITH, JOHN</td><td>VACATION</td><td></td><td>07:00</td><td>07:00</td><td></td><td>Mon-Fri: BETPA&gt;LANPA&gt;BETPA</td><td class="note">← taken: the name as the pick list spells it</td></tr>
     <tr><td>BE11</td><td></td><td></td><td>VACANT</td><td>21:30</td><td>21:30</td><td>21:30</td><td></td><td>Sun-Thu: BETPA&gt;NEWPA&gt;BETPA</td><td class="note">← open: NAME is blank</td></tr>
     <tr><td>XTR4</td><td>CUT</td><td></td><td>PEAK JOB</td><td></td><td>10:00</td><td>10:00</td><td></td><td>Mon-Fri: BETPA&gt;AILPA&gt;BETPA</td><td class="note">← cut: says CUT, shows as taken</td></tr>
+    <tr><td>PK17</td><td>*COVER DAY-BY-DAY</td><td></td><td>PEAK JOB</td><td></td><td>09:00</td><td>09:00</td><td></td><td>Mon-Fri: BETPA&gt;NEWPA&gt;BETPA</td><td class="note">← a note, not a driver: starts with *</td></tr>
     <tr class="gap"><td colspan="9">one blank row, nothing else, between the jobs and the pick list</td><td class="note"></td></tr>
     <tr><th></th><th>NAME</th><th></th><th></th><th colspan="5">PICK #1 … PICK #7</th><td class="note">← pick header, never renamed</td></tr>
     <tr><td>07:00</td><td>DOE, JANE</td><td>1</td><td>LV57</td><td colspan="5"></td><td class="note">← call-in time · name · pick number · job / status</td></tr>
     <tr><td>07:15</td><td>ROE, RICHARD</td><td>2</td><td></td><td colspan="5"></td><td class="note">← hasn't picked yet: job / status is blank</td></tr>
     <tr><td></td><td>POE, ANN</td><td></td><td>VACATION</td><td colspan="5"></td><td class="note">← out this week: no time, no number, 3 is skipped</td></tr>
+    <tr><td></td><td>*VACANT</td><td></td><td></td><td colspan="5"></td><td class="note">← not a driver: starts with *, the app skips the row</td></tr>
     <tr><td>07:45</td><td>LEE, SAM</td><td>4</td><td></td><td colspan="5"></td><td class="note"></td></tr>
     <tr><td>13:00</td><td>KIM, ALEX</td><td>21</td><td>ON CALL</td><td colspan="5"></td><td class="note">← after number 20: on call</td></tr>
   </table>
@@ -159,8 +161,10 @@
     <div>
       <h3>NAME (who took the job)</h3>
       <ul>
-        <li><span class="tag must">Required</span><b>Blank means open.</b> Any text at all in this cell and drivers see the job as taken. So no notes here on an open job.</li>
+        <li><span class="tag must">Required</span><b>Blank means open.</b> Any text at all in this cell and drivers see the job as taken. A note for drivers about an open job goes in Description, which they can read.</li>
         <li><span class="tag must">Required</span><b>Cut job: <code>CUT</code>.</b> Drivers see it as taken, which is right.</li>
+        <li><span class="tag must">Required</span><b>A note starts with an asterisk: <code>*COVER DAY-BY-DAY</code>.</b> The asterisk tells the app the words aren't a driver's name. Drivers still see the job as taken, and never the note. Admins see it labeled "Note".
+          <div class="found"><b>Seen:</b> about a dozen notes under NAME in 19 weeks (covered day by day, nobody to cover). Without the asterisk, the app takes each for a driver by that name.</div></li>
         <li><span class="tag helps">Helps</span><b>Write the name as the pick list has it: <code>DOE, JANE</code>.</b> Copy and paste it from the pick list below. A last name alone marks the job taken just the same, but the app can't tell which driver it is, so the driver who took it also gets "a job on your list was taken".
           <div class="found"><b>Seen:</b> of 553 names since August, 61% were a last name only, 30% <code>LAST, FIRST</code>, 6% <code>CUT</code>. Each week 4 to 11 can't be matched to a pick-list name as written.</div></li>
       </ul>
@@ -201,6 +205,8 @@
           <div class="found"><b>Seen:</b> 1,100 rows since August, 122 drivers, not one spelled two ways. This is the part of the sheet that's kept best.</div></li>
         <li><span class="tag must">Required</span><b>Each driver once.</b> Listed twice, a driver keeps the first row's place and time.
           <div class="found"><b>Seen:</b> one driver listed twice in 4 of the weeks since May.</div></li>
+        <li><span class="tag must">Required</span><b>A row that isn't a driver starts with an asterisk:</b> <code>*VACANT</code>. The app skips it. Without the asterisk it's read as a driver with no number.
+          <div class="found"><b>Seen:</b> a <code>VACANT</code> row on 8/29, read as a driver.</div></li>
       </ul>
 
       <h3>Call-in time (the first column)</h3>

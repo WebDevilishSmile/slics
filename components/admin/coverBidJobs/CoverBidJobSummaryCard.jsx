@@ -12,7 +12,8 @@ import {
   PickedLabel,
   pickedSx,
 } from '@/components/coverBidJobs/jobGrid';
-import { displayName } from '@/lib/names';
+import { isNameNote } from '@/lib/nameNote';
+import { displayJobName, displayName } from '@/lib/names';
 
 // Route codes ("BETPA>VVSPA>…") have no spaces, so let lines break after
 // each ">" rather than mid-code.
@@ -41,7 +42,7 @@ export default function CoverBidJobSummaryCard({
 }) {
   const issues = rowIssues(row, { duplicate });
   // Names capitalized (lib/names.js); the cover reason as the sheet writes it.
-  const people = [displayName(row.assignedDriver), row.coverReason, displayName(row.name)].filter(Boolean);
+  const people = [displayName(row.assignedDriver), row.coverReason, displayJobName(row.name)].filter(Boolean);
 
   return (
     <ButtonBase
@@ -76,7 +77,7 @@ export default function CoverBidJobSummaryCard({
           <Typography component='span' variant='h6' sx={{ fontWeight: 700 }}>
             {row.jobNumber || 'No job #'}
           </Typography>
-          {isPicked(row) && <PickedLabel />}
+          {isPicked(row) && <PickedLabel note={isNameNote(row.name)} />}
           {hidden && <HiddenLabel reason={hidden} />}
           <WantedLabel wanted={wanted} />
         </Box>

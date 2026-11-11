@@ -28,6 +28,7 @@ import {
   pickedSx,
 } from './jobGrid';
 import { isPicked } from '@/lib/coverBidJobRow';
+import { isNameNote } from '@/lib/nameNote';
 import CoverCalendar from '@/components/covers/Calendar';
 import SoftNotice from '@/components/utility/SoftNotice';
 import { softInputSx } from '@/components/utility/soft';
@@ -51,7 +52,7 @@ const DESKTOP_COLUMNS = [
     renderCell: ({ row, value }) => (
       <Box>
         {value}
-        {isPicked(row) && <PickedLabel sx={{ display: 'flex' }} />}
+        {isPicked(row) && <PickedLabel note={isNameNote(row.name)} sx={{ display: 'flex' }} />}
         {row.hidden && <HiddenLabel sx={{ display: 'flex' }} />}
       </Box>
     ),

@@ -8,6 +8,7 @@ import { isPicked, jobKey } from '@/lib/coverBidJobRow';
 import { moveToPlace } from '@/lib/coverList';
 import { getUpcomingSaturday } from '@/lib/format';
 import { tapHaptic } from '@/lib/haptics';
+import { withViewTransition } from '@/lib/viewTransition';
 import CoverBidJobsTable from '@/components/coverBidJobs/CoverBidJobsTable';
 import CoverList from '@/components/covers/CoverList';
 import CoversDisclaimer from '@/components/covers/CoversDisclaimer';
@@ -75,6 +76,9 @@ export default function CoverBoard({
   // Set by the first save that goes through: mounts the notifications nudge.
   const [saved, setSaved] = useState(false);
   const saveSeq = useRef(0);
+  // The job that just moved, for its glow: { key, n }, `n` counting moves so
+  // a second move of the same job glows again. Cleared when the glow ends.
+  const [lastMoved, setLastMoved] = useState(null);
 
   const weekJobs = useMemo(
     () => jobs.filter((job) => job.weekEnding === selectedWeek),
@@ -129,14 +133,22 @@ export default function CoverBoard({
   // Move a job to an open place (1-based), the others shifting to make room:
   // the number picker or the drag handle on each row (lib/coverList.js
   // moveToPlace). Taken jobs keep their places in the saved list.
-  const moveTo = (key, place) => {
+  // The moved job then glows for a moment where it landed (`lastMoved`), and
+  // after a pick from the number menu the rows slide to their new places (a
+  // View Transition; a drag animates itself).
+  const moveTo = (key, place, { drag = false } = {}) => {
     const list = listsRef.current[selectedWeek] ?? [];
     const next = moveToPlace(list, key, place);
     if (next === list) return;
     const entry = list.find((item) => item.jobKey === key);
     const now = next.filter((item) => item.status === 'open').findIndex((item) => item.jobKey === key) + 1;
     tapHaptic();
-    save(selectedWeek, next, `${entry.jobNumber} is now choice ${now}.`);
+    const update = () => {
+      setLastMoved((current) => ({ key, n: (current?.n ?? 0) + 1 }));
+      save(selectedWeek, next, `${entry.jobNumber} is now choice ${now}.`);
+    };
+    if (drag) update();
+    else withViewTransition(update);
   };
 
   const remove = (key) => {
@@ -227,6 +239,8 @@ export default function CoverBoard({
             reminderLeads={reminderLeads}
             profileHref={profileHref}
             onMoveTo={moveTo}
+            lastMoved={lastMoved}
+            onMovedShown={() => setLastMoved(null)}
             onRemove={remove}
             nudge={saved && <PushNudge topic='covers' inset />}
           />

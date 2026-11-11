@@ -40,7 +40,13 @@ function daysSummary(job) {
   return days.map((day) => `${DAY_LABELS[day]} ${formatDayValue(job[day])}`).join(' · ');
 }
 
-const iconButtonSx = [softPressSx, { width: '2.75rem', height: '2.75rem', flexShrink: 0 }];
+// A job key as a view-transition-name: letters, digits and dashes only (a
+// key can hold a space or a slash), with its char codes so two keys that
+// differ only in those never share a name.
+const transitionId = (key) =>
+  key.replace(/[^A-Za-z0-9-]/g, (char) => `_${char.charCodeAt(0)}`);
+
+const iconButtonSx =[softPressSx, { width: '2.75rem', height: '2.75rem', flexShrink: 0 }];
 
 const badgeSx = [
   softRaisedSmall,
@@ -133,7 +139,20 @@ function ChoiceBadge({ entry, index, open, movable, onMoveTo }) {
 // - `job`: the week's driver row for this entry (its days), or undefined.
 // - `editable`: the remove button shows; `movable` (editable, and more than
 //   one open job) adds the picker and the handle.
-export default function CoverListRow({ entry, index, open, job, editable, movable, onMoveTo, onRemove }) {
+// - `moved`: a number while this job glows where it just landed (a new one
+//   replays the glow), else null; `onMovedShown` when the glow ends.
+export default function CoverListRow({
+  entry,
+  index,
+  open,
+  job,
+  editable,
+  movable,
+  onMoveTo,
+  onRemove,
+  moved = null,
+  onMovedShown,
+}) {
   const {
     attributes,
     listeners,
@@ -150,10 +169,33 @@ export default function CoverListRow({ entry, index, open, job, editable, movabl
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
       sx={[
-        { display: 'flex', alignItems: 'center', gap: 1.5, px: 1, py: 0.75, borderRadius: 3 },
-        isDragging && ((theme) => ({ ...softRaised(theme), position: 'relative', zIndex: 1 })),
+        {
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5,
+          px: 1,
+          py: 0.75,
+          borderRadius: 3,
+          // Rows slide to their places after a pick from the number menu
+          // (withViewTransition in CoverBoard). One name per row.
+          viewTransitionName: `cover-row-${transitionId(entry.jobKey)}`,
+        },
+        isDragging && ((theme) => ({ ...softRaised(theme), zIndex: 1 })),
       ]}
     >
+      {moved !== null && (
+        // The brand-blue tint that shows where the job landed (.just-posted in
+        // app/globals.css, stilled under reduced motion). Keyed by the move,
+        // so a second move of the same job glows again.
+        <Box
+          key={moved}
+          aria-hidden='true'
+          className='just-posted'
+          onAnimationEnd={() => onMovedShown?.()}
+          sx={{ position: 'absolute', inset: 0, borderRadius: 'inherit', pointerEvents: 'none' }}
+        />
+      )}
       <ChoiceBadge entry={entry} index={index} open={open} movable={movable} onMoveTo={onMoveTo} />
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Typography sx={{ fontWeight: 700 }}>

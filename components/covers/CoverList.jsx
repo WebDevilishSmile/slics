@@ -55,6 +55,8 @@ const SCREEN_READER_INSTRUCTIONS = {
 // - `nudge`: the notifications suggestion, after a save (CoverBoard).
 // - `onMoveTo(jobKey, place, { drag })`: move a job to an open place
 //   (1-based); `drag` when it was dropped there.
+// - `lastMoved`: { key, n } for the job that just moved, which glows where it
+//   landed; `onMovedShown` when the glow is done.
 export default function CoverList({
   weekEnding,
   entries,
@@ -73,6 +75,8 @@ export default function CoverList({
   nudge = null,
   onMoveTo,
   onRemove,
+  lastMoved = null,
+  onMovedShown,
 }) {
   const open = entries.filter((entry) => entry.status === 'open');
   const taken = entries.filter((entry) => entry.status !== 'open');
@@ -161,6 +165,8 @@ export default function CoverList({
                     movable={movable}
                     onMoveTo={onMoveTo}
                     onRemove={onRemove}
+                    moved={lastMoved?.key === entry.jobKey ? lastMoved.n : null}
+                    onMovedShown={onMovedShown}
                   />
                 ))}
               </Box>

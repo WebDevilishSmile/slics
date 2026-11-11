@@ -222,6 +222,9 @@ Effort: S = an evening or two · M = a few evenings · L = a project with stages
 
 ### Platform
 
+- **Other hubs** (L, `MULTI-HUB.md`): one app for many buildings, with a shared SLIC directory
+  and tips, and per-hub covers, jobs, drivers and local admins. Roadmap only; built on
+  the `multi-hub` branch (its own worktree); stages 3–5 wait until a hub asks
 - **A small test suite** (M, #16): the sheet parsers and the route auth test
 - **CI on GitHub Actions** (S, #17): build and lint on every push
 - **Schemas at the API boundary** (M, #18): zod per collection (`SECURITY.md` #10–#11)

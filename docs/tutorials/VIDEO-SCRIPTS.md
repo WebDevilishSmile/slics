@@ -87,7 +87,7 @@ Six short screen recordings for drivers who aren't comfortable with apps. Each o
 | 2 | Type the number slowly | "…and type the number. You can also type the letter code, the customer's name or the town." |
 | 3 | Tap the match in the list | "Tap the right one." |
 | 4 | The card, point at name, SLIC number and address | "Here's the name, the SLIC number and the address." |
-| 5 | Tap **Navigate** | "To drive there, tap the big blue **Navigate** button. Your maps app opens with the address. Just tap **Start**." |
+| 5 | Tap **Open map** | "To drive there, tap the big blue **Open map** button. Your maps app opens with the address. Just tap **Start**. Map apps route you like a car, so if you're not sure the way fits a truck, ask dispatch." |
 | 6 | Back in SLICs, point at **Call** | "Need to call ahead? **Call** dials that building's dispatch. Only UPS buildings have it." |
 | 7 | Point at **PDF** | "If there's a **PDF** button, it opens the directions sheet, just like the binder." |
 | 8 | Tap the copy button next to the address | "This button copies the address, if you need to paste it somewhere else." |

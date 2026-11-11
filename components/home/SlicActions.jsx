@@ -4,7 +4,7 @@ import { useState } from 'react';
 import {
   ArrowDropDown,
   ChatBubbleOutline,
-  DirectionsOutlined,
+  MapOutlined,
   PhoneOutlined,
   PictureAsPdfOutlined,
 } from '@mui/icons-material';
@@ -15,12 +15,13 @@ import {
   ButtonGroup,
   Menu,
   MenuItem,
+  Typography,
 } from '@mui/material';
 
 import { useMapsApp } from '@/hooks/useMapsApp';
 import { mapsHref } from '@/lib/geo';
 import { useTips } from '@/lib/tipsStore';
-import { COMMENTS_SECTION_ID, slicPdfHref } from '@/constants';
+import { COMMENTS_SECTION_ID, MAP_ROUTE_NOTE, slicPdfHref } from '@/constants';
 
 import { softPressSx, softRaised } from '@/components/utility/soft';
 
@@ -51,7 +52,9 @@ function ActionButton({ icon, label, ...props }) {
 }
 
 // The lookup card's actions (UI-SUGGESTIONS.md #41). A driver's next step is
-// almost always "navigate", so that is the one big button. Call, PDF and Tips
+// almost always the drive there, so Open map is the one big button (it was
+// "Navigate" until 2026-11-11). Under it, a line says a maps app's route
+// isn't always one a truck can take (MAP_ROUTE_NOTE). Call, PDF and Tips
 // sit in a row under it, each shown only when it would do something. Tips
 // needs the comments section on the page, so callers without one leave
 // `showTips` off.
@@ -95,10 +98,11 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
           href={mapsHref({ address: slic.address }, mapsApp)}
           target='_blank'
           size='large'
-          startIcon={<DirectionsOutlined />}
+          startIcon={<MapOutlined />}
           sx={{ justifyContent: 'flex-start' }}
+          aria-describedby={`map-note-${slic.numSlic}`}
         >
-          Navigate{' '}
+          Open map{' '}
           {!isAppleDevice && (
             <Box component='span' sx={{ ml: 'auto', typography: 'body2' }}>
               {MAPS_APPS.google}
@@ -138,6 +142,14 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
           </MenuItem>
         ))}
       </Menu>
+      <Typography
+        id={`map-note-${slic.numSlic}`}
+        variant='body2'
+        color='text.secondary'
+        sx={{ mt: 1.25, px: 0.5 }}
+      >
+        {MAP_ROUTE_NOTE}
+      </Typography>
 
       {(canCall || pdfHref || showTips) && (
         <Box sx={{ display: 'flex', gap: 1.5, mt: 2.5 }}>

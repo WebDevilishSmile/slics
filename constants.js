@@ -7,6 +7,12 @@ export const SITE_URL = 'https://www.slics.app';
 // forwards to the admin's inbox (docs/OPERATIONS.md, "Email for the domain").
 export const CONTACT_EMAIL = 'tiago@slics.app';
 
+// The line under the SLIC card's Open map button (home/SlicActions.jsx, and
+// the copies on /help and the landing page): a maps app routes like a car,
+// so the driver checks with dispatch when unsure (since 2026-11-11).
+export const MAP_ROUTE_NOTE =
+  'Map routes may not be truck-friendly. If unsure, ask dispatch for directions.';
+
 // Rows per page in the admin SLICs table (admin/slics/SlicsTable.jsx).
 export const SLICS_PER_PAGE = 25;
 

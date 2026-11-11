@@ -37,7 +37,7 @@ const TIPS = [
   'Search by city too, not just the SLIC number, code or customer name.',
   'Add SLICs to your home screen from the menu, and it opens like an app.',
   'A red number on the Tips button means new tips since you last looked.',
-  'On an iPhone, the arrow next to Navigate switches between Google and Apple Maps.',
+  'On an iPhone, the arrow next to Open map switches between Google and Apple Maps.',
   'Not sure what to write? Tap a starter like Parking or Gate / guard and fill in the rest.',
   'Tap the thumbs-up on a tip that helped. The most useful tips rise to the top.',
   'Got something wrong in your tip? Tap the pencil on it to fix it.',

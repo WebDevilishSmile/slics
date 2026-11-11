@@ -190,7 +190,7 @@ const donationSnoozed = () => {
 // Enter takes the top match. `onSelect(numSlic | null)` shows the pick at
 // once (home/Main.jsx); the URL follows through pushLookupUrl, with no server
 // round trip, so Back and sharing still work. On a touch screen a pick closes the keyboard, which
-// would otherwise sit over the card's Navigate button, and every pick is
+// would otherwise sit over the card's Open map button, and every pick is
 // read out by screen readers.
 function SlicsSearch({ slics, onSelect, viewCount, isMember }) {
   const [selected, setSelected] = useState(null);

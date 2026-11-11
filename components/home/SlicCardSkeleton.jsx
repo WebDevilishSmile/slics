@@ -6,7 +6,7 @@ import { softInset, softRaised, softRaisedSmall } from '@/components/utility/sof
 
 // The lookup card while it loads (UI-SUGGESTIONS.md #43), shaped like the real
 // thing so nothing jumps when it arrives: title and subline with the type
-// pill, the address well, Navigate, the row of action tiles and the report
+// pill, the address well, Open map and its note, the row of action tiles and the report
 // link. It's also what the server sends for a `?slic=` link
 // (home/LookupSkeleton.jsx). Soft shapes
 // as on the card (utility/soft.js), with skeleton bars inside them.
@@ -37,6 +37,11 @@ export default function SlicCardSkeleton() {
         variant='rounded'
         sx={{ mt: 3, height: '3.25rem', borderRadius: 999 }}
       />
+      {/* The line under Open map (MAP_ROUTE_NOTE): two lines at phone width. */}
+      <Box sx={{ mt: 1.25, px: 0.5 }}>
+        <Skeleton variant='text' sx={{ typography: 'body2', width: '95%' }} />
+        <Skeleton variant='text' sx={{ typography: 'body2', width: '60%' }} />
+      </Box>
 
       <Box sx={{ display: 'flex', gap: 1.5, mt: 2.5 }}>
         {[0, 1, 2].map((tile) => (

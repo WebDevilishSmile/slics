@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAppleDevice } from '@/hooks/useAppleDevice';
 
-// Which maps app Navigate and pinned spots open on this device: a per-viewer
+// Which maps app Open map and pinned spots open on this device: a per-viewer
 // convenience in localStorage. Apple Maps is only offered, and only
 // remembered, on Apple devices. A change made anywhere on the page reaches
 // every other user of the hook through a window event.

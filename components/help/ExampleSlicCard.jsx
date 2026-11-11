@@ -2,7 +2,7 @@ import theme from '@/theme';
 import {
   ChatBubbleOutline,
   ContentCopy,
-  DirectionsOutlined,
+  MapOutlined,
   PhoneOutlined,
   PictureAsPdfOutlined,
   PlaceOutlined,
@@ -10,6 +10,7 @@ import {
 import { Box, Typography } from '@mui/material';
 
 import PinnedControl from '@/components/help/PinnedControl';
+import { MAP_ROUTE_NOTE } from '@/constants';
 
 import {
   softContainedSx,
@@ -21,7 +22,7 @@ import {
 // The card's controls, in pin order, each with the guide that explains it
 // (guides.jsx `screen`). The numbers match the "On this card" list on /help.
 export const CARD_CONTROLS = [
-  { key: 'navigate', label: 'Navigate', guide: 'navigate' },
+  { key: 'navigate', label: 'Open map', guide: 'navigate' },
   { key: 'call', label: 'Call', guide: 'call' },
   { key: 'copy', label: 'Copy', guide: 'copy' },
   { key: 'pdf', label: 'PDF', guide: 'pdf' },
@@ -223,13 +224,22 @@ export default function ExampleSlicCard({ pins = false, focus = null }) {
           },
         ],
         <>
-          <DirectionsOutlined fontSize='small' aria-hidden='true' />
-          Navigate
+          <MapOutlined fontSize='small' aria-hidden='true' />
+          Open map
           <Box component='span' sx={{ ml: 'auto', typography: 'caption', opacity: 0.85 }}>
             Google Maps
           </Box>
         </>,
       )}
+      {/* The note under Open map (home/SlicActions.jsx). Not a control: it
+          dims with the rest unless the picture is Open map's. */}
+      <Typography
+        variant='caption'
+        color='text.secondary'
+        sx={{ display: 'block', mt: 1, px: 0.5, opacity: focus && focus !== 'navigate' ? DIM : 1 }}
+      >
+        {MAP_ROUTE_NOTE}
+      </Typography>
 
       <Box sx={{ display: 'flex', gap: 1.5, mt: pins ? 2.25 : 1.5 }}>
         {tile('call', PhoneOutlined, 'Call')}

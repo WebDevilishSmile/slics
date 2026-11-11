@@ -237,7 +237,7 @@ export const HELP_SECTIONS = [
         steps: [
           <>Look up the SLIC.</>,
           <>
-            Tap the big blue <Tap>Navigate</Tap> button. The address opens in
+            Tap the big blue <Tap>Open map</Tap> button. The address opens in
             your maps app.
           </>,
           <>
@@ -246,7 +246,12 @@ export const HELP_SECTIONS = [
         ],
         notes: [
           <>
-            On an iPhone, the small button next to Navigate picks Google Maps
+            A maps app routes you like a car. It doesn&apos;t know about low
+            bridges, weight limits or roads trucks can&apos;t use. If you&apos;re
+            not sure of the way, ask dispatch for directions.
+          </>,
+          <>
+            On an iPhone, the small button next to Open map picks Google Maps
             or Apple Maps. SLICs remembers your choice.
           </>,
           <>

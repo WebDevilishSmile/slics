@@ -11,7 +11,7 @@ import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 const MAPS_APPS = { google: 'Google Maps', apple: 'Apple Maps' };
 
 // A tip's pinned spot: a soft pill that opens it in the maps app this device
-// uses for Navigate (hooks/useMapsApp.js). Shown on /home, on
+// uses for Open map (hooks/useMapsApp.js). Shown on /home, on
 // a driver's profile and on the admin pages.
 function CommentPin({ pin, sx }) {
   const { mapsApp } = useMapsApp();

@@ -1,13 +1,14 @@
 import theme from '@/theme';
 import {
   ChatBubbleOutline,
-  DirectionsOutlined,
+  MapOutlined,
   PhoneOutlined,
   PictureAsPdfOutlined,
   PlaceOutlined,
 } from '@mui/icons-material';
 import { Avatar, Box, Typography } from '@mui/material';
 import { softInset, softRaised, softRaisedSmall } from '@/components/utility/soft';
+import { MAP_ROUTE_NOTE } from '@/constants';
 
 // A picture of the /home lookup card, so `/` shows the app instead of only
 // describing it. Static and made up (no real SLIC on a public page): nothing in
@@ -139,12 +140,15 @@ export default function ProductPreview({ signedIn }) {
             },
           ]}
         >
-          <DirectionsOutlined />
-          Navigate
+          <MapOutlined />
+          Open map
           <Box component='span' sx={{ ml: 'auto', typography: 'body2' }}>
             Google Maps
           </Box>
         </Box>
+        <Typography variant='body2' color='text.secondary' sx={{ mt: 1.25, px: 0.5 }}>
+          {MAP_ROUTE_NOTE}
+        </Typography>
 
         <Box sx={{ display: 'flex', gap: 1.5, mt: 2.5 }}>
           <Tile icon={PhoneOutlined} label='Call' />

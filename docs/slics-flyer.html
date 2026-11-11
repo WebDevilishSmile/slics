@@ -65,6 +65,7 @@
   .pin { width: 7pt; height: 7pt; border-radius: 50% 50% 50% 0; background: var(--blue); transform: rotate(-45deg); display: inline-block; flex: none; }
   .nav { background: var(--blue); color: #fff; border-radius: 7pt; padding: 5pt 9pt; font-weight: 700; font-size: 9pt; margin-top: 7pt; display: flex; justify-content: space-between; }
   .nav small { font-weight: 400; font-size: 7.4pt; opacity: 0.92; align-self: center; }
+  .navnote { font-size: 6.6pt; color: #4a5560; margin-top: 3pt; line-height: 1.3; }
   .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5pt; margin-top: 6pt; }
   .tiles div { border: 0.6pt solid var(--line); border-radius: 8pt; padding: 5pt 0; text-align: center; color: var(--blue); font-weight: 700; position: relative; }
   .badge { position: absolute; top: -3.5pt; right: 5pt; background: #c62828; color: #fff; border-radius: 7pt; font-size: 6.4pt; padding: 0 3.5pt; line-height: 9pt; }
@@ -108,7 +109,7 @@
     <ol class="steps">
       <li><b>Scan the code</b> and tap <span class="tap">Sign in or sign up</span>. <span class="tap">Continue with Google</span> sets you up, or tap <span class="tap">Create one</span> to use an email and password. There's nothing to download.</li>
       <li><b>Tap the search bar,</b> <span class="tap">SLIC, code or name</span>, and type the SLIC number dispatch gave you. The letter code, the customer's name or the town work too.</li>
-      <li><b>Tap <span class="tap">Navigate</span>.</b> The address opens in Google Maps, or Apple Maps on an iPhone. No typing it in.</li>
+      <li><b>Tap <span class="tap">Open map</span>.</b> The address opens in Google Maps, or Apple Maps on an iPhone. Map routes may not be truck-friendly. If unsure, ask dispatch for directions.</li>
     </ol>
 
     <div class="block">
@@ -145,7 +146,8 @@
           <span class="kind">Center</span>
         </div>
         <div class="addr"><span class="pin"></span><div>100 Example Road<br>Oakdale, PA 15071</div></div>
-        <div class="nav"><span>Navigate</span><small>Google Maps</small></div>
+        <div class="nav"><span>Open map</span><small>Google Maps</small></div>
+        <div class="navnote">Map routes may not be truck-friendly. If unsure, ask dispatch for directions.</div>
         <div class="tiles"><div>Call</div><div>PDF</div><div>Tips<span class="badge">2</span></div></div>
       </div>
       <div class="card">

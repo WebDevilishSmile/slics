@@ -1,6 +1,6 @@
 import theme from '@/theme';
 import {
-  DirectionsOutlined,
+  MapOutlined,
   FlagOutlined,
   ForumOutlined,
   PictureAsPdfOutlined,
@@ -26,9 +26,9 @@ const FEATURES = [
     text: 'Fuel, food, restrooms and truck parking that drivers have found, and whether a trailer fits. Add the spots you know.',
   },
   {
-    icon: DirectionsOutlined,
+    icon: MapOutlined,
     title: 'Your maps app',
-    text: 'Navigate opens Google Maps, or Apple Maps on an iPhone. No typing the address in.',
+    text: 'Open map sends the address to Google Maps, or Apple Maps on an iPhone. No typing it in. Not sure the route fits a truck? Ask dispatch.',
   },
   {
     icon: PictureAsPdfOutlined,

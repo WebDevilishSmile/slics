@@ -126,24 +126,9 @@ export default function CoverBoard({
     }
   }, [preview]);
 
-  // Move a job past the next open job above or below it; taken jobs keep
-  // their places in the saved list.
-  const move = (key, direction) => {
-    const list = listsRef.current[selectedWeek] ?? [];
-    const from = list.findIndex((entry) => entry.jobKey === key);
-    if (from < 0) return;
-    let to = from + direction;
-    while (to >= 0 && to < list.length && list[to].status !== 'open') to += direction;
-    if (to < 0 || to >= list.length) return;
-    const next = [...list];
-    [next[from], next[to]] = [next[to], next[from]];
-    const place = next.filter((entry) => entry.status === 'open').findIndex((entry) => entry.jobKey === key) + 1;
-    tapHaptic();
-    save(selectedWeek, next, `${list[from].jobNumber} is now choice ${place}.`);
-  };
-
   // Move a job to an open place (1-based), the others shifting to make room:
-  // the number picker on each row (lib/coverList.js moveToPlace).
+  // the number picker or the drag handle on each row (lib/coverList.js
+  // moveToPlace). Taken jobs keep their places in the saved list.
   const moveTo = (key, place) => {
     const list = listsRef.current[selectedWeek] ?? [];
     const next = moveToPlace(list, key, place);
@@ -241,7 +226,6 @@ export default function CoverBoard({
             preview={preview}
             reminderLeads={reminderLeads}
             profileHref={profileHref}
-            onMove={move}
             onMoveTo={moveTo}
             onRemove={remove}
             nudge={saved && <PushNudge topic='covers' inset />}

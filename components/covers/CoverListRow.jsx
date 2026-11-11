@@ -1,0 +1,194 @@
+'use client';
+
+import { useState } from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import {
+  Box,
+  ButtonBase,
+  IconButton,
+  ListSubheader,
+  Menu,
+  MenuItem,
+  Typography,
+} from '@mui/material';
+import { CloseOutlined, DragIndicator } from '@mui/icons-material';
+import { visuallyHidden } from '@mui/utils';
+
+import { DAY_FIELDS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
+import {
+  softListItemSx,
+  softPressSx,
+  softRaised,
+  softRaisedSmall,
+} from '@/components/utility/soft';
+
+// "Mon–Fri 06:00" when every day starts at the same time, otherwise each day
+// with its time ("Mon 06:00 · Tue 07:30").
+function daysSummary(job) {
+  if (!job) return '';
+  const days = DAY_FIELDS.filter((day) => job[day]);
+  if (days.length === 0) return '';
+  const times = new Set(days.map((day) => job[day]));
+  if (times.size === 1) {
+    const span =
+      days.length > 2 && DAY_FIELDS.indexOf(days.at(-1)) - DAY_FIELDS.indexOf(days[0]) === days.length - 1
+        ? `${DAY_LABELS[days[0]]}–${DAY_LABELS[days.at(-1)]}`
+        : days.map((day) => DAY_LABELS[day]).join(' ');
+    return `${span} ${formatDayValue(job[days[0]])}`;
+  }
+  return days.map((day) => `${DAY_LABELS[day]} ${formatDayValue(job[day])}`).join(' · ');
+}
+
+const iconButtonSx = [softPressSx, { width: '2.75rem', height: '2.75rem', flexShrink: 0 }];
+
+const badgeSx = [
+  softRaisedSmall,
+  {
+    width: '2.75rem',
+    height: '2.75rem',
+    borderRadius: '50%',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'primary.main',
+    typography: 'body2',
+    fontWeight: 800,
+  },
+];
+
+// A row's choice number. On a list the driver can change, it's a button that
+// opens "Move 1234A to": every open place with the job there now, so they see
+// what they'd push down. Picking one moves the job there in one save.
+function ChoiceBadge({ entry, index, open, movable, onMoveTo }) {
+  const [anchor, setAnchor] = useState(null);
+  const menuId = `cover-move-${index}`;
+
+  if (!movable) {
+    return (
+      <Box aria-hidden='true' sx={badgeSx}>
+        {index + 1}
+      </Box>
+    );
+  }
+
+  const close = () => setAnchor(null);
+  return (
+    <>
+      <ButtonBase
+        aria-label={`Choice ${index + 1}, ${entry.jobNumber}. Move to another place`}
+        aria-haspopup='menu'
+        aria-expanded={anchor ? 'true' : undefined}
+        aria-controls={anchor ? menuId : undefined}
+        onClick={(event) => setAnchor(event.currentTarget)}
+        sx={[...badgeSx, softPressSx]}
+      >
+        {index + 1}
+      </ButtonBase>
+      <Menu
+        id={menuId}
+        anchorEl={anchor}
+        open={Boolean(anchor)}
+        onClose={close}
+        slotProps={{ paper: { sx: { maxHeight: '60vh', minWidth: '12rem' } } }}
+      >
+        <ListSubheader sx={{ bgcolor: 'transparent', position: 'static', lineHeight: 2.5, fontWeight: 700 }}>
+          Move {entry.jobNumber} to
+        </ListSubheader>
+        {open.map((other, place) => (
+          <MenuItem
+            key={other.jobKey}
+            selected={place === index}
+            onClick={() => {
+              close();
+              if (place !== index) onMoveTo(entry.jobKey, place + 1);
+            }}
+            sx={[softListItemSx, { minHeight: '2.75rem', gap: 1 }]}
+          >
+            <Box component='span' sx={{ fontWeight: 800, minWidth: '1.5rem' }}>
+              {place + 1}
+            </Box>
+            <Box component='span' sx={{ color: place === index ? 'inherit' : 'text.secondary' }}>
+              {other.jobNumber}
+            </Box>
+            {place === index && (
+              <Box component='span' sx={visuallyHidden}>
+                (its place now)
+              </Box>
+            )}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
+}
+
+// One open job on a driver's cover list (covers/CoverList.jsx): its choice
+// number (a button that moves it), the job and its days, the drag handle and
+// the remove button. The row is sortable (dnd-kit): only the handle starts a
+// drag, so the rest of the row still scrolls the page on a phone, and the
+// handle works from the keyboard too (Space, the arrows, Space).
+// - `open`: every open entry, in order, for the number picker.
+// - `job`: the week's driver row for this entry (its days), or undefined.
+// - `editable`: the remove button shows; `movable` (editable, and more than
+//   one open job) adds the picker and the handle.
+export default function CoverListRow({ entry, index, open, job, editable, movable, onMoveTo, onRemove }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: entry.jobKey, disabled: !movable });
+
+  return (
+    <Box
+      component='li'
+      ref={setNodeRef}
+      style={{ transform: CSS.Translate.toString(transform), transition }}
+      sx={[
+        { display: 'flex', alignItems: 'center', gap: 1.5, px: 1, py: 0.75, borderRadius: 3 },
+        isDragging && ((theme) => ({ ...softRaised(theme), position: 'relative', zIndex: 1 })),
+      ]}
+    >
+      <ChoiceBadge entry={entry} index={index} open={open} movable={movable} onMoveTo={onMoveTo} />
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Typography sx={{ fontWeight: 700 }}>
+          <Box component='span' sx={visuallyHidden}>
+            Choice {index + 1}:{' '}
+          </Box>
+          {entry.jobNumber}
+        </Typography>
+        <Typography variant='body2' color='text.secondary'>
+          {daysSummary(job)}
+        </Typography>
+      </Box>
+      {movable && (
+        <IconButton
+          ref={setActivatorNodeRef}
+          {...attributes}
+          {...listeners}
+          aria-label={`Reorder ${entry.jobNumber}`}
+          sx={[
+            ...iconButtonSx,
+            { touchAction: 'none', cursor: isDragging ? 'grabbing' : 'grab' },
+          ]}
+        >
+          <DragIndicator fontSize='small' />
+        </IconButton>
+      )}
+      {editable && (
+        <IconButton
+          aria-label={`Remove ${entry.jobNumber} from your list`}
+          onClick={() => onRemove(entry.jobKey)}
+          sx={iconButtonSx}
+        >
+          <CloseOutlined fontSize='small' />
+        </IconButton>
+      )}
+    </Box>
+  );
+}

@@ -536,7 +536,8 @@ export const HELP_SECTIONS = [
             Search by job number or a stop to find one.
           </>,
           <>
-            Use the arrows to put your first choice on top. The{' '}
+            Put your first choice on top: tap a job&apos;s number and pick
+            its new place, or hold <Tap>⋮⋮</Tap> and drag it. The{' '}
             <Tap>×</Tap> takes a job off.
           </>,
           <>

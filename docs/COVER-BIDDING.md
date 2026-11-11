@@ -244,8 +244,11 @@ calling dispatch at the call-in time; the list is what the driver reads off on t
       only; `PUT` sends the whole list in order, this week or later, drops jobs not
       posted or hidden, 300 saves an hour). `GET /api/cover-preferences` for admins.
 - [x] **The list on `/covers`** (`covers/CoverBoard.jsx`, `covers/CoverList.jsx`): for
-      the week picked on the calendar, the open jobs in order with move up, move down
-      and remove; each job in the table, card and dialog has an add/remove button
+      the week picked on the calendar, the open jobs in order. A job moves by its choice
+      number (tap it and pick a place; `moveToPlace`, `lib/coverList.js`) or its drag
+      handle (`covers/CoverListRow.jsx`, dnd-kit, from the keyboard too), one save each
+      (since 2026-11-11; it was move up and move down), and × removes it; each job in
+      the table, card and dialog has an add/remove button
       (`coverBidJobs/ListToggle.jsx`; a taken job can't be added, 30 at most). A taken
       or hidden job leaves the list on read (`coverListStatus`, `lib/coverList.js`) but
       stays stored, so it comes back if it reopens; the list names the taken ones. The

@@ -1,149 +1,45 @@
 'use client';
 
-import { useState } from 'react';
 import {
-  Alert,
-  Box,
-  Button,
-  ButtonBase,
-  CircularProgress,
-  IconButton,
-  Link,
-  ListSubheader,
-  Menu,
-  MenuItem,
-  Typography,
-} from '@mui/material';
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
-  ArrowDownward,
-  ArrowUpward,
-  CloseOutlined,
-  PhoneOutlined,
-} from '@mui/icons-material';
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { Alert, Box, Button, CircularProgress, Link, Typography } from '@mui/material';
+import { PhoneOutlined } from '@mui/icons-material';
 import { visuallyHidden } from '@mui/utils';
 
 import { formatBidDay, leadLabel } from '@/lib/bidDay';
-import { DAY_FIELDS, DAY_LABELS, formatDayValue } from '@/lib/dayFormat';
+import { tapHaptic } from '@/lib/haptics';
 import { formatWeekEnding } from '@/lib/onCallSheet';
-import {
-  softContainedSx,
-  softInset,
-  softListItemSx,
-  softPressSx,
-  softRaised,
-  softRaisedSmall,
-} from '@/components/utility/soft';
-
-// "Mon–Fri 06:00" when every day starts at the same time, otherwise each day
-// with its time ("Mon 06:00 · Tue 07:30").
-function daysSummary(job) {
-  if (!job) return '';
-  const days = DAY_FIELDS.filter((day) => job[day]);
-  if (days.length === 0) return '';
-  const times = new Set(days.map((day) => job[day]));
-  if (times.size === 1) {
-    const span =
-      days.length > 2 && DAY_FIELDS.indexOf(days.at(-1)) - DAY_FIELDS.indexOf(days[0]) === days.length - 1
-        ? `${DAY_LABELS[days[0]]}–${DAY_LABELS[days.at(-1)]}`
-        : days.map((day) => DAY_LABELS[day]).join(' ');
-    return `${span} ${formatDayValue(job[days[0]])}`;
-  }
-  return days.map((day) => `${DAY_LABELS[day]} ${formatDayValue(job[day])}`).join(' · ');
-}
-
-const moveButtonSx = [softPressSx, { width: '2.75rem', height: '2.75rem' }];
-
-const badgeSx = [
-  softRaisedSmall,
-  {
-    width: '2.75rem',
-    height: '2.75rem',
-    borderRadius: '50%',
-    flexShrink: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'primary.main',
-    typography: 'body2',
-    fontWeight: 800,
-  },
-];
-
-// A row's choice number. On a list the driver can change, it's a button that
-// opens "Move 1234A to": every open place with the job there now, so they see
-// what they'd push down. Picking one moves the job there in one save.
-function ChoiceBadge({ entry, index, open, movable, onMoveTo }) {
-  const [anchor, setAnchor] = useState(null);
-  const menuId = `cover-move-${index}`;
-
-  if (!movable) {
-    return (
-      <Box aria-hidden='true' sx={badgeSx}>
-        {index + 1}
-      </Box>
-    );
-  }
-
-  const close = () => setAnchor(null);
-  return (
-    <>
-      <ButtonBase
-        aria-label={`Choice ${index + 1}, ${entry.jobNumber}. Move to another place`}
-        aria-haspopup='menu'
-        aria-expanded={anchor ? 'true' : undefined}
-        aria-controls={anchor ? menuId : undefined}
-        onClick={(event) => setAnchor(event.currentTarget)}
-        sx={[...badgeSx, softPressSx]}
-      >
-        {index + 1}
-      </ButtonBase>
-      <Menu
-        id={menuId}
-        anchorEl={anchor}
-        open={Boolean(anchor)}
-        onClose={close}
-        slotProps={{ paper: { sx: { maxHeight: '60vh', minWidth: '12rem' } } }}
-      >
-        <ListSubheader sx={{ bgcolor: 'transparent', position: 'static', lineHeight: 2.5, fontWeight: 700 }}>
-          Move {entry.jobNumber} to
-        </ListSubheader>
-        {open.map((other, place) => (
-          <MenuItem
-            key={other.jobKey}
-            selected={place === index}
-            onClick={() => {
-              close();
-              if (place !== index) onMoveTo(entry.jobKey, place + 1);
-            }}
-            sx={[softListItemSx, { minHeight: '2.75rem', gap: 1 }]}
-          >
-            <Box component='span' sx={{ fontWeight: 800, minWidth: '1.5rem' }}>
-              {place + 1}
-            </Box>
-            <Box component='span' sx={{ color: place === index ? 'inherit' : 'text.secondary' }}>
-              {other.jobNumber}
-            </Box>
-            {place === index && (
-              <Box component='span' sx={visuallyHidden}>
-                (its place now)
-              </Box>
-            )}
-          </MenuItem>
-        ))}
-      </Menu>
-    </>
-  );
-}
+import CoverListRow from '@/components/covers/CoverListRow';
+import { softContainedSx, softInset, softRaised } from '@/components/utility/soft';
 
 const listFormat = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
 const listOf = (items) => listFormat.format(items);
 
+const MODIFIERS = [restrictToVerticalAxis, restrictToParentElement];
+
+const SCREEN_READER_INSTRUCTIONS = {
+  draggable:
+    'To move this job, press Space, then the up and down arrows to choose its place, then Space again to drop it. Escape cancels.',
+};
+
 // A verified driver's list for one week on /covers (docs/COVER-BIDDING.md,
 // stage 2): the jobs they want, in order, ready to read off when they call
 // dispatch at their call-in time. Jobs someone took drop off the list (they
-// show quietly under it, and come back if they open up again). Moving (tap the
-// choice number and pick a place, or move up/down) and removing save at once
-// (CoverBoard does the saving).
+// show quietly under it, and come back if they open up again). A job moves by
+// its choice number (pick a place) or its drag handle; moving and removing
+// save at once (CoverBoard does the saving). Each row is CoverListRow.
 // - `entries`: [{ jobKey, jobNumber, status }] (lib/coverList.js).
 // - `jobsByKey`: the week's driver rows by jobKey, for each job's days.
 // - `editable`: false for a week that's over, or one the driver is off.
@@ -157,6 +53,8 @@ const listOf = (items) => listFormat.format(items);
 //   notification is on (minutes), said under Call dispatch, or null.
 // - `profileHref`: the driver's /profile, where the reminder is changed.
 // - `nudge`: the notifications suggestion, after a save (CoverBoard).
+// - `onMoveTo(jobKey, place, { drag })`: move a job to an open place
+//   (1-based); `drag` when it was dropped there.
 export default function CoverList({
   weekEnding,
   entries,
@@ -173,12 +71,37 @@ export default function CoverList({
   reminderLeads = null,
   profileHref = null,
   nudge = null,
-  onMove,
   onMoveTo,
   onRemove,
 }) {
   const open = entries.filter((entry) => entry.status === 'open');
   const taken = entries.filter((entry) => entry.status !== 'open');
+  const movable = editable && open.length > 1;
+
+  // Only the handle starts a drag (it has `touch-action: none`), so a few
+  // pixels of movement is enough to tell a drag from a tap.
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const numberOf = (key) => open.find((entry) => entry.jobKey === key)?.jobNumber ?? 'The job';
+  const placeOf = (key) => open.findIndex((entry) => entry.jobKey === key) + 1;
+  // What a screen reader hears while a job is dragged. The drop itself is
+  // said by the save ("1234A is now choice 2."), in the live region below.
+  const announcements = {
+    onDragStart: ({ active }) => `Picked up ${numberOf(active.id)}, choice ${placeOf(active.id)}.`,
+    onDragOver: ({ active, over }) =>
+      over ? `${numberOf(active.id)} over choice ${placeOf(over.id)}.` : `${numberOf(active.id)} is not over a place.`,
+    onDragEnd: ({ active, over }) =>
+      over && over.id !== active.id ? '' : `${numberOf(active.id)} stays choice ${placeOf(active.id)}.`,
+    onDragCancel: ({ active }) => `Move cancelled. ${numberOf(active.id)} stays choice ${placeOf(active.id)}.`,
+  };
+
+  const onDragEnd = ({ active, over }) => {
+    if (!over || active.id === over.id) return;
+    onMoveTo(active.id, placeOf(over.id), { drag: true });
+  };
 
   return (
     <Box
@@ -197,7 +120,7 @@ export default function CoverList({
       </Box>
       <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
         {editable
-          ? 'The jobs you want, in order. Add them with + in the jobs below. Taken jobs drop off.'
+          ? 'The jobs you want, in order. Add them with + in the jobs below. Tap a number or drag to reorder. Taken jobs drop off.'
           : offList
             ? "You're not on this week's cover or on-call list, so your list is read only."
             : 'This week is over. Your list is kept for four weeks.'}
@@ -216,64 +139,33 @@ export default function CoverList({
             {taken.length > 0 ? 'Every job on your list has been taken.' : 'No jobs on your list yet.'}
           </Typography>
         ) : (
-          <Box component='ol' sx={{ listStyle: 'none', m: 0, p: 0 }}>
-            {open.map((entry, index) => {
-              const job = jobsByKey.get(entry.jobKey);
-              return (
-                <Box
-                  component='li'
-                  key={entry.jobKey}
-                  sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 1, py: 0.75 }}
-                >
-                  <ChoiceBadge
+          <DndContext
+            id='cover-list-dnd'
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            modifiers={MODIFIERS}
+            accessibility={{ announcements, screenReaderInstructions: SCREEN_READER_INSTRUCTIONS }}
+            onDragStart={() => tapHaptic()}
+            onDragEnd={onDragEnd}
+          >
+            <SortableContext items={open.map((entry) => entry.jobKey)} strategy={verticalListSortingStrategy}>
+              <Box component='ol' sx={{ listStyle: 'none', m: 0, p: 0 }}>
+                {open.map((entry, index) => (
+                  <CoverListRow
+                    key={entry.jobKey}
                     entry={entry}
                     index={index}
                     open={open}
-                    movable={editable && open.length > 1}
+                    job={jobsByKey.get(entry.jobKey)}
+                    editable={editable}
+                    movable={movable}
                     onMoveTo={onMoveTo}
+                    onRemove={onRemove}
                   />
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography sx={{ fontWeight: 700 }}>
-                      <Box component='span' sx={visuallyHidden}>
-                        Choice {index + 1}:{' '}
-                      </Box>
-                      {entry.jobNumber}
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary'>
-                      {daysSummary(job)}
-                    </Typography>
-                  </Box>
-                  {editable && (
-                    <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
-                      <IconButton
-                        aria-label={`Move ${entry.jobNumber} up`}
-                        disabled={index === 0}
-                        onClick={() => onMove(entry.jobKey, -1)}
-                        sx={moveButtonSx}
-                      >
-                        <ArrowUpward fontSize='small' />
-                      </IconButton>
-                      <IconButton
-                        aria-label={`Move ${entry.jobNumber} down`}
-                        disabled={index === open.length - 1}
-                        onClick={() => onMove(entry.jobKey, 1)}
-                        sx={moveButtonSx}
-                      >
-                        <ArrowDownward fontSize='small' />
-                      </IconButton>
-                      <IconButton
-                        aria-label={`Remove ${entry.jobNumber} from your list`}
-                        onClick={() => onRemove(entry.jobKey)}
-                        sx={moveButtonSx}
-                      >
-                        <CloseOutlined fontSize='small' />
-                      </IconButton>
-                    </Box>
-                  )}
-                </Box>
-              );
-            })}
-          </Box>
+                ))}
+              </Box>
+            </SortableContext>
+          </DndContext>
         )}
       </Box>
 

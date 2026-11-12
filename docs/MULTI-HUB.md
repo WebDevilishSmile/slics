@@ -17,8 +17,11 @@ they see until a stage is finished, verified and deliberately merged.
 - **Stage 1 is merged into `main` and deployed, and its backfill has run on production**
   (2026-11-12): every per-hub doc carries `hubId: 'betpa'` and every SLIC `hubs: ['betpa']`.
   Nothing reads either field yet, so drivers see nothing different.
-- **Stage 2 is next**, on the `multi-hub` branch in its own worktree (`../slics-multi-hub`),
-  which isn't pushed. `main` gets a stage's code only when it's merged.
+- **Stage 2 is on hold** (Tiago, 2026-11-12) until a hub asks, or before Covers picking
+  (stage 3 of `COVER-BIDDING.md`) is built, whichever comes first. See [Timing](#timing).
+  When it starts, it's built on the `multi-hub` branch in its own worktree
+  (`../slics-multi-hub`), which isn't pushed; `main` gets a stage's code only when it's
+  merged.
 
 ---
 
@@ -388,10 +391,20 @@ To copy into `SECURITY.md` when stage 2 lands:
 
 ## Timing
 
-- **Stages 0–1** are cheap and safe to build early, on the branch.
-- **Stage 2** should land before the next large Covers feature (stage 3 of
-  `COVER-BIDDING.md`, picking in the app). Every per-hub query written before it is one
-  more to retrofit.
+- **Stages 0–1** are done (2026-11-12): every per-hub doc is tagged, so waiting costs
+  little.
+- **Stage 2 is on hold** (decided 2026-11-12). It starts when a hub asks, or before the next
+  large Covers feature (stage 3 of `COVER-BIDDING.md`, picking in the app), whichever comes
+  first. Until then:
+  - The Covers rollout already in `TODOS.md` → Now comes first. Stage 2 rewrites that
+    code, so it shouldn't change under a feature still being checked on the live site.
+  - New per-hub code keeps stamping `hubId` (`CLAUDE.md`, Hubs). Every per-hub query
+    written meanwhile is one more for stage 2 to scope.
+  - A SLIC PDF revamp (multiple PDFs per SLIC, made in the app, a railyard map) built
+    before stage 2 should store each PDF with a kind, as a route (one hub's, BETPA's for
+    now) or a destination document such as a railyard map (shared by every hub). Then
+    it's [Shared SLICs](#shared-slics-decided-2026-11-12)' `slic-routes` already, with
+    nothing to move.
 - **Stages 3–5** wait until a hub asks.
 
 ## Open questions

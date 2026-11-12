@@ -10,6 +10,9 @@ import NumSlicField from './NumSlicField';
 import PhoneField from '@/components/form/PhoneField';
 import TypeRadio from './TypeRadio';
 import PdfUpload from './PdfUpload';
+import ArrivalField from './ArrivalField';
+import RouteEditor from './RouteEditor';
+import { slicPdfHref } from '@/constants';
 import { softInputSx } from '@/components/utility/soft';
 
 export default function SlicForm({
@@ -17,6 +20,7 @@ export default function SlicForm({
   mode = 'create', // 'create' or 'edit'
   onSubmit,
   reportId, // a driver report this edit fixes (app/admin/edit/[slic]/page.jsx)
+  route = null, // the SLIC's route, edit mode only (lib/serializers.js toAdminRoute)
 }) {
   const [type, setType] = useState(initialData?.type || 'center');
   const [numSlic, setNumSlic] = useState(initialData?.numSlic || '');
@@ -26,6 +30,7 @@ export default function SlicForm({
   const [address, setAddress] = useState(
     initialData?.address || { street: '', city: '', state: '', zip: '' }
   );
+  const [arrival, setArrival] = useState(initialData?.arrival || '');
 
   const handleClear = () => {
     setType('center');
@@ -34,6 +39,7 @@ export default function SlicForm({
     setName('');
     setPhone('');
     setAddress({ street: '', city: '', state: '', zip: '' });
+    setArrival('');
   };
 
   const slicData = {
@@ -45,6 +51,7 @@ export default function SlicForm({
     phone,
     address,
     directions: initialData?.directions || null,
+    arrival: arrival.trim() || null,
     // `pdfUrl` is deliberately not here: PdfUpload writes it through its own
     // route, so a form Update never overwrites a PDF attached mid-edit.
   };
@@ -72,8 +79,17 @@ export default function SlicForm({
       <NameField name={name} setName={setName} />
       <PhoneField phone={phone} setPhone={setPhone} sx={softInputSx} />
       <AddressFields address={address} setAddress={setAddress} />
+      <ArrivalField arrival={arrival} setArrival={setArrival} />
       {mode === 'edit' && (
-        <PdfUpload slicId={initialData?._id} pdfUrl={initialData?.pdfUrl} />
+        <>
+          {/* The route and the PDF save on their own, not with Update. */}
+          <RouteEditor
+            numSlic={initialData?.numSlic}
+            route={route}
+            pdfHref={initialData ? slicPdfHref(initialData) : null}
+          />
+          <PdfUpload slicId={initialData?._id} pdfUrl={initialData?.pdfUrl} />
+        </>
       )}
 
       <FormActions

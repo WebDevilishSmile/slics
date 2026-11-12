@@ -16,6 +16,16 @@ function formatFieldValue(value) {
   return String(value);
 }
 
+// A route's text is long, and its earlier versions are in the Route section
+// above (slicForm/RouteEditor.jsx), so a route change reads as one line.
+function describeChange(change) {
+  if (change.field === 'route') {
+    if (!change.to) return 'Route removed';
+    return change.from ? 'Route changed' : 'Route added';
+  }
+  return `${change.field}: ${formatFieldValue(change.from)} → ${formatFieldValue(change.to)}`;
+}
+
 // A delete is on record since Dispatch can delete SLICs (lib/db/slics.js); it
 // shows here when a SLIC with the same number is added again.
 const ACTION_LABELS = { created: 'Created', updated: 'Updated', deleted: 'Deleted' };
@@ -49,8 +59,7 @@ function SlicHistoryList({ history }) {
                   color='text.secondary'
                   key={change.field}
                 >
-                  {change.field}: {formatFieldValue(change.from)} →{' '}
-                  {formatFieldValue(change.to)}
+                  {describeChange(change)}
                 </Typography>
               ))}
             </Box>

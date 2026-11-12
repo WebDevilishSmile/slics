@@ -1,6 +1,9 @@
-import { getSession } from '@/lib/authz';
+import { getCreatorMode, getSession } from '@/lib/authz';
+import { creatorHistory, creatorHistoryPage } from '@/lib/creatorData';
 import { getHistoryPage, parseHistoryQuery } from '@/lib/db/slicViews';
 
+import CreatorMode from '@/components/creator/CreatorMode';
+import { CreatorHistory } from '@/components/creator/CreatorPages';
 import HistoryView from '@/components/history/HistoryView';
 import PageContainer from '@/components/layout/PageContainer';
 import RedirectMessage from '@/components/layout/RedirectMessage';
@@ -43,6 +46,21 @@ export default async function HistoryPage({ searchParams }) {
       if (value) params[key] = value;
     }
   }
+
+  // Creator mode (docs/CREATOR-MODE.md): made-up lookups, filtered the same
+  // way in the browser, with nothing read from the database.
+  if (await getCreatorMode(session)) {
+    return (
+      <PageContainer>
+        <CreatorMode />
+        <Typography variant='sectionHeading'>SLIC History</Typography>
+        <HydrationGuard>
+          <CreatorHistory initialPage={creatorHistoryPage(creatorHistory(), params)} initialParams={params} />
+        </HydrationGuard>
+      </PageContainer>
+    );
+  }
+
   const filters = parsed.error ? parseHistoryQuery({}).filters : parsed.filters;
   const initialPage = await getHistoryPage(session.user.id, { ...filters, cursor: null });
 

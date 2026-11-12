@@ -2,10 +2,20 @@ import {
   areasOf,
   canUseCovers,
   canUsePush,
+  getCreatorMode,
   getSession,
   isSuperAdmin,
   isVerifiedDriver,
 } from '@/lib/authz';
+import {
+  creatorDriverWeek,
+  creatorMyTips,
+  creatorProfile,
+  creatorPushPrefs,
+  creatorReminderLeads,
+  creatorSupporterSince,
+  creatorTips,
+} from '@/lib/creatorData';
 import { getCommentsByUserId } from '@/lib/db/comments';
 import {
   getCoverReminderLeads,
@@ -18,6 +28,8 @@ import { getDriverWeeks } from '@/lib/db/driverWeeks';
 import { todayInNewYork } from '@/lib/onCallSheet';
 import { serializeComments, toDriverWeek, toSelfUser } from '@/lib/serializers';
 
+import CreatorMode from '@/components/creator/CreatorMode';
+import { CreatorProfile } from '@/components/creator/CreatorPages';
 import RedirectMessage from '@/components/layout/RedirectMessage';
 import ProfileComments from '@/components/profile/ProfileComments';
 import ProfileData from '@/components/profile/ProfileData';
@@ -48,6 +60,31 @@ async function ProfilePage({ params }) {
         subheading='Please sign in and try again.'
         redirect='/sign-in'
       />
+    );
+  }
+
+  // Creator mode (docs/CREATOR-MODE.md): Alex's made-up profile, tips and
+  // week, with nothing read from the database. Only on your own profile.
+  if (id === session.user.id && (await getCreatorMode(session))) {
+    const push = canUsePush(session);
+    return (
+      <PageContainer>
+        <CreatorMode />
+        <Typography variant='sectionHeading'>Profile</Typography>
+
+        <HydrationGuard>
+          <CreatorProfile
+            userData={creatorProfile(id)}
+            comments={creatorMyTips(creatorTips())}
+            supporterSince={creatorSupporterSince()}
+            pushPrefs={push ? creatorPushPrefs() : null}
+            reminderLeads={push ? creatorReminderLeads() : null}
+            canUseCovers
+            canUsePush={push}
+            driverWeek={creatorDriverWeek(todayInNewYork())}
+          />
+        </HydrationGuard>
+      </PageContainer>
     );
   }
 

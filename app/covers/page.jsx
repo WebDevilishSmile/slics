@@ -1,7 +1,15 @@
 import dayjs from 'dayjs';
 import { Typography } from '@mui/material';
 
-import { canUseCovers, canUsePush, getSession, isSuperAdmin, isVerifiedDriver } from '@/lib/authz';
+import {
+  canUseCovers,
+  canUsePush,
+  getCreatorMode,
+  getSession,
+  isSuperAdmin,
+  isVerifiedDriver,
+} from '@/lib/authz';
+import { CREATOR_NAME, creatorCovers, creatorReminderLeads } from '@/lib/creatorData';
 import { getUserById, resolveReminderLeads } from '@/lib/db/users';
 import { getMyDriverClaim } from '@/lib/db/driverClaims';
 import { getMyCoverDispute } from '@/lib/db/coverDisputes';
@@ -22,6 +30,8 @@ import { isSaturday, todayInNewYork } from '@/lib/onCallSheet';
 import { toDriverCoverJob } from '@/lib/serializers';
 import { COVER_BID_MONTHS_BACK } from '@/constants';
 import CoverBoard from '@/components/covers/CoverBoard';
+import CreatorMode from '@/components/creator/CreatorMode';
+import { CreatorCoverBoard } from '@/components/creator/CreatorPages';
 import { PreviewLink, PreviewNotice } from '@/components/covers/CoverPreview';
 import DriverVerification from '@/components/covers/DriverVerification';
 import MyCoverWeeks from '@/components/covers/MyCoverWeeks';
@@ -78,6 +88,44 @@ export default async function CoversPage({ searchParams }) {
   }
 
   const params = (await searchParams) ?? {};
+
+  // Creator mode (docs/CREATOR-MODE.md): the page as a verified cover driver
+  // gets it, every job, place and time made up, with nothing read from the
+  // database. Lists are kept in the tab (lib/creatorStore.js).
+  if (await getCreatorMode(session)) {
+    const covers = creatorCovers(todayInNewYork());
+    return (
+      <PageContainer>
+        <CreatorMode />
+        <Typography variant='sectionHeading'>Covers</Typography>
+        <HydrationGuard>
+          <MyCoverWeeks
+            name={CREATOR_NAME}
+            driverName='RIVERA, ALEX'
+            week={covers.myWeek}
+            offWeeks={[]}
+            dispute={null}
+            jobCode={null}
+          />
+        </HydrationGuard>
+        <CreatorCoverBoard
+          jobs={covers.jobs}
+          minWeekEnding={covers.minWeekEnding}
+          initialLists={covers.lists}
+          callIns={covers.callIns}
+          bidDates={covers.bidDates}
+          dispatch={covers.dispatch}
+          canList
+          offListWeeks={[]}
+          thisWeek={covers.thisWeek}
+          initialWeek={isSaturday(params.week) ? params.week : covers.bidWeek}
+          reminderLeads={canUsePush(session) ? creatorReminderLeads() : null}
+          profileHref={`/profile/${session.user.id}`}
+        />
+      </PageContainer>
+    );
+  }
+
   const superAdmin = isSuperAdmin(session);
   const preview = superAdmin && params.preview === 'driver';
   const verified = isVerifiedDriver(session) && !preview;

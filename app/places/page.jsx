@@ -1,8 +1,16 @@
 import { Link, Typography } from '@mui/material';
-import { getSession, hasArea } from '@/lib/authz';
+import { getCreatorMode, getSession, hasArea } from '@/lib/authz';
+import {
+  creatorPlaceComments,
+  creatorPlaces,
+  creatorSlicOptions,
+  withCommentCounts,
+} from '@/lib/creatorData';
 import theme from '@/theme';
 import { getPlaces } from '@/lib/db/places';
 import { getAllSlics } from '@/lib/db/slics';
+import CreatorMode from '@/components/creator/CreatorMode';
+import { CreatorPlaces } from '@/components/creator/CreatorPages';
 import PageContainer from '@/components/layout/PageContainer';
 import PlaceFinder from '@/components/places/PlaceFinder';
 import HydrationGuard from '@/components/utility/HydrationGuard';
@@ -11,13 +19,19 @@ export const metadata = {
   title: 'Places · SLICs',
 };
 
-// Places: driver-shared stops along routes — fuel, food, restrooms, rest
-// areas — with a comment thread on each. It was "Whip It In & Out" at
-// /whip-it-in-and-out until 2026-10-12 (next.config.mjs redirects the old
-// path); the tagline keeps the phrase. Sign-in is enforced by middleware.js;
-// the data lives in lib/db/places.js and the UI in components/places/.
-export default async function PlacesPage() {
-  const session = await getSession();
+// Creator mode (docs/CREATOR-MODE.md): made-up places, with nothing read
+// from the database; Alex is a driver, so he moderates nothing.
+function creatorFinder(session) {
+  return (
+    <CreatorPlaces
+      places={withCommentCounts(creatorPlaces(), creatorPlaceComments())}
+      slics={creatorSlicOptions()}
+      user={{ id: session.user.id, canModerate: false }}
+    />
+  );
+}
+
+async function placeFinder(session) {
   // `canModerate`: staff with the Comments area may edit or delete any place
   // or comment (docs/STAFF-ROLES.md); the routes check the same.
   const user = session?.user
@@ -38,8 +52,22 @@ export default async function PlacesPage() {
       name: name || '',
     }));
 
+  return <PlaceFinder places={places} slics={slicOptions} user={user} />;
+}
+
+// Places: driver-shared stops along routes — fuel, food, restrooms, rest
+// areas — with a comment thread on each. It was "Whip It In & Out" at
+// /whip-it-in-and-out until 2026-10-12 (next.config.mjs redirects the old
+// path); the tagline keeps the phrase. Sign-in is enforced by middleware.js;
+// the data lives in lib/db/places.js and the UI in components/places/.
+export default async function PlacesPage() {
+  const session = await getSession();
+  const creator = await getCreatorMode(session);
+  const finder = creator ? creatorFinder(session) : await placeFinder(session);
+
   return (
     <PageContainer>
+      {creator && <CreatorMode />}
       <Typography variant='sectionHeading'>Places</Typography>
       <Typography
         variant='subtitle1'
@@ -60,7 +88,7 @@ export default async function PlacesPage() {
       </Typography>
       {/* Client-only render: dates use the phone's time zone. */}
       <HydrationGuard>
-        <PlaceFinder places={places} slics={slicOptions} user={user} />
+        {finder}
       </HydrationGuard>
     </PageContainer>
   );

@@ -145,6 +145,10 @@ untouched.
     ("Wrong phone number"), never the driver's note. A driver re-reporting the same thing
     (which updates their open report) sends nothing, and an admin filing one isn't sent
     their own.
+  - **Route suggestions** (since 2026-11-12, `SLIC-DIRECTIONS.md` stage 2, area `slics`, on
+    by default): after `createRouteSuggestion` in `app/api/route-suggestions/route.js`,
+    "Route suggestion for SLIC 1809", linking `/admin/routes`. The SLIC only, never the
+    route or the note. Sending again (which replaces the open one) sends nothing.
 - [x] **Account deletion:** `deleteUserAccount` (`lib/db/users.js`) calls
       `deleteUserPushSubscriptions`.
 - [x] **`CLAUDE.md` → "PWA":** replace "no service worker" with the ground rules above

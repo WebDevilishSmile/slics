@@ -19,6 +19,9 @@ Each item says where the code lives. Run `npm run build` (in a scratch copy, nev
   (staff-only). Left: an admin goes over each of the other 64 on its edit page with
   `ROUTE-REVIEW.md` open (saving makes it "Driver-approved"), and Read aloud and Step by
   step get tried on a real phone.
+- **Stage 2 is built (2026-11-12)** and checked on the dev copy: drivers suggest, the SLICs
+  area approves or declines on `/admin/routes`, and the sheet opens on a safety note.
+  Left: deploy and `npm run db:indexes`.
 
 ---
 
@@ -98,8 +101,8 @@ and a code must never be in route text.
 - [x] **`slic-routes`** (per hub), one doc per `(hubId, numSlic)`, unique in
       `lib/db/indexSpecs.mjs`:
       `{ hubId, numSlic, text, source: 'pdf-import' | 'admin' | 'suggestion', importedFrom,
-    approvedBy { id, name }, approvedAt, updated_at, previous: [{ text, approvedBy,
-    approvedAt }] }`. `text` is one step per line; `previous` keeps the last 20.
+approvedBy { id, name }, approvedAt, updated_at, previous: [{ text, approvedBy,
+approvedAt }] }`. `text` is one step per line; `previous` keeps the last 20.
   - **Sections** (from the review): a line ending in `:` ("Way 2 (easier):", "Way back:",
     "From Burtonsville, MD:") starts a section, and the sheet numbers each section's steps
     on their own. 24 of the 65 need it.
@@ -151,7 +154,6 @@ and a code must never be in route text.
     > for better readability? We want to be hands free and minimize driver distraction, so
     > readability and ease of access are key considerations. Maybe voice commands to
     > navigate through the steps could help. Is that possible on a web app like this?
-
     - **Steps and sections, not pages.** The scrolling comes from the paragraph, which
       the steps and sections above fix: a long route like FOSNY or 1110 becomes 10–15
       short numbered lines per section. Paging back and forth is more fiddly than a clean
@@ -218,38 +220,68 @@ and a code must never be in route text.
 
 ## Stage 2 — Drivers suggest, admins approve
 
-- [ ] **`route-suggestions`** (per hub): `{ hubId, numSlic, userId, text, note, status:
-    'open' | 'approved' | 'declined', decidedBy, decidedAt, answer, created_at }`,
+- [x] **`route-suggestions`** (per hub): `{ hubId, numSlic, userId, text, note, status:
+'open' | 'approved' | 'declined', decidedBy, decidedAt, answer, created_at }`,
       modeled on `slic-reports` (`lib/db/slicReports.js`).
-- [ ] **Filing:**
+- [x] **Filing:**
   - "Suggest a change" in the Directions sheet, or "Add directions" on a SLIC with none,
     opens a soft form prefilled with the current steps, plus a note ("why it's better or
     truck-safe").
   - `POST /api/route-suggestions` (`requireUser`), rate-limited per driver
     (`lib/rateLimit.js`), plain text with a length cap. One open suggestion per driver per
     SLIC.
-- [ ] **The queue,** `/admin/routes` (area `slics`; a `PAGE_TITLES` entry and a row on
+- [x] **The queue,** `/admin/routes` (area `slics`; a `PAGE_TITLES` entry and a row on
       `/admin`), shows the current route next to the suggestion.
   - **Approve** (after an optional edit) saves through `saveRoute` with
     `source: 'suggestion'`.
   - **Decline** takes an optional answer the driver sees.
   - **Delete** writes `admin_audit` first.
-- [ ] **Alerts:**
+- [x] **Alerts:**
   - a banner on `/admin` and the header-menu badge through `GET /api/admin-alerts`, like
     `slicReports/SlicReportsNotice.jsx` and `lib/slicReportsStore.js`;
   - an admin push kind, `routeSuggestions` (`PUSH_TYPES`, area `slics`, on by default like
     SLIC reports), lock-screen safe: "SLIC 1813: a route suggestion".
-- [ ] **Account deletion** unlinks a driver's suggestions (`userId` → null), like
+- [x] **Account deletion** unlinks a driver's suggestions (`userId` → null), like
       `unlinkUserSlicReports`.
+- [x] **Add Notifications** above the directions let's add a collapsible or closeable section
+      for an alert, showing that the step by step will keep the phone awake, and caution not to use
+      a device while driving!
+
+**Done 2026-11-12, with these differences from the plan:**
+
+- **Area `slics`**, not `reports`: approving edits a route. So dispatch (SLICs by default)
+  gets the queue, banner, badge and push too; `ALERT_AREAS` in `header/UserMenu.jsx` gained
+  `slics`. The tool link is a second link under SLICs in `STAFF_AREAS`.
+- **The push** says "Route suggestion for SLIC 1809" ("A driver suggested directions."),
+  the SLIC only. Sending again (it replaces the open one) sends nothing.
+- **The driver sees the outcome** in the same form: waiting, approved, or declined with the
+  admin's answer (`GET /api/route-suggestions?slic=`, their own only). No push to drivers.
+- **"Add directions"** is a quiet link under a card with no route and no arrival notes
+  (`home/AddDirections.jsx`); a SLIC with arrival notes only has it in the sheet.
+- **The safety note** (Tiago's item): the sheet opens on "Don't use your phone while
+  driving. Read the steps before you pull out, or while you're stopped. While the
+  directions are open, your screen stays on." Closing folds it to a "Driving safety"
+  button, remembered per device (`directions/DrivingNotice.jsx`); Step by step says
+  "Screen stays on · Don't use your phone while driving" under the step.
+- **The sheet pins** only Step by step, Read aloud and Print; Original PDF and Suggest a
+  change sit at the end of the content, so the steps keep most of the screen.
+- **Also:** the privacy policy (effective November 12, 2026) says what's kept and that an
+  approved route never names its driver; /help's directions guide mentions suggesting.
+- **Checked on the dev copy:** as the `+driver` account, filing one (200), sending again
+  (`updated: true`), an empty one (400), an admin action (403); as the admin, the banner
+  (2), the queue beside the current route, Approve and publish (the route became the
+  suggestion with `source: 'suggestion'`, "Driver-approved"), Decline with an answer (the
+  driver sees it), Delete (`routeSuggestion.deleted` in `admin_audit` with SLIC, status and
+  date only), and the count back to 0.
 
 ## Stage 3 — Extra documents (railyard maps and more)
 
 - [ ] **`slic-documents`** (shared): `{ numSlic, title, kind: 'image' | 'pdf', url, width,
-    height, bytes, sortOrder, uploadedBy, created_at }`.
+height, bytes, sortOrder, uploadedBy, created_at }`.
 - [ ] **Storage:** `lib/blob.js` gains `putSlicDocument` / `deleteSlicDocument`
       (`slic-docs/<alpha>-…`, a random suffix, the old blob deleted after the save).
 - [ ] **Routes:** `POST /api/slics/[id]/documents` and `PATCH`/`DELETE
-    …/documents/[docId]` (area `slics`).
+…/documents/[docId]` (area `slics`).
   - The server checks the content (`%PDF-`, JPEG/PNG/WebP signatures), not only the name.
   - A phone photo is resized in the browser (canvas, longest side 2400 px, JPEG) to stay
     under the 4 MB request limit.

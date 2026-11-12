@@ -42,6 +42,7 @@ import RouteSteps from './RouteSteps';
 import StepByStep from './StepByStep';
 import SuggestRouteDialog from './SuggestRouteDialog';
 import DrivingNotice from './DrivingNotice';
+import SlicDocumentsList from './SlicDocumentsList';
 
 // The way a driver last chose for a SLIC ("Way 2", "Way back"), per device:
 // a convenience in localStorage, by the section's label so an edited route
@@ -62,18 +63,20 @@ function saveWay(numSlic, label) {
   }
 }
 
-// The SLIC's directions (docs/SLIC-DIRECTIONS.md, stage 1): its route as
-// numbered steps, one way at a time when it has several, then "Getting in"
-// (the SLIC's arrival notes, the same from any hub). Step by step shows one
-// step per screen, Read aloud speaks them, and the screen stays on while it's
-// open. Mounted only while open, so each opening loads the latest route.
 // The secondary actions keep their labels on one line and wrap as whole
 // buttons on a narrow phone.
 const SECONDARY = { flex: '1 1 auto', minHeight: '3rem', px: 2, whiteSpace: 'nowrap' };
 
+// The SLIC's directions (docs/SLIC-DIRECTIONS.md, stages 1–3): its route as
+// numbered steps, one way at a time when it has several, then "Getting in"
+// (the SLIC's arrival notes, the same from any hub), then its photos and
+// PDFs. Step by step shows one step per screen, Read aloud speaks them, and
+// the screen stays on while it's open. Mounted only while open, so each
+// opening loads the latest.
 export default function DirectionsSheet({ slic, onClose }) {
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [route, setRoute] = useState(slic.hasRoute ? undefined : null);
+  const [documents, setDocuments] = useState(slic.hasDocuments ? undefined : []);
   const [error, setError] = useState('');
   const [sectionIndex, setSectionIndex] = useState(0);
   const [step, setStep] = useState(null); // null: all steps; a number: step by step
@@ -101,6 +104,19 @@ export default function DirectionsSheet({ slic, onClose }) {
       current = false;
     };
   }, [slic.hasRoute, slic.numSlic]);
+
+  useEffect(() => {
+    if (!slic.hasDocuments) return;
+    let current = true;
+    apiRequest(`/api/slics/${slic._id}/documents`, { method: 'GET' }).then(({ data, error }) => {
+      if (!current) return;
+      if (error) setError(error);
+      setDocuments(data?.documents ?? []);
+    });
+    return () => {
+      current = false;
+    };
+  }, [slic.hasDocuments, slic._id]);
 
   const sections = useMemo(() => (route ? parseRoute(route.text) : []), [route]);
 
@@ -132,13 +148,13 @@ export default function DirectionsSheet({ slic, onClose }) {
   };
 
   const pdfHref = slicPdfHref(slic);
-  const loading = route === undefined;
+  const loading = route === undefined || documents === undefined;
   const place = [slic.alphaSlic, slic.name].filter(Boolean).join(' · ') || slic.numSlic;
 
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth='sm' fullScreen={fullScreen}>
       <DialogTitle sx={{ pr: 7 }}>
-        Directions
+        {slic.hasRoute || slic.arrival ? 'Directions' : 'Maps & docs'}
         <Typography variant='body2' color='text.secondary' component='span' sx={{ display: 'block' }}>
           {place}
         </Typography>
@@ -214,7 +230,9 @@ export default function DirectionsSheet({ slic, onClose }) {
               </Box>
             )}
 
-            {!loading && !route && !slic.arrival && !error && (
+            {documents?.length > 0 && <SlicDocumentsList documents={documents} />}
+
+            {!loading && !route && !slic.arrival && !documents?.length && !error && (
               <Typography color='text.secondary'>No directions for this SLIC yet.</Typography>
             )}
 
@@ -268,7 +286,7 @@ export default function DirectionsSheet({ slic, onClose }) {
                 Read aloud
               </Button>
             )}
-            {route && (
+            {(route || documents?.length > 0) && (
               <Button
                 href={`/directions/${encodeURIComponent(slic.numSlic)}`}
                 startIcon={<PrintOutlined />}

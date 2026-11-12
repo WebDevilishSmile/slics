@@ -12,6 +12,7 @@ import TypeRadio from './TypeRadio';
 import PdfUpload from './PdfUpload';
 import ArrivalField from './ArrivalField';
 import RouteEditor from './RouteEditor';
+import SlicDocuments from './SlicDocuments';
 import { slicPdfHref } from '@/constants';
 import { softInputSx } from '@/components/utility/soft';
 
@@ -21,6 +22,7 @@ export default function SlicForm({
   onSubmit,
   reportId, // a driver report this edit fixes (app/admin/edit/[slic]/page.jsx)
   route = null, // the SLIC's route, edit mode only (lib/serializers.js toAdminRoute)
+  documents = [], // its photos and PDFs, edit mode only (toAdminDocument)
 }) {
   const [type, setType] = useState(initialData?.type || 'center');
   const [numSlic, setNumSlic] = useState(initialData?.numSlic || '');
@@ -88,6 +90,7 @@ export default function SlicForm({
             route={route}
             pdfHref={initialData ? slicPdfHref(initialData) : null}
           />
+          <SlicDocuments slicId={initialData?._id} documents={documents} />
           <PdfUpload slicId={initialData?._id} pdfUrl={initialData?.pdfUrl} />
         </>
       )}

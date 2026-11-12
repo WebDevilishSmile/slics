@@ -22,7 +22,7 @@ function SlicDisplay({ commentsCount, loading, expectsSlic, slic, user }) {
     <SlicDetailsContainer>
       <TitleAddress slic={slic} />
       <SlicActions slic={slic} commentsCount={commentsCount} showTips />
-      {!slic.hasRoute && !slic.arrival && <AddDirections key={`add-${slic.numSlic}`} slic={slic} />}
+      {!slic.hasRoute && !slic.arrival && !slic.hasDocuments && <AddDirections key={`add-${slic.numSlic}`} slic={slic} />}
       <ReportSlic key={slic.numSlic} slic={slic} />
     </SlicDetailsContainer>
   );

@@ -19,6 +19,12 @@ function formatFieldValue(value) {
 // A route's text is long, and its earlier versions are in the Route section
 // above (slicForm/RouteEditor.jsx), so a route change reads as one line.
 function describeChange(change) {
+  // A photo or PDF (docs/SLIC-DIRECTIONS.md, stage 3): its title.
+  if (change.field === 'document') {
+    if (!change.from) return `Document added: ${change.to}`;
+    if (!change.to) return `Document removed: ${change.from}`;
+    return `Document renamed: ${change.from} → ${change.to}`;
+  }
   if (change.field === 'route') {
     if (!change.to) return 'Route removed';
     return change.from ? 'Route changed' : 'Route added';

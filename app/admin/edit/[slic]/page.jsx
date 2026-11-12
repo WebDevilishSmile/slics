@@ -1,6 +1,7 @@
 import {
   serializeSlic,
   serializeSlicHistory,
+  toAdminDocument,
   toAdminRoute,
   withNamedStamps,
   withNamedUser,
@@ -8,6 +9,7 @@ import {
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getSlicHistory } from '@/lib/db/slicHistory';
 import { getRoute } from '@/lib/db/slicRoutes';
+import { getSlicDocuments } from '@/lib/db/slicDocuments';
 import { getOpenSlicReport } from '@/lib/db/slicReports';
 import NoAccess from '@/components/admin/NoAccess';
 import { getAreaSession, hasArea } from '@/lib/authz';
@@ -27,10 +29,11 @@ async function EditPage({ params, searchParams }) {
 
   const { slic } = await params;
   const { report: reportId } = await searchParams;
-  const [slicData, history, route, report] = await Promise.all([
+  const [slicData, history, route, documents, report] = await Promise.all([
     getSlicByNumSlic(slic),
     getSlicHistory(slic),
     getRoute(slic),
+    getSlicDocuments(slic),
     reportId && hasArea(session, 'reports') ? getOpenSlicReport(reportId, slic) : null,
   ]);
 
@@ -49,7 +52,7 @@ async function EditPage({ params, searchParams }) {
 
       {report && <ReportBeingFixed report={report} />}
       <SlicAuditInfo slic={slicProps} />
-      <SlicForm initialData={slicProps} mode='edit' reportId={report?._id} route={toAdminRoute(route)} />
+      <SlicForm initialData={slicProps} mode='edit' reportId={report?._id} route={toAdminRoute(route)} documents={documents.map(toAdminDocument)} />
       <SlicHistoryList history={historyProps} />
     </>
   );

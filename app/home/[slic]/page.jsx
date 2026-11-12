@@ -6,6 +6,7 @@ import Title from '@/components/slic/Title';
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getCommentsBySlic } from '@/lib/db/comments';
 import { getRoute } from '@/lib/db/slicRoutes';
+import { getSlicDocuments } from '@/lib/db/slicDocuments';
 import { toDriverSlic } from '@/lib/serializers';
 
 export default async function SlicPage({ params }) {
@@ -21,9 +22,10 @@ export default async function SlicPage({ params }) {
     );
   }
   const user = session.user;
-  const [slicData, route] = await Promise.all([
+  const [slicData, route, documents] = await Promise.all([
     getSlicByNumSlic(slic),
     getRoute(slic).catch(() => null),
+    getSlicDocuments(slic).catch(() => []),
   ]);
 
   let comments = [];
@@ -36,7 +38,7 @@ export default async function SlicPage({ params }) {
 
   return (
     <PageContainer>
-      <Title slic={toDriverSlic(slicData, { hasRoute: Boolean(route) })} commentsCount={commentsCount} />
+      <Title slic={toDriverSlic(slicData, { hasRoute: Boolean(route), hasDocuments: documents.length > 0 })} commentsCount={commentsCount} />
     </PageContainer>
   );
 }

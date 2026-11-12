@@ -3,6 +3,7 @@ import { Box, Paper, Typography } from '@mui/material';
 import { getSession } from '@/lib/authz';
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getRoute } from '@/lib/db/slicRoutes';
+import { getSlicDocuments } from '@/lib/db/slicDocuments';
 import { parseRoute, routeSourceLine, sectionLabel } from '@/lib/routeText';
 import { formatPhoneNumber } from '@/lib/format';
 import { MAP_ROUTE_NOTE } from '@/constants';
@@ -26,9 +27,10 @@ export default async function DirectionsPage({ params }) {
   }
 
   const { slic: numSlic } = await params;
-  const [slic, route] = await Promise.all([
+  const [slic, route, documents] = await Promise.all([
     getSlicByNumSlic(numSlic).catch(() => null),
     getRoute(numSlic).catch(() => null),
+    getSlicDocuments(numSlic).catch(() => []),
   ]);
   if (!slic) {
     return <RedirectMessage heading="That SLIC doesn't exist." redirect='/home' />;
@@ -76,7 +78,33 @@ export default async function DirectionsPage({ params }) {
           </Box>
         )}
 
-        {!route && !slic.arrival && (
+        {documents.length > 0 && (
+          <Box component='section' sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Typography variant='h6' component='h2'>
+              Maps &amp; documents
+            </Typography>
+            {documents
+              .filter((doc) => doc.kind === 'image')
+              .map((doc) => (
+                <Box component='figure' key={String(doc._id)} sx={{ m: 0, breakInside: 'avoid' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={doc.url} alt={doc.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
+                  <Typography component='figcaption' variant='body2' sx={{ mt: 0.75 }}>
+                    {doc.title}
+                  </Typography>
+                </Box>
+              ))}
+            {documents
+              .filter((doc) => doc.kind === 'pdf')
+              .map((doc) => (
+                <Typography key={String(doc._id)} variant='body2'>
+                  PDF: <a href={doc.url}>{doc.title}</a>
+                </Typography>
+              ))}
+          </Box>
+        )}
+
+        {!route && !slic.arrival && !documents.length && (
           <Typography color='text.secondary'>No directions for this SLIC yet.</Typography>
         )}
 
@@ -91,7 +119,7 @@ export default async function DirectionsPage({ params }) {
           </Typography>
         </Box>
 
-        {(route || slic.arrival) && (
+        {(route || slic.arrival || documents.length > 0) && (
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <PrintButton />
           </Box>

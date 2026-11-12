@@ -321,6 +321,10 @@ export const HELP_SECTIONS = [
         notes: [
           <>Read the steps before you pull out, or while you&apos;re stopped.</>,
           <>
+            Some SLICs have photos or PDFs too, such as a railyard map, under
+            Maps &amp; documents. Tap a photo to see it full screen.
+          </>,
+          <>
             Know a better way? Tap <Tap>Suggest a change</Tap> in the
             directions, or <Tap>Add directions</Tap> under a SLIC that has none.
             An admin checks it before drivers see it.

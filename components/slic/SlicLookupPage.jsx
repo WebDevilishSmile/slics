@@ -1,6 +1,7 @@
 import { getCommentsBySlic } from '@/lib/db/comments';
 import { countSlicViews } from '@/lib/db/slicViews';
 import { getRouteNumSlics } from '@/lib/db/slicRoutes';
+import { getDocumentNumSlics } from '@/lib/db/slicDocuments';
 import { toDriverSlics } from '@/lib/serializers';
 
 import Comments from '@/components/comments/Comments';
@@ -26,6 +27,17 @@ async function routeNumSlics() {
   }
 }
 
+// Which SLICs have photos or PDFs (docs/SLIC-DIRECTIONS.md, stage 3). Same
+// rule: without them the card just doesn't offer them.
+async function documentNumSlics() {
+  try {
+    return await getDocumentNumSlics();
+  } catch (error) {
+    console.error('Error listing documents for the lookup page:', error);
+    return new Set();
+  }
+}
+
 // The driver's lifetime lookup count, read with the page instead of by a call
 // of its own. A counter is never worth failing the lookup screen over.
 async function lookupCount(userId) {
@@ -45,10 +57,11 @@ export default async function SlicLookupPage({
   children,
 }) {
   const { slic } = await searchParams;
-  const [commentsCount, viewCount, withRoutes] = await Promise.all([
+  const [commentsCount, viewCount, withRoutes, withDocuments] = await Promise.all([
     slic ? getCommentsBySlic(slic).then((comments) => comments.length) : 0,
     lookupCount(user.id),
     routeNumSlics(),
+    documentNumSlics(),
   ]);
 
   return (
@@ -58,7 +71,7 @@ export default async function SlicLookupPage({
 
       <HydrationGuard fallback={<LookupSkeleton hasSlic={Boolean(slic)} />}>
         <Main
-          slics={toDriverSlics(slics, withRoutes)}
+          slics={toDriverSlics(slics, withRoutes, withDocuments)}
           commentsCount={commentsCount}
           viewCount={viewCount}
           user={user}

@@ -74,7 +74,10 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
   const tipTotal = tips?.total ?? commentsCount;
   const newTips = tips?.newCount ?? 0;
 
-  const hasDirections = Boolean(slic.hasRoute || slic.arrival);
+  // The tile opens the sheet: the route and arrival notes ("Directions"), or
+  // only photos and PDFs ("Maps & docs").
+  const hasDirections = Boolean(slic.hasRoute || slic.arrival || slic.hasDocuments);
+  const directionsLabel = slic.hasRoute || slic.arrival ? 'Directions' : 'Maps & docs';
   const pdfHref = hasDirections ? null : slicPdfHref(slic);
   const canCall = slic.type === 'center' && slic.phone;
 
@@ -170,7 +173,7 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
           {hasDirections && (
             <ActionButton
               icon={<DirectionsOutlined />}
-              label='Directions'
+              label={directionsLabel}
               onClick={() => setDirectionsOpen(true)}
               aria-haspopup='dialog'
             />

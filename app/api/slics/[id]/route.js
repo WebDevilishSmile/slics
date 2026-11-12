@@ -4,6 +4,7 @@ import { after, NextResponse } from 'next/server';
 import { errorResponse } from '@/lib/httpError';
 import { deleteSlic, getSlicById, updateSlic } from '@/lib/db/slics';
 import { notifySlicEdit } from '@/lib/pushEvents';
+import { validateArrival } from '@/lib/routeText';
 
 // `[id]` is the slic's MongoDB _id for every method here and in ./pdf.
 
@@ -39,7 +40,9 @@ export async function GET(request, { params }) {
 // PATCH body is dropped: the PDF has its own route, and the created/updated
 // stamps are the server's. It matters since Dispatch edits SLICs too
 // (docs/STAFF-ROLES.md); updateSlic itself $sets whatever it's given.
-const EDITABLE_FIELDS = ['type', 'numSlic', 'alphaSlic', 'name', 'phone', 'address', 'directions'];
+// `arrival` is the SLIC's arrival notes (docs/SLIC-DIRECTIONS.md); its route
+// has its own API (/api/slic-routes).
+const EDITABLE_FIELDS = ['type', 'numSlic', 'alphaSlic', 'name', 'phone', 'address', 'directions', 'arrival'];
 
 // PATCH (update) a slic
 export async function PATCH(request, { params }) {
@@ -60,6 +63,11 @@ export async function PATCH(request, { params }) {
     const updates = Object.fromEntries(
       EDITABLE_FIELDS.filter((field) => field in body).map((field) => [field, body[field]]),
     );
+    if ('arrival' in updates) {
+      const { arrival, error } = validateArrival(updates.arrival);
+      if (error) return NextResponse.json({ error }, { status: 400 });
+      updates.arrival = arrival;
+    }
 
     const { numSlic, changed } = await updateSlic(id, updates, session.user);
     // A push to the other admins who chose SLIC edits, when anything changed.

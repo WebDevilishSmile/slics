@@ -37,6 +37,9 @@ export const PER_HUB_COLLECTIONS = [
   'sheet-jobs',
   'sheet-job-changes',
   'slic-reports',
+  // Always written with a hubId (lib/db/slicRoutes.js), listed so a run
+  // counts it like the rest (docs/SLIC-DIRECTIONS.md).
+  'slic-routes',
 ];
 
 const args = process.argv.slice(2);

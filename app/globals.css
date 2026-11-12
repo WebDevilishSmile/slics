@@ -334,4 +334,11 @@ a:active > .help-pin {
   .print-sheet * {
     color: #000 !important;
   }
+  /* A way's title stays with its first step, and a step isn't cut in two. */
+  .print-sheet h2 {
+    break-after: avoid;
+  }
+  .print-sheet li {
+    break-inside: avoid;
+  }
 }

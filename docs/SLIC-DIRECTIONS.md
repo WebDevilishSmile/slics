@@ -13,10 +13,11 @@ Each item says where the code lives. Run `npm run build` (in a scratch copy, nev
 - **Stage 0 done 2026-11-12:** `ROUTE-REVIEW.md`. Its "Do first" list (a gate code in a
   public PDF, low clearances, a parkway, Manhattan streets) and its 28 app-vs-PDF
   mismatches are Tiago's to confirm with drivers.
-- **Stage 1 is next;** no code is written yet. The review changed it: sections in a route,
-  arrival notes kept apart, no codes in route text. Tiago's question on long routes and
-  hands-free use added a step-by-step view and Read aloud to it, and stage 4 (the route
-  as waypoints in the maps app).
+- **Stage 1 is built (2026-11-12)** and checked on the dev copy, where all 65 routes are
+  imported. Left: deploy, `npm run db:indexes`, then `npm run routes:import` on
+  production (dry run first). Until the import, drivers see the PDF tiles as before.
+  After it, an admin goes over each route on its edit page with `ROUTE-REVIEW.md` open;
+  saving one makes it "Driver-approved".
 
 ---
 
@@ -93,7 +94,7 @@ and a code must never be in route text.
 
 ## Stage 1 — Routes as text on the card
 
-- [ ] **`slic-routes`** (per hub), one doc per `(hubId, numSlic)`, unique in
+- [x] **`slic-routes`** (per hub), one doc per `(hubId, numSlic)`, unique in
       `lib/db/indexSpecs.mjs`:
       `{ hubId, numSlic, text, source: 'pdf-import' | 'admin' | 'suggestion', importedFrom,
     approvedBy { id, name }, approvedAt, updated_at, previous: [{ text, approvedBy,
@@ -101,7 +102,7 @@ and a code must never be in route text.
   - **Sections** (from the review): a line ending in `:` ("Way 2 (easier):", "Way back:",
     "From Burtonsville, MD:") starts a section, and the sheet numbers each section's steps
     on their own. 24 of the 65 need it.
-- [ ] **Arrival notes** (from the review): gates, doors, check-in, weekend rules and
+- [x] **Arrival notes** (from the review): gates, doors, check-in, weekend rules and
       railyard steps are the destination's, the same from any hub, so they're a shared
       plain-text field on the SLIC, `slics.arrival`, edited on the edit page and shown in
       the sheet under "Getting in". Never a gate code: the editor warns on a run of digits
@@ -112,7 +113,7 @@ and a code must never be in route text.
     `scripts/backfillHubId.mjs`.
   - A save is in `slic_history` as `{ field: 'route', from, to }` (`addSlicHistoryEntry`),
     so the edit page's history shows it. Restore and delete go to `admin_audit` first.
-- [ ] **Import:** `scripts/importSlicRoutes.mjs` (`npm run routes:import`, `--dry-run`,
+- [x] **Import:** `scripts/importSlicRoutes.mjs` (`npm run routes:import`, `--dry-run`,
       `--dev`, `--undo`).
   - It downloads each `pdfUrl`, extracts its text (`unpdf`, a dev dependency used only by
     the script), and drops the header lines that match the SLIC's own record.
@@ -123,7 +124,7 @@ and a code must never be in route text.
     text layer (a scan, to type by hand).
   - `--undo` deletes only imported routes nobody has edited since. `pdfUrl` and the PDFs
     are untouched.
-- [ ] **Driver view:**
+- [x] **Driver view:**
   - The route comes from `GET /api/slics/[numSlic]/route` (`requireUser`), since a lookup
     on `/home` doesn't go back to the server (`lib/lookupUrl.js`). `toDriverSlic` is
     unchanged.
@@ -176,20 +177,43 @@ and a code must never be in route text.
       and the maps app does the talking on the road. Check UPS's rules on phone use in the
       cab before any in-cab feature is promoted to drivers.
 
-- [ ] **Admin:** a Route section on `/admin/edit/<slic>` beside `PdfUpload`
+- [x] **Admin:** a Route section on `/admin/edit/<slic>` beside `PdfUpload`
       (`slicForm/RouteEditor.jsx`).
   - It has a soft multiline field (one step per line), Save, Original PDF to compare
     against, and earlier versions with Restore.
   - Saving sets `approvedBy` / `approvedAt` and sends `notifySlicEdit` with a new
     `SLIC_ACTIONS.route` ("Route updated").
   - Area `slics`.
-- [ ] **Copy, changed together:**
+- [x] **Copy, changed together:**
   - `/help`: "Open the directions PDF" becomes "Read the directions" (`help/guides.jsx`,
     `ExampleSlicCard.jsx`, `HelpScreens.jsx`);
   - the landing page (`landing/ProductPreview.jsx`, `Features.jsx`);
   - `PRODUCT.md`, `DATA-MODEL.md`, `OPERATIONS.md`, `CLAUDE.md`.
 - **Rollback:** `npm run routes:import -- --undo` (or deleting a route) brings the PDF tile
   back for that SLIC.
+
+**Done 2026-11-12, with these differences from the plan:**
+
+- **Paths:** the API is `/api/slic-routes?slic=<numSlic>` (`/api/slics/[id]` means the
+  `_id`), and the print page is `/directions/<numSlic>`.
+- **No restore action:** an earlier version goes back into the box ("Put in the box") and
+  is saved like any edit, so `slic_history` is the record; no `admin_audit` rows for routes
+  except the import's counts (`routes.imported` / `.importUndone`). `getRouteNumSlics`,
+  `saveRoute` and `deleteRoute` are the data layer; there's no `restoreRoute`.
+- **The import puts one sentence per step** (the words unchanged), instead of leaving the
+  paragraph for an admin to split: a paragraph as one step made Step by step useless. It
+  keeps `...` inside brackets in one step, splits after a road abbreviation only before a
+  usual step opener, and turns way titles without a colon ("George Washington Bridge
+  Way") into sections. Arrival notes stay in the route text until an admin moves them.
+- **Where the card learns about a route:** the lookup page reads every routed numSlic once
+  (`getRouteNumSlics`) into `toDriverSlic`'s `hasRoute`; `slics.arrival` rides on the SLIC.
+- **History** shows "Route added / changed / removed", not the text, which is long.
+- **Checked on the dev copy:** dry run on production (all 65, every header dropped); import,
+  undo and import again; phone screenshots, light and dark, of the card, the sheet with
+  four ways, Step by step, Getting in, the editor and its earlier version; Chrome's
+  printout (white, no shadows, a heading kept with its step); an admin save (200), an empty
+  one (400), long arrival notes (400), a driver's save (403); the driver's route has no
+  `approvedBy`. Read aloud and the wake lock need a real phone (Verifying).
 
 ## Stage 2 — Drivers suggest, admins approve
 

@@ -12,7 +12,6 @@ import {
   NotificationsActiveOutlined,
   OutlinedFlag,
   PhoneOutlined,
-  PictureAsPdfOutlined,
   PlaylistAdd,
   RateReviewOutlined,
   SearchOutlined,
@@ -297,19 +296,36 @@ export const HELP_SECTIONS = [
         ],
       },
       {
+        // The id stays 'pdf' (it was the PDF guide until 2026-11-12), so
+        // links to /help#pdf still land here.
         id: 'pdf',
         screen: 'pdf',
-        title: 'Open the directions PDF',
-        icon: PictureAsPdfOutlined,
+        title: 'Read the directions',
+        icon: DirectionsOutlined,
         steps: [
           <>Look up the SLIC.</>,
           <>
-            If you see a <Tap>PDF</Tap> button, tap it. The directions sheet
-            opens.
+            Tap <Tap>Directions</Tap>. The route opens as numbered steps, with
+            how to get in at the end.
           </>,
-          <>Pinch with two fingers to zoom in. Use your phone&apos;s back button to return.</>,
+          <>
+            If there&apos;s more than one way, tap the one you take at the
+            top. The app remembers it.
+          </>,
+          <>
+            Tap <Tap>Step by step</Tap> for one big step at a time, or{' '}
+            <Tap>Read aloud</Tap> to hear them. <Tap>Print</Tap> prints the
+            directions or saves them as a PDF.
+          </>,
         ],
-        notes: [<>Not every SLIC has a PDF. No button means there isn&apos;t one yet.</>],
+        notes: [
+          <>Read the steps before you pull out, or while you&apos;re stopped.</>,
+          <>
+            Some SLICs still show a <Tap>PDF</Tap> button instead, which opens
+            the old directions sheet. No button means there are no directions
+            yet.
+          </>,
+        ],
       },
     ],
   },

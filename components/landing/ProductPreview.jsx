@@ -1,9 +1,9 @@
 import theme from '@/theme';
 import {
   ChatBubbleOutline,
+  DirectionsOutlined,
   MapOutlined,
   PhoneOutlined,
-  PictureAsPdfOutlined,
   PlaceOutlined,
 } from '@mui/icons-material';
 import { Avatar, Box, Typography } from '@mui/material';
@@ -16,7 +16,7 @@ import { MAP_ROUTE_NOTE } from '@/constants';
 // what it is. It copies the look of home/TitleAddress.jsx, home/SlicActions.jsx
 // and a tip from comments/Comment.jsx; keep it in step when those change.
 
-// One of the Call/PDF/Tips tiles under Navigate.
+// One of the Call/Directions/Tips tiles under Open map.
 function Tile({ icon: Icon, label }) {
   return (
     <Box
@@ -152,7 +152,7 @@ export default function ProductPreview({ signedIn }) {
 
         <Box sx={{ display: 'flex', gap: 1.5, mt: 2.5 }}>
           <Tile icon={PhoneOutlined} label='Call' />
-          <Tile icon={PictureAsPdfOutlined} label='PDF' />
+          <Tile icon={DirectionsOutlined} label='Directions' />
           <Tile icon={ChatBubbleOutline} label='Tips' />
         </Box>
 

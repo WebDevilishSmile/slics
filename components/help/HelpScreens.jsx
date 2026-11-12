@@ -6,7 +6,7 @@ import {
   MenuOutlined,
   PersonOutline,
   PhoneOutlined,
-  PictureAsPdfOutlined,
+  DirectionsOutlined,
   PinDropOutlined,
   SearchOutlined,
   SignpostOutlined,
@@ -114,7 +114,7 @@ function ReportScreen() {
       <Box sx={{ display: 'flex', gap: 1.5, opacity: DIM }}>
         {[
           [PhoneOutlined, 'Call'],
-          [PictureAsPdfOutlined, 'PDF'],
+          [DirectionsOutlined, 'Directions'],
           [ChatBubbleOutline, 'Tips'],
         ].map(([Icon, label]) => (
           <Box

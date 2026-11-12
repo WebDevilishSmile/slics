@@ -34,6 +34,10 @@ Use absolute dates.
 
 ## Now
 
+- [ ] **SLIC directions, stage 1** (built 2026-11-12): deploy, `npm run db:indexes`, then
+      `npm run routes:import -- --dry-run` and `npm run routes:import` on production. Then
+      go over each route on its edit page (`ROUTE-REVIEW.md` open; move arrival notes out),
+      and try Read aloud and Step by step on a phone (`SLIC-DIRECTIONS.md` → Stage 1)
 - [ ] **Sheet digests and the sheet conventions** (built 2026-11-11): deploy, check the
       cron's first run says `baseline` for the three sheet kinds, then watch dispatch's
       next edits arrive as one push about 15 minutes after they stop
@@ -151,10 +155,10 @@ The system health page counts the two collections (`lib/systemHealth.js`).
 
 ## Next
 
-- [ ] **SLIC directions:** routes as text on the card with print / save as PDF, drivers
-      suggest and admins approve, extra documents like a railyard map (`SLIC-DIRECTIONS.md`).
-      Stage 0 done 2026-11-12: confirm `ROUTE-REVIEW.md` → Do first with drivers (a gate
-      code in a public PDF, low clearances) and settle its 28 app-vs-PDF mismatches
+- [ ] **SLIC directions, stages 2–4:** drivers suggest and admins approve, extra documents
+      like a railyard map, the route as waypoints in Google Maps (`SLIC-DIRECTIONS.md`).
+      Before then: confirm `ROUTE-REVIEW.md` → Do first with drivers (a gate code in a
+      public PDF, low clearances) and settle its 28 app-vs-PDF mismatches
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open
       questions first, starting with what the source of truth is once the app can't write
       the sheet (`COVER-BIDDING.md` → "Stage 3")

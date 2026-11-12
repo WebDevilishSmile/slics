@@ -3,7 +3,7 @@ import {
   MapOutlined,
   FlagOutlined,
   ForumOutlined,
-  PictureAsPdfOutlined,
+  DirectionsOutlined,
   SignpostOutlined,
 } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
@@ -31,9 +31,9 @@ const FEATURES = [
     text: 'Open map sends the address to Google Maps, or Apple Maps on an iPhone. No typing it in. Not sure the route fits a truck? Ask dispatch.',
   },
   {
-    icon: PictureAsPdfOutlined,
-    title: 'Directions PDFs',
-    text: 'Open the printed directions for the SLICs that have them.',
+    icon: DirectionsOutlined,
+    title: 'Step-by-step directions',
+    text: 'The way there from your building, one step at a time, read aloud or printed, for the SLICs that have it.',
   },
   {
     icon: FlagOutlined,

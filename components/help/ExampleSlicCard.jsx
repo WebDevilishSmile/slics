@@ -2,9 +2,9 @@ import theme from '@/theme';
 import {
   ChatBubbleOutline,
   ContentCopy,
+  DirectionsOutlined,
   MapOutlined,
   PhoneOutlined,
-  PictureAsPdfOutlined,
   PlaceOutlined,
 } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
@@ -25,7 +25,7 @@ export const CARD_CONTROLS = [
   { key: 'navigate', label: 'Open map', guide: 'navigate' },
   { key: 'call', label: 'Call', guide: 'call' },
   { key: 'copy', label: 'Copy', guide: 'copy' },
-  { key: 'pdf', label: 'PDF', guide: 'pdf' },
+  { key: 'pdf', label: 'Directions', guide: 'pdf' },
   { key: 'tips', label: 'Tips', guide: 'read-tips' },
 ];
 
@@ -243,7 +243,7 @@ export default function ExampleSlicCard({ pins = false, focus = null }) {
 
       <Box sx={{ display: 'flex', gap: 1.5, mt: pins ? 2.25 : 1.5 }}>
         {tile('call', PhoneOutlined, 'Call')}
-        {tile('pdf', PictureAsPdfOutlined, 'PDF')}
+        {tile('pdf', DirectionsOutlined, 'Directions')}
         {tile('tips', ChatBubbleOutline, 'Tips')}
       </Box>
     </Box>

@@ -12,7 +12,7 @@ UPS Feeder drivers at the BETPA hub, a building of about 270 drivers. Dispatch g
 
 ## Product Purpose
 
-SLICs replaces the paper binder of destination addresses. A driver types a SLIC and gets the address, a tap-to-open maps link, a tap-to-call phone number, a directions PDF where one exists, and tips other drivers left about that location (real entrances, low bridges, who to call). Success is a driver getting from code to directions in seconds, every shift, without asking dispatch.
+SLICs replaces the paper binder of destination addresses. A driver types a SLIC and gets the address, a tap-to-open maps link, a tap-to-call phone number, step-by-step directions where they exist (read aloud, printable), and tips other drivers left about that location (real entrances, low bridges, who to call). Success is a driver getting from code to directions in seconds, every shift, without asking dispatch.
 
 ## Positioning
 

@@ -8,16 +8,17 @@ SLIC directory and its Driver tips. It's built in stages. Check items off as the
 The app is used daily in production by BETPA's drivers, and none of this may change what
 they see until a stage is finished, verified and deliberately merged.
 
-## Status (2026-11-11)
+## Status (2026-11-12)
 
 - **Stage 0 is merged into `main` and deployed** (2026-11-11): the hub settings
   (`hub-configs`, `lib/hubScope.js`, `lib/db/hubConfigs.js`), the seed script, and BETPA's
   values behind optional arguments. Nothing a driver sees changed, and no `hub-configs`
   doc exists in production yet (`npm run hub:seed` has only been dry-run).
-- **Stage 1 is built and checked on the dev copy** (2026-11-12), on the `multi-hub` branch
-  in its own worktree (`../slics-multi-hub`), which isn't pushed; not merged. Its backfill
-  has run on the dev copy only, not on production. `main` gets a stage's code only when
-  it's merged.
+- **Stage 1 is merged into `main` and deployed, and its backfill has run on production**
+  (2026-11-12): every per-hub doc carries `hubId: 'betpa'` and every SLIC `hubs: ['betpa']`.
+  Nothing reads either field yet, so drivers see nothing different.
+- **Stage 2 is next**, on the `multi-hub` branch in its own worktree (`../slics-multi-hub`),
+  which isn't pushed. `main` gets a stage's code only when it's merged.
 
 ---
 
@@ -213,7 +214,8 @@ Built 2026-11-11 on `multi-hub`, merged into `main` and deployed the same day.
 
 ## Stage 1: tag the data (additive)
 
-Code built 2026-11-11 on `multi-hub`; not merged. The backfill hasn't run anywhere.
+Built 2026-11-11 on `multi-hub`, checked on the dev copy, merged into `main` and deployed
+2026-11-12, and backfilled on production the same day.
 
 - [x] Writers stamp `hubId: DEFAULT_HUB_ID` on every doc they create in a per-hub
       collection: an `insertOne`/`insertMany` field, or `$setOnInsert` on an upsert, so an
@@ -261,8 +263,9 @@ Code built 2026-11-11 on `multi-hub`; not merged. The backfill hasn't run anywhe
     one. Every doc written has `hubId: 'betpa'`, the existing ones keep their backfill
     tag, and the change rows a refresh hands its pushes carry no `hubId`. The test rows
     were deleted after.
-- **Left:** merge and deploy, then `npm run hub:backfill -- --dry-run` and
-  `npm run hub:backfill` on production.
+- **Production (2026-11-12),** after the deploy: `npm run hub:backfill -- --dry-run` counted
+  the same 7,575 docs and 361 SLICs as the day before, and `npm run hub:backfill` tagged
+  them all, 0 left untagged. `npm run hub:backfill -- --undo` takes back only those.
 
 ## Stage 2: scope everything by hub (the big refactor)
 

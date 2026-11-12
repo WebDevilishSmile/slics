@@ -22,6 +22,9 @@ Each item says where the code lives. Run `npm run build` (in a scratch copy, nev
 - **Stage 2 is live (2026-11-12):** drivers suggest, the SLICs area approves or declines on
   `/admin/routes`, and the sheet opens on a safety note. Deployed, `db:indexes` run. Left:
   one real suggestion filed and decided on the live site.
+- **Stage 3 is built (2026-11-12)** and checked on the dev copy: photos and PDFs such as a
+  railyard map on the edit page, in the directions sheet and on the print page. Left:
+  deploy, `npm run db:indexes`, and the first real railyard map.
 
 ---
 
@@ -276,20 +279,20 @@ approvedAt }] }`. `text` is one step per line; `previous` keeps the last 20.
 
 ## Stage 3 — Extra documents (railyard maps and more)
 
-- [ ] **`slic-documents`** (shared): `{ numSlic, title, kind: 'image' | 'pdf', url, width,
+- [x] **`slic-documents`** (shared): `{ numSlic, title, kind: 'image' | 'pdf', url, width,
 height, bytes, sortOrder, uploadedBy, created_at }`.
-- [ ] **Storage:** `lib/blob.js` gains `putSlicDocument` / `deleteSlicDocument`
+- [x] **Storage:** `lib/blob.js` gains `putSlicDocument` / `deleteSlicDocument`
       (`slic-docs/<alpha>-…`, a random suffix, the old blob deleted after the save).
-- [ ] **Routes:** `POST /api/slics/[id]/documents` and `PATCH`/`DELETE
+- [x] **Routes:** `POST /api/slics/[id]/documents` and `PATCH`/`DELETE
 …/documents/[docId]` (area `slics`).
   - The server checks the content (`%PDF-`, JPEG/PNG/WebP signatures), not only the name.
   - A phone photo is resized in the browser (canvas, longest side 2400 px, JPEG) to stay
     under the 4 MB request limit.
   - Each change is in `slic_history` (`{ field: 'document', … }`) and sends
     `notifySlicEdit`.
-- [ ] **Admin:** a Documents section on the edit page (`slicForm/SlicDocuments.jsx`): add
+- [x] **Admin:** a Documents section on the edit page (`slicForm/SlicDocuments.jsx`): add
       with a title, rename, reorder, remove.
-- [ ] **Driver:**
+- [x] **Driver:**
   - documents are listed in the Directions sheet, or behind a "Maps & docs" tile when
     there's no route;
   - images show inline (`img-src` already allows the Blob host) and open full screen to
@@ -297,6 +300,26 @@ height, bytes, sortOrder, uploadedBy, created_at }`.
   - PDFs open in a new tab.
 - **Privacy:** like today's PDFs, the files are public URLs. `SECURITY.md` #13's fix (a
   signed-in route that streams them) covers both.
+
+**Done 2026-11-12, with these differences from the plan:**
+
+- **Limits:** 12 documents per SLIC, 4 MB per upload, titles up to 60 characters. A photo
+  that already fits (2400 px, 4 MB, JPEG/PNG/WebP) goes up as it is, so a crisp PNG
+  screenshot of a map stays crisp; anything bigger is redrawn as a JPEG. A photo the
+  browser can't read (HEIC on a desktop) is refused before upload.
+- **Driver reads** go through `GET /api/slics/[id]/documents` (`requireUser`), loaded with
+  the route when the sheet opens; `hasDocuments` comes from one `getDocumentNumSlics()` per
+  lookup page. A SLIC with only documents gets a "Maps & docs" tile; "Add directions" under
+  the card hides for it (the sheet has it).
+- **The print page** prints the photos full width and lists the PDFs.
+- **A failed save takes the file back down** (the blob is deleted if the row can't be
+  written).
+- **Checked on the dev copy** (the uploads went to the real Blob store and were deleted
+  through the app; both URLs answer 404): a 1600×1000 PNG and a PDF uploaded with titles;
+  a text file named `.png` refused in the browser and by the server (400, "That isn't a
+  photo… or a PDF"), an empty title refused; the sheet's Maps & documents, the full-screen
+  photo, the printout; rename, move up, remove; history lines "Document added / renamed /
+  removed".
 
 ## Stage 4 — The approved route in the maps app
 

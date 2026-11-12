@@ -925,6 +925,11 @@ and both stores serve them to anyone with the URL:
    switch to it so even a leaked URL fails.
 3. Validate uploads by content, not just extension: check the first bytes are `%PDF-`.
 
+**Since 2026-11-12, a SLIC's photos and PDFs** (`slic-documents`, `SLIC-DIRECTIONS.md`
+stage 3) are public random-suffix Blob URLs the same way (`slic-docs/`), so step 2 should
+cover them too. Their upload route already does step 3: the type comes from the first bytes
+(`detectDocumentType`, `lib/slicDocumentFile.js`), never the name.
+
 ---
 
 ### [ ] 14. Buy Me a Coffee webhook: timing-unsafe compare, no replay protection, email-keyed

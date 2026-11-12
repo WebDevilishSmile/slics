@@ -39,6 +39,9 @@ Use absolute dates.
       and try Read aloud and Step by step on a phone (`SLIC-DIRECTIONS.md` → Stage 1)
 - [ ] **SLIC directions, stage 2** (live 2026-11-12): file one suggestion on the live site
       and decide it on `/admin/routes`
+- [ ] **SLIC directions, stage 3** (built 2026-11-12): deploy, `npm run db:indexes`; then
+      add the first real railyard map on its SLIC's edit page and look at it on a phone
+      (`SLIC-DIRECTIONS.md` → Stage 3)
       (`SLIC-DIRECTIONS.md` → Stage 2)
 - [ ] **Sheet digests and the sheet conventions** (built 2026-11-11): deploy, check the
       cron's first run says `baseline` for the three sheet kinds, then watch dispatch's
@@ -157,8 +160,8 @@ The system health page counts the two collections (`lib/systemHealth.js`).
 
 ## Next
 
-- [ ] **SLIC directions, stages 3–4:** extra documents like a railyard map, the route as
-      waypoints in Google Maps (`SLIC-DIRECTIONS.md`).
+- [ ] **SLIC directions, stage 4:** the route as waypoints in Google Maps
+      (`SLIC-DIRECTIONS.md`).
       Before then: confirm `ROUTE-REVIEW.md` → Do first with drivers (a gate code in a
       public PDF, low clearances) and settle its 28 app-vs-PDF mismatches
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open

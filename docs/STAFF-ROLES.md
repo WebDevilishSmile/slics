@@ -82,7 +82,7 @@ Decided:
 
 | Key | Label | Pages | Also |
 |---|---|---|---|
-| `slics` | SLICs | `/admin/slics`, `/admin/new`, `/admin/edit/[slic]`, `/admin/routes` (drivers' route suggestions, since 2026-11-12) | `/api/slics` POST, `[id]` PATCH/DELETE, `[id]/pdf`; `/api/slic-routes` PUT/DELETE; `/api/route-suggestions/[id]`; the SLIC edits and route suggestions pushes, the route suggestions banner and badge count (`SLIC-DIRECTIONS.md`) |
+| `slics` | SLICs | `/admin/slics`, `/admin/new`, `/admin/edit/[slic]`, `/admin/routes` (drivers' route suggestions, since 2026-11-12) | `/api/slics` POST, `[id]` PATCH/DELETE, `[id]/pdf`; `/api/slic-routes` PUT/DELETE; `/api/slics/[id]/documents` POST, `[docId]` PATCH/DELETE; `/api/route-suggestions/[id]`; the SLIC edits and route suggestions pushes, the route suggestions banner and badge count (`SLIC-DIRECTIONS.md`) |
 | `reports` | SLIC reports | `/admin/reports` | `/api/slic-reports` GET, `[id]`; `?report=` on the edit page; the banner and badge count; the reports push |
 | `driverClaims` | Driver claims | `/admin/driver-claims` | `/api/driver-claims` GET, `[id]`; `/api/cover-disputes` GET, `[id]`; `/api/users/[id]/driver`; banner, badge, both pushes |
 | `comments` | Comments | `/admin/comments` | Edit or delete anyone's tip, place or place comment; see a tip's voters; the tips and places pushes |

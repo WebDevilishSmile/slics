@@ -22,9 +22,9 @@ Each item says where the code lives. Run `npm run build` (in a scratch copy, nev
 - **Stage 2 is live (2026-11-12):** drivers suggest, the SLICs area approves or declines on
   `/admin/routes`, and the sheet opens on a safety note. Deployed, `db:indexes` run. Left:
   one real suggestion filed and decided on the live site.
-- **Stage 3 is built (2026-11-12)** and checked on the dev copy: photos and PDFs such as a
-  railyard map on the edit page, in the directions sheet and on the print page. Left:
-  deploy, `npm run db:indexes`, and the first real railyard map.
+- **Stage 3 is live (2026-11-12):** photos and PDFs such as a railyard map on the edit page,
+  in the directions sheet and on the print page. Deployed, `db:indexes` run. Left: the
+  first real railyard map.
 
 ---
 

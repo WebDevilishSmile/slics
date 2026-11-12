@@ -39,8 +39,8 @@ Use absolute dates.
       and try Read aloud and Step by step on a phone (`SLIC-DIRECTIONS.md` → Stage 1)
 - [ ] **SLIC directions, stage 2** (live 2026-11-12): file one suggestion on the live site
       and decide it on `/admin/routes`
-- [ ] **SLIC directions, stage 3** (built 2026-11-12): deploy, `npm run db:indexes`; then
-      add the first real railyard map on its SLIC's edit page and look at it on a phone
+- [ ] **SLIC directions, stage 3** (live 2026-11-12): add the first real railyard map on
+      its SLIC's edit page and look at it on a phone
       (`SLIC-DIRECTIONS.md` → Stage 3)
       (`SLIC-DIRECTIONS.md` → Stage 2)
 - [ ] **Sheet digests and the sheet conventions** (built 2026-11-11): deploy, check the

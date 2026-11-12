@@ -152,8 +152,9 @@ The system health page counts the two collections (`lib/systemHealth.js`).
 ## Next
 
 - [ ] **SLIC directions:** routes as text on the card with print / save as PDF, drivers
-      suggest and admins approve, extra documents like a railyard map. Stage 0, Claude's
-      review of the 65 routes, first (`SLIC-DIRECTIONS.md`)
+      suggest and admins approve, extra documents like a railyard map (`SLIC-DIRECTIONS.md`).
+      Stage 0 done 2026-11-12: confirm `ROUTE-REVIEW.md` → Do first with drivers (a gate
+      code in a public PDF, low clearances) and settle its 28 app-vs-PDF mismatches
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open
       questions first, starting with what the source of truth is once the app can't write
       the sheet (`COVER-BIDDING.md` → "Stage 3")

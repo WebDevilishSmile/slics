@@ -10,8 +10,11 @@ Each item says where the code lives. Run `npm run build` (in a scratch copy, nev
 
 ## Status (2026-11-12)
 
-- **Planned 2026-11-12.** Stage 0 (Claude's review of the existing routes) is next; no code
-  is written yet.
+- **Stage 0 done 2026-11-12:** `ROUTE-REVIEW.md`. Its "Do first" list (a gate code in a
+  public PDF, low clearances, a parkway, Manhattan streets) and its 28 app-vs-PDF
+  mismatches are Tiago's to confirm with drivers.
+- **Stage 1 is next;** no code is written yet. The review changed it: sections in a route,
+  arrival notes kept apart, no codes in route text.
 
 ---
 
@@ -68,7 +71,7 @@ Decided 2026-11-12:
 
 ## Stage 0 — Claude's review of the 65 routes (no code)
 
-- [ ] Read every PDF (read-only, from `pdfUrl`) and write `ROUTE-REVIEW.md`, one section
+- [x] Read every PDF (read-only, from `pdfUrl`) and write `ROUTE-REVIEW.md`, one section
       per SLIC. Each finding says "confirm with a driver"; nothing about roads is claimed
       as checked. It looks for:
   - the PDF's header disagreeing with the app's record (address, phone, name);
@@ -78,6 +81,14 @@ Decided 2026-11-12:
   - where the paragraph would read better as steps.
 - The report is stage 1's checklist for the import.
 
+**Done 2026-11-12.** All 65 have a text layer (no scans). Findings: a gate pass code in
+NWTVA's public PDF, four routes that rely on fitting under a low clearance, a parkway on
+BRUNY's way back, Manhattan street legs to check against the city's truck routes, a
+possible I-481/I-81 renumbering on SYRNY, and 28 SLICs whose PDF and app record
+disagree (address, city or zip, phone). Three things change stage 1 (below): 24 routes
+have more than one section, many end with arrival notes that belong to the destination,
+and a code must never be in route text.
+
 ## Stage 1 — Routes as text on the card
 
 - [ ] **`slic-routes`** (per hub), one doc per `(hubId, numSlic)`, unique in
@@ -85,6 +96,14 @@ Decided 2026-11-12:
       `{ hubId, numSlic, text, source: 'pdf-import' | 'admin' | 'suggestion', importedFrom,
       approvedBy { id, name }, approvedAt, updated_at, previous: [{ text, approvedBy,
       approvedAt }] }`. `text` is one step per line; `previous` keeps the last 20.
+  - **Sections** (from the review): a line ending in `:` ("Way 2 (easier):", "Way back:",
+    "From Burtonsville, MD:") starts a section, and the sheet numbers each section's steps
+    on their own. 24 of the 65 need it.
+- [ ] **Arrival notes** (from the review): gates, doors, check-in, weekend rules and
+      railyard steps are the destination's, the same from any hub, so they're a shared
+      plain-text field on the SLIC, `slics.arrival`, edited on the edit page and shown in
+      the sheet under "Getting in". Never a gate code: the editor warns on a run of digits
+      after "code", and `ROUTE-REVIEW.md` → Do first covers NWTVA's.
   - `lib/db/slicRoutes.js`: `getRoute`, `getRouteNumSlics`, `saveRoute` (moves the old
     text into `previous`), `restoreRoute`, `deleteRoute`. Every write stamps
     `hubId: DEFAULT_HUB_ID`, and the collection joins `PER_HUB_COLLECTIONS` in
@@ -95,7 +114,9 @@ Decided 2026-11-12:
       `--dev`, `--undo`).
   - It downloads each `pdfUrl`, extracts its text (`unpdf`, a dev dependency used only by
     the script), and drops the header lines that match the SLIC's own record.
-  - It saves the paragraph unchanged as `source: 'pdf-import'`, with `importedFrom`.
+  - It saves the text unchanged as `source: 'pdf-import'`, with `importedFrom`, reading it
+    as UTF-8 so ½, ¾ and accents survive. Splitting it into steps, sections and arrival
+    notes is done by hand on the edit page, SLIC by SLIC, with `ROUTE-REVIEW.md` open.
   - The dry run lists each SLIC: header matched or not, characters, and any PDF with no
     text layer (a scan, to type by hand).
   - `--undo` deletes only imported routes nobody has edited since. `pdfUrl` and the PDFs

@@ -25,6 +25,8 @@ Each item says where the code lives. Run `npm run build` (in a scratch copy, nev
 - **Stage 3 is live (2026-11-12):** photos and PDFs such as a railyard map on the edit page,
   in the directions sheet and on the print page. Deployed, `db:indexes` run. Left: the
   first real railyard map.
+- **Stage 4 is on hold (2026-11-12),** Tiago's call. Nothing of it is built; its plan
+  stays below for when it's picked back up (`TODOS.md` → Waiting).
 
 ---
 
@@ -321,7 +323,9 @@ height, bytes, sortOrder, uploadedBy, created_at }`.
   photo, the printout; rename, move up, remove; history lines "Document added / renamed /
   removed".
 
-## Stage 4 — The approved route in the maps app
+## Stage 4 — The approved route in the maps app (on hold)
+
+On hold since 2026-11-12 (see Status).
 
 Drivers already navigate by voice in Google Maps, which picks its own route, not always a
 truck-friendly one (`MAP_ROUTE_NOTE`). Google's Maps URLs take `waypoints`, so the app can

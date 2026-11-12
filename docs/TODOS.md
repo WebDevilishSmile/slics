@@ -139,6 +139,10 @@ Use absolute dates.
 - [ ] **On or after 2026-11-12:** make the `/whip-it-in-and-out` redirect `permanent: true`
       (`next.config.mjs`), and remove `PLACES_NEW_UNTIL` and its check in
       `header/UserMenu.jsx`
+- [ ] **On hold (2026-11-12) until Tiago picks it back up: SLIC directions, stage 4,**
+      the route as waypoints in Google Maps (`SLIC-DIRECTIONS.md`). Before then: confirm
+      `ROUTE-REVIEW.md` → Do first with drivers (a gate code in a public PDF, low
+      clearances) and settle its 28 app-vs-PDF mismatches
 - [ ] **When the first one-time coffee arrives by webhook:** check its row
       (`BMC-SUPPORT.md` stage 1)
 - [ ] **When every SLIC has `pdfUrl`:** retire the Supabase bucket and the `slic.pdf`
@@ -160,10 +164,6 @@ The system health page counts the two collections (`lib/systemHealth.js`).
 
 ## Next
 
-- [ ] **SLIC directions, stage 4:** the route as waypoints in Google Maps
-      (`SLIC-DIRECTIONS.md`).
-      Before then: confirm `ROUTE-REVIEW.md` → Do first with drivers (a gate code in a
-      public PDF, low clearances) and settle its 28 app-vs-PDF mismatches
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open
       questions first, starting with what the source of truth is once the app can't write
       the sheet (`COVER-BIDDING.md` → "Stage 3")

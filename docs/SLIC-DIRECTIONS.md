@@ -13,11 +13,12 @@ Each item says where the code lives. Run `npm run build` (in a scratch copy, nev
 - **Stage 0 done 2026-11-12:** `ROUTE-REVIEW.md`. Its "Do first" list (a gate code in a
   public PDF, low clearances, a parkway, Manhattan streets) and its 28 app-vs-PDF
   mismatches are Tiago's to confirm with drivers.
-- **Stage 1 is built (2026-11-12)** and checked on the dev copy, where all 65 routes are
-  imported. Left: deploy, `npm run db:indexes`, then `npm run routes:import` on
-  production (dry run first). Until the import, drivers see the PDF tiles as before.
-  After it, an admin goes over each route on its edit page with `ROUTE-REVIEW.md` open;
-  saving one makes it "Driver-approved".
+- **Stage 1 is live (2026-11-12):** deployed, `db:indexes` run, and all 65 routes imported
+  on production (Tiago ran `routes:import`). NWTVA's gate code was taken out of its route
+  on the edit page; its earlier version and the import's history line still hold it
+  (staff-only). Left: an admin goes over each of the other 64 on its edit page with
+  `ROUTE-REVIEW.md` open (saving makes it "Driver-approved"), and Read aloud and Step by
+  step get tried on a real phone.
 
 ---
 

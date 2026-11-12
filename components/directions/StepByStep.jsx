@@ -75,6 +75,9 @@ export default function StepByStep({
             {section.steps[index]}
           </Typography>
         </Box>
+        <Typography variant='caption' color='text.secondary'>
+          Screen stays on · Don&apos;t use your phone while driving
+        </Typography>
       </DialogContent>
 
       <DialogActions

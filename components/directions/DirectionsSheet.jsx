@@ -41,6 +41,7 @@ import {
 import RouteSteps from './RouteSteps';
 import StepByStep from './StepByStep';
 import SuggestRouteDialog from './SuggestRouteDialog';
+import DrivingNotice from './DrivingNotice';
 
 // The way a driver last chose for a SLIC ("Way 2", "Way back"), per device:
 // a convenience in localStorage, by the section's label so an edited route
@@ -163,6 +164,7 @@ export default function DirectionsSheet({ slic, onClose }) {
       ) : (
         <>
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            <DrivingNotice />
             {loading && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pt: 1 }}>
                 {[90, 75, 85, 60].map((width) => (

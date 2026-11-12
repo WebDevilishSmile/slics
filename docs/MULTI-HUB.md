@@ -121,7 +121,7 @@ What stage 0 replaces with hub config, each item falling back to today's value:
 
 | Collection | Note |
 |---|---|
-| `slics` | Gains `hubs: ['betpa', …]`, the hubs whose list it's on (indexed array) |
+| `slics` | One record per code, never a copy. `hubs: ['betpa', …]` is the hubs whose list it's on (indexed array). The route PDF moves out to `slic-routes` ([Shared SLICs](#shared-slics-decided-2026-11-12)) |
 | `slic_history` | Gains a `hubId` stamp: which hub's staff made the change |
 | `comments` (tips) | Tips belong to the destination. An author's hub could later show as a small label |
 | `slicViews` | A driver's own history |
@@ -148,6 +148,7 @@ What stage 0 replaces with hub config, each item falling back to today's value:
 | `sheet-job-changes` | — |
 | `sync-state` | BETPA keeps its `_id`s; another hub's gain a `<hubId>:` prefix (`hubKey`) |
 | `slic-reports` | the reporter's hub, so it lands in that hub's queue |
+| `slic-routes` | new: a hub's route PDF to a SLIC, unique `(hubId, numSlic)` |
 
 **Users and staff:**
 - `users.hubId` is the driver's home hub; a missing value means `betpa`.
@@ -165,6 +166,34 @@ never from a request body.
 - `app-settings` gains `features:<hubId>` (`coversOpen`, `pushOpen`) and `roles:<hubId>`.
 - Each falls back to the current global `features` / `roles` doc, then to `constants.js`.
 - Icon and Places dates stay global.
+
+## Shared SLICs (decided 2026-11-12)
+
+What happens when BETPA and ALLPA both run to the same SLIC.
+
+- **One record per SLIC, never a copy.** When ALLPA starts running to 1813, its admin finds
+  1813 in the directory and taps **Add to our list**, which adds `'allpa'` to `slics.hubs`.
+  "Add a SLIC" searches the directory first and creates a record only for a code nobody
+  has. `createSlic` already refuses a duplicate number (`lib/db/slics.js`), and stage 2
+  makes the `numSlic` index unique so the database does too. Checked 2026-11-12: no number
+  appears twice in production's 361.
+- **The place is shared; the route isn't.**
+  - Shared: number, alpha code, name, address, phone, type, Driver tips, and a "Something
+    wrong" fix. They're the same whichever building you leave from.
+  - Per hub: the directions PDF, which is the route from your building (Tiago,
+    2026-11-12). It moves to `slic-routes` (`hubId`, `numSlic`, `pdfUrl`). A driver sees
+    their own hub's route and never another hub's. BETPA's 65 PDFs move there by a script
+    with `--dry-run` and `--undo`. Until it runs, `slicPdfHref` keeps reading
+    `slic.pdfUrl`, and the Supabase fallback stays (`CLAUDE.md`, Vercel Blob). The
+    `directions` text field is empty on every SLIC.
+- **Two hubs editing one SLIC.** Any admin of a hub whose list has it can edit the shared
+  details (Tiago, 2026-11-12). The last save wins. `slic_history` stamps each change with
+  the editor's hub, so every version is kept and can be put back, and the other listing
+  hubs' admins get the SLIC-edit notice. A driver's report goes to the reporter's hub
+  queue; the fix shows for every hub.
+- **Removing.** On a hub's pages, Delete means "remove from our list": the hub comes off
+  `hubs`. The record (and its tips) is deleted only when no hub lists it, and only by the
+  super admin, so one hub can never delete another's SLIC.
 
 ---
 
@@ -288,6 +317,12 @@ Built 2026-11-11 on `multi-hub`, checked on the dev copy, merged into `main` and
 - [ ] `GET /api/admin-alerts` and the `/admin` banners count the session's hub.
 - [ ] `/home` lists the hub's SLICs (`slics.hubs`). A code that isn't on the list is found in
       the whole directory, marked "Not on your hub's list".
+- [ ] Shared SLICs ([above](#shared-slics-decided-2026-11-12)):
+  - [ ] the `numSlic` index becomes unique (no duplicates, checked 2026-11-12);
+  - [ ] `slic-routes`, and a script (`--dry-run`, `--undo`) that moves BETPA's 65 PDFs
+        there, with `slicPdfHref`'s fallback kept;
+  - [ ] the PDF button on `/home` reads the driver's hub's route, and the upload route
+        (`app/api/slics/[id]/pdf`) writes the admin's hub's.
 - [ ] The super admin's hub switcher. `/admin/super` stats per hub and for all hubs.
 - [ ] The **hub isolation** item in `SECURITY.md` (below).
 - [ ] Remove the missing-`hubId` fallback in `hubFilter` once production is backfilled and checked.
@@ -305,6 +340,9 @@ Built 2026-11-11 on `multi-hub`, checked on the dev copy, merged into `main` and
       to `admin_audit` first.
 - [ ] The hub's SLIC list: tag SLICs already in the directory, or import a CSV through
       `createSlic` so history records each one.
+- [ ] Shared SLICs ([above](#shared-slics-decided-2026-11-12)): **Add to our list** in the
+      SLIC search; Delete becomes "remove from our list"; `slic_history` gets `hubId`; the
+      SLIC-edit push goes to the admins of every hub whose list has the SLIC.
 - [ ] Joining:
   - [ ] an invite link `/join/<hubId>` sets `users.hubId` at sign-up;
   - [ ] existing accounts stay BETPA;
@@ -359,8 +397,15 @@ To copy into `SECURITY.md` when stage 2 lands:
 ## Open questions
 
 - Do Places stay shared, or get a "near your hub" filter?
-- A SLIC on several hubs' lists: which hub's queue gets a report on it? For now, the
-  reporter's hub.
 - Does the super admin get every hub's admin notifications, or only BETPA's?
 - Should a tip show its author's hub?
-- Who edits a SLIC that's on several hubs' lists? For now, any admin of a hub whose list it's on, with history saying which hub made the change.
+- ~~What if multiple hubs use the same SLIC? If BETPA and ALLPA have overlapping places
+  they go? How do we handle conflicts or duplicate entries?~~ Decided 2026-11-12:
+  [Shared SLICs](#shared-slics-decided-2026-11-12), which also settles who edits a shared
+  SLIC and whose queue gets a report on one.
+- When a driver is onboarding should there be a question of which hub they belong to?
+- Create a flyer for new hubs to explain the onboarding process and benefits.
+- Create a flyer for new hubs on how we handle covers and recommend best practices. (Including the Google Sheet conventions)
+- Duplicate Places: two hubs' drivers may add the same truck stop. A "There's already a
+  place here" check when adding one (within about 150 m of the pin) would catch most, and
+  it helps BETPA today too.

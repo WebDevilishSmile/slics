@@ -267,7 +267,7 @@ export const HELP_SECTIONS = [
         steps: [
           <>Look up the SLIC.</>,
           <>
-            Tap <Tap>Call</Tap> under the Navigate button. Your phone dials
+            Tap <Tap>Call</Tap> under the Open map button. Your phone dials
             that building&apos;s dispatch.
           </>,
         ],

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Directions in SLICs: a one-page guide for drivers</title>
+<!--
+  The one-page flyer about a SLIC's directions (docs/DIRECTIONS-FOR-DRIVERS.pdf
+  is this page printed to PDF with headless Chrome: -headless=new
+  -no-pdf-header-footer -print-to-pdf=…, each flag with two dashes). It's the
+  companion of slics-flyer.html and covers-for-drivers.html and shares their
+  look. The QR code opens https://www.slics.app/home, the lookup, which sends a
+  signed-out driver to sign-in and back. It was made once with the `qrcode`
+  package (level Q) and checked by decoding a screenshot of this page; make it
+  again the same way if the address changes.
+  Both phones show the made-up SLIC the landing page and /help use (OAKHB),
+  with Creator mode's made-up route and arrival notes for it
+  (lib/creatorData.js), never a real route. The words are the app's own
+  (components/directions/, home/SlicActions.jsx, home/AddDirections.jsx,
+  help/guides.jsx "Read the directions"): rename a button there and this needs
+  the new label too. "65 SLICs" is the routes imported from the PDFs on
+  2026-11-12. It promises no more than the app does: the sheet itself says a
+  map route may not be truck-friendly and to ask dispatch.
+-->
+<style>
+  @page { size: Letter; margin: 0.5in 0.55in; }
+  * { box-sizing: border-box; }
+  html { font: 10.4pt/1.4 "Segoe UI", Arial, Helvetica, sans-serif; color: #10151a; }
+  /* Sized to fit one Letter page: the type is about 9pt on paper. */
+  body { margin: 0; zoom: 0.86; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root { --blue: #0172b5; --deep: #01579b; --tint: #edf3fc; --line: #c5d3e3; }
+  h1 { font-size: 27pt; line-height: 1.05; margin: 0; letter-spacing: -0.02em; font-weight: 800; }
+  h2 { font-size: 13pt; margin: 0 0 6pt; font-weight: 800; letter-spacing: -0.01em; }
+  p { margin: 0 0 5pt; }
+  .top { display: grid; grid-template-columns: minmax(0, 1fr) 2.05in; gap: 20pt; align-items: center; padding-bottom: 10pt; border-bottom: 2.4pt solid #10151a; }
+  .brand { display: flex; align-items: center; gap: 8pt; margin-bottom: 8pt; font-weight: 800; font-size: 13pt; color: var(--deep); }
+  .brand svg { width: 26pt; height: 26pt; border-radius: 6pt; }
+  .lead { font-size: 12pt; line-height: 1.38; margin-top: 8pt; }
+  .qr { text-align: center; }
+  .qr .code { border: 1.6pt solid #10151a; border-radius: 10pt; padding: 9pt; background: #fff; }
+  .qr svg { display: block; width: 100%; height: auto; }
+  .qr .scan { font-weight: 800; font-size: 12pt; margin-top: 6pt; }
+  .qr .url { font: 600 10.5pt Consolas, "Courier New", monospace; color: var(--deep); }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) 2.55in; gap: 20pt; margin-top: 13pt; }
+  ol.steps { list-style: none; margin: 0 0 4pt; padding: 0; counter-reset: s; }
+  ol.steps li { counter-increment: s; position: relative; padding-left: 26pt; margin-bottom: 6.5pt; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 0; top: -0.5pt; width: 17pt; height: 17pt; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 800; font-size: 9.5pt; line-height: 17pt; text-align: center; }
+  .tap { font-weight: 700; white-space: nowrap; }
+  ul { margin: 0; padding-left: 13pt; }
+  li { margin-bottom: 4.5pt; }
+  .block { margin-top: 12pt; }
+  .safe { margin-top: 9pt; border: 1.2pt solid #10151a; border-radius: 8pt; padding: 7pt 11pt 3pt; display: flex; gap: 9pt; align-items: flex-start; }
+  .safe svg { width: 17pt; height: 17pt; flex: none; margin-top: 1pt; }
+  .post { margin-top: 12pt; background: var(--tint); border-left: 3.2pt solid var(--blue); border-radius: 0 8pt 8pt 0; padding: 7pt 11pt 5pt; }
+  .post h2 { font-size: 11.5pt; margin-bottom: 3pt; }
+  .foot { margin-top: 9pt; font-size: 8.6pt; color: #37424d; display: flex; justify-content: space-between; gap: 12pt; }
+
+  /* The phones: the made-up SLIC's directions, in the app's own words. */
+  .phone { border: 2pt solid #10151a; border-radius: 22pt; padding: 10pt 9pt 10pt; background: var(--tint); font-size: 7.8pt; line-height: 1.32; }
+  .phone + .cap + .phone { margin-top: 9pt; }
+  .head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6pt; }
+  .head .big { font-size: 13pt; font-weight: 800; line-height: 1.1; }
+  .head .x { font-size: 12pt; line-height: 1; color: #4a5560; }
+  .muted { color: #4a5560; }
+  .fold { display: inline-flex; align-items: center; gap: 4pt; color: #4a5560; font-weight: 700; margin-bottom: 6pt; }
+  .fold svg { width: 9pt; height: 9pt; }
+  .ways { display: flex; flex-wrap: wrap; gap: 4pt; margin-bottom: 7pt; }
+  .ways span { background: #fff; border: 0.6pt solid var(--line); border-radius: 9pt; padding: 2pt 7pt; font-weight: 600; }
+  .ways .on { background: var(--tint); border: 1pt solid var(--blue); color: var(--blue); font-weight: 700; }
+  .well { background: #fff; border: 0.6pt solid var(--line); border-radius: 10pt; padding: 7pt 8pt 3pt; }
+  .well ol { list-style: none; margin: 0; padding: 0; counter-reset: r; }
+  .well li { counter-increment: r; position: relative; padding-left: 14pt; margin-bottom: 4pt; font-size: 8.4pt; }
+  .well li::before { content: counter(r) "."; position: absolute; left: 0; width: 10pt; text-align: right; color: var(--blue); font-weight: 700; }
+  .src { font-size: 6.8pt; color: #4a5560; margin-top: 5pt; }
+  .in { margin-top: 6pt; }
+  .in b { display: block; font-size: 9pt; font-weight: 800; margin-bottom: 1pt; }
+  .quiet { text-align: center; color: var(--blue); font-weight: 700; margin-top: 6pt; }
+  .go { background: var(--blue); color: #fff; border-radius: 7pt; padding: 5.5pt 9pt; font-weight: 700; font-size: 9pt; text-align: center; margin-top: 7pt; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 5pt; margin-top: 5pt; }
+  .row div { background: #fff; border: 0.6pt solid var(--line); border-radius: 7pt; padding: 4.5pt 0; text-align: center; color: var(--blue); font-weight: 700; }
+  .one { padding: 4pt 2pt 2pt; }
+  .one .step { font-size: 15pt; font-weight: 700; line-height: 1.22; margin: 5pt 0 6pt; letter-spacing: -0.01em; }
+  .row.nav { grid-template-columns: 1fr 2fr; margin-top: 8pt; }
+  .row.nav div { padding: 8pt 0; font-size: 9pt; }
+  .row.nav .next { background: var(--blue); border-color: var(--blue); color: #fff; font-size: 10.5pt; }
+  .cap { text-align: center; font-size: 8pt; color: #37424d; margin-top: 4pt; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <div class="brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true">
+        <defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#29b6f6"/><stop offset="0.55" stop-color="#0884cc"/><stop offset="1" stop-color="#01579b"/></linearGradient></defs>
+        <rect width="100" height="100" fill="url(#b)"/>
+        <path d="M60.09 25.92A12.8 12.8 0 1 0 50 46.6A14 14 0 1 1 49.51 74.59" fill="none" stroke="#fff" stroke-width="9.5" stroke-linecap="round"/>
+        <circle cx="37.64" cy="67.17" r="6.4" fill="#fff"/>
+      </svg>
+      SLICs
+    </div>
+    <h1>Directions, one step at a time</h1>
+    <p class="lead">The directions PDFs are now steps you read in the app. Look up a SLIC, tap <b>Directions</b> and get the route, how to get in, and any maps of the yard. 65 SLICs have a route so far, and you can add the ones you know.</p>
+  </div>
+  <div class="qr">
+    <div class="code"><svg role="img" aria-label="QR code for https://www.slics.app/home" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h29v29H0z"/><path stroke="#000000" d="M0 0.5h7m1 0h3m1 0h1m2 0h1m2 0h1m3 0h7M0 1.5h1m5 0h1m1 0h1m1 0h1m1 0h1m1 0h2m2 0h1m3 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h2m1 0h2m1 0h1m4 0h1m2 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h2m4 0h1m1 0h1m3 0h1m1 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h3m1 0h1m1 0h2m2 0h2m2 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m8 0h1m1 0h1m1 0h2m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m1 0h1m1 0h4m1 0h1M1 8.5h2m1 0h1m1 0h2m1 0h2m1 0h1m2 0h1m2 0h1m1 0h1m1 0h1m1 0h5M4 9.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h2m3 0h1m1 0h1M0 10.5h1m1 0h1m1 0h1m1 0h1m3 0h1m2 0h1m1 0h3m5 0h1m3 0h2M0 11.5h1m1 0h1m4 0h1m2 0h2m5 0h1m1 0h4m1 0h1m2 0h1M3 12.5h1m1 0h9m3 0h1m4 0h2M0 13.5h3m1 0h1m4 0h3m4 0h1m1 0h1m1 0h4m3 0h2M1 14.5h1m2 0h4m3 0h2m1 0h1m2 0h1m5 0h1m2 0h1m1 0h1M1 15.5h1m2 0h1m3 0h3m3 0h1m5 0h2m1 0h1m4 0h1M0 16.5h2m4 0h2m1 0h1m2 0h1m2 0h1m4 0h3m2 0h1m2 0h1M4 17.5h2m3 0h1m1 0h2m2 0h1m1 0h1m2 0h4m1 0h1m1 0h2M0 18.5h1m1 0h1m1 0h1m1 0h2m4 0h1m4 0h2m2 0h1m2 0h5M1 19.5h3m11 0h1m1 0h4m1 0h2m3 0h2M0 20.5h1m2 0h2m1 0h2m2 0h1m1 0h1m1 0h1m1 0h2m1 0h7M8 21.5h1m3 0h2m2 0h2m2 0h1m3 0h1m3 0h1M0 22.5h7m1 0h3m2 0h1m4 0h3m1 0h1m1 0h1m1 0h3M0 23.5h1m5 0h1m3 0h2m1 0h1m1 0h1m1 0h2m1 0h1m3 0h1m3 0h1M0 24.5h1m1 0h3m1 0h1m1 0h3m2 0h1m1 0h2m1 0h1m1 0h6m2 0h1M0 25.5h1m1 0h3m1 0h1m2 0h1m3 0h1m1 0h2m1 0h1m1 0h2m2 0h2M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m3 0h2m2 0h1m3 0h2m1 0h1m1 0h1M0 27.5h1m5 0h1m1 0h2m3 0h1m2 0h2m1 0h2m1 0h2m3 0h1M0 28.5h7m2 0h1m3 0h5m1 0h3m2 0h2m1 0h2"/></svg></div>
+    <div class="scan">Scan to open SLICs</div>
+    <div class="url">www.slics.app</div>
+  </div>
+</div>
+
+<div class="cols">
+  <div>
+    <h2>Read the directions</h2>
+    <ol class="steps">
+      <li><b>Look up the SLIC</b> and tap <span class="tap">Directions</span> on its card. The route opens as numbered steps, with how to get in at the end.</li>
+      <li><b>More than one way?</b> Tap the one you take at the top, like <span class="tap">Way 2</span> or <span class="tap">Way back</span>. SLICs remembers it for next time.</li>
+      <li><b>Tap <span class="tap">Step by step</span></b> for one big step at a time, with <span class="tap">Back</span> and <span class="tap">Next</span> buttons your thumb finds without looking. <span class="tap">Read aloud</span> says each step out loud.</li>
+      <li><b>Tap <span class="tap">Print</span></b> to print the directions, or save them as a PDF.</li>
+    </ol>
+
+    <div class="safe">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#10151a" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      <p><b>Don't use your phone while driving.</b> Read the steps before you pull out, or while you're stopped. While the directions are open, your screen stays on.</p>
+    </div>
+
+    <div class="block">
+      <h2>What else is in there</h2>
+      <ul>
+        <li><b>Getting in.</b> Which gate, where to check in, where the empties go.</li>
+        <li><b>Maps &amp; documents.</b> Photos and PDFs such as a railyard map. Tap a photo to see it full screen.</li>
+        <li><b>Where the route came from.</b> "From the original directions PDF", or "Driver-approved route" with the date it was approved.</li>
+        <li><span class="tap">Original PDF</span> still opens the old sheet, for the SLICs that had one.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h2>Open map or Directions?</h2>
+      <ul>
+        <li><span class="tap">Open map</span> sends the address to Google Maps or Apple Maps, which route you like a car. Map routes may not be truck-friendly.</li>
+        <li><span class="tap">Directions</span> is the route written down for that SLIC. Roads change, so if a step looks wrong or you're unsure, ask dispatch.</li>
+        <li>No Directions button? A SLIC may still show <span class="tap">PDF</span> instead, which opens the old sheet. No button at all means nobody has written the way yet.</li>
+      </ul>
+    </div>
+
+    <div class="post">
+      <h2>Know a better way? Send it in.</h2>
+      <p>Tap <span class="tap">Suggest a change</span> under the steps, or <span class="tap">Know the way? Add directions</span> under a SLIC that has none. Write one step per line. A line ending in a colon, like "Way back:", starts another way. Say why if you like, then tap <span class="tap">Send to an admin</span>. An admin checks it before drivers see it. Leave gate codes out: every driver would see them.</p>
+    </div>
+  </div>
+
+  <div>
+    <div class="phone" aria-label="A made-up example of a SLIC's directions">
+      <div class="head"><div><div class="big">Directions</div><div class="muted">OAKHB · Oakdale Hub</div></div><span class="x">✕</span></div>
+      <div class="fold"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4a5560" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>Driving safety</div>
+      <div class="ways"><span class="on">Way 1 (fastest)</span><span>Way 2 (no low bridges)</span><span>Way back</span></div>
+      <div class="well">
+        <ol>
+          <li>Left out of the hub onto Example Road.</li>
+          <li>Right on Route 9 North for 4 miles.</li>
+          <li>Take exit 12 toward Oakdale.</li>
+          <li>Left at the second light onto Depot Street.</li>
+          <li>The north gate is on the right, past the rail crossing.</li>
+        </ol>
+      </div>
+      <div class="src">Driver-approved route · approved Nov 12, 2026</div>
+      <div class="in"><b>Getting in</b>Feeders use the north gate. Check in at the guard shack, then doors 14–20. Empties go in the back row by the fence.</div>
+      <div class="quiet">Suggest a change</div>
+      <div class="go">Step by step</div>
+      <div class="row"><div>Read aloud</div><div>Print</div></div>
+    </div>
+    <div class="cap">Every step on one screen.</div>
+
+    <div class="phone" aria-label="A made-up example of one step, step by step">
+      <div class="head"><div><div class="big">Directions</div><div class="muted">OAKHB · Oakdale Hub</div></div><span class="x">✕</span></div>
+      <div class="one">
+        <div class="muted">Way 1 (fastest) · Step 2 of 5</div>
+        <div class="step">Right on Route 9 North for 4 miles.</div>
+        <div class="muted" style="font-size:6.8pt">Screen stays on · Don't use your phone while driving</div>
+      </div>
+      <div class="row nav"><div>← Back</div><div class="next">Next →</div></div>
+      <div class="row"><div>Read aloud</div><div>All steps</div></div>
+    </div>
+    <div class="cap">Step by step. The SLIC and its route are made up.</div>
+  </div>
+</div>
+
+<div class="foot"><span>Step-by-step help in the app: menu → Help.</span><span>SLICs is an independent project by a Feeder driver, not made or endorsed by UPS. · www.slics.app</span></div>
+
+</body>
+</html>

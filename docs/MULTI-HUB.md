@@ -14,10 +14,10 @@ they see until a stage is finished, verified and deliberately merged.
   (`hub-configs`, `lib/hubScope.js`, `lib/db/hubConfigs.js`), the seed script, and BETPA's
   values behind optional arguments. Nothing a driver sees changed, and no `hub-configs`
   doc exists in production yet (`npm run hub:seed` has only been dry-run).
-- **Stage 1's code is built** on the `multi-hub` branch in its own worktree
-  (`../slics-multi-hub`), which isn't pushed; not merged. Its backfill hasn't run
-  anywhere yet: it waits on the dev database (`DEV-DATABASE.md` stage 2, the Atlas user).
-  `main` gets a stage's code only when it's merged.
+- **Stage 1 is built and checked on the dev copy** (2026-11-12), on the `multi-hub` branch
+  in its own worktree (`../slics-multi-hub`), which isn't pushed; not merged. Its backfill
+  has run on the dev copy only, not on production. `main` gets a stage's code only when
+  it's merged.
 
 ---
 
@@ -246,17 +246,23 @@ Code built 2026-11-11 on `multi-hub`; not merged. The backfill hasn't run anywhe
     1,340, `cover-bid-jobs` 583, `drivers` 249, `sheet-jobs` 215, the rest under 20 each),
     361 SLICs, nothing tagged before. `--undo --dry-run` finds nothing to undo.
   - `npm run lint` and `next build` pass.
-- **Left before the merge:**
-  1. The dev database: the Atlas user, `DEV_MONGODB_URI` and `npm run db:dev-seed`
-     (`DEV-DATABASE.md` stage 2).
-  2. On the dev copy: `hub:backfill -- --dev --dry-run`, then `--dev`. Check no per-hub
-     doc is left untagged; then `--dev --undo`, check it's back to the dry-run's counts,
-     and backfill again.
-  3. On the dev copy, with `npm run dev` pointed at it: refresh a cover week and the
-     Jobs tab, save a cover list, file a SLIC report. Each new doc has `hubId: 'betpa'`,
-     and no change rows or alerts appear for an unchanged sheet.
-  4. Merge and deploy, then `npm run hub:backfill -- --dry-run` and `npm run hub:backfill`
-     on production.
+- **Verified on the dev copy (2026-11-12, `DEV-DATABASE.md` stage 2 done that day):**
+  - The backfill: `--dev --dry-run` counted 7,560 docs (production's 7,575 less the
+    `driver-claims` and `cover-list-totals` the seed doesn't copy) and 361 SLICs. `--dev`
+    tagged them all; a second run tagged nothing. A report written as the app now writes
+    it (`hubId`, no marker) went in, then `--dev --undo` untagged exactly the run's
+    7,560 and 361 and left that report's `hubId` alone. Backfilling again tagged them all.
+  - The writers, called directly on the copy (`replaceCoverBidJobsForWeek`,
+    `saveJobsSnapshot`, `saveCoverBidPicks`, `saveMyCoverList`, `createSlicReport`), not
+    through a sheet refresh: that would copy real names into the scrubbed copy, and every
+    made-up name would read as a change. The newest cover week, the Jobs tab and the
+    newest picks sent back unchanged are no change and no event. One day changed is one
+    change row and back is one more; one Jobs-tab row added is one change, and removed is
+    one. Every doc written has `hubId: 'betpa'`, the existing ones keep their backfill
+    tag, and the change rows a refresh hands its pushes carry no `hubId`. The test rows
+    were deleted after.
+- **Left:** merge and deploy, then `npm run hub:backfill -- --dry-run` and
+  `npm run hub:backfill` on production.
 
 ## Stage 2: scope everything by hub (the big refactor)
 

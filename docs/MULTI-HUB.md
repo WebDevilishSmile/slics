@@ -10,13 +10,13 @@ they see until a stage is finished, verified and deliberately merged.
 
 ## Status (2026-11-11)
 
-- **Stage 0 is built on the `multi-hub` branch** (2026-11-11), not merged: the hub
-  settings (`hub-configs`, `lib/hubScope.js`, `lib/db/hubConfigs.js`), the seed script,
-  and the BETPA values behind optional arguments. Nothing a driver sees changes, and no
-  `hub-configs` doc exists in production yet (`npm run hub:seed` has only been dry-run).
-- This roadmap is on `main`. The building work happens on the `multi-hub` branch, in its
-  own worktree (`../slics-multi-hub`), which isn't pushed; `main` gets none of the code
-  until a stage is merged.
+- **Stage 0 is merged into `main` and deployed** (2026-11-11): the hub settings
+  (`hub-configs`, `lib/hubScope.js`, `lib/db/hubConfigs.js`), the seed script, and BETPA's
+  values behind optional arguments. Nothing a driver sees changed, and no `hub-configs`
+  doc exists in production yet (`npm run hub:seed` has only been dry-run).
+- **Stage 1 is next**, on the `multi-hub` branch in its own worktree
+  (`../slics-multi-hub`), which isn't pushed. `main` gets a stage's code only when it's
+  merged.
 
 ---
 
@@ -168,7 +168,7 @@ never from a request body.
 
 ## Stage 0: groundwork (no behavior change)
 
-Built 2026-11-11 on `multi-hub`; not merged.
+Built 2026-11-11 on `multi-hub`, merged into `main` and deployed the same day.
 
 - [x] `lib/hubScope.js`: `DEFAULT_HUB_ID = 'betpa'`, `DEFAULT_HUB` (BETPA's values),
       `hubFilter`, `assertHubId` (throws when a per-hub function is called without a hub),

@@ -309,3 +309,25 @@ a:active > .help-pin {
     outline-offset: clamp(6px, 2vw, 12px);
   }
 }
+
+/* Printing (the directions page, /directions/[slic], docs/SLIC-DIRECTIONS.md):
+   the app's header and footer and anything marked .no-print stay off the
+   paper, and a dark-mode page prints black on white with no soft shadows,
+   which a printer turns into gray smudges. */
+@media print {
+  .MuiAppBar-root,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  .print-sheet,
+  .print-sheet * {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+}

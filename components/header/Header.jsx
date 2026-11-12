@@ -20,7 +20,7 @@ export default async function Header() {
       {/* The AppBar is position: fixed, so it takes no room in the page. This
           empty Toolbar does, at the toolbar's own responsive height (56px on
           phones), so pages start just below the header (UI-SUGGESTIONS.md #37). */}
-      <Toolbar />
+      <Toolbar className='no-print' />
     </>
   );
 }

@@ -23,6 +23,7 @@ import UserMenu from './UserMenu';
 // level, so there's nothing to go back to.
 const PAGE_TITLES = [
   ['/home/', 'SLIC'],
+  ['/directions', 'Directions'],
   ['/about', 'About'],
   ['/help', 'Help'],
   ['/reset-password', 'Reset Password'],

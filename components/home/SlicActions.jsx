@@ -4,6 +4,7 @@ import { useState } from 'react';
 import {
   ArrowDropDown,
   ChatBubbleOutline,
+  DirectionsOutlined,
   MapOutlined,
   PhoneOutlined,
   PictureAsPdfOutlined,
@@ -24,6 +25,7 @@ import { useTips } from '@/lib/tipsStore';
 import { COMMENTS_SECTION_ID, MAP_ROUTE_NOTE, slicPdfHref } from '@/constants';
 
 import { softPressSx, softRaised } from '@/components/utility/soft';
+import DirectionsSheet from '@/components/directions/DirectionsSheet';
 
 const MAPS_APPS = { google: 'Google Maps', apple: 'Apple Maps' };
 
@@ -54,14 +56,17 @@ function ActionButton({ icon, label, ...props }) {
 // The lookup card's actions (UI-SUGGESTIONS.md #41). A driver's next step is
 // almost always the drive there, so Open map is the one big button (it was
 // "Navigate" until 2026-11-11). Under it, a line says a maps app's route
-// isn't always one a truck can take (MAP_ROUTE_NOTE). Call, PDF and Tips
-// sit in a row under it, each shown only when it would do something. Tips
+// isn't always one a truck can take (MAP_ROUTE_NOTE). Call, Directions (or
+// PDF) and Tips sit in a row under it, each shown only when it would do
+// something. Directions opens the route as text and the arrival notes
+// (docs/SLIC-DIRECTIONS.md); a SLIC with neither keeps its PDF tile. Tips
 // needs the comments section on the page, so callers without one leave
 // `showTips` off.
 function SlicActions({ slic, commentsCount = 0, showTips = false }) {
   // The device's maps app, shared with pinned spots on tips (hooks/useMapsApp.js).
   const { mapsApp, chooseMapsApp, isAppleDevice } = useMapsApp();
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [directionsOpen, setDirectionsOpen] = useState(false);
 
   // Live counts from the tips section once it has loaded (lib/tipsStore.js);
   // the server's count until then.
@@ -69,7 +74,8 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
   const tipTotal = tips?.total ?? commentsCount;
   const newTips = tips?.newCount ?? 0;
 
-  const pdfHref = slicPdfHref(slic);
+  const hasDirections = Boolean(slic.hasRoute || slic.arrival);
+  const pdfHref = hasDirections ? null : slicPdfHref(slic);
   const canCall = slic.type === 'center' && slic.phone;
 
   const scrollToComments = () => {
@@ -151,7 +157,7 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
         {MAP_ROUTE_NOTE}
       </Typography>
 
-      {(canCall || pdfHref || showTips) && (
+      {(canCall || hasDirections || pdfHref || showTips) && (
         <Box sx={{ display: 'flex', gap: 1.5, mt: 2.5 }}>
           {canCall && (
             <ActionButton
@@ -159,6 +165,14 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
               label='Call'
               href={`tel:${slic.phone}`}
               aria-label={`Call ${slic.alphaSlic} dispatch`}
+            />
+          )}
+          {hasDirections && (
+            <ActionButton
+              icon={<DirectionsOutlined />}
+              label='Directions'
+              onClick={() => setDirectionsOpen(true)}
+              aria-haspopup='dialog'
             />
           )}
           {pdfHref && (
@@ -192,6 +206,10 @@ function SlicActions({ slic, commentsCount = 0, showTips = false }) {
             />
           )}
         </Box>
+      )}
+
+      {directionsOpen && (
+        <DirectionsSheet slic={slic} onClose={() => setDirectionsOpen(false)} />
       )}
     </Box>
   );

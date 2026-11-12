@@ -1,7 +1,8 @@
-import { getSession } from '@/lib/authz';
+import { getCreatorMode, getSession } from '@/lib/authz';
 import { Typography } from '@mui/material';
 
 import { getAllHubs } from '@/lib/db/slics';
+import { CREATOR_HUBS, creatorUser } from '@/lib/creatorData';
 
 import RedirectMessage from '@/components/layout/RedirectMessage';
 import SlicLookupPage from '@/components/slic/SlicLookupPage';
@@ -20,6 +21,21 @@ export default async function Hubs({ searchParams }) {
     );
   }
 
+  const heading = <Typography variant='sectionHeading'>All Hubs</Typography>;
+
+  // Creator mode (docs/CREATOR-MODE.md): the made-up centers.
+  if (await getCreatorMode(session)) {
+    return (
+      <SlicLookupPage
+        creator
+        searchParams={searchParams}
+        slics={CREATOR_HUBS}
+        user={creatorUser(session.user)}
+        heading={heading}
+      />
+    );
+  }
+
   const hubs = await getAllHubs();
 
   return (
@@ -27,7 +43,7 @@ export default async function Hubs({ searchParams }) {
       searchParams={searchParams}
       slics={hubs}
       user={session.user}
-      heading={<Typography variant='sectionHeading'>All Hubs</Typography>}
+      heading={heading}
     />
   );
 }

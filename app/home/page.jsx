@@ -1,4 +1,4 @@
-import { areasOf, getSession } from '@/lib/authz';
+import { areasOf, getCreatorMode, getSession } from '@/lib/authz';
 import { STAFF_ROLES } from '@/constants';
 import { Typography } from '@mui/material';
 
@@ -6,6 +6,7 @@ import { ObjectId } from 'mongodb';
 
 import { getUnthankedSupport } from '@/lib/db/bmcEvents';
 import { getAllSlics } from '@/lib/db/slics';
+import { CREATOR_SLICS, creatorUser } from '@/lib/creatorData';
 import { getRoleNotice, isIconNoticeDue } from '@/lib/db/users';
 
 import CommentPrompt from '@/components/comments/CommentPrompt';
@@ -57,6 +58,20 @@ export default async function Home({ searchParams }) {
       <RedirectMessage
         heading='You must be logged in to view SLICs.'
         redirect='/sign-in'
+      />
+    );
+  }
+
+  // Creator mode (docs/CREATOR-MODE.md): made-up SLICs and tips for a video,
+  // with none of the notes and nudges below.
+  if (await getCreatorMode(session)) {
+    return (
+      <SlicLookupPage
+        creator
+        searchParams={searchParams}
+        slics={CREATOR_SLICS}
+        user={creatorUser(session.user)}
+        heading={<Typography variant='h1'>SLICs</Typography>}
       />
     );
   }

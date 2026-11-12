@@ -51,6 +51,7 @@ import { useOpenRouteSuggestionsCount } from '@/lib/routeSuggestionsStore';
 import { useOpenCoverReportsCount } from '@/lib/coverReportsStore';
 import { userHasArea } from '@/lib/staffAreas';
 
+import CreatorModeSwitch from '@/components/creator/CreatorModeSwitch';
 import InstallMenuItem from '@/components/install/InstallMenuItem';
 import ModeSwitch from '@/components/layout/ModeSwitch';
 import SlicsMark from '@/components/utility/SlicsMark';
@@ -130,8 +131,10 @@ function ExternalItem({ href, label, icon }) {
 // this device's notifications off (lib/pushDevice.js), so the next driver to
 // use it isn't sent this account's. `features` is the
 // session's feature switches (auth.js, lib/db/appSettings.js); the constants
-// are the defaults when there's none.
-function UserMenu({ user, features, signOutAction }) {
+// are the defaults when there's none. `creatorMode` is null unless the
+// account can use creator mode (the super admin, docs/CREATOR-MODE.md), else
+// whether it's on; while it is, `user` is the made-up driver.
+function UserMenu({ user, features, creatorMode = null, signOutAction }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -430,6 +433,7 @@ function UserMenu({ user, features, signOutAction }) {
 
         <List sx={groupSx}>
           <ModeSwitch />
+          {creatorMode !== null && <CreatorModeSwitch on={creatorMode} />}
           {user ? (
             <ListItem disablePadding>
               {/* A flex row, so the button grows to fill it inside its

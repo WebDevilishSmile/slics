@@ -3,8 +3,10 @@ import { countSlicViews } from '@/lib/db/slicViews';
 import { getRouteNumSlics } from '@/lib/db/slicRoutes';
 import { getDocumentNumSlics } from '@/lib/db/slicDocuments';
 import { toDriverSlics } from '@/lib/serializers';
+import { CREATOR_VIEW_COUNT, countCreatorTips, creatorTips } from '@/lib/creatorData';
 
 import Comments from '@/components/comments/Comments';
+import CreatorMode from '@/components/creator/CreatorMode';
 import LookupSkeleton from '@/components/home/LookupSkeleton';
 import Main from '@/components/home/Main';
 import PageContainer from '@/components/layout/PageContainer';
@@ -14,6 +16,11 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // only): the search, the looked-up SLIC's card (`?slic=`) and its Driver tips.
 // The routes check the session and load `slics`; they differ only in the
 // list, the `heading`, and what they put under it (`children`).
+//
+// With `creator` (creator mode, docs/CREATOR-MODE.md) `slics` and `user` are
+// the made-up ones from lib/creatorData.js, already in the driver's shape, and
+// nothing is read from the database: the counts are made up too, and
+// CreatorMode answers the page's API calls in the browser.
 
 // Which SLICs have directions as text (docs/SLIC-DIRECTIONS.md), so the card
 // shows Directions without a call per lookup. Without them the card shows
@@ -55,8 +62,31 @@ export default async function SlicLookupPage({
   user,
   heading,
   children,
+  creator = false,
 }) {
   const { slic } = await searchParams;
+
+  if (creator) {
+    return (
+      <PageContainer>
+        <CreatorMode />
+        {heading}
+        {children}
+
+        <HydrationGuard fallback={<LookupSkeleton hasSlic={Boolean(slic)} />}>
+          <Main
+            slics={slics}
+            commentsCount={slic ? countCreatorTips(creatorTips(), slic) : 0}
+            viewCount={CREATOR_VIEW_COUNT}
+            user={user}
+          />
+        </HydrationGuard>
+
+        <Comments user={user} />
+      </PageContainer>
+    );
+  }
+
   const [commentsCount, viewCount, withRoutes, withDocuments] = await Promise.all([
     slic ? getCommentsBySlic(slic).then((comments) => comments.length) : 0,
     lookupCount(user.id),

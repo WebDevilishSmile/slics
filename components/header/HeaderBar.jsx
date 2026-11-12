@@ -79,7 +79,7 @@ let inAppNavigations = -1;
 // arrow and the page name, and the logo linking home. It's flat at the top of
 // the page and lifts with a soft shadow once content scrolls under it.
 // `features` is the session's feature switches (auth.js), for the menu.
-export default function HeaderBar({ user, features, signOutAction }) {
+export default function HeaderBar({ user, features, creatorMode, signOutAction }) {
   const pathname = usePathname();
   const router = useRouter();
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 0 });
@@ -110,7 +110,12 @@ export default function HeaderBar({ user, features, signOutAction }) {
       })}
     >
       <Toolbar sx={{ gap: 0.5 }}>
-        <UserMenu user={user} features={features} signOutAction={signOutAction} />
+        <UserMenu
+          user={user}
+          features={features}
+          creatorMode={creatorMode}
+          signOutAction={signOutAction}
+        />
 
         {title && (
           <>

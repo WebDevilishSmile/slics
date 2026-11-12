@@ -10,7 +10,7 @@ import { softPressSx, softRaised, softRaisedSmall } from '@/components/utility/s
 // for pinch-zooming in the browser's own viewer.
 function PhotoViewer({ doc, onClose }) {
   return (
-    <Dialog open onClose={onClose} fullScreen>
+    <Dialog open onClose={onClose} fullScreen slotProps={{ paper: { sx: { borderRadius: 0 } } }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1 }}>
         <Typography variant='h6' component='h2' sx={{ flex: 1, minWidth: 0 }} noWrap>
           {doc.title}

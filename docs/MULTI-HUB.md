@@ -14,9 +14,10 @@ they see until a stage is finished, verified and deliberately merged.
   (`hub-configs`, `lib/hubScope.js`, `lib/db/hubConfigs.js`), the seed script, and BETPA's
   values behind optional arguments. Nothing a driver sees changed, and no `hub-configs`
   doc exists in production yet (`npm run hub:seed` has only been dry-run).
-- **Stage 1 is next**, on the `multi-hub` branch in its own worktree
-  (`../slics-multi-hub`), which isn't pushed. `main` gets a stage's code only when it's
-  merged.
+- **Stage 1's code is built** on the `multi-hub` branch in its own worktree
+  (`../slics-multi-hub`), which isn't pushed; not merged. Its backfill hasn't run
+  anywhere yet: it waits on the dev database (`DEV-DATABASE.md` stage 2, the Atlas user).
+  `main` gets a stage's code only when it's merged.
 
 ---
 
@@ -141,10 +142,10 @@ What stage 0 replaces with hub config, each item falling back to today's value:
 | `cover-preferences` | stays `(userId, weekEnding)` |
 | `cover-list-totals`, `cover-bid-days` | `weekEnding` → `(hubId, weekEnding)` |
 | `cover-disputes`, `cover-reports` | — |
-| `cover-notices` | keys gain a `<hubId>:` prefix |
+| `cover-notices` | BETPA keeps its keys; another hub's gain a `<hubId>:` prefix (`hubKey`) |
 | `sheet-jobs` | `jobName` → `(hubId, jobName)` |
 | `sheet-job-changes` | — |
-| `sync-state` | `_id`s gain a `<hubId>:` prefix |
+| `sync-state` | BETPA keeps its `_id`s; another hub's gain a `<hubId>:` prefix (`hubKey`) |
 | `slic-reports` | the reporter's hub, so it lands in that hub's queue |
 
 **Users and staff:**
@@ -212,15 +213,50 @@ Built 2026-11-11 on `multi-hub`, merged into `main` and deployed the same day.
 
 ## Stage 1: tag the data (additive)
 
-- [ ] Writers stamp `hubId` on every per-hub collection, and `createSlic` adds
-      `hubs: [hubId]`. While only BETPA exists, the value is the default.
-- [ ] `scripts/backfillHubId.mjs` (`--dry-run`, `--undo`): `hubId: 'betpa'` on every
-      per-hub doc, and `hubs: ['betpa']` on every SLIC. The `--undo` removes only what it
-      added, by a `hubIdBackfilledAt` marker.
-- [ ] The compound indexes in `lib/db/indexSpecs.mjs`, added alongside the old ones.
-- [ ] The prefixed `sync-state` and `cover-notices` keys: read both forms, write the new.
-- **Verify:** read-only checks with jiti. The dry-run counts match `countDocuments`, and
-  after the backfill (dev DB first) no per-hub doc is left without `hubId`.
+Code built 2026-11-11 on `multi-hub`; not merged. The backfill hasn't run anywhere.
+
+- [x] Writers stamp `hubId: DEFAULT_HUB_ID` on every doc they create in a per-hub
+      collection: an `insertOne`/`insertMany` field, or `$setOnInsert` on an upsert, so an
+      update never touches it. `createSlic` adds `hubs: [DEFAULT_HUB_ID]`, which the edit
+      route's `EDITABLE_FIELDS` keeps a PATCH from changing. Stage 2 passes the hub in.
+      Checked: the change detectors compare named fields only (`sameJobs` and
+      `diffCoverJobs` on `JOB_FIELDS`, `flattenJob` on the Jobs tab, the picks' rows), so
+      the new field can't raise a change, an alert or a push. The change rows a refresh
+      hands to its pushes are left as they were (`saveCoverJobChanges` stamps a copy).
+- [x] `scripts/backfillHubId.mjs` (`npm run hub:backfill`, `--dry-run`, `--undo`,
+      `--dev` for `DEV_MONGODB_URI`): `hubId: 'betpa'` on every untagged doc in the 15
+      per-hub collections (`PER_HUB_COLLECTIONS`) and `hubs: ['betpa']` on every untagged
+      SLIC. Each doc it tags gets `hubIdBackfilledAt` / `hubsBackfilledAt`, so `--undo`
+      removes exactly those and never a `hubId` the app wrote. A second run tags nothing.
+      `admin_audit` gets `hubId.backfilled` / `.backfillUndone` with counts only. `--dev`
+      refuses a database whose name lacks "dev".
+- [x] **Keyed state isn't renamed** (a change from the first plan). `sync-state` `_id`s
+      and `cover-notices` keys stay as they are for BETPA, and another hub's carry its id
+      in front: `hubKey(hubId, key)` (`lib/hubScope.js`), used from stage 2. Renaming
+      BETPA's would have needed both forms read during the deploy: two locks under two
+      names don't exclude each other, and a reminder whose marker moved would be sent
+      again. So these two collections get no `hubId` and aren't backfilled.
+- [x] **The compound indexes moved to stage 2** (a change from the first plan). Nothing
+      filters by `hubId` until then, so they'd do no work, and they'd show as missing on
+      the health page until `db:indexes` ran. With every doc BETPA's, a unique
+      `(hubId, weekEnding)` proves nothing the `weekEnding` one doesn't.
+- **Verified so far (2026-11-11):**
+  - `npm run hub:backfill -- --dry-run` on production, read-only: 7,575 docs to tag
+    (`cover-job-changes` 2,251, `sheet-job-changes` 2,520, `cover-bid-pick-events`
+    1,340, `cover-bid-jobs` 583, `drivers` 249, `sheet-jobs` 215, the rest under 20 each),
+    361 SLICs, nothing tagged before. `--undo --dry-run` finds nothing to undo.
+  - `npm run lint` and `next build` pass.
+- **Left before the merge:**
+  1. The dev database: the Atlas user, `DEV_MONGODB_URI` and `npm run db:dev-seed`
+     (`DEV-DATABASE.md` stage 2).
+  2. On the dev copy: `hub:backfill -- --dev --dry-run`, then `--dev`. Check no per-hub
+     doc is left untagged; then `--dev --undo`, check it's back to the dry-run's counts,
+     and backfill again.
+  3. On the dev copy, with `npm run dev` pointed at it: refresh a cover week and the
+     Jobs tab, save a cover list, file a SLIC report. Each new doc has `hubId: 'betpa'`,
+     and no change rows or alerts appear for an unchanged sheet.
+  4. Merge and deploy, then `npm run hub:backfill -- --dry-run` and `npm run hub:backfill`
+     on production.
 
 ## Stage 2: scope everything by hub (the big refactor)
 

@@ -15,6 +15,17 @@ All collections live in one database: the driver's default (`test`), because
 
 ---
 
+## Hubs (`MULTI-HUB.md`)
+
+Since stage 1 (2026-11-11, on the `multi-hub` branch), every doc created in a per-hub
+collection carries `hubId` (`'betpa'`): `drivers`, `driver-claims`, every `cover-*`
+collection but `cover-notices`, `sheet-jobs`, `sheet-job-changes` and `slic-reports`.
+Older docs get it from `npm run hub:backfill`, which also marks each one
+`hubIdBackfilledAt`; until then a missing `hubId` means BETPA (`hubFilter`). Every SLIC
+carries `hubs` (`['betpa']`), the hubs whose list it's on, and `hubsBackfilledAt` when the
+script set it. `sync-state` and `cover-notices` have no `hubId`: BETPA keeps their keys,
+and another hub's are prefixed (`hubKey`, `lib/hubScope.js`).
+
 ## Joins to know about
 
 - **`numSlic` is the join key for SLIC data.** Comments, `slic_history` and `slicViews`

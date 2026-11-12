@@ -73,9 +73,18 @@ function splitName(name) {
 }
 
 // One made-up last name per real one, one first name per real first name.
-function nameMapper(realNames) {
+// `avoid` is every real value (name keys): a made-up name never matches one,
+// so a copied "MOORE" is never a real Moore and the leak check stays exact.
+function nameMapper(realNames, avoid = new Set()) {
   const lasts = new Map();
   const firsts = new Map();
+  let lastSeq = 0;
+  const nextLast = () => {
+    let name;
+    do name = nth(LASTS, lastSeq++);
+    while (avoid.has(name));
+    return name;
+  };
   // Last names as "LAST, FIRST" writes them, so "VAN DYKE" alone on a cover
   // job is read as one last name, not a first and a last.
   const commaLasts = new Set([...realNames].map(nameKey).filter((key) => key.includes(',')).map((key) => key.split(',')[0]));
@@ -83,7 +92,7 @@ function nameMapper(realNames) {
   for (const name of realNames) {
     const parts = parse(name);
     if (!parts) continue;
-    if (!lasts.has(parts.last)) lasts.set(parts.last, nth(LASTS, lasts.size));
+    if (!lasts.has(parts.last)) lasts.set(parts.last, nextLast());
     for (const first of parts.firsts) if (!firsts.has(first)) firsts.set(first, nth(FIRSTS, firsts.size));
   }
   const known = new Set([...realNames].map(nameKey).filter(Boolean));
@@ -91,7 +100,7 @@ function nameMapper(realNames) {
   const map = (name) => {
     const parts = parse(name);
     if (!parts) return name;
-    const last = lasts.get(parts.last) ?? nth(LASTS, lasts.size + parts.last.length);
+    const last = lasts.get(parts.last) ?? nextLast();
     const rest = parts.firsts.map((first) => firsts.get(first) ?? 'X');
     const out = parts.comma ? [last, rest.join(' ')].filter(Boolean).join(', ') : [...rest, last].join(' ');
     const original = String(name);
@@ -130,7 +139,13 @@ async function main() {
     const data = {};
     for (const name of [...PLAN.keep, ...PLAN.scrub]) data[name] = await read(name);
 
-    // Every real driver name, from everywhere one is written.
+    // A cover job change's old or new driver (a name or assignedDriver change).
+    // An added or removed job's "name · reason" summary isn't read for names:
+    // with no name, its first part is the reason.
+    const changeNames = (row) => (row.field === 'name' || row.field === 'assignedDriver' ? [row.from, row.to] : []);
+    // Every real driver name, from everywhere one is written. A value with a
+    // digit is a job code that landed in a name column (old pick events), not
+    // a person.
     const realNames = new Set([
       ...data['sheet-jobs'].map((row) => row.driver),
       ...data['cover-bid-picks'].flatMap((week) => week.rows.map((row) => row.name)),
@@ -138,8 +153,21 @@ async function main() {
       ...data.drivers.map((row) => row.name),
       ...data.users.map((user) => user.driver?.name),
       ...data['cover-bid-pick-events'].map((row) => row.name),
-    ].filter(Boolean));
-    const drivers = nameMapper(realNames);
+      ...data['cover-job-changes'].flatMap(changeNames),
+    ].filter((name) => name && !/\d/.test(name)));
+    const avoid = new Set(
+      [
+        ...realNames,
+        ...data.users.flatMap((user) => [user.name, user.firstName, user.lastName]),
+      ]
+        .filter(Boolean)
+        .flatMap((value) => [nameKey(value), ...nameKey(value).split(/[ ,]+/)]),
+    );
+    const drivers = nameMapper(realNames, avoid);
+    // A "name · reason" summary, or a lone name or reason (a reason is often
+    // the last name of the driver whose job it is): each part that's a name.
+    const mapParts = (value) =>
+      typeof value === 'string' ? value.split(' · ').map(drivers.mapIfName).join(' · ') : value;
 
     // Accounts get made-up display names by position.
     const userNames = new Map(
@@ -177,15 +205,21 @@ async function main() {
       ...row,
       actorName: row.actorId ? userName(row.actorId) : row.actorName,
       targetName:
-        row.targetType === 'user' ? userName(row.targetId) : row.targetType === 'driver' ? drivers.mapIfName(row.targetName) : row.targetName,
+        row.targetType === 'user'
+          ? userName(row.targetId)
+          : row.targetType === 'driver'
+            ? drivers.mapIfName(row.targetName)
+            : typeof row.targetName === 'string' && row.targetName.includes('@')
+              ? '(removed in the dev copy)'
+              : row.targetName,
       from: auditValue(row, row.from),
       to: auditValue(row, row.to),
     }));
     // A cover job's `name` change is who picked it.
     out['cover-job-changes'] = out['cover-job-changes'].map((row) => ({
       ...row,
-      from: drivers.mapIfName(row.from),
-      to: drivers.mapIfName(row.to),
+      from: mapParts(row.from),
+      to: mapParts(row.to),
     }));
 
     out.users = data.users.map((user, i) => {
@@ -203,10 +237,12 @@ async function main() {
         ...(driver ? { driver } : {}),
       };
     });
-    out.drivers = data.drivers.map((row) => ({
+    // A made-up employee ID per row: the field is required and unique
+    // (indexSpecs.mjs), so null on every row fails the index build.
+    out.drivers = data.drivers.map((row, i) => ({
       ...row,
       name: drivers.map(row.name),
-      employeeId: null,
+      employeeId: String(9000001 + i),
       phone: null,
       sheetKey: row.sheetKey ? nameKey(drivers.mapIfName(row.sheetKey) === row.sheetKey ? drivers.map(row.sheetKey) : drivers.mapIfName(row.sheetKey)) : row.sheetKey,
       notSheetKeys: (row.notSheetKeys ?? []).map((key) => nameKey(drivers.map(key))),
@@ -221,6 +257,7 @@ async function main() {
       ...scrubStamps(job),
       name: job.name ? drivers.map(job.name) : job.name,
       assignedDriver: job.assignedDriver ? drivers.map(job.assignedDriver) : job.assignedDriver,
+      coverReason: drivers.mapIfName(job.coverReason),
     }));
     out['cover-bid-picks'] = data['cover-bid-picks'].map((week) => ({
       ...scrubStamps(week),
@@ -247,7 +284,9 @@ async function main() {
       // A SLIC's own old values (slic_history's changes) are SLIC data.
       if (path.startsWith('slic_history.changes')) return;
       if (typeof value === 'string') {
-        if (real.has(nameKey(value)) && !madeUp.has(nameKey(value))) leakPaths.set(path, (leakPaths.get(path) ?? 0) + 1);
+        // A whole value, or a part of a "name · reason" summary (cover-job-changes).
+        const parts = [value, ...(value.includes(' · ') ? value.split(' · ') : [])];
+        if (parts.some((part) => real.has(nameKey(part)) && !madeUp.has(nameKey(part)))) leakPaths.set(path, (leakPaths.get(path) ?? 0) + 1);
       } else if (Array.isArray(value)) value.forEach((inner) => check(inner, `${path}[]`));
       else if (value && typeof value === 'object' && !(value instanceof Date) && !value._bsontype) {
         for (const [key, inner] of Object.entries(value)) check(inner, `${path}.${key}`);

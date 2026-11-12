@@ -254,9 +254,9 @@ order that file suggests:
 - [ ] **#14** BMC webhook, mostly done 2026-10-10 (`emailVerified` 2026-10-28). Left: a
       freshness check and an `admin_audit` row (#17)
 - [ ] **#20** dev database for local work and previews (`DEV-DATABASE.md`). The seed
-      script is built and dry-run checked (2026-10-14). Left: the `slics-dev` Atlas user
-      and `DEV_MONGODB_URI` (stage 2), `.env.development.local` and the dev-time warning
-      (stage 3), Vercel Preview on it (stage 4)
+      script is built (2026-10-14); the `slics-dev` Atlas user, `DEV_MONGODB_URI` and the
+      first copy are done (stage 2, 2026-11-12). Left: `.env.development.local` and the
+      dev-time warning (stage 3), Vercel Preview on it (stage 4)
 - [ ] then Tier 2 (#15–#18, #21, #24, #27) in any order
 
 ---

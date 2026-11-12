@@ -11,10 +11,11 @@ signed-in screen meant either a driver's own phone or a scratch preview page wit
 data. A dev copy lets the app run locally as an admin and as a driver, with realistic
 sheets, cover weeks and SLICs, and nothing anyone did there reaches a driver.
 
-## Status (2026-10-14)
+## Status (2026-11-12)
 
-- Stage 1 is built: the seed script, dry-run checked against production.
-- Stage 2 waits on an Atlas user (below).
+- Stage 1 is built: the seed script.
+- Stage 2 is done: the `slics-dev` Atlas user, `DEV_MONGODB_URI` in `.env`, and the first
+  copy, written 2026-11-12.
 - Stages 3 and 4 follow.
 
 ## Stage 1 — The seed script (built 2026-10-14)
@@ -33,21 +34,29 @@ writing.
     (without private notes), report kinds (the notes are replaced), the push log, sync
     state, feature switches.
   - **Scrubbed:** accounts (made-up names, `user<N>@example.test`, no password, phone or
-    picture), the roster (no employee ID or phone), and every driver name on the Jobs tab,
+    picture), the roster (a made-up employee ID, since the field is required and unique, and
+    no phone), and every driver name on the Jobs tab,
     the cover tabs, picks and change logs.
     - Each real driver name gets the same made-up name everywhere, so the sheets still line
-      up. The dry run prints the matches before and after, and they're equal: 21 pick names
-      on the Jobs tab, 91 cover-job names on the picks, 4 account links.
+      up. The dry run prints the matches before and after, and they're equal: on 2026-11-12,
+      75 pick names on the Jobs tab, 327 cover-job names on the picks, 12 account links.
+    - A cover job's reason, often the last name of the driver whose job it is, is swapped
+      like a name, and so is each half of a change row's "name · reason" (since 2026-11-12).
+    - A value with a digit isn't a name: old pick events have job codes in their name
+      column. And no made-up name is ever a real driver's or account's name, so the leak
+      check stays exact.
     - Admin stamps (`{ id, name, email }`) get the account's made-up name and no email.
-    - Audit rows lose supporter details.
+    - Audit rows lose supporter details, and an email address as their target.
   - **Dropped:** OAuth tokens (`accounts`), `sessions`, push addresses, password resets,
     rate limits, Buy Me a Coffee events, driver claims and disputes (employee IDs), and the
     old cover/bid lists.
 - **A leak check runs before anything is written.**
-  - It compares every string in the scrubbed collections with every real email, name,
-    phone and employee ID.
+  - It compares every string in the scrubbed collections, and each part of a
+    "name · reason", with every real email, name, phone and employee ID.
   - On any match it stops and prints only where: the collection and field, never the value.
-  - The 2026-10-14 dry run: 331 last names swapped, 0 left.
+  - The 2026-10-14 dry run: 331 last names swapped, 0 left. The 2026-11-12 one first found
+    138 (cover reasons, job codes read as names, made-up names matching real ones, email
+    targets), fixed as above: 363 swapped, 0 left.
 - **Two test accounts** are added, from `TEST_ACCOUNT_EMAIL` / `TEST_ACCOUNT_PASSWORD` in
   `.env.local`:
   - the address itself, a super admin linked to a driver covering a job in the newest
@@ -56,12 +65,14 @@ writing.
   - `+driver` on the same address, a plain user linked to a driver on their own job.
 - **The indexes** are built from `lib/db/indexSpecs.mjs`.
 
-## Stage 2 — The Atlas user and the first copy (the admin)
+## Stage 2 — The Atlas user and the first copy (done 2026-11-12)
 
 1. **Atlas → Database Access → Add New Database User.**
    - Password authentication, username `slics-dev`.
-   - Built-in role: none. Under **Specific Privileges**, add `readWrite` on database
-     `slics-dev` only. It must not be able to read `test`.
+   - Built-in role: none. Atlas fills one in (Atlas admin); delete it, or the user can read
+     and write production. Under **Specific Privileges**, add `readWrite` on database
+     `slics-dev`, collection blank. It must not be able to read `test`: a `findOne` on
+     `test` as this user is refused (checked 2026-11-12).
 2. **Copy the cluster's connection string**, change the user and password to the new ones,
    and put `/slics-dev` in the path: `mongodb+srv://slics-dev:<password>@<cluster>/slics-dev?retryWrites=true&w=majority`.
 3. **Add it to `.env`** as `DEV_MONGODB_URI=…`.

@@ -18,7 +18,8 @@
     "admin:super": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/setSuperAdmin.mjs",
     "password:reset-link": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/passwordResetLink.mjs",
     "sheet:preview": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/previewSheetWeek.mjs",
-    "hub:seed": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/seedHubConfig.mjs"
+    "hub:seed": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/seedHubConfig.mjs",
+    "hub:backfill": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/backfillHubId.mjs"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.3",

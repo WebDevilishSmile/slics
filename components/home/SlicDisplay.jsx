@@ -3,6 +3,7 @@
 import EmptySlic from './EmptySlic';
 import EmptySlicSkeleton from './EmptySlicSkeleton';
 import AddDirections from './AddDirections';
+import EditSlicLink from './EditSlicLink';
 import ReportSlic from './ReportSlic';
 import SlicActions from './SlicActions';
 import SlicCardSkeleton from './SlicCardSkeleton';
@@ -23,6 +24,7 @@ function SlicDisplay({ commentsCount, loading, expectsSlic, slic, user }) {
       <TitleAddress slic={slic} />
       <SlicActions slic={slic} commentsCount={commentsCount} showTips />
       {!slic.hasRoute && !slic.arrival && !slic.hasDocuments && <AddDirections key={`add-${slic.numSlic}`} slic={slic} />}
+      <EditSlicLink slic={slic} user={user} />
       <ReportSlic key={slic.numSlic} slic={slic} />
     </SlicDetailsContainer>
   );

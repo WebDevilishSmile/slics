@@ -19,9 +19,9 @@ Each item says where the code lives. Run `npm run build` (in a scratch copy, nev
   (staff-only). Left: an admin goes over each of the other 64 on its edit page with
   `ROUTE-REVIEW.md` open (saving makes it "Driver-approved"), and Read aloud and Step by
   step get tried on a real phone.
-- **Stage 2 is built (2026-11-12)** and checked on the dev copy: drivers suggest, the SLICs
-  area approves or declines on `/admin/routes`, and the sheet opens on a safety note.
-  Left: deploy and `npm run db:indexes`.
+- **Stage 2 is live (2026-11-12):** drivers suggest, the SLICs area approves or declines on
+  `/admin/routes`, and the sheet opens on a safety note. Deployed, `db:indexes` run. Left:
+  one real suggestion filed and decided on the live site.
 
 ---
 

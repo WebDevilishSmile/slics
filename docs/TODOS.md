@@ -37,8 +37,8 @@ Use absolute dates.
 - [ ] **SLIC directions, stage 1** (live 2026-11-12, all 65 routes imported): go over each
       route on its edit page (`ROUTE-REVIEW.md` open; move arrival notes out; NWTVA done),
       and try Read aloud and Step by step on a phone (`SLIC-DIRECTIONS.md` → Stage 1)
-- [ ] **SLIC directions, stage 2** (built 2026-11-12): deploy, `npm run db:indexes`; then
-      file one suggestion on the live site and decide it on `/admin/routes`
+- [ ] **SLIC directions, stage 2** (live 2026-11-12): file one suggestion on the live site
+      and decide it on `/admin/routes`
       (`SLIC-DIRECTIONS.md` → Stage 2)
 - [ ] **Sheet digests and the sheet conventions** (built 2026-11-11): deploy, check the
       cron's first run says `baseline` for the three sheet kinds, then watch dispatch's

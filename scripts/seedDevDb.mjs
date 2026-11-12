@@ -29,7 +29,7 @@ const DRY_RUN = process.argv.includes('--dry-run');
 const PLAN = {
   keep: [
     'allHubs', 'slics', 'app-settings', 'places', 'placeComments', 'comments', 'gyms',
-    'gymComments', 'slicViews', 'slic_history', 'slic-reports', 'slic-routes', 'admin_audit', 'push-log',
+    'gymComments', 'slicViews', 'slic_history', 'slic-reports', 'slic-routes', 'slic-documents', 'admin_audit', 'push-log',
     'sync-state', 'cover-job-changes', 'cover-preferences', 'cover-bid-job-hides',
     'cover-bid-days',
   ],

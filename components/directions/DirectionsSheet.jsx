@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   Close,
+  EditNoteOutlined,
   FormatListNumbered,
   PictureAsPdfOutlined,
   PrintOutlined,
@@ -39,6 +40,7 @@ import {
 
 import RouteSteps from './RouteSteps';
 import StepByStep from './StepByStep';
+import SuggestRouteDialog from './SuggestRouteDialog';
 
 // The way a driver last chose for a SLIC ("Way 2", "Way back"), per device:
 // a convenience in localStorage, by the section's label so an edited route
@@ -75,6 +77,7 @@ export default function DirectionsSheet({ slic, onClose }) {
   const [sectionIndex, setSectionIndex] = useState(0);
   const [step, setStep] = useState(null); // null: all steps; a number: step by step
   const [reading, setReading] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
   const speech = useSpeech();
 
   useWakeLock(true);
@@ -257,8 +260,25 @@ export default function DirectionsSheet({ slic, onClose }) {
                 Original PDF
               </Button>
             )}
+            {!loading && (
+              <Button
+                onClick={() => setSuggesting(true)}
+                startIcon={<EditNoteOutlined />}
+                sx={[softRaisedSmall, softPressSx, SECONDARY]}
+              >
+                {route ? 'Suggest a change' : 'Add directions'}
+              </Button>
+            )}
           </DialogActions>
         </>
+      )}
+
+      {suggesting && (
+        <SuggestRouteDialog
+          slic={slic}
+          initialText={route?.text ?? ''}
+          onClose={() => setSuggesting(false)}
+        />
       )}
     </Dialog>
   );

@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Privacy Policy · SLICs',
 };
 
-const EFFECTIVE_DATE = 'November 7, 2026';
+const EFFECTIVE_DATE = 'November 12, 2026';
 
 // Every section's title, in page order, for the summary card's "On this
 // page" list. Keep it in step with the LegalSection titles below.
@@ -108,6 +108,15 @@ export default function PrivacyPage() {
               wrong with this SLIC?&quot;, what you pick and any note you write
               are stored with your account and the SLIC, so the administrator
               can check and fix it. Other drivers never see reports.
+            </>,
+            <>
+              <strong>Suggested directions.</strong> If you use &quot;Suggest a
+              change&quot; or &quot;Add directions&quot;, the steps and any note you
+              write are stored with your account and the SLIC, so an
+              administrator can check them. If one is approved, the steps become
+              the SLIC&apos;s directions, which every signed-in driver sees, but
+              never your name. If one isn&apos;t, you see the administrator&apos;s
+              answer.
             </>,
             <>
               <strong>Driver verification.</strong> If you ask to be verified
@@ -251,7 +260,7 @@ export default function PrivacyPage() {
               <strong>The administrator.</strong> As the person running the app,
               Tiago Davila can see account details (including your email and
               phone number if you added one), tips and comments, reports about
-              SLICs, lookup history, driver verification requests, cover lists
+              SLICs, suggested directions, lookup history, driver verification requests, cover lists
               and messages about the cover list in order to keep the app
               working, moderate what drivers post, verify drivers and run the
               cover bid, and the support you send through Buy Me a Coffee.
@@ -322,6 +331,7 @@ export default function PrivacyPage() {
             'Tips and comments are kept until you delete them, or until your account is deleted. Delete a tip from the SLIC or your profile page, and a comment on a place from the place itself.',
             'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
             'Reports about a SLIC are kept after they are dealt with, as a record of what was fixed. If you delete your account they stay, no longer linked to you.',
+            'Suggested directions are kept the same way: after an administrator decides them, and no longer linked to you once you delete your account.',
             'Reports about Covers are kept the same way: after they are dealt with, and without your account or linked name once you delete your account.',
             'Lookup history is kept while your account exists. Removing an entry from the History page hides it there, but it still counts toward your lookup total. All of it is deleted with your account.',
             'A driver verification request keeps your employee ID and seniority date only until the administrator decides it; then they are deleted. The request is deleted with your account. Your verification lasts until your account is deleted or the administrator removes it.',

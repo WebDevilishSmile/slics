@@ -47,6 +47,7 @@ import { useCoverJobChangesCount } from '@/lib/coverJobChangesStore';
 import { coversAllowed } from '@/lib/featureAccess';
 import { turnOffThisDevice } from '@/lib/pushDevice';
 import { useOpenReportsCount } from '@/lib/slicReportsStore';
+import { useOpenRouteSuggestionsCount } from '@/lib/routeSuggestionsStore';
 import { useOpenCoverReportsCount } from '@/lib/coverReportsStore';
 import { userHasArea } from '@/lib/staffAreas';
 
@@ -60,7 +61,7 @@ const MENU_ID = 'app-menu';
 
 // The tools whose counts are in the menu's alerts (GET /api/admin-alerts):
 // jobs, cover jobs and cover reports, SLIC reports, and claims with disputes.
-const ALERT_AREAS = ['jobs', 'covers', 'reports', 'driverClaims'];
+const ALERT_AREAS = ['jobs', 'covers', 'reports', 'driverClaims', 'slics'];
 
 // Every row is at least 48px tall — a driver's thumb, maybe gloved, in a cab
 // (UI-SUGGESTIONS.md "Design target"). Soft rows (utility/soft.js): the
@@ -161,8 +162,15 @@ function UserMenu({ user, features, signOutAction }) {
   const pendingClaims = usePendingClaimsCount();
   const openDisputes = useOpenDisputesCount();
   const openCoverReports = useOpenCoverReportsCount();
+  const openRouteSuggestions = useOpenRouteSuggestionsCount();
   const alerts =
-    jobChanges + coverJobChanges + openReports + pendingClaims + openDisputes + openCoverReports;
+    jobChanges +
+    coverJobChanges +
+    openReports +
+    pendingClaims +
+    openDisputes +
+    openCoverReports +
+    openRouteSuggestions;
   const alertsText = [
     jobChanges && `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`,
     coverJobChanges && `${coverJobChanges} cover job change${coverJobChanges === 1 ? '' : 's'}`,
@@ -170,6 +178,8 @@ function UserMenu({ user, features, signOutAction }) {
     pendingClaims && `${pendingClaims} driver claim${pendingClaims === 1 ? '' : 's'}`,
     openDisputes && `${openDisputes} cover list dispute${openDisputes === 1 ? '' : 's'}`,
     openCoverReports && `${openCoverReports} cover report${openCoverReports === 1 ? '' : 's'}`,
+    openRouteSuggestions &&
+      `${openRouteSuggestions} route suggestion${openRouteSuggestions === 1 ? '' : 's'}`,
   ]
     .filter(Boolean)
     .join(', ');

@@ -4,6 +4,8 @@ import CoverReportsNotice from '@/components/admin/coverReports/CoverReportsNoti
 import DriverClaimsNotice from '@/components/admin/driverClaims/DriverClaimsNotice';
 import JobChangesNotice from '@/components/admin/sheetJobs/JobChangesNotice';
 import SlicReportsNotice from '@/components/admin/slicReports/SlicReportsNotice';
+import RouteSuggestionsNotice from '@/components/admin/routeSuggestions/RouteSuggestionsNotice';
+import { getOpenRouteSuggestionSummary } from '@/lib/db/routeSuggestions';
 import { getOpenDisputeCount } from '@/lib/db/coverDisputes';
 import { getOpenCoverReportSummary } from '@/lib/db/coverReports';
 import { getUnseenCoverJobChanges } from '@/lib/db/coverJobChanges';
@@ -45,6 +47,17 @@ async function openReports() {
   }
 }
 
+// Drivers' open route suggestions (docs/SLIC-DIRECTIONS.md), for their
+// banner. Same rule.
+async function openRouteSuggestions() {
+  try {
+    return await getOpenRouteSuggestionSummary();
+  } catch (error) {
+    console.error('Error loading open route suggestions for a staff hub:', error);
+    return { count: 0, slics: [] };
+  }
+}
+
 // Open driver reports on Covers, for their banner. Same rule.
 async function openCoverReports() {
   try {
@@ -81,19 +94,21 @@ async function openDisputes() {
 // `extraLinks` go last (the super admin's hub link).
 export default async function StaffHub({ areas, userId, extraLinks = [], label }) {
   const has = (key) => areas.includes(key);
-  const [jobChanges, coverJobChanges, reports, claims, disputes, coverReports] = await Promise.all([
+  const [jobChanges, coverJobChanges, reports, claims, disputes, coverReports, routeSuggestions] = await Promise.all([
     has('jobs') ? unseenJobChanges(userId) : null,
     has('covers') ? unseenCoverJobChanges(userId) : null,
     has('reports') ? openReports() : null,
     has('driverClaims') ? pendingClaims() : 0,
     has('driverClaims') ? openDisputes() : 0,
     has('covers') ? openCoverReports() : null,
+    has('slics') ? openRouteSuggestions() : null,
   ]);
   const links = [...areaEntries(areas).flatMap((area) => area.links), ...extraLinks];
 
   return (
     <>
       {reports && <SlicReportsNotice {...reports} />}
+      {routeSuggestions && <RouteSuggestionsNotice {...routeSuggestions} />}
       {coverReports && <CoverReportsNotice {...coverReports} />}
       {has('driverClaims') && <DriverClaimsNotice count={claims} disputes={disputes} />}
       {jobChanges && <JobChangesNotice {...jobChanges} />}

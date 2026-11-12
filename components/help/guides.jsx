@@ -321,6 +321,11 @@ export const HELP_SECTIONS = [
         notes: [
           <>Read the steps before you pull out, or while you&apos;re stopped.</>,
           <>
+            Know a better way? Tap <Tap>Suggest a change</Tap> in the
+            directions, or <Tap>Add directions</Tap> under a SLIC that has none.
+            An admin checks it before drivers see it.
+          </>,
+          <>
             Some SLICs still show a <Tap>PDF</Tap> button instead, which opens
             the old directions sheet. No button means there are no directions
             yet.

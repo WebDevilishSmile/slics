@@ -46,7 +46,7 @@ export default async function DirectionsPage({ params }) {
             {place}
           </Typography>
           <Typography variant='h6' component='p'>
-            {slic.alphaSlic} · {slic.numSlic}
+            {slic.name ? `${slic.alphaSlic} · ${slic.numSlic}` : `SLIC ${slic.numSlic}`}
           </Typography>
           <Typography>
             {address.street}

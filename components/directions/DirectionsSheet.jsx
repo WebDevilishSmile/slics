@@ -64,6 +64,10 @@ function saveWay(numSlic, label) {
 // (the SLIC's arrival notes, the same from any hub). Step by step shows one
 // step per screen, Read aloud speaks them, and the screen stays on while it's
 // open. Mounted only while open, so each opening loads the latest route.
+// The secondary actions keep their labels on one line and wrap as whole
+// buttons on a narrow phone.
+const SECONDARY = { flex: '1 1 auto', minHeight: '3rem', px: 2, whiteSpace: 'nowrap' };
+
 export default function DirectionsSheet({ slic, onClose }) {
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [route, setRoute] = useState(slic.hasRoute ? undefined : null);
@@ -228,7 +232,7 @@ export default function DirectionsSheet({ slic, onClose }) {
                   setStep(0);
                 }}
                 startIcon={<RecordVoiceOverOutlined />}
-                sx={[softRaisedSmall, softPressSx, { flex: 1, minHeight: '3rem' }]}
+                sx={[softRaisedSmall, softPressSx, SECONDARY]}
               >
                 Read aloud
               </Button>
@@ -237,7 +241,7 @@ export default function DirectionsSheet({ slic, onClose }) {
               <Button
                 href={`/directions/${encodeURIComponent(slic.numSlic)}`}
                 startIcon={<PrintOutlined />}
-                sx={[softRaisedSmall, softPressSx, { flex: 1, minHeight: '3rem' }]}
+                sx={[softRaisedSmall, softPressSx, SECONDARY]}
               >
                 Print
               </Button>
@@ -248,7 +252,7 @@ export default function DirectionsSheet({ slic, onClose }) {
                 target='_blank'
                 rel='noopener'
                 startIcon={<PictureAsPdfOutlined />}
-                sx={[softRaisedSmall, softPressSx, { flex: 1, minHeight: '3rem' }]}
+                sx={[softRaisedSmall, softPressSx, SECONDARY]}
               >
                 Original PDF
               </Button>

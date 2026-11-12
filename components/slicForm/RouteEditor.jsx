@@ -99,6 +99,7 @@ export default function RouteEditor({ numSlic, route, pdfHref }) {
         }}
         multiline
         minRows={8}
+        maxRows={16}
         placeholder={'33 south to 78 east\n78 east to exit 29\nWay back:\nLeft out of the yard'}
         helperText={`${steps} step${steps === 1 ? '' : 's'}${
           sections.length > 1 ? ` in ${sections.length} sections` : ''

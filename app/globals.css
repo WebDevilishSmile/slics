@@ -324,10 +324,14 @@ a:active > .help-pin {
   body {
     background: #fff !important;
   }
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
   .print-sheet,
   .print-sheet * {
     color: #000 !important;
-    background: transparent !important;
-    box-shadow: none !important;
   }
 }

@@ -91,11 +91,18 @@ const STEP_OPENERS = new Set(
 // One sentence per step: split after . ! or ? (after a road abbreviation only
 // when a step opener follows), and at the "..." some routes use between steps.
 function sentences(paragraph) {
-  // "..." or "…", with any dots after it ("center.... Follow").
-  const parts = paragraph
-    .split(/(?:\.{3,}|…)\.*\s*/)
-    .map((part) => part.trim())
-    .filter((part) => /[A-Za-z0-9]/.test(part));
+  // "..." or "…", with any dots after it ("center.... Follow"), except inside
+  // brackets, where it's a pause: "(a UPS facility on your right... not the
+  // one you want)" stays one step.
+  const pieces = paragraph.split(/(?:\.{3,}|…)\.*\s*/).map((part) => part.trim());
+  const parts = [];
+  for (const piece of pieces) {
+    const last = parts.at(-1);
+    const open = last ? (last.match(/\(/g) ?? []).length - (last.match(/\)/g) ?? []).length : 0;
+    if (open > 0) parts[parts.length - 1] = `${last}… ${piece}`;
+    else parts.push(piece);
+  }
+  for (let i = parts.length - 1; i >= 0; i -= 1) if (!/[A-Za-z0-9]/.test(parts[i])) parts.splice(i, 1);
   const out = [];
   for (const part of parts) {
     let start = 0;

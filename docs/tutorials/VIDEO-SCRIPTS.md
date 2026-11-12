@@ -9,10 +9,11 @@ Six short screen recordings for drivers who aren't comfortable with apps. Each o
 - **Phone:** record on a phone, in portrait, not a computer. iPhone: Control Center → Screen Recording. Android: Quick Settings → Screen recorder (turn on "Show touches" if offered).
 - **Quiet the phone:** turn on Do Not Disturb so no texts pop up on screen.
 - **Bigger text:** raise the phone's text size a step, and pick light mode so the video reads well when it's watched outside.
+- **Creator mode:** for the lookup videos, turn on **Creator mode** in the menu (super admin only, [`../CREATOR-MODE.md`](../CREATOR-MODE.md)). The lookup screen then shows made-up SLICs, tips and drivers, so nothing needs blurring, and tips you post while recording aren't saved. It only covers the lookup screen (/home and All Hubs).
 - **Privacy:**
   - The sign-in video shows an email address. Record it with a spare account, or blur it when you edit.
-  - Driver tips show other drivers' first names and photos. For the tips videos, pick a SLIC whose only tips are yours, or blur the names.
-- **Pick one SLIC for all the lookup videos:** a UPS center that has a phone number, a directions PDF and at least one tip, so every button shows up. Use the same one throughout.
+  - Without creator mode, driver tips show other drivers' first names and photos. For the tips videos, pick a SLIC whose only tips are yours, or blur the names.
+- **Pick one SLIC for all the lookup videos:** in creator mode, **1234** (Oakdale Hub) has a phone number, directions and tips, so every button shows up. Without it, pick a UPS center with all three. Use the same one throughout.
 - **Voice:** talk like you're showing a coworker in the break room. Short sentences. Use the button names exactly as they appear on screen (they're in **bold** below).
 
 ---

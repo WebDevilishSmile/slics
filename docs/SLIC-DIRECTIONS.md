@@ -14,7 +14,9 @@ Each item says where the code lives. Run `npm run build` (in a scratch copy, nev
   public PDF, low clearances, a parkway, Manhattan streets) and its 28 app-vs-PDF
   mismatches are Tiago's to confirm with drivers.
 - **Stage 1 is next;** no code is written yet. The review changed it: sections in a route,
-  arrival notes kept apart, no codes in route text.
+  arrival notes kept apart, no codes in route text. Tiago's question on long routes and
+  hands-free use added a step-by-step view and Read aloud to it, and stage 4 (the route
+  as waypoints in the maps app).
 
 ---
 
@@ -94,8 +96,8 @@ and a code must never be in route text.
 - [ ] **`slic-routes`** (per hub), one doc per `(hubId, numSlic)`, unique in
       `lib/db/indexSpecs.mjs`:
       `{ hubId, numSlic, text, source: 'pdf-import' | 'admin' | 'suggestion', importedFrom,
-      approvedBy { id, name }, approvedAt, updated_at, previous: [{ text, approvedBy,
-      approvedAt }] }`. `text` is one step per line; `previous` keeps the last 20.
+    approvedBy { id, name }, approvedAt, updated_at, previous: [{ text, approvedBy,
+    approvedAt }] }`. `text` is one step per line; `previous` keeps the last 20.
   - **Sections** (from the review): a line ending in `:` ("Way 2 (easier):", "Way back:",
     "From Burtonsville, MD:") starts a section, and the sheet numbers each section's steps
     on their own. 24 of the 65 need it.
@@ -129,12 +131,51 @@ and a code must never be in route text.
     route exists (`home/SlicActions.jsx`).
   - It opens a soft sheet (full screen on a phone, a dialog on desktop) with:
     - the steps, numbered and large (a single paragraph shows as one);
+    - each section numbered on its own, alternative ways as tabs, "Getting in" last;
+    - **Step by step** (one step per screen, big Next/Back, the screen kept on) and **Read
+      aloud** (`speechSynthesis`), as answered below;
     - "Driver-approved route · approved <date>" and `MAP_ROUTE_NOTE`;
     - **Print / save PDF**, which opens `/slics/<numSlic>/print`: a print-styled page with
       the live record's header, the steps and the route's date. `window.print()` gives
       "Save as PDF" on phones and desktops, with no PDF library and no CSP change;
     - **Original PDF** while one exists;
     - **Suggest a change** (stage 2).
+
+  - **Long routes and hands-free** (Tiago's question, answered 2026-11-12):
+
+    > How do we handle a long winded route that doesn't fit well on a single screen or
+    > page? It is currently displayed as a single paragraph, which may require scrolling.
+    > Should we consider breaking it into multiple pages or adding a collapsible section
+    > for better readability? We want to be hands free and minimize driver distraction, so
+    > readability and ease of access are key considerations. Maybe voice commands to
+    > navigate through the steps could help. Is that possible on a web app like this?
+
+    - **Steps and sections, not pages.** The scrolling comes from the paragraph, which
+      the steps and sections above fix: a long route like FOSNY or 1110 becomes 10–15
+      short numbered lines per section. Paging back and forth is more fiddly than a clean
+      list, so no pages.
+    - **Alternative ways are tabs** ("Way 1 / Way 2 / Way back"), one shown at a time, the
+      last one chosen remembered per SLIC (`localStorage`). They're choices, not one long
+      read. "Getting in" (`slics.arrival`) is its own section at the end.
+    - **A step-by-step view:** one step fills the screen in very large text, with Next and
+      Back as big tap areas a thumb finds without looking. The screen stays on while it's
+      open (the Screen Wake Lock API, Safari 16.4+ and Chrome; the Permissions-Policy in
+      `next.config.mjs` doesn't block it).
+    - **Read aloud:** one button speaks the current step through the browser's own
+      text-to-speech (`speechSynthesis`, on iPhone and Android, no server, no microphone),
+      then waits for Next. It stops when the driver switches to the maps app, because the
+      browser pauses the page, so it's for before pulling out or at a stop.
+    - **Voice commands** ("next", "repeat") are possible but not dependable: speech
+      recognition is best in Chrome on Android (it sends audio to Google), patchier in
+      Safari, stops after silence, needs the page in front and a network, and struggles
+      with cab noise. The Permissions-Policy also has `microphone=()`. Left for later, as
+      an Android-only experiment ([Later](#later)).
+    - **The real hands-free answer is stage 4:** the approved route goes into the maps app
+      as waypoints, so the app's own voice guidance follows it.
+    - **Distraction:** the design assumes a route is read before rolling or while stopped,
+      and the maps app does the talking on the road. Check UPS's rules on phone use in the
+      cab before any in-cab feature is promoted to drivers.
+
 - [ ] **Admin:** a Route section on `/admin/edit/<slic>` beside `PdfUpload`
       (`slicForm/RouteEditor.jsx`).
   - It has a soft multiline field (one step per line), Save, Original PDF to compare
@@ -153,7 +194,7 @@ and a code must never be in route text.
 ## Stage 2 — Drivers suggest, admins approve
 
 - [ ] **`route-suggestions`** (per hub): `{ hubId, numSlic, userId, text, note, status:
-      'open' | 'approved' | 'declined', decidedBy, decidedAt, answer, created_at }`,
+    'open' | 'approved' | 'declined', decidedBy, decidedAt, answer, created_at }`,
       modeled on `slic-reports` (`lib/db/slicReports.js`).
 - [ ] **Filing:**
   - "Suggest a change" in the Directions sheet, or "Add directions" on a SLIC with none,
@@ -179,11 +220,11 @@ and a code must never be in route text.
 ## Stage 3 — Extra documents (railyard maps and more)
 
 - [ ] **`slic-documents`** (shared): `{ numSlic, title, kind: 'image' | 'pdf', url, width,
-      height, bytes, sortOrder, uploadedBy, created_at }`.
+    height, bytes, sortOrder, uploadedBy, created_at }`.
 - [ ] **Storage:** `lib/blob.js` gains `putSlicDocument` / `deleteSlicDocument`
       (`slic-docs/<alpha>-…`, a random suffix, the old blob deleted after the save).
 - [ ] **Routes:** `POST /api/slics/[id]/documents` and `PATCH`/`DELETE
-      …/documents/[docId]` (area `slics`).
+    …/documents/[docId]` (area `slics`).
   - The server checks the content (`%PDF-`, JPEG/PNG/WebP signatures), not only the name.
   - A phone photo is resized in the browser (canvas, longest side 2400 px, JPEG) to stay
     under the 4 MB request limit.
@@ -200,8 +241,35 @@ and a code must never be in route text.
 - **Privacy:** like today's PDFs, the files are public URLs. `SECURITY.md` #13's fix (a
   signed-in route that streams them) covers both.
 
+## Stage 4 — The approved route in the maps app
+
+Drivers already navigate by voice in Google Maps, which picks its own route, not always a
+truck-friendly one (`MAP_ROUTE_NOTE`). Google's Maps URLs take `waypoints`, so the app can
+send the approved route's main legs and let Maps' turn-by-turn voice follow BETPA's way,
+hands-free.
+
+- [ ] **Waypoints on a route:** `slic-routes` gains `waypoints: [{ label, lat, lng }]`, 2–5
+      points that pin the main legs ("Mario Cuomo Bridge", "I-84 at exit 20"). They're
+      set on the edit page with the pin field (`form/PinField.jsx`, a pasted Google Maps
+      link or coordinates), and are part of the route, so they're versioned and approved
+      with it.
+- [ ] **"Open route in Maps"** in the Directions sheet, and on the card's map button when
+      a route has waypoints: a Google Maps directions URL (`api=1`, `destination` = the
+      address, `waypoints` = the points, `travelmode=driving`), built in `lib/geo.js`
+      beside `mapsHref`.
+  - Apple Maps links don't take waypoints, so on an iPhone this opens Google Maps (in
+    the app if installed, else the browser). The plain "Open map" keeps the driver's own
+    choice (`useMapsApp`).
+  - Waypoints fix the main legs only. The last mile and "Getting in" still matter, so the
+    sheet says so beside the button.
+- [ ] **Check:** open each route's link on a phone, and confirm with a driver that Maps
+      follows the approved roads between the points.
+
 ## Later
 
+- **Voice commands** ("next", "repeat"), Android-only and experimental: the Web Speech
+  API's recognition, behind a switch, with `microphone=(self)` in the Permissions-Policy.
+  Only if Read aloud and stage 4 leave a real need.
 - Retire the PDF tile once every imported route is checked. Retiring the Supabase bucket
   stays its own item (`TODOS.md` → Housekeeping).
 - Take the unused `slics.directions` out of the edit route's allow-list.
@@ -218,6 +286,9 @@ and a code must never be in route text.
   - Headless phone screenshots, light and dark, signed in with the dev test accounts: the
     card with Directions and with the PDF fallback, the sheet, the print page, the editor.
   - Chrome's `Page.printToPDF` on the print page.
+  - On a real iPhone and an Android phone: Step by step keeps the screen on, Read aloud
+    speaks a step and stops cleanly when the app goes to the background, and the tabs
+    remember the last way chosen.
 - **Stage 2:**
   - On the dev copy: file a suggestion as the `+driver` test account, then approve one and
     decline one as the admin.
@@ -229,3 +300,6 @@ and a code must never be in route text.
     renamed non-image is refused.
   - The image shows inline under the CSP.
   - Removing a document deletes its blob.
+- **Stage 4:** each route's "Open route in Maps" link opens Google Maps with every
+  waypoint in order, on an iPhone and an Android phone, and a driver confirms Maps keeps
+  to the approved roads between them.

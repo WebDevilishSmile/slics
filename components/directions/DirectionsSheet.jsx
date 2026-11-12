@@ -217,6 +217,32 @@ export default function DirectionsSheet({ slic, onClose }) {
             {!loading && !route && !slic.arrival && !error && (
               <Typography color='text.secondary'>No directions for this SLIC yet.</Typography>
             )}
+
+            {/* Quieter actions at the end of the content, so the pinned
+                buttons below leave the steps most of a phone's screen. */}
+            {!loading && (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
+                {pdfHref && (
+                  <Button
+                    href={pdfHref}
+                    target='_blank'
+                    rel='noopener'
+                    startIcon={<PictureAsPdfOutlined />}
+                    sx={[softPressSx, { minHeight: '3rem', px: 2 }]}
+                  >
+                    Original PDF
+                  </Button>
+                )}
+                <Button
+                  onClick={() => setSuggesting(true)}
+                  startIcon={<EditNoteOutlined />}
+                  aria-haspopup='dialog'
+                  sx={[softPressSx, { minHeight: '3rem', px: 2 }]}
+                >
+                  {route ? 'Suggest a change' : 'Add directions'}
+                </Button>
+              </Box>
+            )}
           </DialogContent>
 
           <DialogActions disableSpacing sx={{ flexWrap: 'wrap', gap: 1.5, px: 3, pb: 3 }}>
@@ -249,26 +275,6 @@ export default function DirectionsSheet({ slic, onClose }) {
                 sx={[softRaisedSmall, softPressSx, SECONDARY]}
               >
                 Print
-              </Button>
-            )}
-            {pdfHref && (
-              <Button
-                href={pdfHref}
-                target='_blank'
-                rel='noopener'
-                startIcon={<PictureAsPdfOutlined />}
-                sx={[softRaisedSmall, softPressSx, SECONDARY]}
-              >
-                Original PDF
-              </Button>
-            )}
-            {!loading && (
-              <Button
-                onClick={() => setSuggesting(true)}
-                startIcon={<EditNoteOutlined />}
-                sx={[softRaisedSmall, softPressSx, SECONDARY]}
-              >
-                {route ? 'Suggest a change' : 'Add directions'}
               </Button>
             )}
           </DialogActions>

@@ -10,7 +10,10 @@ they see until a stage is finished, verified and deliberately merged.
 
 ## Status (2026-11-11)
 
-- **Roadmap only.** Nothing is built.
+- **Stage 0 is built on the `multi-hub` branch** (2026-11-11), not merged: the hub
+  settings (`hub-configs`, `lib/hubScope.js`, `lib/db/hubConfigs.js`), the seed script,
+  and the BETPA values behind optional arguments. Nothing a driver sees changes, and no
+  `hub-configs` doc exists in production yet (`npm run hub:seed` has only been dry-run).
 - This roadmap is on `main`. The building work happens on the `multi-hub` branch, in its
   own worktree (`../slics-multi-hub`), which isn't pushed; `main` gets none of the code
   until a stage is merged.
@@ -62,8 +65,9 @@ be a setup task on `/admin/super`, not a fork of the code.
 collection is the list of UPS hubs behind `/hubs`. So the new pieces are named:
 
 - `hub-configs`: the collection with one doc per building using SLICs;
-- `lib/db/hubConfigs.js` (`getHubConfig`, `listHubConfigs`) and `lib/hubScope.js` (`hubFilter`,
-  `assertHubId`, `DEFAULT_HUB_ID`);
+- `lib/db/hubConfigs.js` (`getHubConfig`, `getHubConfigFresh`, `describeHubConfig`) and
+  `lib/hubScope.js` (`DEFAULT_HUB_ID`, `DEFAULT_HUB`, `hubFilter`, `assertHubId`,
+  `hubConfigFrom`, `publicHub`);
 - `hubId`: a lowercase alpha code (`'betpa'`) on per-hub docs and on `users`.
 
 ## Where BETPA is wired in today
@@ -72,7 +76,7 @@ What stage 0 replaces with hub config, each item falling back to today's value:
 
 | What | Where |
 |---|---|
-| The dispatch phone's SLIC, `DISPATCH_NUM_SLIC = '1809'` | `constants.js`; `app/covers/page.jsx`; the "BETPA" text in `covers/CoverList.jsx` |
+| The dispatch phone's SLIC, `DISPATCH_NUM_SLIC = '1809'` (gone since stage 0: `dispatchNumSlic`) | `constants.js`; `app/covers/page.jsx`; the "BETPA" text in `covers/CoverList.jsx` |
 | The one on-call sheet, `ON_CALL_SHEET_ID` | `lib/googleSheets.js`, `lib/onCallSheetSync.js`, `scripts/previewSheetWeek.mjs`, `lib/systemHealth.js` |
 | The webhook secret, `ON_CALL_SHEET_WEBHOOK_SECRET` | `app/api/webhooks/on-call-sheet/route.js` |
 | New York time | `lib/bidDay.js`, `lib/db/hub.js`, `lib/onCallSheet.js` (`todayInNewYork`) |
@@ -90,18 +94,26 @@ What stage 0 replaces with hub config, each item falling back to today's value:
 
 **`hub-configs`**, one doc per building:
 ```
-{ _id: 'betpa', name: 'Bethlehem', alphaSlic: 'BETPA', numSlic: '1809',
+{ _id: 'betpa', name: 'Bethlehem Center', alphaSlic: 'BETPA', numSlic: '1809',
   dispatchNumSlic: '1809', timeZone: 'America/New_York',
-  covers: { enabled: true, sheetId, webhookSecretHash, layout: 'betpa-v1',
-            coverDriverCount: 20, bidDay: { weekday: 4, daysBeforeWeekEnd: 9 },
-            sleeperPattern: '^ER\\d' },
-  createdAt, createdBy: { id, name }, updatedAt }
+  covers: { enabled: true, layout: 'betpa-v1', coverDriverCount: 20,
+            bidDayOffsetDays: 9, sleeperPattern: '^ER\\d' },
+  sheet: { id, webhookSecretHash },      // optional, server-only
+  seededAt, seededBy, updatedAt }
 ```
-- It's read behind a 5-minute `unstable_cache` with a tag, like `lib/db/appSettings.js`.
-- A missing doc or field falls back to today's constants and env values, so deleting
-  BETPA's doc is the rollback.
-- The sheet id moves from env into the doc. It stays out of git and is shown only to the
-  super admin. The webhook secret is stored as a hash, like reset tokens.
+- BETPA's values live in the code as `DEFAULT_HUB` (`lib/hubScope.js`, pure and
+  import-free). `hubConfigFrom` lays a stored doc over them one field at a time, keeping
+  the code's value for a missing or malformed field. Another hub starts from BETPA's rules
+  with Covers off.
+- It's read behind a 5-minute `unstable_cache` with a tag (`getHubConfig`), like
+  `lib/db/appSettings.js`. BETPA's read never throws: a failure is the code's values.
+- `bidDayOffsetDays` is the bid day's distance before the week's Saturday (9 is the
+  Thursday before), so no weekday needs storing.
+- `sheet` is optional and stays on the server (`publicHub` drops it). Without it, BETPA
+  reads `ON_CALL_SHEET_ID` and `ON_CALL_SHEET_WEBHOOK_SECRET` as before. Once it's saved
+  (`npm run hub:seed -- --with-sheet`) it wins over the env keys, so rotating the webhook
+  secret means re-saving its hash. The secret is stored as a SHA-256, like reset tokens,
+  and the cache never holds an env value.
 
 **Shared** (never filtered by hub):
 
@@ -156,19 +168,44 @@ never from a request body.
 
 ## Stage 0: groundwork (no behavior change)
 
-- [ ] `lib/hubScope.js`: `DEFAULT_HUB_ID = 'betpa'`, `hubFilter`, `assertHubId` (throws when
-      a per-hub function is called without a hub).
-- [ ] `hub-configs` and `lib/db/hubConfigs.js`, cached, with the fallbacks above.
-- [ ] `scripts/seedHubConfig.mjs` (`--dry-run`, `--undo`): writes BETPA's doc from today's
-      constants and env.
-- [ ] Hub config replaces each hardcoded point in the table above, with a fallback:
-  - [ ] `DISPATCH_NUM_SLIC` and the "BETPA" text: the hub's `dispatchNumSlic` / `alphaSlic`
-  - [ ] the time zone in `lib/bidDay.js`, `lib/onCallSheet.js` and `lib/db/hub.js`
-  - [ ] the bid-day rule, `COVER_POSITIONS` and `SLEEPER_JOB`
-  - [ ] `lib/googleSheets.js` takes the spreadsheet id as an argument
-  - [ ] the webhook checks the secret hash, falling back to the env value
-- [ ] `lib/systemHealth.js` reports each hub's sheet as set or not.
-- **Verify:** `npm run build`, and screenshots of BETPA unchanged.
+Built 2026-11-11 on `multi-hub`; not merged.
+
+- [x] `lib/hubScope.js`: `DEFAULT_HUB_ID = 'betpa'`, `DEFAULT_HUB` (BETPA's values),
+      `hubFilter`, `assertHubId` (throws when a per-hub function is called without a hub),
+      `hubConfigFrom`, `publicHub`.
+- [x] `hub-configs` and `lib/db/hubConfigs.js`, cached, with the fallbacks above.
+- [x] `scripts/seedHubConfig.mjs` (`npm run hub:seed`, `--dry-run`, `--undo`,
+      `--with-sheet`): writes BETPA's doc from `DEFAULT_HUB`, and with `--with-sheet` the
+      sheet's id and the webhook secret's hash from env. Undo deletes only a doc it wrote.
+      Each change goes to `admin_audit` (`hubConfig.seeded`, `.sheetSaved`, `.removed`).
+- [x] The hardcoded points now come from hub settings:
+  - [x] `DISPATCH_NUM_SLIC` is gone: `/covers` reads `getHubConfig()` for
+        `dispatchNumSlic`, and `CoverList` shows its `alphaSlic` (`dispatch={ name, phone }`).
+  - [x] `lib/googleSheets.js` takes `{ spreadsheetId }` on every read (env when absent).
+        `lib/onCallSheetSync.js` passes the hub's `sheet.id`.
+  - [x] The webhook checks `sheet.webhookSecretHash` when saved (`secretMatchesHash`,
+        `lib/secretsMatch.js`), else the env secret.
+  - [x] Time zone, bid-day offset, cover-driver count and sleeper pattern read their
+        defaults from `DEFAULT_HUB`. Each function that uses one takes it as a last,
+        optional argument: `todayInNewYork(now, timeZone)`, `callInInstant(…, timeZone)`,
+        `currentBidWeek` / `defaultBidDate` / `bidDateFor` / `weeksBiddingOn(…, offsetDays)`,
+        `coverSpots` / `myCoverSpot` / `offListWeeks(…, positions)`,
+        `autoHideReason(job, { sleeperPattern })`, `isJobHidden(…, rules)`. No caller passes
+        one yet: stage 2 does, once there's a hub to pass.
+- [x] `lib/systemHealth.js`: a "Hub settings" line in the sheet section says whether
+      BETPA's settings, sheet id and webhook secret come from `hub-configs` or env.
+- **Verified 2026-11-11:**
+  - Every changed pure function gave the same answer as `main`'s for each day of
+    2025–2027 (bid weeks, bid days, call-in instants, sleeper hides, cover places,
+    today in New York).
+  - Read-only against production, `getHubConfigFresh('betpa')` returns BETPA's values with
+    the sheet from env, and another hub with no doc is null.
+  - The seed script's `--dry-run`, `--with-sheet --dry-run` and `--undo --dry-run` print
+    what they would do and write nothing.
+  - `npm run lint` and `next build` pass.
+- **Left for the merge:** headless phone screenshots of `/covers` ("Call dispatch" and
+  "BETPA (phone)") on a scratch build, before and after. Then, optionally, `npm run hub:seed`
+  on the dev database, then production.
 
 ## Stage 1: tag the data (additive)
 

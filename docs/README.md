@@ -32,7 +32,7 @@ a line for each open stage and links here.
 | [`STAFF-ROLES.md`](STAFF-ROLES.md) | The Dispatch role and a switch per admin tool per role on `/admin/super/admins`. Built 2026-10-16 |
 | [`MULTI-HUB.md`](MULTI-HUB.md) | Opening SLICs to other hubs: a shared SLIC directory, per-hub covers, jobs, drivers and admins. Stages 0–1 live (2026-11-12); stage 2 on hold until a hub asks |
 | [`SLIC-DIRECTIONS.md`](SLIC-DIRECTIONS.md) | The directions PDFs become routes drivers read on the card, suggest changes to and print, plus extra documents like a railyard map. Stage 0 (Claude's review of the 65 PDFs, [`ROUTE-REVIEW.md`](ROUTE-REVIEW.md)) done 2026-11-12 |
-| [`CREATOR-MODE.md`](CREATOR-MODE.md) | The super admin's switch for recording videos: made-up SLICs, tips and drivers on the lookup screen. Stage 1 built 2026-11-12 |
+| [`CREATOR-MODE.md`](CREATOR-MODE.md) | The super admin's switch for recording videos: made-up SLICs, tips, drivers, history, cover jobs and places on every driver page. Stage 1 live, stage 2 built 2026-11-12 |
 | [`SUPER-ADMIN-HUB.md`](SUPER-ADMIN-HUB.md) | The super admin's hub at `/admin/super`: numbers and usage, notifications, activity, system health, feature switches. Built 2026-10-12 |
 | [`RECOMMENDATIONS.md`](RECOMMENDATIONS.md) | Design notes for the ideas in `TODOS.md` → Ideas, numbered (#1–#20). An idea's notes move into its own plan doc when it's committed |
 

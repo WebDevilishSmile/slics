@@ -34,8 +34,9 @@ Use absolute dates.
 
 ## Now
 
-- [ ] **Creator mode** (built 2026-11-12): try it on a phone as the super admin, then
-      record the lookup tutorials with it (`CREATOR-MODE.md` → Checklist)
+- [ ] **Creator mode** (stage 1 live, stage 2, the other driver pages, built 2026-11-12):
+      try every page on a phone as the super admin, then record the tutorials with it
+      (`CREATOR-MODE.md` → Checklist)
 - [ ] **SLIC directions, stage 1** (live 2026-11-12, all 65 routes imported): go over each
       route on its edit page (`ROUTE-REVIEW.md` open; move arrival notes out; NWTVA done),
       and try Read aloud and Step by step on a phone (`SLIC-DIRECTIONS.md` → Stage 1)

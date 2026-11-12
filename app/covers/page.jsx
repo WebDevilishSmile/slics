@@ -12,6 +12,7 @@ import { getBidDayOverrides } from '@/lib/db/coverBidDays';
 import { getHiddenJobKeys } from '@/lib/db/coverBidJobHides';
 import { getMyCoverLists } from '@/lib/db/coverPreferences';
 import { getSlicByNumSlic } from '@/lib/db/slics';
+import { getHubConfig } from '@/lib/db/hubConfigs';
 import { bidDateFor, currentBidWeek } from '@/lib/bidDay';
 import { isJobHidden } from '@/lib/coverBidJobRow';
 import { coverListStatus } from '@/lib/coverList';
@@ -19,7 +20,7 @@ import { myCoverSpot, offListWeeks } from '@/lib/coverDrivers';
 import { getUpcomingSaturday } from '@/lib/format';
 import { isSaturday, todayInNewYork } from '@/lib/onCallSheet';
 import { toDriverCoverJob } from '@/lib/serializers';
-import { COVER_BID_MONTHS_BACK, DISPATCH_NUM_SLIC } from '@/constants';
+import { COVER_BID_MONTHS_BACK } from '@/constants';
 import CoverBoard from '@/components/covers/CoverBoard';
 import { PreviewLink, PreviewNotice } from '@/components/covers/CoverPreview';
 import DriverVerification from '@/components/covers/DriverVerification';
@@ -39,8 +40,9 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // get it.
 //
 // A verified driver also keeps a list of the jobs they want for each week
-// (stage 2, covers/CoverBoard.jsx), with BETPA's phone (DISPATCH_NUM_SLIC)
-// to call dispatch at their call-in time.
+// (stage 2, covers/CoverBoard.jsx), with the hub's phone (the SLIC its
+// settings name, `dispatchNumSlic`, lib/db/hubConfigs.js; BETPA's 1809) to
+// call dispatch at their call-in time.
 //
 // A verified driver a posted week's pick list leaves off isn't a cover or
 // on-call driver that week: the week is read only for them (no list, and no
@@ -93,6 +95,9 @@ export default async function CoversPage({ searchParams }) {
   // The one week the driver's place shows for, and the calendar opens on.
   const bidWeek = currentBidWeek(today);
 
+  // The hub's settings: BETPA's, the only hub until docs/MULTI-HUB.md stage 2.
+  const hub = await getHubConfig();
+
   const [user, claim, jobs, hiddenKeys, pickWeeks, savedLists, dispatchPhone, dispute, bidDayOverrides] = await Promise.all([
     verified ? getUserById(session.user.id) : null,
     driverView ? null : getMyDriverClaim(session.user.id),
@@ -101,8 +106,8 @@ export default async function CoversPage({ searchParams }) {
     driverView ? getCoverBidPicksSince(thisWeek) : [],
     verified ? getMyCoverLists(session.user.id, cutoffWeek) : {},
     // The button just doesn't show if the hub's SLIC can't be read.
-    driverView
-      ? getSlicByNumSlic(DISPATCH_NUM_SLIC).then((slic) => slic.phone || null).catch(() => null)
+    driverView && hub.dispatchNumSlic
+      ? getSlicByNumSlic(hub.dispatchNumSlic).then((slic) => slic.phone || null).catch(() => null)
       : null,
     verified ? getMyCoverDispute(session.user.id) : null,
     // Weeks an admin moved off the usual Thursday (lib/bidDay.js). A failure
@@ -192,7 +197,7 @@ export default async function CoversPage({ searchParams }) {
           initialLists={lists}
           callIns={callIns}
           bidDates={bidDates}
-          dispatchPhone={dispatchPhone}
+          dispatch={dispatchPhone ? { name: hub.alphaSlic, phone: dispatchPhone } : null}
           canList={driverView}
           offListWeeks={offWeeks}
           thisWeek={thisWeek}

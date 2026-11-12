@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { secretsMatch } from '@/lib/secretsMatch';
+import { secretMatchesHash, secretsMatch } from '@/lib/secretsMatch';
+import { getHubConfig } from '@/lib/db/hubConfigs';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { recordSheetPing } from '@/lib/db/syncState';
 import { syncFromSheet } from '@/lib/onCallSheetSync';
@@ -11,14 +12,17 @@ export const maxDuration = 60;
 // The sheet's notifier pings this when the ON CALL SHEET changes
 // (docs/on-call-sheet-apps-script.md, docs/ON-CALL-SHEET-SYNC.md stage 3).
 //
-// Header: x-sheet-secret, the script's APP_SECRET (ON_CALL_SHEET_WEBHOOK_SECRET).
+// Header: x-sheet-secret, the script's APP_SECRET. It's checked against the
+// hub's stored hash (`hub-configs` `sheet.webhookSecretHash`) when there is
+// one, else ON_CALL_SHEET_WEBHOOK_SECRET as before (docs/MULTI-HUB.md). Only
+// BETPA's sheet pings until stage 2 names the hub.
 // Body: { tab } for an edit, { changeType } for added or removed rows, columns
 // or tabs. It's only a hint about what to re-read (syncFromSheet).
 // 200 done · 202 every part was already being read, and will be read once more
 // · 401 no secret · 403 wrong secret · 429 too many pings · 502 Google failed.
 export async function POST(request) {
-  const expected = process.env.ON_CALL_SHEET_WEBHOOK_SECRET;
-  if (!expected) {
+  const { sheet } = await getHubConfig();
+  if (!sheet.webhookSecretHash && !sheet.webhookSecret) {
     console.error('ON_CALL_SHEET_WEBHOOK_SECRET is not set.');
     return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
@@ -26,7 +30,10 @@ export async function POST(request) {
   if (!secret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  if (!secretsMatch(secret, expected)) {
+  const matches = sheet.webhookSecretHash
+    ? secretMatchesHash(secret, sheet.webhookSecretHash)
+    : secretsMatch(secret, sheet.webhookSecret);
+  if (!matches) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 

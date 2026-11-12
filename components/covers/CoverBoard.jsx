@@ -50,7 +50,7 @@ export default function CoverBoard({
   initialLists,
   callIns,
   bidDates,
-  dispatchPhone,
+  dispatch,
   canList,
   offListWeeks,
   thisWeek,
@@ -285,7 +285,7 @@ export default function CoverBoard({
             announcement={announcement}
             callIn={callIns?.[selectedWeek] ?? null}
             bidDate={bidDates?.[selectedWeek] ?? null}
-            dispatchPhone={dispatchPhone}
+            dispatch={dispatch}
             preview={preview}
             reminderLeads={reminderLeads}
             profileHref={profileHref}

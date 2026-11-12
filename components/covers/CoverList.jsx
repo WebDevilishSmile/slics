@@ -51,7 +51,8 @@ const SCREEN_READER_INSTRUCTIONS = {
 //   is read only and there's no call to make.
 // - `callIn`: the driver's call-in time that week, when they're on the list.
 // - `bidDate`: the day they call in (lib/bidDay.js).
-// - `dispatchPhone`: BETPA's phone (DISPATCH_NUM_SLIC), or null.
+// - `dispatch`: `{ name, phone }`, the hub's alpha code and phone (BETPA's,
+//   from its dispatch SLIC, lib/db/hubConfigs.js), or null.
 // - `preview`: the super admin's preview; the list isn't saved.
 // - `reminderLeads`: the driver's call-in reminder times when that
 //   notification is on (minutes), said under Call dispatch, or null.
@@ -74,7 +75,7 @@ export default function CoverList({
   announcement,
   callIn,
   bidDate,
-  dispatchPhone,
+  dispatch,
   preview = false,
   reminderLeads = null,
   profileHref = null,
@@ -210,11 +211,11 @@ export default function CoverList({
         </Typography>
       )}
 
-      {dispatchPhone && !offList && (
+      {dispatch && !offList && (
         <Box sx={{ mt: 2.5, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
           <Button
             variant='contained'
-            href={`tel:${dispatchPhone}`}
+            href={`tel:${dispatch.phone}`}
             startIcon={<PhoneOutlined />}
             sx={[softContainedSx, { minHeight: '3rem', px: 3 }]}
           >
@@ -230,7 +231,7 @@ export default function CoverList({
                 {' · '}
               </>
             ) : null}
-            BETPA {dispatchPhone}
+            {dispatch.name} {dispatch.phone}
           </Typography>
         </Box>
       )}

@@ -203,9 +203,12 @@ Built 2026-11-11 on `multi-hub`; not merged.
   - The seed script's `--dry-run`, `--with-sheet --dry-run` and `--undo --dry-run` print
     what they would do and write nothing.
   - `npm run lint` and `next build` pass.
-- **Left for the merge:** headless phone screenshots of `/covers` ("Call dispatch" and
-  "BETPA (phone)") on a scratch build, before and after. Then, optionally, `npm run hub:seed`
-  on the dev database, then production.
+  - Tiago compared the branch (`next dev -p 3001` in the worktree) with `main` (port
+    3000) by hand: Call dispatch and "BETPA (phone)", bid day and call-in time on
+    `/covers`, the sleeper and sheet-hidden jobs, This week on `/profile`, and the new
+    "Hub settings" line on `/admin/super/health`. All the same, apart from the new line.
+- **Left for the merge:** optionally, `npm run hub:seed` on the dev database, then
+  production.
 
 ## Stage 1: tag the data (additive)
 

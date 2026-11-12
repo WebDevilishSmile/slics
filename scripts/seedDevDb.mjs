@@ -29,7 +29,7 @@ const DRY_RUN = process.argv.includes('--dry-run');
 const PLAN = {
   keep: [
     'allHubs', 'slics', 'app-settings', 'places', 'placeComments', 'comments', 'gyms',
-    'gymComments', 'slicViews', 'slic_history', 'slic-reports', 'admin_audit', 'push-log',
+    'gymComments', 'slicViews', 'slic_history', 'slic-reports', 'slic-routes', 'admin_audit', 'push-log',
     'sync-state', 'cover-job-changes', 'cover-preferences', 'cover-bid-job-hides',
     'cover-bid-days',
   ],
@@ -37,7 +37,7 @@ const PLAN = {
   drop: [
     'accounts', 'sessions', 'verification_tokens', 'push-subscriptions', 'password-resets',
     'rateLimits', 'bmc-events', 'driver-claims', 'cover-disputes', 'bid-drivers', 'bid-jobs',
-    'bid-sleepers', 'cover', 'cover-notices',
+    'bid-sleepers', 'cover', 'cover-notices', 'route-suggestions',
   ],
 };
 

@@ -406,6 +406,17 @@ export const PUSH_TYPES = [
     defaultOn: true,
   },
   {
+    // docs/SLIC-DIRECTIONS.md, stage 2: approving one is editing a SLIC's
+    // route, so it's the SLICs area's.
+    key: 'routeSuggestions',
+    area: 'slics',
+    group: 'Drivers',
+    label: 'Route suggestions',
+    description: 'A driver suggests directions for a SLIC, or a change to them.',
+    audience: 'admin',
+    defaultOn: true,
+  },
+  {
     key: 'tips',
     area: 'comments',
     group: 'Drivers',
@@ -530,8 +541,11 @@ export const STAFF_AREAS = [
   {
     key: 'slics',
     label: 'SLICs',
-    description: 'Add, edit and delete SLICs and their PDFs.',
-    links: [{ href: '/admin/slics', label: 'SLICs' }],
+    description: "Add, edit and delete SLICs, their directions and PDFs, and decide drivers' route suggestions.",
+    links: [
+      { href: '/admin/slics', label: 'SLICs' },
+      { href: '/admin/routes', label: 'Route Suggestions' },
+    ],
   },
   {
     key: 'reports',

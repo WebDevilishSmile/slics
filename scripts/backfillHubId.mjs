@@ -40,6 +40,7 @@ export const PER_HUB_COLLECTIONS = [
   // Always written with a hubId (lib/db/slicRoutes.js), listed so a run
   // counts it like the rest (docs/SLIC-DIRECTIONS.md).
   'slic-routes',
+  'route-suggestions',
 ];
 
 const args = process.argv.slice(2);

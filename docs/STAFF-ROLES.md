@@ -88,7 +88,7 @@ Decided:
 | `comments` | Comments | `/admin/comments` | Edit or delete anyone's tip, place or place comment; see a tip's voters; the tips and places pushes |
 | `users` | Users | `/admin/users`, `/admin/users/[id]` | `toggle-member`, `password-reset`, anyone's phone (`add-phone`); the sign-ups push |
 | `jobs` | Jobs | `/admin/jobs` | `/api/sheet-jobs/*`; banner, badge, the job changes push |
-| `covers` | Covers | `/admin/cover/drivers`, `/jobs`, `/lists` | `/api/cover-bid-jobs/*`, `/api/cover-job-changes/*`, `GET /api/cover-preferences`; `/covers` before it opens (`canUseCovers`); banner, badge, the cover pushes |
+| `covers` | Covers | `/admin/cover/drivers`, `/jobs`, `/lists` | `/api/cover-bid-jobs/*`, `/api/cover-job-changes/*`, `/api/cover-drivers/*`, `GET /api/cover-preferences`; `/covers` before it opens (`canUseCovers`); banner, badge, the cover pushes |
 | `drivers` | Drivers | `/admin/drivers` | `/api/drivers/*` |
 | `gyms` | Planet Fitness | `/admin/planet-fitness` | `/api/gyms/*`, `/api/gym-comments/*` |
 

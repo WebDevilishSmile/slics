@@ -383,6 +383,27 @@ the #1 entry. No userId, no names, so a total can't say whose list it came from.
 whose lists are gone keeps its last count. The privacy page says so. Run
 `npm run db:indexes` once for its unique `weekEnding` index.
 
+### Driver details on Cover Drivers (built 2026-11-13)
+
+On `/admin/cover/drivers` every driver's name is a button that opens their details for
+the week the calendar shows (`covers/CoverDriverDialog.jsx`, full screen on a phone). It
+reads `GET /api/cover-drivers/[key]?weekEnding=` (Covers area; `[key]` is the name as the
+sheet writes it), which `getCoverDriverProfile` (`lib/db/coverDriverProfile.js`) loads
+from what the sync saved, with no sheet read:
+
+- **This week**: their place (cover #N, on call #N, out, no number), call-in time and bid
+  day, what they work (`weekAssignment`: the cover job they took, their own job, on call,
+  a leave), and that job's days and route. `readDriverWeek` and the schedule helpers in
+  `lib/db/driverWeeks.js` are the profile's This week card's own, and the days are drawn
+  by `covers/JobSchedule.jsx`, which the card uses too.
+- **Own job**: the job the Jobs tab names them on, its seniority rank, week hours and
+  days.
+- **Recent weeks**: the last 8 weeks bid on up to the week shown (`RECENT_WEEKS`), each
+  read by `readWeek` through `readWeeks` (`lib/db/coverHistory.js`, shared with Cover
+  History), with `driverTrends`' totals, so they match the History page's Drivers row.
+
+It names one driver and job codes, never who picked another job or a job's cover reason.
+
 ## Reference only and cover reports (built 2026-11-07)
 
 **The note.** Every visit to `/covers` shows a note above the jobs (`covers/CoversDisclaimer.jsx`,

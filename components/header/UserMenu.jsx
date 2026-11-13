@@ -145,7 +145,7 @@ function UserMenu({ user, features, creatorMode = null, signOutAction }) {
   };
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
-  // Staff (admins and dispatch, docs/STAFF-ROLES.md): Jobs-tab and cover-tab
+  // Staff (admins and dispatch, docs/archive/STAFF-ROLES.md): Jobs-tab and cover-tab
   // changes they haven't seen (alerts, docs/ON-CALL-SHEET-SYNC.md;
   // /admin/jobs and /admin/cover/jobs clear them), open SLIC reports
   // (RECOMMENDATIONS.md #5; they count until closed on /admin/reports) and

@@ -6,7 +6,7 @@ import { getPushLog } from '@/lib/db/pushLog';
 import { getNotificationsOverview } from '@/lib/db/pushOverview';
 import theme from '@/theme';
 
-// Push notifications in one place (docs/SUPER-ADMIN-HUB.md stage C): stats,
+// Push notifications in one place (docs/archive/SUPER-ADMIN-HUB.md stage C): stats,
 // every admin's devices and kinds, samples, a written message and the send
 // log. Super admin only; checked here before reading anything.
 export default async function NotificationsPage() {

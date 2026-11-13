@@ -6,7 +6,7 @@ import { Box, Link as MuiLink, Typography } from '@mui/material';
 import { softRaised } from '@/components/utility/soft';
 import { formatCount } from './format';
 
-// The SLICs looked up most in the last 30 days (docs/SUPER-ADMIN-HUB.md stage
+// The SLICs looked up most in the last 30 days (docs/archive/SUPER-ADMIN-HUB.md stage
 // B). Ten long names read better as a ranked list than as a chart on a
 // phone: each row has its number in text and a thin bar on a track of the
 // same blue, so the size is never told by color or a tooltip alone.

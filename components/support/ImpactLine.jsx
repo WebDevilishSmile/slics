@@ -5,7 +5,7 @@ import { getImpactNumbers } from '@/lib/impact';
 const number = (value) => new Intl.NumberFormat('en-US').format(value);
 
 // "In the last 30 days, drivers looked up 2,482 SLICs and shared 12 tips."
-// Shows what the app does without asking for anything (docs/BMC-SUPPORT.md
+// Shows what the app does without asking for anything (docs/archive/BMC-SUPPORT.md
 // stage 4). Renders nothing if the numbers can't be read, or are too small to
 // mean much.
 export default async function ImpactLine({ sx }) {

@@ -10,7 +10,7 @@ import { sendPush } from '@/lib/push';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // POST `{ title, body, url, to }`: a notification the super admin writes on
-// /admin/super/notifications (docs/SUPER-ADMIN-HUB.md stage C). `to` is
+// /admin/super/notifications (docs/archive/SUPER-ADMIN-HUB.md stage C). `to` is
 // 'admins' (every admin with a device, whatever kinds they chose) or one
 // admin's id. `url` is the page a tap opens: a path on this site only. Written
 // to admin_audit before it's sent. → { success, data: { sent, failed } }

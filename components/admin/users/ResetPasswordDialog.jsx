@@ -27,7 +27,7 @@ import {
 const COPY_FEEDBACK_MS = 1500;
 const buttonSx = [softRaisedSmall, softPressSx, { px: 2.5, minHeight: '3rem' }];
 
-// "Reset password" on /admin/users (docs/PASSWORD-RESET.md stage 1). Asks
+// "Reset password" on /admin/users (docs/archive/PASSWORD-RESET.md stage 1). Asks
 // first, then makes a one-time link that works for 24 hours, for the admin to
 // copy or text to the driver. The link lives only in this dialog's state:
 // closing it forgets the link, and the server keeps only a hash.

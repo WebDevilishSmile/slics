@@ -7,7 +7,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { tapHaptic } from '@/lib/haptics';
 
 // Hides a job from drivers' /covers, or shows it again
-// (docs/COVER-JOB-HIDING.md). A toggle: pressed (and the crossed-out eye)
+// (docs/archive/COVER-JOB-HIDING.md). A toggle: pressed (and the crossed-out eye)
 // while hidden. It follows the job number as saved, the one /covers sees, so
 // it waits for a saved row with a number. The week's summary line in
 // CoverBidJobsManager announces the change. `hidden` is why it's hidden

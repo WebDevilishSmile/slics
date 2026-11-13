@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 // /reset-password#<token>: sets a new password from a reset link
-// (docs/PASSWORD-RESET.md). Public in middleware.js, since whoever opens it
+// (docs/archive/PASSWORD-RESET.md). Public in middleware.js, since whoever opens it
 // can't sign in; the link itself is the proof.
 export default function ResetPasswordPage() {
   return (

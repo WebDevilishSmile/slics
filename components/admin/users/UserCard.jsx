@@ -38,7 +38,7 @@ function UserCard({ user: initialUser, viewCount = 0, coversOpen = false }) {
   // (lib/db/admins.js).
   const canChangeRole =
     session?.user?.superAdmin === true && !isProtected && user?.superAdmin !== true;
-  // Reset links (docs/PASSWORD-RESET.md): password accounts only, never your
+  // Reset links (docs/archive/PASSWORD-RESET.md): password accounts only, never your
   // own; a staff account's (admin or dispatch) only from a super admin, and
   // never a super admin's. The route checks the same.
   const canResetPassword =

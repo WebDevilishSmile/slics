@@ -9,7 +9,7 @@ import {
 } from '@/lib/db/places';
 
 // `[id]` is the place comment's MongoDB _id. Only its author or staff with the
-// Comments area (docs/STAFF-ROLES.md) may edit or delete it.
+// Comments area (docs/archive/STAFF-ROLES.md) may edit or delete it.
 
 function canManage(comment, session) {
   return (

@@ -10,7 +10,7 @@ import {
 } from '@/lib/db/places';
 
 // `[id]` is the place's MongoDB _id. Only the driver who added a place, or
-// staff with the Comments area (docs/STAFF-ROLES.md), may edit or delete it.
+// staff with the Comments area (docs/archive/STAFF-ROLES.md), may edit or delete it.
 
 function canManage(place, session) {
   return (

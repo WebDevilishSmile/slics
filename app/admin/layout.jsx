@@ -6,7 +6,7 @@ import { getSession, isStaff } from '@/lib/authz';
 // redirect, not the boundary: a layout doesn't re-run on client navigation,
 // and a page segment can be requested on its own. So every page checks its
 // own area (getAreaSession) before reading anything, and every API route
-// calls requireArea() (docs/SECURITY.md #7, docs/STAFF-ROLES.md). Any staff
+// calls requireArea() (docs/SECURITY.md #7, docs/archive/STAFF-ROLES.md). Any staff
 // account gets past here: a dispatcher has only some areas, and a page
 // outside them shows admin/NoAccess.jsx.
 export default async function AdminLayout({ children }) {

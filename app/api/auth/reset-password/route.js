@@ -11,7 +11,7 @@ const RESET_WINDOW_MS = 15 * 60 * 1000;
 
 const LINK_ERROR = 'This link has expired or was already used.';
 
-// POST `{ token, password }` from /reset-password (docs/PASSWORD-RESET.md):
+// POST `{ token, password }` from /reset-password (docs/archive/PASSWORD-RESET.md):
 // sets the new password and uses up the link. Public: the link is the proof.
 // Every bad link gets the same answer, which never says whose it was.
 export async function POST(request) {

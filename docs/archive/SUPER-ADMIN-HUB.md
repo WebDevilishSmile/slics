@@ -1,5 +1,11 @@
 # SUPER-ADMIN-HUB.md
 
+> **Archived 2026-11-13: done.** Stages A–F built 2026-10-12 and shipped 2026-10-14
+> (`archive/DONE.md`); the hub has grown since (Notes 2026-10-16, Email 2026-11-11, which
+> `CLAUDE.md` describes). The Status below is as written then. The week-after review
+> (does it replace the Vercel and Atlas dashboards?) was closed 2026-11-13. Code cites this
+> file by path, so don't rename it.
+
 The super admin's hub at `/admin/super`: one place to read and manage the whole app. It
 covers the numbers, usage over time, everything happening, push notifications, the
 system's health and the feature switches. Admins and Supporters stay where they were, as

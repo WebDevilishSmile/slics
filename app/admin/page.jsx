@@ -4,7 +4,7 @@ import { areasOf, getSession, isStaff, isSuperAdmin } from '@/lib/authz';
 import StaffHub from '@/components/admin/StaffHub';
 
 // The admins' hub: the banners and links of the tools their role has
-// (docs/STAFF-ROLES.md; every one by default). A dispatcher's hub is
+// (docs/archive/STAFF-ROLES.md; every one by default). A dispatcher's hub is
 // /dispatch, which the layout's staff check would otherwise let in here. The
 // note previews moved to the super admin hub on 2026-10-16.
 async function AdminPage() {

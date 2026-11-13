@@ -8,7 +8,7 @@ import { apiRequest } from '@/lib/apiRequest';
 import { softPressSx, softRaisedSmall, softToggleSx } from '@/components/utility/soft';
 import ActivityList from './ActivityList';
 
-// The full activity feed on /admin/super/activity (docs/SUPER-ADMIN-HUB.md
+// The full activity feed on /admin/super/activity (docs/archive/SUPER-ADMIN-HUB.md
 // stage D): filter chips in one row above the list (none on means every
 // kind), and "Load more" for older rows. Changing the filters reloads from
 // the newest row; the list keeps showing until the new one arrives.

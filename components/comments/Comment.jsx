@@ -92,7 +92,7 @@ function Comment({
     });
   }, [comment._id, justPosted]);
 
-  // Staff with the Comments area moderate (docs/STAFF-ROLES.md).
+  // Staff with the Comments area moderate (docs/archive/STAFF-ROLES.md).
   const canManage = comment.isMine || userHasArea(user, 'comments');
   const canViewVoters = Boolean(user?.bmcMember || userHasArea(user, 'comments'));
   const authorName = comment.author?.firstName ?? 'Former driver';

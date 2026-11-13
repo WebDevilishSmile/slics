@@ -6,7 +6,7 @@ import { Box, Button, Typography } from '@mui/material';
 
 import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 
-// One section of a super admin page (docs/SUPER-ADMIN-HUB.md): a heading, an
+// One section of a super admin page (docs/archive/SUPER-ADMIN-HUB.md): a heading, an
 // optional "See all"-style link on its right, and its content. Open on the
 // page, not a card: the content brings its own soft shapes.
 export default function HubSection({ id, title, description, action, children }) {

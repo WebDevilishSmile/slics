@@ -25,7 +25,7 @@ import { softContainedSx, softInputSx, softPressSx, softRaisedSmall } from '@/co
 import { plural } from './format';
 
 // "Write your own message" on /admin/super/notifications
-// (docs/SUPER-ADMIN-HUB.md stage C, POST /api/push/compose): a title, a line of
+// (docs/archive/SUPER-ADMIN-HUB.md stage C, POST /api/push/compose): a title, a line of
 // text and the page a tap opens, to every admin with a device or to one. It
 // goes past the kinds each admin chose, so it asks first; the server records
 // it in admin_audit before sending.

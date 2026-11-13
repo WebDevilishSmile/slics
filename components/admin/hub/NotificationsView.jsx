@@ -133,7 +133,7 @@ function KindRow({ kind, onSample, sampleState }) {
   );
 }
 
-// /admin/super/notifications (docs/SUPER-ADMIN-HUB.md stage C): everything
+// /admin/super/notifications (docs/archive/SUPER-ADMIN-HUB.md stage C): everything
 // about push notifications in one place, read-only except samples and a
 // written message. Each admin chooses their own kinds on /profile.
 export default function NotificationsView({ overview, log, myId }) {

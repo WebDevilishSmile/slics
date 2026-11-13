@@ -33,7 +33,7 @@ function creatorFinder(session) {
 
 async function placeFinder(session) {
   // `canModerate`: staff with the Comments area may edit or delete any place
-  // or comment (docs/STAFF-ROLES.md); the routes check the same.
+  // or comment (docs/archive/STAFF-ROLES.md); the routes check the same.
   const user = session?.user
     ? { id: session.user.id, canModerate: hasArea(session, 'comments') }
     : null;

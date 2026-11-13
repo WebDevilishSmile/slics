@@ -5,7 +5,7 @@ import { getSession, isSuperAdmin } from '@/lib/authz';
 import { getActivity } from '@/lib/db/activity';
 import theme from '@/theme';
 
-// Everything happening in the app, newest first (docs/SUPER-ADMIN-HUB.md
+// Everything happening in the app, newest first (docs/archive/SUPER-ADMIN-HUB.md
 // stage D, lib/db/activity.js). Super admin only; checked here before reading
 // anything.
 export default async function ActivityPage() {

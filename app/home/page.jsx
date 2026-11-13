@@ -17,7 +17,7 @@ import SlicLookupPage from '@/components/slic/SlicLookupPage';
 import WelcomeCard from '@/components/staff/WelcomeCard';
 import SupportThanks from '@/components/support/SupportThanks';
 
-// A thank-you waiting for this driver (docs/BMC-SUPPORT.md stage 3). Never
+// A thank-you waiting for this driver (docs/archive/BMC-SUPPORT.md stage 3). Never
 // worth failing the lookup page over.
 async function unthankedSupport(userId) {
   try {

@@ -20,7 +20,7 @@ function Stat({ value, label }) {
   );
 }
 
-// "What it takes" (docs/BMC-SUPPORT.md stage 4): the effort behind the app,
+// "What it takes" (docs/archive/BMC-SUPPORT.md stage 4): the effort behind the app,
 // with no dollar figures and no ask beyond the button under it. An inset well
 // inside the Contributions card. The SLIC and PDF counts are live; the hours
 // are SUPPORT_HOURS_ESTIMATE. If the counts fail, it shows the hours alone.

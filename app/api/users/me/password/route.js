@@ -19,7 +19,7 @@ const tooMany = (rate) =>
   );
 
 // POST `{ currentPassword, newPassword }` from /profile's "Change password"
-// (docs/PASSWORD-RESET.md stage 2). On success every device is signed out,
+// (docs/archive/PASSWORD-RESET.md stage 2). On success every device is signed out,
 // this one included: the client signs out and sends the driver to sign in.
 export async function POST(request) {
   const { session, denied } = await requireUser();

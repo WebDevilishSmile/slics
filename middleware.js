@@ -38,7 +38,7 @@ export default auth((req) => {
   // before sign-in, and the Google OAuth consent screen needs a reachable
   // privacy policy URL. /help too: its sign-in guide is for drivers who aren't
   // signed in yet. And /reset-password, opened from a reset link by someone
-  // who can't sign in (docs/PASSWORD-RESET.md). /opengraph-image is the link
+  // who can't sign in (docs/archive/PASSWORD-RESET.md). /opengraph-image is the link
   // preview picture (app/opengraph-image.jsx), fetched by crawlers. /about
   // (since 2026-10-22): the signed-out menu links to it, and it shows only who
   // made the app and two cached totals (lookups and tips, lib/impact.js).

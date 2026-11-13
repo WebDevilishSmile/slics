@@ -44,7 +44,7 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 // week bid on this week, so from Sunday it's next week's (currentBidWeek,
 // lib/bidDay.js). Then the weeks' jobs, picked ones grayed out with no name:
 // toDriverCoverJob drops who took each one, so it never reaches the page.
-// Jobs an admin hid (docs/COVER-JOB-HIDING.md) are left out here on the
+// Jobs an admin hid (docs/archive/COVER-JOB-HIDING.md) are left out here on the
 // server, for admins too, so they're never sent. Anyone else gets the claim
 // that verifies them, admins included: they test the page as drivers will
 // get it.

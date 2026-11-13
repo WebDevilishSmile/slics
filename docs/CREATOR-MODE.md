@@ -1,7 +1,7 @@
 # Creator mode
 
 Made-up data on every driver page, so videos of the app (the `/help` tutorials in
-[`tutorials/VIDEO-SCRIPTS.md`](tutorials/VIDEO-SCRIPTS.md), posts, demos) never show a
+[`guides/VIDEO-SCRIPTS.md`](guides/VIDEO-SCRIPTS.md), posts, demos) never show a
 real address, phone number, driver, tip, job or lookup.
 
 ## Status

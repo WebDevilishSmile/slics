@@ -15,7 +15,7 @@ import { getCoverChangesSeenAt, getJobChangesSeenAt } from '@/lib/db/users';
 // disputes, open cover reports, and open route suggestions (the SLICs
 // area, docs/SLIC-DIRECTIONS.md). It was five calls on every route change. The five routes it reads
 // like stay for the feeds and queues. Each count is read only for an area the
-// caller has (docs/STAFF-ROLES.md), and is 0 otherwise.
+// caller has (docs/archive/STAFF-ROLES.md), and is 0 otherwise.
 // 200 { success, data: { jobChanges, coverJobChanges, openReports,
 // pendingClaims, openDisputes, openCoverReports, openRouteSuggestions } }.
 export async function GET() {

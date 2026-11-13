@@ -29,7 +29,7 @@ import {
 
 const sameName = (a, b) => Boolean(a && b) && a.trim().toLowerCase() === b.trim().toLowerCase();
 
-// "Link to account" on the Supporters page (docs/BMC-SUPPORT.md stage 2):
+// "Link to account" on the Supporters page (docs/archive/BMC-SUPPORT.md stage 2):
 // attach the support from an email that matched no account to the account the
 // driver actually uses. `supporter` is the unmatched row, `accounts` every
 // account's `{ _id, name, email }`. An account with the supporter's name is

@@ -82,7 +82,7 @@ function Empty({ children }) {
   );
 }
 
-// The admin Supporters page (docs/BMC-SUPPORT.md stage 2). Shows what the BMC
+// The admin Supporters page (docs/archive/BMC-SUPPORT.md stage 2). Shows what the BMC
 // webhook has saved since 2026-10-10, and who's a member now. Recent loads ten
 // at a time; an email with no account can be linked to one (`accounts`), and
 // an event (BMC's test deliveries) can be deleted.

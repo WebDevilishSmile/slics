@@ -1,5 +1,10 @@
 # PASSWORD-RESET.md
 
+> **Archived 2026-11-13.** All three stages have been live since 2026-10-12. Two live
+> checks are left, as one line in [`../TODOS.md`](../TODOS.md) → Now: an admin-made link
+> and an emailed link to a password account, each opened on a phone ("Verifying").
+> Code cites this file by path, so don't rename it.
+
 Plan and checklist for "Forgot password": first a reset link an admin hands a driver, then
 changing a password from the profile, then a self-service reset by email. Built in stages;
 check items off as they ship.

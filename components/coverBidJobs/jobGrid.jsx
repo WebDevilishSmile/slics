@@ -54,7 +54,7 @@ export const filterBarSx = [
 // their colors too, so the whole job reads as taken.
 export const pickedSx = { opacity: 0.55, filter: 'grayscale(1)' };
 
-// A job an admin hid from drivers (docs/COVER-JOB-HIDING.md), on the admin
+// A job an admin hid from drivers (docs/archive/COVER-JOB-HIDING.md), on the admin
 // pages only: drivers never receive it. Dimmed without the gray, so it reads
 // apart from picked.
 export const hiddenSx = { opacity: 0.55 };

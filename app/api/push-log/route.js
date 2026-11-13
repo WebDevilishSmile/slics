@@ -4,7 +4,7 @@ import { requireSuperAdmin } from '@/lib/authz';
 import { getPushLog } from '@/lib/db/pushLog';
 
 // GET ?before=<id>: the push send log, newest first, a page at a time, for
-// "Load more" on /admin/super/notifications (docs/SUPER-ADMIN-HUB.md stage C).
+// "Load more" on /admin/super/notifications (docs/archive/SUPER-ADMIN-HUB.md stage C).
 // Super admin only. → { success, data: { rows, hasMore } }
 export async function GET(request) {
   const { denied } = await requireSuperAdmin();

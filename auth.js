@@ -170,7 +170,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (dbUser && (dbUser.sessionVersion ?? 0) !== (token.sessionVersion ?? 0)) {
             // The password was reset (lib/db/passwordResets.js), which bumps
             // the row's version: every session from before it ends here, the
-            // same way as a deleted user (docs/PASSWORD-RESET.md).
+            // same way as a deleted user (docs/archive/PASSWORD-RESET.md).
             return null;
           } else if (dbUser) {
             token.role = dbUser.role || 'user';
@@ -207,7 +207,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // request. Never throws; a failed read means the constants.js defaults.
       const [features, roleAreas] = await Promise.all([getSessionFeatures(), getRoleAreas()]);
       token.features = features;
-      // The admin tools this account may use (docs/STAFF-ROLES.md), from its
+      // The admin tools this account may use (docs/archive/STAFF-ROLES.md), from its
       // fresh role: every one for a super admin, none for a driver.
       token.areas = areasFor(token, roleAreas);
 

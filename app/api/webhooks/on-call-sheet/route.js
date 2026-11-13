@@ -10,7 +10,7 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 // The sheet's notifier pings this when the ON CALL SHEET changes
-// (docs/on-call-sheet-apps-script.md, docs/ON-CALL-SHEET-SYNC.md stage 3).
+// (docs/guides/on-call-sheet-apps-script.md, docs/ON-CALL-SHEET-SYNC.md stage 3).
 //
 // Header: x-sheet-secret, the script's APP_SECRET. It's checked against the
 // hub's stored hash (`hub-configs` `sheet.webhookSecretHash`) when there is

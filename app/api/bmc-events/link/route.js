@@ -6,7 +6,7 @@ import { linkSupportToUser, normalizeEmail, setBmcMember } from '@/lib/db/bmcEve
 import { getUserById } from '@/lib/db/users';
 
 // POST `{ email, userId }`: attach the support from an email that matched no
-// account to that account (docs/BMC-SUPPORT.md stage 2, "Link to account").
+// account to that account (docs/archive/BMC-SUPPORT.md stage 2, "Link to account").
 // If the email's latest membership event is a start, membership is turned on
 // too. Both are written to `admin_audit` first. Super admin only.
 export async function POST(request) {

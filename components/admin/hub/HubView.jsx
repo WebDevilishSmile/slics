@@ -115,7 +115,7 @@ function cards({ notifications, activity, health, features, admins, support, mem
   ];
 }
 
-// The super admin hub, /admin/super (docs/SUPER-ADMIN-HUB.md): the app at a
+// The super admin hub, /admin/super (docs/archive/SUPER-ADMIN-HUB.md): the app at a
 // glance, a card for each place to manage it, the notes drivers and new staff
 // find on /home to play, usage over time, and the latest activity. Each part
 // is `null` when it failed to load, and says so in place.

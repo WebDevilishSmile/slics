@@ -8,7 +8,7 @@ import { getSentEmails } from '@/lib/db/adminAudit';
 import theme from '@/theme';
 
 // Write an email from tiago@slics.app in the account emails' look
-// (docs/SUPER-ADMIN-HUB.md "Email", POST /api/emails), and the ones sent so
+// (docs/archive/SUPER-ADMIN-HUB.md "Email", POST /api/emails), and the ones sent so
 // far. Super admin only; checked here before reading anything.
 export default async function EmailPage() {
   const session = await getSession();

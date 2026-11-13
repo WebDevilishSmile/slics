@@ -29,7 +29,7 @@ const tooMany = (rate) =>
   );
 
 // POST `{ email }` from "Forgot your password?" on /sign-in
-// (docs/PASSWORD-RESET.md stage 3). Public. The answer is the same for every
+// (docs/archive/PASSWORD-RESET.md stage 3). Public. The answer is the same for every
 // address, and the email goes out after the response (`after()`), so neither
 // the answer nor its timing says whether the address has an account:
 // - a password account gets a reset link that works once, for 30 minutes;

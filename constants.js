@@ -312,7 +312,7 @@ export const SHEET_NOTICE_MAX_WAIT_MINUTES = 60;
 // 'driver' everyone `canUsePush` lets in (lib/authz.js), 'coverDriver' verified
 // drivers who can use Covers (isVerifiedDriver), 'admin' admins,
 // 'superAdmin' super admins. An admin kind's `area` is the tool it's about
-// (STAFF_AREAS below, docs/STAFF-ROLES.md): it's offered and sent only to
+// (STAFF_AREAS below, docs/archive/STAFF-ROLES.md): it's offered and sent only to
 // admins whose role has that tool, and always to super admins. The wording of
 // each notification is in lib/pushEvents.js.
 export const PUSH_TYPES = [
@@ -526,7 +526,7 @@ export const ACTIVITY_KINDS = [
   { key: 'push', label: 'Notifications' },
 ];
 
-// Staff roles and the admin tools ("areas") each may use (docs/STAFF-ROLES.md).
+// Staff roles and the admin tools ("areas") each may use (docs/archive/STAFF-ROLES.md).
 // A role is `users.role`: 'user' (every driver), 'dispatch' or 'admin'. Which
 // areas a staff role has is the super admin's choice on /admin/super/admins
 // (lib/db/appSettings.js); these are only the defaults. A super admin has

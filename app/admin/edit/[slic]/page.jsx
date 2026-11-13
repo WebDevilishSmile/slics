@@ -22,7 +22,7 @@ import { Typography } from '@mui/material';
 
 // `?report=<id>`: opened from a driver report's Fix (/admin/reports). Saving
 // then resolves that report. Only for someone with the SLIC reports area
-// too: a dispatcher with SLICs alone edits without it (docs/STAFF-ROLES.md).
+// too: a dispatcher with SLICs alone edits without it (docs/archive/STAFF-ROLES.md).
 async function EditPage({ params, searchParams }) {
   const session = await getAreaSession('slics');
   if (!session) return <NoAccess />;

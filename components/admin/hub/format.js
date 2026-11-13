@@ -1,4 +1,4 @@
-// Formatting for the super admin hub (docs/SUPER-ADMIN-HUB.md). Times are
+// Formatting for the super admin hub (docs/archive/SUPER-ADMIN-HUB.md). Times are
 // shown in the drivers' zone, America/New_York, so the server's render and the
 // browser's hydration print the same text (a local-zone format would differ
 // between a UTC server and the phone). Intl puts a narrow no-break space before

@@ -8,7 +8,7 @@ import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 const ROLES = ['user', 'dispatch', 'admin'];
 
 // The role line in a user's details, with the one place to change it: a menu
-// of the three roles (docs/STAFF-ROLES.md), for a super admin only
+// of the three roles (docs/archive/STAFF-ROLES.md), for a super admin only
 // (`canChange`). The list row only shows the role.
 function UserRole({ user, onChange, canChange }) {
   const [anchor, setAnchor] = useState(null);

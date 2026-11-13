@@ -5,7 +5,7 @@ import { getActivity } from '@/lib/db/activity';
 
 // GET ?before=<cursor>&kinds=tips,reports: the super admin's activity feed,
 // newest first, a page at a time (/admin/super/activity,
-// docs/SUPER-ADMIN-HUB.md stage D). Unknown kinds are ignored; none means
+// docs/archive/SUPER-ADMIN-HUB.md stage D). Unknown kinds are ignored; none means
 // every kind. → { success, data: { rows, next } }
 export async function GET(request) {
   const { denied } = await requireSuperAdmin();

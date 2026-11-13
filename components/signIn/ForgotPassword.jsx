@@ -37,7 +37,7 @@ function Fallback() {
   );
 }
 
-// "Forgot your password?" on /sign-in (docs/PASSWORD-RESET.md stage 3). The
+// "Forgot your password?" on /sign-in (docs/archive/PASSWORD-RESET.md stage 3). The
 // panel's heading takes focus when it opens (SignInPanel.jsx), so the field
 // doesn't autofocus. An email field, then the same "check your email" for
 // every address, since the server never says whether it has an account. The

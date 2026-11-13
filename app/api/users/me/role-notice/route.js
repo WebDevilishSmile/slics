@@ -4,7 +4,7 @@ import { requireUser } from '@/lib/authz';
 import { clearRoleNotice } from '@/lib/db/users';
 
 // POST: the signed-in account opened or dismissed its welcome note on /home
-// (staff/WelcomeCard.jsx, docs/STAFF-ROLES.md). Clears `roleNotice` so it
+// (staff/WelcomeCard.jsx, docs/archive/STAFF-ROLES.md). Clears `roleNotice` so it
 // doesn't come back. Idempotent.
 export async function POST() {
   const { session, denied } = await requireUser();

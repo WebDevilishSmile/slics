@@ -7,7 +7,7 @@ export const runtime = 'nodejs';
 
 // The role menu on /admin/users. Super-admin-only since the super admin role
 // (2026-10-10); every change is written to `admin_audit` first. Body:
-// { role } ('user', 'dispatch' or 'admin', docs/STAFF-ROLES.md). A page
+// { role } ('user', 'dispatch' or 'admin', docs/archive/STAFF-ROLES.md). A page
 // opened before dispatch existed sends no body and means the old toggle: a
 // driver becomes an admin, anyone else goes back to a driver, so it can never
 // promote a dispatcher.

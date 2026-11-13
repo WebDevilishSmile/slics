@@ -30,7 +30,7 @@ export async function GET(request) {
     ]);
 
     // `hidden`: the week's jobs hidden from drivers, by job number
-    // (docs/COVER-JOB-HIDING.md).
+    // (docs/archive/COVER-JOB-HIDING.md).
     return NextResponse.json(
       { success: true, data: serializeCoverBidJobs(jobs), hidden },
       { status: 200 }

@@ -6,7 +6,7 @@ import { setUserRole } from '@/lib/db/admins';
 export const runtime = 'nodejs';
 
 // Adds someone to the staff, from the super admin's Admins page
-// (docs/STAFF-ROLES.md). Body: { userId, role }, `role` 'admin' or
+// (docs/archive/STAFF-ROLES.md). Body: { userId, role }, `role` 'admin' or
 // 'dispatch'; a page opened before dispatch existed sends no role, which
 // means admin.
 export async function POST(request) {

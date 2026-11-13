@@ -1,5 +1,5 @@
 // One-off import: Buy Me a Coffee history from before the webhook kept a record
-// (docs/BMC-SUPPORT.md, "History import"). The input is a JSON file of what the
+// (docs/archive/BMC-SUPPORT.md, "History import"). The input is a JSON file of what the
 // buymeacoffee MCP tools returned: `supports` (get-recent-supports, donations)
 // and `subscriptions` (get-recent-memberships, memberships and monthly
 // supporters). It holds emails, so keep it out of the repo.

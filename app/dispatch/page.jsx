@@ -13,7 +13,7 @@ export const metadata = {
   title: 'Dispatch · SLICs',
 };
 
-// The Dispatch role's hub (docs/STAFF-ROLES.md): the tools the super admin
+// The Dispatch role's hub (docs/archive/STAFF-ROLES.md): the tools the super admin
 // turned on for Dispatch on /admin/super/admins, SLICs by default. Those
 // tools are the admin pages themselves (/admin/slics and so on), which check
 // each area. A super admin sees it too, as Dispatch sees it.

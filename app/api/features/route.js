@@ -5,7 +5,7 @@ import { setFeature, validateFeature } from '@/lib/db/appSettings';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // PATCH `{ key, value }`: one feature switch on /admin/super/features
-// (docs/SUPER-ADMIN-HUB.md stage F, lib/db/appSettings.js). Super admin only;
+// (docs/archive/SUPER-ADMIN-HUB.md stage F, lib/db/appSettings.js). Super admin only;
 // written to admin_audit before it's saved. Reaches every driver on their
 // next request. → { success, data: features }
 export async function PATCH(request) {

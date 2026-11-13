@@ -89,7 +89,7 @@ async function openDisputes() {
 }
 
 // The banners and links of a staff hub, /admin or /dispatch
-// (docs/STAFF-ROLES.md), for the areas (keys) given: each area's links in
+// (docs/archive/STAFF-ROLES.md), for the areas (keys) given: each area's links in
 // STAFF_AREAS order, and each banner read only when its area is there.
 // `extraLinks` go last (the super admin's hub link).
 export default async function StaffHub({ areas, userId, extraLinks = [], label }) {

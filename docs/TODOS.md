@@ -1,23 +1,8 @@
 # TODOs
 
-The hub: everything to do, and every idea worth keeping. This file says **what** and
-**when**, one line per item. The other docs say **how**: a plan doc per feature, the
-references (`DATA-MODEL.md`, `OPERATIONS.md`, `SECURITY.md`), and design notes for ideas
-(`RECOMMENDATIONS.md`). Each line links to the doc with the detail.
-
-**How an item moves:** Inbox → Ideas → Next → Now → Done.
-
-- **Inbox:** anything, in any wording, added from anywhere. It gets sorted into the
-  sections below the next time we plan.
-- **Ideas:** worth keeping, not committed. Write as much as you like; a sketch of how to
-  build it can go in `RECOMMENDATIONS.md`.
-- **Next:** decided, not started. A staged feature gets a plan doc (`README.md` →
-  "Conventions"), its notes move there, and it keeps one line here.
-- **Now:** being built, or built and waiting on a check on the live site.
-- **Waiting:** open, but not before a date or a condition.
-- **Done:** checked off where it is, then moved to `archive/DONE.md`.
-
-Use absolute dates.
+The hub: everything to do and every idea worth keeping, one line each, linking to the doc
+with the detail. Items move **Inbox → Ideas → Next → Now → done**, and a done item goes to
+`archive/DONE.md` (`README.md` → "Conventions" has the rules). Use absolute dates.
 
 ---
 
@@ -30,138 +15,51 @@ Use absolute dates.
   pushes until someone signs in on it. Delete them where `sessionVersion` is bumped?
   (found 2026-10-14 building Push stage 2, `PUSH-NOTIFICATIONS.md` → 2.4)
 
+- Have app notify driver when driver before them finishes picking their cover picks.
+
 ---
 
 ## Now
 
-- [ ] **Creator mode** (stage 1 live, stage 2, the other driver pages, built 2026-11-12):
-      try every page on a phone as the super admin, then record the tutorials with it
-      (`CREATOR-MODE.md` → Checklist)
-- [ ] **SLIC directions, stage 1** (live 2026-11-12, all 65 routes imported): go over each
-      route on its edit page (`ROUTE-REVIEW.md` open; move arrival notes out; NWTVA done),
-      and try Read aloud and Step by step on a phone (`SLIC-DIRECTIONS.md` → Stage 1)
-- [ ] **SLIC directions, stage 2** (live 2026-11-12): file one suggestion on the live site
-      and decide it on `/admin/routes`
-- [ ] **SLIC directions, stage 3** (live 2026-11-12): add the first real railyard map on
-      its SLIC's edit page and look at it on a phone
-      (`SLIC-DIRECTIONS.md` → Stage 3)
-      (`SLIC-DIRECTIONS.md` → Stage 2)
-- [ ] **Sheet digests and the sheet conventions** (built 2026-11-11): deploy, check the
-      cron's first run says `baseline` for the three sheet kinds, then watch dispatch's
-      next edits arrive as one push about 15 minutes after they stop
-      (`PUSH-NOTIFICATIONS.md` → "Sheet digests"). Print `ON-CALL-SHEET-CONVENTIONS.pdf`
-      for dispatch only after the deploy: it says the app reads past a blank row and
-      sends digests, which is true from then on
-- [ ] **Cover reports** (built 2026-11-07): deploy, run `npm run db:indexes`
-      (`cover-reports`), then send one test report from `/covers` on a phone, check the push,
-      the menu badge, the `/admin` banner and `/admin/cover/reports`, and Delete it
-      (`COVER-BIDDING.md` → "Reference only and cover reports")
-- [ ] **Covers hub and Cover History** (built 2026-11-07): deploy, run `npm run db:indexes`
-      (`cover-list-totals`), and the day after, check that the cron saved a row per week
-      with lists. Open `/admin/cover` and `/admin/cover/history` signed in, in both schemes,
-      and read "What stands out" against what you know of the weeks; tune a threshold in
-      `findPatterns` (`lib/coverHistory.js`) if one says something that isn't so
-      (`COVER-BIDDING.md` → "Covers hub and History")
-- [ ] **Covers for every driver** (ready 2026-11-07, after the trial): turn on "Covers for
-      every driver" on `/admin/super/features`, then check it as a driver on a phone
-      (`COVER-BIDDING.md` → "Rolling stage 1 out to every driver"). The `/help`
-      guides and the menu's "New" wait on the switch
-- [ ] **Covers notifications** (built 2026-10-22, not deployed): deploy (the cron needs
-      Vercel Pro, which the team is on), run `npm run db:indexes` (`cover-bid-days`,
-      `cover-notices`), then "Verifying stage 3" (`PUSH-NOTIFICATIONS.md`): the samples on
-      phones, the super admin's `/covers?preview=driver`, a verified driver's reminder on
-      the next bid Thursday, and moving a bid day and back
-- [ ] **Sheet sync:** one Refresh each (Jobs and a cover week) on the live site to confirm
-      the deployment (`ON-CALL-SHEET-SYNC.md`)
-- [ ] **Cover-week alerts** (built 2026-10-14): after the deploy, run `npm run db:indexes`
-      (`cover-job-changes.seenAt`), then watch the first real cover-tab edit raise the
-      `/admin` banner, the menu badge and the push, and clear when `/admin/cover/jobs`
-      opens. `push-log` should show every device sent, iPhones included (the `Topic` fix).
-      (`ON-CALL-SHEET-SYNC.md` → "Alerts for cover weeks")
-  - As of 2026-10-14 `sheet-job-changes` is still empty: the Jobs tab hasn't changed since
-    its 10/09 baseline, so no Jobs-tab alert has fired in production yet either
-- [ ] **Covers:** after the deploy, `npm run db:indexes` and the live checks for job hiding
-      (`COVER-JOB-HIDING.md` → "Verifying"), cover lists (`COVER-BIDDING.md` → "Verifying
-      stage 2") and the read-only rule (`COVER-BIDDING.md` → "Verifying the read-only
-      rule")
-- [ ] **Cover jobs, automatic hides** (built 2026-10-14): press Refresh for W/E 10/24 on
-      `/admin/cover/jobs`. SH16, WA03, WA09 and SH12 should read "Hidden in sheet", the ER
-      jobs "Sleeper job", each with its eye disabled, and SH13 should show once. None of
-      them should be on `/covers` (`COVER-JOB-HIDING.md` → "Automatic hides")
-- [ ] **Covers:** screenshot `/covers` with an account linked to a driver
-      (`archive/UI-SUGGESTIONS.md` #57)
-- [ ] **Admin fixes from 2026-10-11:** check them on a phone, signed in as an admin, in
-      both schemes (`archive/DONE.md` → UI/UX; they couldn't be screen-shotted without an
-      admin session)
-- [ ] **Places:** check on a phone as a non-admin driver: the Places row under All Hubs,
-      adding a place, a comment, and an old `/whip-it-in-and-out` bookmark landing on
-      `/places`
-- [ ] **Password reset:** make a link for a test account on the live site and check it on
-      a phone (`PASSWORD-RESET.md` → "Verifying")
-- [ ] **Password reset:** send a reset to a password account on the live site and open the
-      link on a phone (the 2026-10-12 test went to a Google account)
-- [ ] **Profile, This week** (built 2026-10-14): on a phone, signed in as a verified admin,
-      check the card against the sheet for this week and next, tap a stop to open its
-      SLIC, open the folded "Your job" on a cover week, in both schemes
-      (`COVER-BIDDING.md` → "This week on the profile")
-- [ ] **Push stage 2** (built and deployed 2026-10-14, switch off): run "Verifying stage
-      2" on phones (`PUSH-NOTIFICATIONS.md`): as an admin, a second account's reply gives
-      exactly one push; sign-out empties `push-subscriptions` for that device, offline too;
-      then turn on "Notifications for every driver" on `/admin/super/features` and check
-      it as a driver (desktop Chrome, Android, the iPhone home-screen app)
-- [ ] **Buy Me a Coffee:** tick every event in BMC → Webhooks (monthly support's renewals
-      would be `recurring_donation.updated`), and watch what BMC sends when a failed
-      renewal's retry goes through (`BMC-SUPPORT.md` → "Renewals")
-- [ ] **Buy Me a Coffee:** fix the membership mismatches by hand in Users, or leave them
-      (`BMC-SUPPORT.md` → "History import" has the list, re-checked 2026-10-10)
-- [ ] **Staff roles** (built 2026-10-16): after the deploy, the live checks in
-      `STAFF-ROLES.md` → "Verifying": every admin tool still on `/admin` and the switches
-      on `/admin/super/admins`; then `claude-test@slics.app` made Dispatch sees only SLICs
-      (`/dispatch`, "No access" elsewhere, 403s) and gets the welcome note once on `/home`,
-      and is set back to User
+Built and live, waiting on a check or a step only Tiago can do.
+
+- [ ] **Creator mode** (stage 2 built 2026-11-12): try every driver page on a phone as the
+      super admin, then record the tutorials with it (`CREATOR-MODE.md` → Checklist)
+- [ ] **SLIC directions** (stages 1–3 live 2026-11-12): go over each route on its edit page
+      (`ROUTE-REVIEW.md`; move arrival notes out; NWTVA done), and on a phone try Read
+      aloud, Step by step and the two documents now on production (`SLIC-DIRECTIONS.md`)
+- [ ] **Sheet conventions:** print `print/ON-CALL-SHEET-CONVENTIONS.pdf` for dispatch. The
+      digests and blank-row reading it describes are live (checked 2026-11-13)
+- [ ] **Cover reports** (built 2026-11-07, none filed yet): send a test report from
+      `/covers` on a phone, check the push, the menu badge, the `/admin` banner and
+      `/admin/cover/reports`, then Delete it (`COVER-BIDDING.md` → "Reference only and
+      cover reports")
+- [ ] **Covers notifications** (live, sending since 2026-10-22): move a week's bid day on
+      `/admin/cover/jobs` and back; `/covers` should follow and `admin_audit` get
+      `coverBidDay.set` and `.reset`. No week has been moved yet
+      (`PUSH-NOTIFICATIONS.md` → "Verifying stage 3")
+- [ ] **Password reset:** on a phone, open an admin-made link for a test account, and an
+      emailed reset sent to a password account (the 2026-10-12 test went to a Google
+      account) (`archive/PASSWORD-RESET.md` → "Verifying")
 
 ---
 
 ## Waiting
 
-- [ ] **On or after 2026-10-17:** compare Vercel → Observability → Functions (last 12
-      hours) with 2026-10-15's, before the CPU fixes: ~2.6K calls, ~4 min of Active CPU (about
-      Hobby's 4 CPU-hours a month); `/home` 231 calls / 58s, `/` 130 / 36s, the auth route
-      489 / 31s, `/help` 155 / 11s, the 404 page 61 / 11s, `/sign-in` 101 / 10s,
-      `/api/users/me/views` 99 / 10s. Still close? Static public pages (Ideas → Platform)
-      or Pro. A cold `/home` went from 14 calls to 2 for an admin, 1 for a driver.
-- [ ] **On or after 2026-10-21** (a week after it shipped): does the super admin hub
-      replace checking the Vercel and Atlas dashboards day to day, and is anything missing
-      from it? (`SUPER-ADMIN-HUB.md`)
-- [ ] **On or after 2026-10-22:** delete the 13 old-path API alias files
-      (`grep -rln "Old path, renamed on 2026-10-08" app/api`) and their mention in
-      `CLAUDE.md` → "API routes" (`archive/STRUCTURE.md` #29 follow-up)
-- [ ] **On or after 2026-11-12:** count the places and `placeComments` added since
-      2026-10-12 and the `/places` pageviews in Vercel Analytics, then decide the forum
-      (Ideas → Forum)
-- [ ] **On or after 2026-11-12:** make the `/whip-it-in-and-out` redirect `permanent: true`
-      (`next.config.mjs`), and remove `PLACES_NEW_UNTIL` and its check in
-      `header/UserMenu.jsx`
-- [ ] **On hold (2026-11-12) until Tiago picks it back up: SLIC directions, stage 4,**
-      the route as waypoints in Google Maps (`SLIC-DIRECTIONS.md`). Before then: confirm
+- [ ] **On hold (2026-11-12) until Tiago picks it back up: SLIC directions, stage 4,** the
+      route as waypoints in Google Maps (`SLIC-DIRECTIONS.md`). Before then: confirm
       `ROUTE-REVIEW.md` → Do first with drivers (a gate code in a public PDF, low
       clearances) and settle its 28 app-vs-PDF mismatches
-- [ ] **When the first one-time coffee arrives by webhook:** check its row
-      (`BMC-SUPPORT.md` stage 1)
-- [ ] **When every SLIC has `pdfUrl`:** retire the Supabase bucket and the `slic.pdf`
-      fallback (`CLAUDE.md` → "External integrations"; also closes part of `SECURITY.md`
-      #13)
 
-### Old data to drop
+**Old data to drop.** Tiago's call; the system health page counts the two collections
+(`lib/systemHealth.js`).
 
-The system health page counts the two collections (`lib/systemHealth.js`).
-
-- [ ] the `cover` collection, **once the sheet's cover list has proven itself** (its code
-      went 2026-10-10; the rows are kept until then in case the old list is wanted)
-- [ ] the `bid-jobs` collection, **when sure nobody wants the old list** (`/bids`, its only
-      reader, was deleted 2026-10-10 with `SECURITY.md` #7)
-- [ ] `users.driverId`, the old roster link (nothing writes or reads it since 2026-10-10;
-      `COVER-BIDDING.md` → "Data")
+- [ ] the `cover` collection (20 rows), once you're sure the sheet's cover list has proven
+      itself: its code went 2026-10-10, and Covers has run from the sheet since
+- [ ] the `bid-jobs` collection (148 rows), when sure nobody wants the old list (`/bids`,
+      its only reader, was deleted 2026-10-10 with `SECURITY.md` #7)
+- [ ] `users.driverId`, the old roster link (on one account; nothing reads or writes it
+      since 2026-10-10, `COVER-BIDDING.md` → "Data")
 
 ---
 
@@ -177,46 +75,28 @@ The system health page counts the two collections (`lib/systemHealth.js`).
 
 ## Ideas
 
-Not committed. The numbers are `RECOMMENDATIONS.md` items, where the design notes are.
+Not committed. Numbers are `RECOMMENDATIONS.md` items, where the design notes are.
 Effort: S = an evening or two · M = a few evenings · L = a project with stages.
 
 ### For drivers
 
-- **Drivers helping drivers.** Ability to change profile image and share time they work
-  and show phone number for those that need help. A page where drivers that need
-  assistance can find and contact each other. A driver can choose a schedule (mon: 18:30 -
-  tues: 05:00) that they are available for assistance. Any driver can call with questions
-  about where they are going and the driver will try to help.
-- **My Daily Log** (L, #1). Track the day's route from your job. Your notes:
-  - develop new feature to track daily route(s)
-  - user's job is pulled by the job list (Tiago Davila is on job BMEL)
-  - ask if that is true and save to backend (user { job: 'BMEL' })
-  - display user's job in history and ask if they want to log day based on job
-    description for that day (Mon: BETPA>BURMD>GAIMD>EZRPA>ALLPA>BETPA)
-  - one click add for specific daily route. (e.g., a button that automatically fills in
-    the day's route based on the job description Mon: BETPA>BURMD>GAIMD>EZRPA>ALLPA>BETPA)
-  - driver can adjust arrival and departure times for each leg of that day's job route
-    (BETPA>BURMD dep: 18:50 arr: 22:05, BURMD>GAIMD dep: 22:15 arr: 23:45, GAIMD>EZRPA
-    dep: 00:10 arr: 01:30, EZRPA>ALLPA dep: 01:50 arr: 03:20, ALLPA>BETPA dep: 03:40 arr:
-    05:00)
-- **Forum page** for discussions among users. **On hold** (decided 2026-10-10) until the
-  Places count on 2026-11-12 (Waiting): first see whether drivers use the Places comments.
-  If they do, build a small board on the places comment code (`lib/db/places.js`,
-  `components/places/`): plain text, one-level threads, votes, maybe posts that expire.
-  Concerns: drivers post little now, push notifications for drivers are built but not
-  switched on yet (Now → Push stage 2), and someone has to moderate.
-- **Pinned SLICs** (S, #8): a star on the details card; pinned SLICs lead the search list
-  and the empty state. Start in localStorage (`archive/UI-SUGGESTIONS.md` #54). With the
-  daily log, a confirmed job could pin its route's SLICs.
+- **Drivers helping drivers** (M–L, #21): a driver shares the hours they can take calls,
+  and drivers who need help find and call them
+- **My Daily Log** (L, #1): log the day's route from your job, legs pre-filled; Tiago's
+  notes are in #1
+- **Forum page** for discussions (on hold since 2026-10-10). The Places count was due
+  2026-11-12: by 2026-11-13, 9 places (7 since 2026-10-12) and 3 place comments in all.
+  Check the `/places` pageviews in Vercel Analytics, then decide. If yes, build on the
+  places comment code (`lib/db/places.js`, `components/places/`); someone has to moderate
+- **Pinned SLICs** (S, #8): a star on the card; pinned SLICs lead the search list and the
+  empty state (`archive/UI-SUGGESTIONS.md` #54)
 - **Home-screen shortcuts** (S): "Look up a SLIC" and "My history" on a long-press of the
-  home-screen icon (`app/manifest.js`, `archive/UI-SUGGESTIONS.md` #55)
-- **Bottom navigation.** **On hold** (2026-10-10; left open in
-  `archive/UI-SUGGESTIONS.md` #52). A working prototype (Look up · History/Hubs · Profile ·
-  Menu, phones only) is on the local branch `bottom-nav-preview`. Open points: hide the
-  header's hamburger on phones, drop the back arrow on tab pages, a stronger top edge in
-  light mode
-- **Safety notes at the top of the card** (S–M, #6): low bridges, no-truck roads and a
-  closed dock, above the fold instead of in a thread
+  icon (`app/manifest.js`, `archive/UI-SUGGESTIONS.md` #55)
+- **Bottom navigation** (on hold since 2026-10-10, `archive/UI-SUGGESTIONS.md` #52): a
+  prototype is on the local branch `bottom-nav-preview`. Open: the hamburger on phones,
+  the back arrow on tab pages, a stronger top edge in light mode
+- **Safety notes at the top of the card** (S–M, #6): low bridges, no-truck roads, a closed
+  dock
 - **Tip freshness** (S, #7): a tip's age, and "Still right?" after 6 months
 - **Share a SLIC** (S, #9): `navigator.share` with the `/home/<slic>` link
 - **"What's new" after a release** (S, #10): a one-time sheet with two or three lines
@@ -226,67 +106,64 @@ Effort: S = an evening or two · M = a few evenings · L = a project with stages
 ### For the admin
 
 - **A data-health page** (S, #12): SLICs with no PDF or phone, stale ones, duplicates
-- **An admin audit log page** (S, #14): who changed what, on one page. `admin_audit` and
-  the super admin's Activity page cover part of it; the rest is `SECURITY.md` #17
-- **Notifications for dispatchers** (`STAFF-ROLES.md` → "Follow-ups"): `canUsePush` and
-  the admin push kinds still go by the admin role, so a dispatcher with SLIC reports gets
-  no reports push
-- **Per-person tool exceptions** (`STAFF-ROLES.md`): tools are per role today; add
-  overrides on an account if one dispatcher ever needs a tool the others don't
-- **Leaving as a dispatcher** (`STAFF-ROLES.md`): only admins are refused self-service
-  account deletion; decide whether a dispatcher should need a super admin too
+- **An admin audit log page** (S, #14): who changed what, on one page; `admin_audit` and
+  the hub's Activity cover part of it, the rest is `SECURITY.md` #17
+- **Notifications for dispatchers:** `canUsePush` still goes by the admin role, so a
+  dispatcher with SLIC reports gets no reports push (`archive/STAFF-ROLES.md` →
+  "Follow-ups")
+- **Per-person tool exceptions:** tools are per role; add overrides on an account if one
+  dispatcher needs a tool the others don't (`archive/STAFF-ROLES.md`)
+- **Leaving as a dispatcher:** only admins are refused self-service account deletion;
+  should a dispatcher need a super admin too? (`archive/STAFF-ROLES.md`)
 
 ### Platform
 
-- **Other hubs** (L, `MULTI-HUB.md`): one app for many buildings, with a shared SLIC directory
-  and tips, and per-hub covers, jobs, drivers and local admins. Roadmap only; built on
-  the `multi-hub` branch (its own worktree); stages 3–5 wait until a hub asks
+- **Other hubs** (L, `MULTI-HUB.md`): stages 0–1 live 2026-11-12; stage 2 on hold until a
+  hub asks or Covers picking starts, built on the `multi-hub` branch (its own worktree)
 - **A small test suite** (M, #16): the sheet parsers and the route auth test
 - **CI on GitHub Actions** (S, #17): build and lint on every push
 - **Schemas at the API boundary** (M, #18): zod per collection (`SECURITY.md` #10–#11)
 - **Next 16** (M, #19): clears the last audit findings (`SECURITY.md` #3)
 - **Error alerts** (S, #20): a 500 on a driver's phone reaches you first
-- **Static public pages** (M): the root layout reads the session for the header, so every
-  route renders on demand. Without it, `/`, `/help`, `/privacy`, `/terms` and the 404
-  page could be static files, free for crawlers; the header's signed-in parts would come
-  from the client. Only if the 2026-10-17 CPU check says so.
+- **Static public pages** (M): `/`, `/help`, `/privacy`, `/terms` and the 404 as static
+  files, with the header's signed-in parts from the client. Less pressing on Vercel Pro
+  (the team's plan, checked 2026-10-22)
 - A dev database (#15) is under Security → #20
 
 ---
 
 ## Security
 
-Detail and fixes in `SECURITY.md`; its "Status" table says what's left of each. In the
-order that file suggests:
+Detail in `SECURITY.md`; its "Status" table says what's left of each, in this order:
 
-- [ ] **#1** history rewritten and force-pushed 2026-10-10. Left: the GitHub Support purge
-      (old SHAs + `refs/pull/1/head`; ticket #4844294 open) and whether to tell the drivers
-      on the roster
-- [ ] **#12** step 1 done 2026-10-10 (CSP and the other headers in `next.config.mjs`). Left:
-      check signed-in pages, Google sign-in and the installed iPhone app on the live site for
-      blocked loads; then step 2, nonces instead of `'unsafe-inline'` scripts
-- [ ] **#10** allowlist PATCH bodies (`updateSlic`; `drivers/[id]` done 2026-10-10;
-      `cover/[position]` was deleted 2026-10-10)
-- [ ] **#14** BMC webhook, mostly done 2026-10-10 (`emailVerified` 2026-10-28). Left: a
-      freshness check and an `admin_audit` row (#17)
-- [ ] **#20** dev database for local work and previews (`DEV-DATABASE.md`). The seed
-      script is built (2026-10-14); the `slics-dev` Atlas user, `DEV_MONGODB_URI` and the
-      first copy are done (stage 2, 2026-11-12). Left: `.env.development.local` and the
-      dev-time warning (stage 3), Vercel Preview on it (stage 4)
+- [ ] **#12** step 2: nonces instead of `'unsafe-inline'` scripts (step 1 shipped
+      2026-10-10 and was checked on the live site by 2026-11-13)
+- [ ] **#10** allowlist PATCH bodies (`updateSlic`; `drivers/[id]` done 2026-10-10)
+- [ ] **#14** BMC webhook: a freshness check and an `admin_audit` row (#17)
+- [ ] **#20** dev database (`DEV-DATABASE.md`, stages 1–2 done 2026-11-12): stage 3,
+      `.env.development.local` and the dev-time warning; stage 4, Vercel Preview on it
 - [ ] then Tier 2 (#15–#18, #21, #24, #27) in any order
 
 ---
 
 ## Housekeeping
 
+- [ ] **Due since 2026-10-22:** delete the 12 old-path API alias files
+      (`grep -rln "Old path, renamed on 2026-10-08" app/api`) and their mention in
+      `CLAUDE.md` → "API routes" (`archive/STRUCTURE.md` #29)
+- [ ] **Due since 2026-11-12:** make the `/whip-it-in-and-out` redirect `permanent: true`
+      (`next.config.mjs`). The Places "New" label ended by itself on 2026-11-12 (a date on
+      `/admin/super/features`)
+- [ ] **Ready:** retire the Supabase bucket and the `slic.pdf` fallback: every SLIC with a
+      PDF has `pdfUrl` (checked 2026-11-13). `CLAUDE.md` → "External integrations"; closes
+      part of `SECURITY.md` #13
 - [ ] Gemini: revoke the key in Google AI Studio and remove `GEMINI_API_KEY` from `.env`
-      (gone from Vercel; the code went 2026-10-10, `ON-CALL-SHEET-SYNC.md` → "Stage 4")
+      (still there 2026-11-13; gone from Vercel and the code since 2026-10-10)
 - [ ] `/admin/drivers`: link the 20 suggested matches, add details for the new hires, and
       delete the roster rows of drivers who left
-- [ ] check the three SLIC numbers that are on two hubs in `allHubs`: 0269 (PRORI Warwick,
-      YARMA W. Yarmouth), 7752 (BAYTX Baytown, FTW1 Dallas), 9079 (LGBAP Long Beach Airport,
-      SNAAP Santa Ana). If one of each pair is wrong, fix the data; the lookup copes either
-      way since 2026-10-10 (`&alpha=`), but both hubs share one set of tips
+- [ ] check the three SLIC numbers on two hubs in `allHubs`: 0269 (PRORI Warwick, YARMA W.
+      Yarmouth), 7752 (BAYTX Baytown, FTW1 Dallas), 9079 (LGBAP Long Beach Airport, SNAAP
+      Santa Ana). Both of a pair share one set of tips
 - [ ] lint for unused imports (`eslint.config.mjs`; `archive/STRUCTURE.md` #34)
 - [ ] `package.json`: `"engines": { "node": ">=20.6" }`, a `"description"`, a version off
       `0.1.0`, and drop `@types/node` (`archive/STRUCTURE.md` #32, #35)

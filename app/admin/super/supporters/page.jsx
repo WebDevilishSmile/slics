@@ -6,7 +6,7 @@ import { getSupportOverview } from '@/lib/db/bmcEvents';
 import { getUsers } from '@/lib/db/users';
 import theme from '@/theme';
 
-// Buy Me a Coffee support as the webhook saved it (docs/BMC-SUPPORT.md stage
+// Buy Me a Coffee support as the webhook saved it (docs/archive/BMC-SUPPORT.md stage
 // 2). Emails, amounts and messages: super admin only. The layouts redirect
 // everyone else, and this page checks again before reading anything
 // (SECURITY.md #7: a layout isn't a boundary).

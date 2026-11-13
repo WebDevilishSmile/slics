@@ -47,7 +47,7 @@ export async function PATCH(request) {
   }
   const admin = session.user.role === 'admin';
   const superAdmin = isSuperAdmin(session);
-  // An admin kind only for an admin with its tool (docs/STAFF-ROLES.md).
+  // An admin kind only for an admin with its tool (docs/archive/STAFF-ROLES.md).
   const areas = areasOf(session);
   const coverDriver = isVerifiedDriver(session);
   if (type.audience === 'coverDriver' && !coverDriver) {

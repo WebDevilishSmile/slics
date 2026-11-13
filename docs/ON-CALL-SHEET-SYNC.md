@@ -134,10 +134,10 @@ saved reads differently.
 
 ## Conventions for the sheet (2026-11-11)
 
-`ON-CALL-SHEET-CONVENTIONS.pdf` is a four-page printable for the people who keep the
+`print/ON-CALL-SHEET-CONVENTIONS.pdf` is a four-page printable for the people who keep the
 sheet, SLICs staff and cover drivers: a posting checklist, what to write in each column
 and why, the standard words for the status column, and how a change travels to drivers'
-phones. Its source is `on-call-sheet-conventions.html`; print it again with headless
+phones. Its source is `print/on-call-sheet-conventions.html`; print it again with headless
 Chrome (`--headless=new --no-pdf-header-footer --print-to-pdf=…`). Every name in it is
 made up, and it must never carry the sheet's link.
 
@@ -283,11 +283,11 @@ Replaces the photo upload with a **Refresh** button for the week picked on the c
 ## Stage 3 — Your script, automatic sync and job-change alerts (in progress)
 
 The admin runs the Apps Script from their own Google account; the guide is
-`docs/on-call-sheet-apps-script.md`. When the `Jobs` tab or a dated tab is edited, the
+`docs/guides/on-call-sheet-apps-script.md`. When the `Jobs` tab or a dated tab is edited, the
 script pings the app, and the app re-reads that part of the sheet. Jobs changes raise an
 alert, and since 2026-10-14 so do cover weeks.
 
-- [x] **Guide.** `docs/on-call-sheet-apps-script.md`:
+- [x] **Guide.** `docs/guides/on-call-sheet-apps-script.md`:
   - A standalone script with two installable triggers:
     - `onSheetEdit` sends `{ tab }`, only for `Jobs` or a dated tab;
     - `onSheetChange` sends `{ changeType }` for added or removed rows, columns or tabs.

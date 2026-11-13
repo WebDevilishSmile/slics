@@ -5,7 +5,7 @@ import { getSession, isSuperAdmin } from '@/lib/authz';
 import { getFeaturesFresh } from '@/lib/db/appSettings';
 import theme from '@/theme';
 
-// Switches that used to need a deploy (docs/SUPER-ADMIN-HUB.md stage F,
+// Switches that used to need a deploy (docs/archive/SUPER-ADMIN-HUB.md stage F,
 // lib/db/appSettings.js). Read past the cache, so it shows what's saved.
 // Super admin only; checked here before reading anything.
 export default async function FeaturesPage() {

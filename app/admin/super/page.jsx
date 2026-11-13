@@ -18,7 +18,7 @@ const part = (name, load) =>
     return null;
   });
 
-// The super admin hub (docs/SUPER-ADMIN-HUB.md): the app at a glance, the
+// The super admin hub (docs/archive/SUPER-ADMIN-HUB.md): the app at a glance, the
 // places to manage it, usage and the latest activity. Super admin only: the
 // layout redirects everyone else, and this checks again before reading
 // anything (SECURITY.md #7).

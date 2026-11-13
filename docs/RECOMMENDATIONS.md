@@ -36,6 +36,7 @@ new. Part 5 is about this folder.
 | 18  | Schemas at the API boundary                                           | You             | M      | `SECURITY.md` #10–#11                                       |
 | 19  | Next 16                                                               | You             | M      | `SECURITY.md` #3                                            |
 | 20  | Error alerts                                                          | You             | S      | Vercel logs                                                 |
+| 21  | Drivers helping drivers                                               | Drivers         | M–L    | `/profile`, `PhoneField`, verified drivers                  |
 
 ---
 
@@ -129,6 +130,20 @@ change (`SECURITY.md` Part 3).
 4. The "later" list.
 
 Write it up as `DAILY-LOG.md` when you start.
+
+**Tiago's notes** (moved word for word from `TODOS.md` → Ideas on 2026-11-13):
+
+- develop new feature to track daily route(s)
+- user's job is pulled by the job list (Tiago Davila is on job BMEL)
+- ask if that is true and save to backend (user { job: 'BMEL' })
+- display user's job in history and ask if they want to log day based on job
+  description for that day (Mon: BETPA>BURMD>GAIMD>EZRPA>ALLPA>BETPA)
+- one click add for specific daily route. (e.g., a button that automatically fills in
+  the day's route based on the job description Mon: BETPA>BURMD>GAIMD>EZRPA>ALLPA>BETPA)
+- driver can adjust arrival and departure times for each leg of that day's job route
+  (BETPA>BURMD dep: 18:50 arr: 22:05, BURMD>GAIMD dep: 22:15 arr: 23:45, GAIMD>EZRPA
+  dep: 00:10 arr: 01:30, EZRPA>ALLPA dep: 01:50 arr: 03:20, ALLPA>BETPA dep: 03:40 arr:
+  05:00)
 
 ### 2. Buy Me a Coffee: track support, thank people, show impact
 
@@ -296,6 +311,20 @@ and phone number too would let the card render instantly while the network catch
 - This helps on a slow connection, not a dead one. Real offline needs a service worker,
   which the app avoids on purpose (`CLAUDE.md` → "PWA").
 - It's a per-device convenience, like the rest of localStorage.
+
+### 21. Drivers helping drivers
+
+Added 2026-11-13; the ask, moved word for word from `TODOS.md` → Ideas:
+
+> Ability to change profile image and share time they work and show phone number for
+> those that need help. A page where drivers that need assistance can find and contact
+> each other. A driver can choose a schedule (mon: 18:30 - tues: 05:00) that they are
+> available for assistance. Any driver can call with questions about where they are
+> going and the driver will try to help.
+
+No design notes yet. Opt-in only: a driver's phone number and hours are personal data, so
+it needs a retention decision, a `deleteUserAccount` line and a privacy-page line
+(`SECURITY.md` Part 3), and a switch to stop sharing.
 
 ---
 

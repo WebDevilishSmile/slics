@@ -50,7 +50,7 @@ function Outcome({ icon, title, children }) {
   );
 }
 
-// /reset-password#<token> (docs/PASSWORD-RESET.md). The token is in the
+// /reset-password#<token> (docs/archive/PASSWORD-RESET.md). The token is in the
 // fragment, which never reaches the server, Vercel's logs or analytics. It's
 // read once on mount and wiped from the address bar, then sent with the new
 // password. The page doesn't sign the driver in: they sign in with the new

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { Box } from '@mui/material';
 
-// The thank-you note's confetti (docs/BMC-SUPPORT.md stage 3): one burst from
+// The thank-you note's confetti (docs/archive/BMC-SUPPORT.md stage 3): one burst from
 // behind the letter as it comes out of the envelope. The note renders it just
 // before the letter, inside the dialog, so it flies over the backdrop but
 // never over the words, and it goes when the note closes. It plays once on

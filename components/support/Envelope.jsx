@@ -4,8 +4,8 @@ import { useId } from 'react';
 import { Box } from '@mui/material';
 import { keyframes } from '@mui/material/styles';
 
-// The note envelope (the thank-you, docs/BMC-SUPPORT.md stage 3, and the
-// welcome note, docs/STAFF-ROLES.md): brand-blue paper, shaded as if lit from
+// The note envelope (the thank-you, docs/archive/BMC-SUPPORT.md stage 3, and the
+// welcome note, docs/archive/STAFF-ROLES.md): brand-blue paper, shaded as if lit from
 // the top left, shut with an amber wax seal with an icon pressed into it
 // (`seal`, a 24px icon path: the coffee cup unless told otherwise). `stage`
 // drives it:

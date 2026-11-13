@@ -8,7 +8,7 @@ import { softPressSx, softRaised } from '@/components/utility/soft';
 import StatusLabel from './StatusLabel';
 
 // A card on the hub that opens one of the super admin's pages
-// (docs/SUPER-ADMIN-HUB.md): an icon, its name, a line or two of what's there
+// (docs/archive/SUPER-ADMIN-HUB.md): an icon, its name, a line or two of what's there
 // now, and, for a page that can need attention, its status as an icon and a
 // word. The whole card is the link; it presses in while held.
 export default function HubCard({ href, icon, title, lines = [], status, statusWord, index = 0 }) {

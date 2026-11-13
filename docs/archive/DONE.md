@@ -9,6 +9,13 @@
 
 ## On-call sheet sync (`ON-CALL-SHEET-SYNC.md`)
 
+- [x] **Sheet sync:** one Refresh each (Jobs and a cover week) on the live site to confirm
+      the deployment (closed 2026-11-13: the sync has run every day since, with 2,522
+      Jobs-tab and 2,337 cover-week changes recorded)
+- [x] **Cover-week alerts** (built 2026-10-14): `npm run db:indexes`, then the first real
+      cover-tab edit raising the `/admin` banner, the menu badge and the push (closed
+      2026-11-13: the indexes exist, the changes and pushes flow, and `push-log` has had no
+      iPhone failure since the `Topic` fix on 2026-10-14)
 - [x] cover weeks and the Jobs tab read straight from the ON CALL SHEET, with a change
       history, automatic sync and job-change alerts (2026-10-09/10, stages 1–3)
 - [x] set `CRON_SECRET` on Vercel (until then the daily cron route answers 500)
@@ -21,6 +28,9 @@
 
 ## Super admin hub (`SUPER-ADMIN-HUB.md`)
 
+- [x] **On or after 2026-10-21:** does the super admin hub replace checking the Vercel and
+      Atlas dashboards day to day, and is anything missing from it? (closed by Tiago
+      2026-11-13; the plan moved to `archive/SUPER-ADMIN-HUB.md`)
 - [x] stages A–F built 2026-10-12: notification choices, the hub with numbers and usage,
       notifications, activity, system health and feature switches
 - [x] ship it: run `npm run db:indexes`, restart `next dev` (new `@mui/x-charts`), and go
@@ -31,6 +41,9 @@
 
 ## Places (`CLAUDE.md` → Data layer → Places)
 
+- [x] **Places:** check on a phone as a non-admin driver: the Places row under All Hubs,
+      adding a place, a comment, and an old `/whip-it-in-and-out` bookmark landing on
+      `/places` (Tiago, 2026-11-13)
 - [x] renamed from Whip It In & Out to Places at `/places` (the old path redirects), opened
       to every driver, and announced in the menu ("New" until `PLACES_NEW_UNTIL`), an
       empty-state tip on /home, the landing page and a `/help` section (2026-10-12)
@@ -58,10 +71,34 @@
 - [x] allow user's to reply to SLIC comments (one thread per comment)
 - [x] consider removing tiptap and just using textfield or textarea
 
+## SLIC directions (`SLIC-DIRECTIONS.md`)
+
+- [x] **stage 2** (live 2026-11-12): file one suggestion on the live site and decide it on
+      `/admin/routes` (2026-11-13)
+- [x] **stage 3** (live 2026-11-12): add the first real document on its SLIC's edit page
+      (two on production by 2026-11-13). Looking at them on a phone is in `TODOS.md` → Now,
+      with stage 1's phone check
+
 ## Covers (`COVER-BIDDING.md`)
 
 The original ask is quoted in `COVER-BIDDING.md` → "Why".
 
+- [x] **Covers for every driver:** the switch on `/admin/super/features` turned on
+      2026-11-07, after the trial (`admin_audit`); the `/help` guides and the menu's "New"
+      follow it
+- [x] **Covers hub and Cover History** (built 2026-11-07): the indexes, the cron's
+      `cover-list-totals` (five weeks saved by 2026-11-13), and Tiago's read of "What
+      stands out" (2026-11-13)
+- [x] **Profile, This week** (built 2026-10-14): checked on a phone against the sheet
+      (Tiago, 2026-11-13)
+- [x] **Covers:** `npm run db:indexes` and the live checks for job hiding, cover lists and
+      the read-only rule (closed 2026-11-13: in daily use, with 15 hides and 14 lists on
+      production; the hiding plan moved to `archive/COVER-JOB-HIDING.md`)
+- [x] **Cover jobs, automatic hides** (built 2026-10-14): Refresh W/E 10/24 and check the
+      "Hidden in sheet" and "Sleeper job" labels (superseded 2026-11-13: that week is past,
+      and every week since has been read with them)
+- [x] **Covers:** screenshot `/covers` with an account linked to a driver
+      (`archive/UI-SUGGESTIONS.md` #57; superseded 2026-11-13 by the rollout)
 - [x] reorder list, either drag and drop or number input (2026-11-11): tap a job's choice
       number and pick its place, or drag its handle; Undo after ×, and the moved job glows
       where it lands
@@ -90,6 +127,18 @@ The original ask is quoted in `COVER-BIDDING.md` → "Why".
 
 ## Push notifications (`PUSH-NOTIFICATIONS.md`)
 
+- [x] **Sheet digests** (built 2026-11-11): deploy, check the cron's first run says
+      `baseline` for the three sheet kinds, then watch dispatch's edits arrive as one push
+      after they stop (checked 2026-11-13: the three `sheet:` markers are in
+      `cover-notices`, and the pushes come 15–60 minutes apart). Printing the conventions
+      PDF is in `TODOS.md` → Now
+- [x] **Covers notifications** (built 2026-10-22): deploy, `npm run db:indexes`, then
+      "Verifying stage 3" (checked 2026-11-13: deployed, the indexes and the cron's rows
+      exist, and reminders, call-in times, jobs taken and week posts are sending with no
+      failures; real pushes stood in for the samples). Moving a bid day and back is in
+      `TODOS.md` → Now
+- [x] **Push stage 2:** "Verifying stage 2" on phones, then "Notifications for every
+      driver" turned on (on by 2026-11-13; the checks closed by Tiago)
 - [x] stage 3: verified drivers who can use Covers turn notifications on, and get call-in
       reminders on bid day (15 min, 30 min, 1 hr, 2 hr before), their list's jobs taken,
       their call-in time and the week's cover jobs; the super admin sees `/covers` as a
@@ -136,6 +185,12 @@ email.
 
 ## Buy Me a Coffee (`BMC-SUPPORT.md`)
 
+- [x] **When the first one-time coffee arrives by webhook:** check its row (two live ones
+      arrived, the latest 2026-11-12; ticked in `BMC-SUPPORT.md` stage 1)
+- [x] tick every event in BMC → Webhooks, and watch what BMC sends when a failed renewal's
+      retry goes through (closed by Tiago 2026-11-13)
+- [x] fix the membership mismatches by hand in Users (closed by Tiago 2026-11-13). The plan
+      moved to `archive/BMC-SUPPORT.md`
 - [x] see them: the admin Supporters page (stage 2)
 - [x] add load more button on recent list, too much scrolling (ten at a time, 2026-10-10)
 - [x] the "what it takes" card: effort, not dollars: 200+ hours, the SLICs and PDFs
@@ -190,6 +245,11 @@ sign in process should be in the /sign-in page.
 
 ## Admin pages
 
+- [x] **Staff roles** (built 2026-10-16): deploy and the live checks in "Verifying"
+      (closed 2026-11-13: in use, with three dispatchers; the plan moved to
+      `archive/STAFF-ROLES.md`)
+- [x] **Admin fixes from 2026-10-11:** check them on a phone, signed in as an admin, in both
+      schemes (Tiago, 2026-11-13)
 - [x] available days of cover drivers: find where the sheet shows them, if anywhere
       (call-in times are done) This is not a feature
 - [x] get rid of drivers page or populate it with data from Google Sheets (2026-10-10:
@@ -260,6 +320,11 @@ sign in process should be in the /sign-in page.
 
 ## Security (`SECURITY.md`)
 
+- [x] **#1** what was left: the GitHub Support purge (ticket #4844294) and whether to tell
+      the drivers on the roster (closed by Tiago 2026-11-13)
+- [x] **#12** step 1's live check: signed-in pages, Google sign-in and the installed iPhone
+      app, for blocked loads (Tiago, 2026-11-13). Step 2, nonces, is in `TODOS.md` →
+      Security
 - [x] **#9** left: Google-only or a second factor for admins, the breached-password check,
       and the register route's 409. Decided 2026-10-28: staff sign-in stays as it is (all
       8 staff use Google, no password); no breached-password check; the 409 stays on
@@ -284,6 +349,14 @@ sign in process should be in the /sign-in page.
 
 ## Housekeeping
 
+- [x] reorganize `docs/` (2026-11-13): the finished plans (`COVER-JOB-HIDING`,
+      `PASSWORD-RESET`, `STAFF-ROLES`, `SUPER-ADMIN-HUB`, `BMC-SUPPORT`) moved to
+      `archive/`, the flyers and the sheet conventions to `print/`, the Apps Script guide
+      and the video scripts to `guides/`, with every path citation updated; `TODOS.md`
+      checked against production and cut to what's open
+- [x] **On or after 2026-10-17:** compare Vercel → Observability → Functions (last 12
+      hours) with 2026-10-15's, before the CPU fixes (checked by Tiago; the team is on
+      Vercel Pro since 2026-10-22)
 - [x] organize TODOS.md (2026-10-10: one live list; finished punch lists moved to
       `docs/archive/`)
 - [x] `.env.example` named the old `extract` path: the line went with Gemini (2026-10-10)

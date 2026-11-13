@@ -113,7 +113,7 @@ async function ProfilePage({ params }) {
       ? getPushPrefs(id, {
           admin: session.user.role === 'admin',
           superAdmin: isSuperAdmin(session),
-          // Admin kinds only for the tools this admin has (docs/STAFF-ROLES.md).
+          // Admin kinds only for the tools this admin has (docs/archive/STAFF-ROLES.md).
           areas: areasOf(session),
           // The Covers kinds (reminders, their list) for a verified driver.
           coverDriver,

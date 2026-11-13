@@ -14,7 +14,7 @@ import { secretsMatch } from '@/lib/secretsMatch';
 
 export const runtime = 'nodejs';
 
-// Buy Me a Coffee events (docs/BMC-SUPPORT.md, SECURITY.md #14). Every signed
+// Buy Me a Coffee events (docs/archive/BMC-SUPPORT.md, SECURITY.md #14). Every signed
 // delivery is saved to `bmc-events`; membership events also turn the matched
 // account's `bmcMember` on or off, once the account has confirmed it owns the
 // email (SECURITY.md #8 step 4). Until then the membership waits in the event,

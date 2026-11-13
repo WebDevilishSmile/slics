@@ -5,7 +5,7 @@ import { isSaturday } from '@/lib/onCallSheet';
 import { hideCoverBidJob, showCoverBidJob } from '@/lib/db/coverBidJobHides';
 
 // Hides a cover job from drivers (PUT) or shows it again (DELETE), by week and
-// job number so the hide survives sheet refreshes (docs/COVER-JOB-HIDING.md).
+// job number so the hide survives sheet refreshes (docs/archive/COVER-JOB-HIDING.md).
 // /covers leaves hidden jobs out before toDriverCoverJob.
 //
 // Body: { weekEnding: 'YYYY-MM-DD' (a Saturday), jobNumber }

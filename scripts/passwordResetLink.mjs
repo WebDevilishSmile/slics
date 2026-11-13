@@ -1,5 +1,5 @@
 // Prints a one-time password reset link for a password account
-// (docs/PASSWORD-RESET.md). It's for the accounts /admin/users won't make
+// (docs/archive/PASSWORD-RESET.md). It's for the accounts /admin/users won't make
 // one for: a super admin's, your own. It needs the database credentials, so
 // only someone who has them can run it.
 //

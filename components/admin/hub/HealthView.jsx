@@ -10,7 +10,7 @@ import { softInset, softPressSx, softRaised, softRaisedSmall } from '@/component
 import StatusLabel from './StatusLabel';
 import { formatWhen } from './format';
 
-// /admin/super/health (docs/SUPER-ADMIN-HUB.md stage E, lib/systemHealth.js):
+// /admin/super/health (docs/archive/SUPER-ADMIN-HUB.md stage E, lib/systemHealth.js):
 // one card per check with its state as an icon and a word, and the details in
 // a well. Keys show as set or not set, never their values. "Check again"
 // reruns every check on the server.

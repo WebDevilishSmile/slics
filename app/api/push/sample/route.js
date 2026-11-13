@@ -5,7 +5,7 @@ import { hasSample, sendSample } from '@/lib/pushEvents';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // POST `{ type }`: "Send me a sample" on /admin/super/notifications
-// (docs/SUPER-ADMIN-HUB.md stage C). Sends what a kind of notification looks
+// (docs/archive/SUPER-ADMIN-HUB.md stage C). Sends what a kind of notification looks
 // like, with made-up details, to the caller's own devices only, whatever kinds
 // they chose. Super admin only. → { success, data: { sent, failed } }
 export async function POST(request) {

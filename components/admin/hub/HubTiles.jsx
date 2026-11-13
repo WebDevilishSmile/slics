@@ -6,7 +6,7 @@ import { Box, ButtonBase, Typography } from '@mui/material';
 import { softPressSx, softRaised } from '@/components/utility/soft';
 import { formatCount } from './format';
 
-// The hub's "At a glance" tiles (docs/SUPER-ADMIN-HUB.md stage B): a label,
+// The hub's "At a glance" tiles (docs/archive/SUPER-ADMIN-HUB.md stage B): a label,
 // one number and a line of context each. A tile with somewhere to go is a
 // link that presses in. Numbers are proportional, not tabular: they stand
 // alone.

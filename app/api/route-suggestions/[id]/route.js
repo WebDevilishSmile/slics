@@ -10,7 +10,7 @@ import {
 import { notifySlicEdit } from '@/lib/pushEvents';
 
 // The queue on /admin/routes (docs/SLIC-DIRECTIONS.md, stage 2). Approving
-// edits the SLIC's route, so it's the SLICs area's (docs/STAFF-ROLES.md).
+// edits the SLIC's route, so it's the SLICs area's (docs/archive/STAFF-ROLES.md).
 
 // PATCH `{ action: 'approve', text }` (the suggestion as the admin left it
 // becomes the route) or `{ action: 'decline', answer }`.

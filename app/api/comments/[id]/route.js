@@ -21,7 +21,7 @@ async function loadManageable(params, session) {
     return { response: NextResponse.json({ error: 'Comment not found' }, { status: 404 }) };
 
   const isOwner = comment.userId?.toString() === session.user.id?.toString();
-  // Staff with the Comments area moderate (docs/STAFF-ROLES.md).
+  // Staff with the Comments area moderate (docs/archive/STAFF-ROLES.md).
   if (!isOwner && !hasArea(session, 'comments'))
     return { response: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
 

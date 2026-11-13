@@ -15,7 +15,7 @@ export const runtime = 'nodejs';
 const LINK_TTL_MS = 24 * 60 * 60 * 1000;
 
 // POST: makes a one-time password reset link for the account, which the admin
-// texts to the driver (docs/PASSWORD-RESET.md stage 1). Answers
+// texts to the driver (docs/archive/PASSWORD-RESET.md stage 1). Answers
 // `{ url, expiresAt }`. The link is in this response only: it's stored as a
 // hash and never logged.
 //

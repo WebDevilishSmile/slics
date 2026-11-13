@@ -36,7 +36,7 @@ export function welcomeCopy(role, areas, firstName) {
 }
 
 // The welcome note someone gets once when they're made an admin or a
-// dispatcher (docs/STAFF-ROLES.md), in the envelope with a key on its seal
+// dispatcher (docs/archive/STAFF-ROLES.md), in the envelope with a key on its seal
 // (support/LetterNote.jsx). Its letterhead starts as the logo's dot alone,
 // which draws the S once Tiago has signed (AnimatedSlicsMark's `dot` story).
 // `date` is when the role was given (ISO); the main action opens their hub.

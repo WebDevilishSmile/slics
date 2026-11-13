@@ -6,7 +6,7 @@ import { setUserRole } from '@/lib/db/admins';
 export const runtime = 'nodejs';
 
 // Moves a staff member between Admin and Dispatch, from the super admin's
-// Admins page (docs/STAFF-ROLES.md). Body: { role }.
+// Admins page (docs/archive/STAFF-ROLES.md). Body: { role }.
 export async function PATCH(request, { params }) {
   const { session, denied } = await requireSuperAdmin();
   if (denied) return denied;

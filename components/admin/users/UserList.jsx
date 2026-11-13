@@ -77,7 +77,7 @@ function UserList({ users, viewCounts = {}, coversOpen = false }) {
   const filteredUsers = users.filter(
     (user) =>
       (view.members ? user.bmcMember : true) &&
-      // `admins`: staff, admins and dispatch (docs/STAFF-ROLES.md); the URL
+      // `admins`: staff, admins and dispatch (docs/archive/STAFF-ROLES.md); the URL
       // keeps its old name so saved links still work.
       (view.admins ? STAFF_ROLES.includes(user.role) : true) &&
       (view.verified ? user.driverVerified : true) &&

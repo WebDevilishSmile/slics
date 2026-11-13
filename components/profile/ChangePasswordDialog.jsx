@@ -32,7 +32,7 @@ import {
 
 const actionSx = { px: 3, minHeight: '3rem' };
 
-// "Change password" on /profile (docs/PASSWORD-RESET.md stage 2), stacked on
+// "Change password" on /profile (docs/archive/PASSWORD-RESET.md stage 2), stacked on
 // EditProfileDialog. A change signs out every device, this one included
 // (the session version goes up), so the dialog says so before the driver
 // confirms. Once it's saved this device signs out too, and the dialog stays

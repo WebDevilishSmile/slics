@@ -93,7 +93,7 @@ export async function PATCH(req, { params }) {
 
     // The session's id and areas are fresh (auth.js re-reads the user row on
     // every request), so there's no second lookup by email. Staff with the
-    // Users area edit anyone's phone (docs/STAFF-ROLES.md).
+    // Users area edit anyone's phone (docs/archive/STAFF-ROLES.md).
     const isAdmin = hasArea(session, 'users');
     const isUpdatingOwnProfile = session.user.id === userId;
 

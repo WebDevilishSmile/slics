@@ -27,7 +27,7 @@ import {
 } from '@/components/utility/soft';
 import { formatDay, formatWhen } from './format';
 
-// /admin/super/features (docs/SUPER-ADMIN-HUB.md stage F, lib/db/appSettings.js):
+// /admin/super/features (docs/archive/SUPER-ADMIN-HUB.md stage F, lib/db/appSettings.js):
 // switches that used to need a deploy. Each change asks first, is written to
 // the admin audit, and reaches every driver on their next request. A switch
 // nobody has changed shows the code's default (constants.js).

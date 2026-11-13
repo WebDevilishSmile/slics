@@ -1,5 +1,11 @@
 # STAFF-ROLES.md
 
+> **Archived 2026-11-13: done.** Built and deployed 2026-10-16, and in use since: three
+> accounts were dispatchers when this moved. The Status below is as written then.
+> The follow-ups (notifications for dispatchers, per-person exceptions, leaving as a
+> dispatcher) are ideas in [`../TODOS.md`](../TODOS.md) → Ideas → For the admin. Code cites
+> this file by path, so don't rename it.
+
 Plan and checklist for staff roles: a **Dispatch** role beside Admin, and a switch per
 admin tool per role on `/admin/super/admins`. Built in one go on 2026-10-16, in five
 commits that can each be reverted alone.

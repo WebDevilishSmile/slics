@@ -6,7 +6,7 @@ import NoteCard from '@/components/support/NoteCard';
 import WelcomeNote from './WelcomeNote';
 
 // A one-time card on /home after someone is made an admin or a dispatcher
-// (docs/STAFF-ROLES.md): a sealed envelope (support/NoteCard.jsx) holding the
+// (docs/archive/STAFF-ROLES.md): a sealed envelope (support/NoteCard.jsx) holding the
 // welcome note. `notice` is { role, at } from getRoleNotice (lib/db/users.js);
 // `areas` the tools the role has. Opening the note, or dismissing the card,
 // clears it so it won't come back.

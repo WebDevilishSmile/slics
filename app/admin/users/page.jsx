@@ -19,7 +19,7 @@ async function UsersPage() {
     getRoleAreas(),
     getFeatures(),
   ]);
-  // `hasPassword` puts "Reset password" on the card (docs/PASSWORD-RESET.md);
+  // `hasPassword` puts "Reset password" on the card (docs/archive/PASSWORD-RESET.md);
   // only the flag, never the hash. `coversByRole`: their role has the Covers
   // tool, so Covers early access is theirs already (UserCoversAccess).
   const rows = users.map((user) => ({

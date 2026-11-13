@@ -5,7 +5,7 @@ import { setRoleArea, validateRoleArea } from '@/lib/db/appSettings';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // PATCH `{ role, area, on }`: one tool switch for a staff role on
-// /admin/super/admins (docs/STAFF-ROLES.md, lib/db/appSettings.js). Super
+// /admin/super/admins (docs/archive/STAFF-ROLES.md, lib/db/appSettings.js). Super
 // admin only; written to admin_audit before it's saved. Reaches everyone in
 // the role on their next request. → { success, data: { areas, changed } }
 export async function PATCH(request) {

@@ -5,7 +5,7 @@ import { getSession, isSuperAdmin } from '@/lib/authz';
 import { getSystemHealth } from '@/lib/systemHealth';
 import theme from '@/theme';
 
-// What the app depends on, checked on every visit (docs/SUPER-ADMIN-HUB.md
+// What the app depends on, checked on every visit (docs/archive/SUPER-ADMIN-HUB.md
 // stage E, lib/systemHealth.js). Keys show as set or not, never their values.
 // Super admin only; checked here before reading anything.
 export default async function HealthPage() {

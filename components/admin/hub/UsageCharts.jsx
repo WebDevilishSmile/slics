@@ -15,7 +15,7 @@ import ChartCard, { chartSx, useSeriesColor } from '@/components/admin/charts/Ch
 import { softTableSx } from '@/components/utility/soft';
 import { formatCount, plural, shortDate } from './format';
 
-// The hub's usage charts (docs/SUPER-ADMIN-HUB.md stage B), one series each,
+// The hub's usage charts (docs/archive/SUPER-ADMIN-HUB.md stage B), one series each,
 // so one brand blue and no legend: the title says what's plotted (the
 // `dataviz` skill's rules). Columns with a 4px rounded top, on the shared
 // ChartCard (components/admin/charts/ChartCard.jsx).

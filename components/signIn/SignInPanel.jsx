@@ -293,7 +293,7 @@ export default function SignInPanel({ google, returnTo }) {
         {noticeAlert}
         {submitButton('Sign in', 'Signing in…')}
         <Box sx={[formSx, vt('links')]}>
-          {/* A reset link by email (docs/PASSWORD-RESET.md stage 3). */}
+          {/* A reset link by email (docs/archive/PASSWORD-RESET.md stage 3). */}
           <Typography variant='body2' sx={{ textAlign: 'center' }}>
             <Link
               component='button'

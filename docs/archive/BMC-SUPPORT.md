@@ -1,5 +1,11 @@
 # BMC-SUPPORT.md
 
+> **Archived 2026-11-13: done.** Stages 1–4 built 2026-10-10, renewals since. The last
+> open items closed 2026-11-13: the first live one-time coffees arrived by webhook
+> (2026-11-12), and Tiago closed the webhook-events check ("Renewals") and the
+> membership mismatches ("History import"). The Status below is as written then. Code
+> cites this file by path, so don't rename it.
+
 Buy Me a Coffee support: record it, show it to the admin, thank people, and show what the
 app does without asking for money. The design is `RECOMMENDATIONS.md` #2. This file is the
 plan and the checklist.
@@ -60,7 +66,7 @@ signature check, no replay protection, and an exact-case email match.
       a coffee's `amount` is one coffee's price and `total_amount` is what was paid, so
       `parseBmcEvent` now reads the total first. Before, a five-coffee webhook would have
       saved one coffee's price.
-- [ ] **When the first one-time coffee arrives by webhook,** look at its row's `type` and
+- [x] **When the first one-time coffee arrives by webhook,** look at its row's `type` and
       `fields.data`. Check that `amount` (the total), `currency` and `message` were read; if
       not, add the field names to `parseBmcEvent`.
 
@@ -98,7 +104,7 @@ to remove it).
 - **The input file holds emails.** It stays out of the repo; pull it again with the MCP
   tools to re-run.
 - [ ] Membership in the app doesn't match BMC for a few accounts (found during the
-  import, re-checked against BMC's live list 2026-10-10, read-only):
+      import, re-checked against BMC's live list 2026-10-10, read-only):
   - **Active on BMC, off in the app:** two accounts. One is a yearly membership cancelled
     from BMC that stays active until 2026-12-07; its BMC email has capitals, which the old
     exact-case webhook missed. The other is the maintainer's second account (BMC's lifetime

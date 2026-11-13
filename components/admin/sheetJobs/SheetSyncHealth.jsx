@@ -32,7 +32,7 @@ export default function SheetSyncHealth({ lastPingAt, errors }) {
         <Alert severity='warning'>
           {lastPingAt
             ? `No ping from the sheet since ${when(lastPingAt)}. Your sheet script may be off: check its Triggers page at script.google.com.`
-            : 'The sheet has never pinged the app. Install the script (docs/on-call-sheet-apps-script.md) and run testPing.'}{' '}
+            : 'The sheet has never pinged the app. Install the script (docs/guides/on-call-sheet-apps-script.md) and run testPing.'}{' '}
           The daily check and the Refresh button still work.
         </Alert>
       )}

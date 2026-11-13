@@ -17,7 +17,7 @@ import {
 import { apiRequest } from '@/lib/apiRequest';
 import { softContainedSx, softPressSx, softRaisedSmall } from '@/components/utility/soft';
 
-// "Delete" on a Recent row of the Supporters page (docs/BMC-SUPPORT.md stage
+// "Delete" on a Recent row of the Supporters page (docs/archive/BMC-SUPPORT.md stage
 // 2), for Buy Me a Coffee's test deliveries. `event` is the row, `label` how
 // the page describes it; `onDeleted` gets the id. Mounted only while open.
 export default function DeleteSupportDialog({ event, label, onClose, onDeleted }) {

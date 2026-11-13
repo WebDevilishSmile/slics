@@ -1,5 +1,11 @@
 # COVER-JOB-HIDING.md
 
+> **Archived 2026-11-13: done.** Built 2026-10-12 (automatic hides 2026-10-14), deployed,
+> and in use: 15 hides on production when this moved, and every driver has seen the
+> result since Covers opened on 2026-11-07. The Status below is as written then. How
+> hiding works now is in `CLAUDE.md` → "Cover bid jobs". Code cites this file by path, so
+> don't rename it.
+
 Plan and checklist for letting an admin hide a cover job from drivers: one tap on
 `/admin/cover/jobs` takes a job off the drivers' Covers page, and it stays off through
 every sheet refresh until the admin shows it again. One stage; check items off as they

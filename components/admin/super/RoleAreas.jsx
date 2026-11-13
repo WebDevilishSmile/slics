@@ -10,7 +10,7 @@ import { softRaised } from '@/components/utility/soft';
 
 const columns = `minmax(0, 1fr) repeat(${STAFF_ROLES.length}, 4rem)`;
 
-// The switches for which tools each staff role may use (docs/STAFF-ROLES.md):
+// The switches for which tools each staff role may use (docs/archive/STAFF-ROLES.md):
 // a row per tool, a column per role. A tap saves at once (PATCH
 // /api/role-areas, written to admin_audit), and tapping again undoes it, so
 // there's no confirm. Super admins always have every tool, so they aren't a

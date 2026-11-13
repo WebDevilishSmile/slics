@@ -5,7 +5,7 @@ import { getSession } from '@/lib/authz';
 import theme from '@/theme';
 
 // What an admin page shows a staff account without its area
-// (docs/STAFF-ROLES.md). The /admin layout lets every staff account in, and
+// (docs/archive/STAFF-ROLES.md). The /admin layout lets every staff account in, and
 // each page checks its own area (getAreaSession, lib/authz.js), so this is
 // where a dispatcher lands on a tool their role doesn't have. It points back
 // to the hub they do have.

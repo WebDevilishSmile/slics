@@ -286,7 +286,7 @@ const FIND_THEM = {
   dispatch: 'They’ll find them under Dispatch in the menu.',
 };
 
-// The super admin's Admins page (docs/STAFF-ROLES.md): which tools each staff
+// The super admin's Admins page (docs/archive/STAFF-ROLES.md): which tools each staff
 // role may use, every admin and dispatcher with what the app recorded them
 // doing, and adding, moving or removing one. Every change goes to
 // `admin_audit`. `roleAreas` is { areas, changed } (getRoleAreasFresh).

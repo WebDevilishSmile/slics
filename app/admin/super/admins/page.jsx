@@ -7,7 +7,7 @@ import { getRoleAreasFresh } from '@/lib/db/appSettings';
 import theme from '@/theme';
 
 // Which tools each staff role may use, who the admins and dispatchers are and
-// what they've done; add, move or remove one (docs/STAFF-ROLES.md). Super
+// what they've done; add, move or remove one (docs/archive/STAFF-ROLES.md). Super
 // admin only: the layout redirects everyone else, and this checks again
 // before reading anything.
 export default async function AdminsPage() {

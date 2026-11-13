@@ -39,7 +39,7 @@ export async function GET(request, { params }) {
 // The fields the SLIC form edits (slicForm/SlicForm.jsx). Anything else in a
 // PATCH body is dropped: the PDF has its own route, and the created/updated
 // stamps are the server's. It matters since Dispatch edits SLICs too
-// (docs/STAFF-ROLES.md); updateSlic itself $sets whatever it's given.
+// (docs/archive/STAFF-ROLES.md); updateSlic itself $sets whatever it's given.
 // `arrival` is the SLIC's arrival notes (docs/SLIC-DIRECTIONS.md); its route
 // has its own API (/api/slic-routes).
 const EDITABLE_FIELDS = ['type', 'numSlic', 'alphaSlic', 'name', 'phone', 'address', 'directions', 'arrival'];

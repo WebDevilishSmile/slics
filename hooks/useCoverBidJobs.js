@@ -21,7 +21,7 @@ async function readJson(res, fallbackMessage) {
 /**
  * Owns the editable rows for one week: loading them, and creating, updating and
  * deleting them against the cover bid jobs API. Also the week's hides
- * (docs/COVER-JOB-HIDING.md): which job numbers are hidden from drivers.
+ * (docs/archive/COVER-JOB-HIDING.md): which job numbers are hidden from drivers.
  *
  * Keyed on the formatted week string rather than the dayjs object so a caller
  * that builds a fresh dayjs each render doesn't send this into a refetch loop.

@@ -34,7 +34,7 @@ export function noteCopy(type, firstName) {
   };
 }
 
-// The thank-you note (docs/BMC-SUPPORT.md stage 3), in the envelope with the
+// The thank-you note (docs/archive/BMC-SUPPORT.md stage 3), in the envelope with the
 // coffee cup on its seal (support/LetterNote.jsx). Its letterhead is a heart
 // that beats twice and turns into the SLICs mark once Tiago has signed. `type`
 // is the support's event type and `date` when it came in (ISO; the letter is

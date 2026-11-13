@@ -15,8 +15,6 @@ with the detail. Items move **Inbox → Ideas → Next → Now → done**, and a
   pushes until someone signs in on it. Delete them where `sessionVersion` is bumped?
   (found 2026-10-14 building Push stage 2, `PUSH-NOTIFICATIONS.md` → 2.4)
 
-- Have app notify driver when driver before them finishes picking their cover picks.
-
 ---
 
 ## Now
@@ -34,9 +32,10 @@ Built and live, waiting on a check or a step only Tiago can do.
       `/covers` on a phone, check the push, the menu badge, the `/admin` banner and
       `/admin/cover/reports`, then Delete it (`COVER-BIDDING.md` → "Reference only and
       cover reports")
-- [ ] **Covers notifications** (live, sending since 2026-10-22): move a week's bid day on
-      `/admin/cover/jobs` and back; `/covers` should follow and `admin_audit` get
-      `coverBidDay.set` and `.reset`. No week has been moved yet
+- [ ] **W/E 12/05's bid day falls on Thanksgiving** (Thu 11/26, the default): ask dispatch
+      which day it moves to and set it on `/admin/cover/jobs` before then. No week has
+      been moved yet, so it's also the last check of Covers notifications: `/covers` and
+      the reminders should follow, and `admin_audit` get `coverBidDay.set`
       (`PUSH-NOTIFICATIONS.md` → "Verifying stage 3")
 - [ ] **Password reset:** on a phone, open an admin-made link for a test account, and an
       emailed reset sent to a password account (the 2026-10-12 test went to a Google
@@ -68,8 +67,10 @@ Built and live, waiting on a check or a step only Tiago can do.
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open
       questions first, starting with what the source of truth is once the app can't write
       the sheet (`COVER-BIDDING.md` → "Stage 3")
-- [ ] **Push stage 3:** "your pick is up" for cover bidding (`PUSH-NOTIFICATIONS.md` →
-      "Stage 3"; waits on Covers stage 3)
+- [ ] **Up next on bid day** (planned 2026-11-13, from the Inbox): a push when the driver
+      before you has picked, read from the sheet, so it doesn't wait on Covers stage 3.
+      Five open questions, each with a default. Ship before a bid day (next: Thu 11/19)
+      (`PUSH-NOTIFICATIONS.md` → "Up next: your turn on bid day")
 
 ---
 

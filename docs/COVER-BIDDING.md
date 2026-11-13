@@ -23,7 +23,8 @@ The app is used daily in production.
 - **Indexes:** every index in `lib/db/indexSpecs.mjs` exists in production (checked
   2026-11-07), so nothing here waits on `npm run db:indexes`.
 - **Stage 3** (picking in the app): not started. **Stage 4:** the call-in reminder is
-  built; "your pick is up" waits for stage 3.
+  built; "your pick is up" is planned from the sheet, without waiting for stage 3
+  (`PUSH-NOTIFICATIONS.md` → "Up next", 2026-11-13).
 
 ---
 
@@ -330,7 +331,10 @@ Open questions, to settle before building:
 A push notification when a driver's turn comes. The call-in reminder is built: on bid day,
 at the times the driver chose before their call-in, with the first jobs on their list
 (stage 3 of `PUSH-NOTIFICATIONS.md`). "Your pick is up", sent when the driver before them
-picks, waits for stage 3.
+picks, no longer waits for stage 3: it's planned from the sheet (`PUSH-NOTIFICATIONS.md` →
+"Up next: your turn on bid day", 2026-11-13), where dispatch types each pick into the
+driver's status cell as the call ends. Once picking is in the app, only the source of a
+pick changes.
 
 ---
 

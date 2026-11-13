@@ -42,7 +42,7 @@ a line for each open stage or live check and links here.
 | Doc | What it's for | Where it stands |
 |---|---|---|
 | [`COVER-BIDDING.md`](COVER-BIDDING.md) | Driver verification, the drivers' Covers page, cover lists, the Covers hub and History, then picking in the app | Stages 1–2 open to every driver since 2026-11-07; stage 3 (picking) is next |
-| [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts and the sheet digests, drivers' replies, cover drivers' reminders and lists | Live for every driver; "your pick is up" waits on Covers stage 3 |
+| [`PUSH-NOTIFICATIONS.md`](PUSH-NOTIFICATIONS.md) | Web push: admin alerts and the sheet digests, drivers' replies, cover drivers' reminders and lists | Live for every driver; "Up next" (your turn on bid day) planned 2026-11-13 |
 | [`SLIC-DIRECTIONS.md`](SLIC-DIRECTIONS.md) | The directions PDFs as routes on the card that drivers read, suggest changes to and print, plus documents like a railyard map | Stages 0–3 live 2026-11-12; stage 4 (Google Maps waypoints) on hold |
 | [`ROUTE-REVIEW.md`](ROUTE-REVIEW.md) | Claude's review of the 65 directions PDFs (`SLIC-DIRECTIONS.md` stage 0): things to confirm with drivers | Being worked through, route by route |
 | [`CREATOR-MODE.md`](CREATOR-MODE.md) | The super admin's switch for recording videos: made-up data on every driver page | Stage 2 built 2026-11-12; the phone check is left |

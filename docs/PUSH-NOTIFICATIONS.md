@@ -18,7 +18,8 @@ already get the two reply kinds; drivers get nothing until the super admin turns
 "Notifications for every driver", after "Verifying stage 2". **Stage 3 built 2026-10-22**
 (below, not deployed yet): verified cover drivers can turn notifications on before that
 switch, and get call-in reminders on bid day, their list's jobs taken, their call-in
-time and the week's cover jobs. Its checks are "Verifying stage 3".
+time and the week's cover jobs. Its checks are "Verifying stage 3". **Up next** (a push
+when the driver before you has picked) was planned 2026-11-13, below.
 
 ---
 
@@ -526,8 +527,9 @@ Tiago asked (2026-10-22):
 
 Still not built:
 
-- [ ] **"Your pick is up"** when the driver before them picks waits for picking in the app
-      (`COVER-BIDDING.md` stage 3). Until then the call-in time is the turn.
+- [ ] **"Your pick is up"** when the driver before them picks. Planned 2026-11-13 from the
+      sheet, without waiting for picking in the app: "Up next: your turn on bid day"
+      below.
 - The cover page stays the source of truth. A push that fails or arrives late never
   changes anyone's turn.
 
@@ -626,6 +628,153 @@ signed out. Still to do:
   the reminder arrives at the chosen time and `push-log` has a `coverReminder` row.
 - Move a week's bid day on `/admin/cover/jobs`, then back: `/covers` follows, and
   `admin_audit` has `coverBidDay.set` and `.reset`.
+
+---
+
+## Up next: your turn on bid day (planned 2026-11-13)
+
+Tiago asked (Inbox, 2026-11-13):
+
+> Have app notify driver when driver before them finishes picking their cover picks.
+
+### Status
+
+Planned 2026-11-13, not started. It replaces stage 3's unbuilt "Your pick is up" for
+today's phone bidding: that was waiting on picking in the app (`COVER-BIDDING.md` stage
+3), and this doesn't need to. When picking does move into the app, only the source of a
+pick changes (the app's own picks instead of the sheet's status cell). Ship it before a
+bid day: the next ones are Thu 11/19 (W/E 11/28) and, unless it's moved, Thanksgiving
+Thu 11/26 (W/E 12/05).
+
+### Why it can be built now
+
+Dispatch types each driver's pick into their pick-list row's "Job / status" cell as the
+call ends. The sheet notifier pings the app within seconds, and the sync records the
+change as a `job` event in `cover-bid-pick-events` (from empty to the job code, ON CALL, a
+leave…). That's enough to tell the next driver, with the same parts stage 3 already
+uses: the every-minute cron, `cover-notices` and the Covers kinds.
+
+**What the last four bid days show** (a read-only replay on 2026-11-13 of W/E 10/31 to
+11/21, bid days 10/22 to 11/12, printing positions and times only):
+
+- Picks are typed in pick order, from 7:00 (cover 1) to about 23:00 (the last on-call
+  driver), each within a few minutes of the call.
+- **Drivers call early once the driver before them is done.** On 11/5 and 11/12, twelve
+  drivers called 9 to 56 minutes before their slot (covers 12 to 16 on 11/12). This push
+  gives them that time without watching `/covers`.
+- Some statuses are typed before bid day (leaves, own jobs: drivers 20 to 32 of W/E
+  11/21 were typed 11/11). Those drivers don't call.
+- A numbered driver sometimes never gets a status (on-call 23 on 11/5), so the queue has
+  to move past a no-show.
+- **The rule below, replayed on those days:** 123 pushes; none reached a driver who had
+  already picked; 3 went to drivers who never picked; a median of 15 minutes between the
+  push and the driver's own pick; none earlier than an hour before the driver's call-in.
+
+### The rule
+
+- **The queue** is a week's numbered drivers in pick order: cover drivers who are in
+  (`coverDriversFromPicks`, status `in`), then the numbered on-call drivers, each with a
+  call-in time. Out, unnumbered and vacant rows aren't in it.
+- **A pick** is a driver's status cell going from empty to filled on the week's bid day
+  (New York date, `bidDateFor` with moved days), no earlier than 90 minutes before that
+  driver's call-in (`UP_NEXT_PICK_WINDOW_MINUTES`). A status typed the day before, or a
+  leave typed in the morning for an evening driver, isn't a pick.
+- **Who's up:** once a pick has held for a minute (`UP_NEXT_SETTLE_MINUTES`, so a typo
+  fixed at once tells nobody), the first driver after the picker in the queue whose own
+  status is still empty. A no-show doesn't stop the queue: the next pick moves past them.
+- **Not too early:** never more than an hour before that driver's own call-in
+  (`UP_NEXT_MAX_EARLY_MINUTES`); the push waits until then. That covers the jump from the
+  last cover driver to an on-call driver with an afternoon slot (without it, three
+  drivers in the replay were told 99 to 205 minutes before their call-in).
+- **Once per driver per week,** and never once their own status has a value. Cover 1 is
+  never told: their call-in reminder is their turn.
+- Push to arrival: the sheet ping and sync (seconds), the minute it must hold, and the
+  cron's next minute, so one to two minutes after dispatch types the pick.
+
+### What it says
+
+Lock-screen safe like the other Covers kinds: the week, the driver's own place and time,
+and the job codes still open on their list. Never who picked, or what.
+
+- Title: "You're up: the driver before you has picked"
+- Body: "W/E 11/28/2026 · Cover 9 · call-in 9:15. Your list: LV92, SH16, WA03." After
+  their time: "call-in was 9:15". With an empty list: "Your list is empty. Open Covers
+  to add jobs."
+- Tag `cover-reminder-<week>`: it replaces the call-in reminder on the lock screen, so a
+  driver sees one turn notice. Links `/covers?week=`.
+
+The wording stays neutral about calling early ("has picked", plus their time), so it's
+right whatever dispatch's rule is.
+
+### Ground rules
+
+Stage 3's, unchanged: the sheet and `/covers` are the truth, and a push that's late or
+missing changes nobody's turn; a driver is told only about their own place; the names
+stay on the server (`coverDriversFromPicks` runs in the cron, and only a user id and the
+words leave it); every send goes through `sendPush` and `push-log`.
+
+### Build
+
+Each item is a commit that can be reverted alone. `npm run build` in a scratch copy before
+each, never while `next dev` runs.
+
+- [ ] **The rule, pure:** `upNextQueue(rows)` in `lib/coverDrivers.js` (the numbered
+      drivers in pick order: `{ key, spot, callIn, job }`), and `whoIsUpNext({ queue,
+      picks, bidDate, now })` in a new `lib/upNext.js`, with no imports, like
+      `lib/sheetChangeWords.js`, so the cron and the replay share one rule. The three
+      minute constants go in `constants.js` beside `CALL_IN_QUIET_MINUTES`.
+- [ ] **The kind:** `coverUpNext` in `PUSH_TYPES` (group Covers, label "Your turn", "On
+      bid day, when the driver before you has picked.", `audience: 'coverDriver'`, on by
+      default like the other Covers kinds). Its words in `lib/pushEvents.js`
+      (`coverUpNext`, `sendCoverUpNext`), and a sample on `/admin/super/notifications`.
+      `/profile` shows the switch from `PUSH_TYPES` with no other code.
+- [ ] **The engine:** `runUpNextNotices(now)` in `lib/coverNotices.js`, every minute beside
+      the reminders (`runCoverNotifications`). For each week bid on today: the picks, and
+      the `job` events since the week's `upnext:<week>` marker (one query on the existing
+      `{ weekEnding, seenAt }` index); the rule; `claimNotice('upnext:<userId>:<week>')`
+      for each driver up, before sending; then `moveNotice` for the marker, so a doubled
+      run tells nobody twice. No new collection or index; the rows expire with the week's
+      other notices (`noticeExpiresAt`).
+- [ ] **Reminders stop once a driver has picked:** `runCoverReminders` skips a driver
+      whose own status has a value (`spot.job`). Today a driver who called early still
+      gets "Call in at 10:00, in 15 minutes" afterwards: on 11/5 and 11/12, nine drivers
+      picked more than 15 minutes before their slot.
+- [ ] **Words:** the `/help` guide "Get a reminder before your call-in" says you're also
+      told when the driver before you has picked; the privacy page's line on what a
+      Covers alert can show.
+- [ ] **Docs:** check this section off, `COVER-BIDDING.md` stage 4, `CLAUDE.md` "Covers
+      notifications" (five kinds), `DATA-MODEL.md` (`cover-notices` keys), `TODOS.md`.
+
+### Open questions for Tiago
+
+Each has a default, so the build doesn't wait on them.
+
+1. **Calling early:** may a driver call as soon as the driver before them has picked, or
+   should they wait for their slot? The bid days say early calls are taken, and the
+   wording works either way. Default: no change to the words.
+2. **On by default** for verified cover drivers, like the other four Covers kinds?
+   Default: yes.
+3. **On-call drivers** too? They call at their slots all afternoon and evening. Default:
+   yes.
+4. **A second heads-up** one driver sooner ("you're next")? Default: no, one push per
+   week.
+5. **A status typed before bid day** always means the driver won't call (so no reminder
+   either)? Default: yes.
+
+### Verifying
+
+- The pure rule over the last four bid days gives the replay's figures above (123
+  pushes, none after a pick), from a scratch script that prints positions and times only.
+- The engine on a stubbed store and stubbed sends against a real bid day's picks (stage
+  3's pattern): one push per driver, nothing on a second run or on a day that isn't a bid
+  day, a corrected typo telling nobody, a no-show passed over, cover 1 never told,
+  reminders skipped after a pick. Never a write function against production.
+- On the first bid day after the deploy, with a verified driver's phone: the push comes
+  one to two minutes after the previous driver's pick, `push-log` has `coverUpNext` rows
+  and no failures, and no driver is told twice.
+
+**Rollback:** `git revert` the engine commit and nothing more is sent; the kind's switch
+on `/profile` then does nothing. The markers expire with the week.
 
 ---
 

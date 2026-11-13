@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import {
   Alert,
   Box,
+  ButtonBase,
   Paper,
   Skeleton,
   Stack,
@@ -17,8 +18,9 @@ import {
 } from '@mui/material';
 
 import CoverCalendar from '@/components/covers/Calendar';
+import CoverDriverDialog from '@/components/covers/CoverDriverDialog';
 import SheetRefreshButton from '@/components/admin/coverBidJobs/SheetRefreshButton';
-import { softTableSx } from '@/components/utility/soft';
+import { softPressSx, softTableSx } from '@/components/utility/soft';
 import { useCoverBidPicks } from '@/hooks/useCoverBidPicks';
 import { COVER_POSITIONS, coverDriversFromPicks } from '@/lib/coverDrivers';
 import { getUpcomingSaturday } from '@/lib/format';
@@ -53,7 +55,34 @@ function onCallRow(driver, index) {
   };
 }
 
-function DriversTable({ id, title, rows }) {
+// A name opens the driver's details (CoverDriverDialog).
+function DriverName({ row, onOpen }) {
+  return (
+    <ButtonBase
+      onClick={() => onOpen(row.name)}
+      aria-haspopup='dialog'
+      sx={[
+        softPressSx,
+        {
+          display: 'flex',
+          justifyContent: 'flex-start',
+          textAlign: 'left',
+          minHeight: '2.5rem',
+          px: 1,
+          mx: -1,
+          borderRadius: 2,
+          typography: 'body1',
+          fontWeight: 600,
+          color: row.muted ? 'text.secondary' : 'primary.main',
+        },
+      ]}
+    >
+      {displayName(row.name)}
+    </ButtonBase>
+  );
+}
+
+function DriversTable({ id, title, rows, onOpen }) {
   return (
     <Box component='section' aria-labelledby={id} sx={{ mt: 3 }}>
       <Typography id={id} variant='subtitle1' component='h4' sx={{ fontWeight: 600 }}>
@@ -74,14 +103,7 @@ function DriversTable({ id, title, rows }) {
               <TableRow key={row.key}>
                 <TableCell>{row.number}</TableCell>
                 <TableCell>
-                  {row.name && (
-                    <Box
-                      component='span'
-                      sx={{ display: 'block', color: row.muted ? 'text.secondary' : undefined }}
-                    >
-                      {displayName(row.name)}
-                    </Box>
-                  )}
+                  {row.name && <DriverName row={row} onOpen={onOpen} />}
                   {row.detail && (
                     <Typography component='span' variant='body2' color='text.secondary'>
                       {row.detail}
@@ -106,6 +128,8 @@ export default function CoverDriversFromSheet() {
   // Next week, the week being posted, as on /admin/cover/jobs.
   const [selectedDay, setSelectedDay] = useState(() => dayjs().add(1, 'week'));
   const [refreshKey, setRefreshKey] = useState(0);
+  // The driver whose details are open, by their sheet name.
+  const [openName, setOpenName] = useState(null);
   const weekEndDate = useMemo(() => getUpcomingSaturday(selectedDay), [selectedDay]);
   const { picks, loading, error } = useCoverBidPicks({ weekEndDate, refreshKey });
   const { cover, onCall } = useMemo(
@@ -124,7 +148,13 @@ export default function CoverDriversFromSheet() {
         px: { xs: 1, sm: 3 },
       }}
     >
-      <CoverCalendar value={selectedDay} setValue={setSelectedDay} />
+      <CoverCalendar
+        value={selectedDay}
+        setValue={(day) => {
+          setOpenName(null);
+          setSelectedDay(day);
+        }}
+      />
       <SheetRefreshButton
         key={weekEndDate.format('YYYY-MM-DD')}
         weekEndDate={weekEndDate}
@@ -162,11 +192,20 @@ export default function CoverDriversFromSheet() {
               id='cover-list-heading'
               title={`Cover drivers (1–${COVER_POSITIONS})`}
               rows={cover.map(coverRow)}
+              onOpen={setOpenName}
             />
-            <DriversTable id='on-call-heading' title='On call' rows={onCall.map(onCallRow)} />
+            <DriversTable id='on-call-heading' title='On call' rows={onCall.map(onCallRow)} onOpen={setOpenName} />
           </>
         )}
       </Box>
+
+      {openName && (
+        <CoverDriverDialog
+          name={openName}
+          weekEnding={weekEndDate.format('YYYY-MM-DD')}
+          onClose={() => setOpenName(null)}
+        />
+      )}
     </Paper>
   );
 }

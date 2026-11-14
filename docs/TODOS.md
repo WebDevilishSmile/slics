@@ -21,6 +21,9 @@ with the detail. Items move **Inbox → Ideas → Next → Now → done**, and a
 
 Built and live, waiting on a check or a step only Tiago can do.
 
+- [ ] **Jobs page** (`/jobs`, built 2026-11-14, admins only): try it on a phone and a wide
+      screen, then go through the rollout checklist before turning on "Jobs for verified
+      drivers" (`JOBS-PAGE.md` → Verifying)
 - [ ] **Creator mode** (stage 2 built 2026-11-12): try every driver page on a phone as the
       super admin, then record the tutorials with it (`CREATOR-MODE.md` → Checklist)
 - [ ] **SLIC directions** (stages 1–3 live 2026-11-12): go over each route on its edit page

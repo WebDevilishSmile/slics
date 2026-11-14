@@ -43,6 +43,9 @@ same components, the same URL, the same header.
     jobs, Alex's place (cover #4, call-in 14:30), the bid day, a list, and the dispatch
     button on Oakdale Hub's phone. No preview link or notice.
   - `/places`: seven places with comments; one is Alex's, so Edit shows on it.
+  - `/jobs` (since 2026-11-14, `JOBS-PAGE.md`): the Covers jobs as bid jobs, each with
+    made-up hours, miles and a seniority number (`creatorJobs`). None is Alex's, and his
+    menu has no Jobs row until the "Jobs for verified drivers" switch is on.
   - The header menu (`header/Header.jsx`) shows a made-up verified driver, Alex Rivera,
     with Covers through early access, no Admin or Dispatch rows and no alert badge.
 - **The browser.** `creator/CreatorMode.jsx`, first on each of those pages, swaps

@@ -76,6 +76,7 @@ function cards({ notifications, activity, health, features, admins, support, mem
         ? [
             `Covers: ${features.coversOpen ? 'every driver' : 'admins only (testing)'}`,
             `Notifications: ${features.pushOpen ? 'every driver' : 'admins only (testing)'}`,
+            `Jobs: ${features.jobsOpen ? 'verified drivers' : 'admins only (testing)'}`,
             new Date().toISOString() < features.placesNewUntil
               ? `Places says “New” until ${formatDay(features.placesNewUntil)}`
               : 'Places “New” label ended',

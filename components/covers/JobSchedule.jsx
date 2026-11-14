@@ -11,8 +11,9 @@ import { softInset, softPressSx, softRaisedSmall } from '@/components/utility/so
 // A job's week as a pressed-in well (lib/driverWeek.js jobSchedule, shaped by
 // toSchedule in lib/serializers.js): each working day or run of days with its
 // start time and route, every stop a link to its SLIC. Shared by a verified
-// driver's This week card on /profile (profile/ThisWeek.jsx) and the admins'
-// driver details on /admin/cover/drivers (covers/CoverDriverDialog.jsx).
+// driver's This week card on /profile (profile/ThisWeek.jsx), the admins'
+// driver details on /admin/cover/drivers (covers/CoverDriverDialog.jsx) and a
+// job's details on the drivers' /jobs (jobs/JobDialog.jsx).
 
 // One stop on a route: a pill linking to its SLIC's card, or plain text for a
 // code that isn't a SLIC (a yard, "SHUTTLE").
@@ -69,8 +70,9 @@ function groupDays(days) {
 // with its dates, start time, hours and miles when the Jobs tab has them, and
 // the route. Today is marked in words and brand blue, unless `today` is null
 // (the folded own job on a cover week: not what they work today). Off days
-// are one line at the end.
-export default function JobSchedule({ schedule, weekEnding, today = null }) {
+// are one line at the end. Without `weekEnding` the days carry no dates: a
+// bid job as it runs every week (/jobs).
+export default function JobSchedule({ schedule, weekEnding = null, today = null }) {
   const working = schedule.days.filter((day) => day.works);
   const groups = groupDays(working);
   const offDays = schedule.days.filter((day) => !day.works).map((day) => DAY_LABELS[day.day]);
@@ -87,24 +89,34 @@ export default function JobSchedule({ schedule, weekEnding, today = null }) {
         const first = group.days[0].day;
         const last = group.days[group.days.length - 1].day;
         const run = first !== last;
-        const isToday = Boolean(today) && group.days.some((entry) => dateOf(entry.day).format('YYYY-MM-DD') === today);
+        const isToday =
+          Boolean(today && weekEnding) &&
+          group.days.some((entry) => dateOf(entry.day).format('YYYY-MM-DD') === today);
         const label = run ? `${DAY_LABELS[first]}–${DAY_LABELS[last]}` : DAY_LABELS[first];
-        const dates = run
-          ? `${dateOf(first).format('M/D')}–${dateOf(last).format('M/D')}`
-          : dateOf(first).format('M/D');
+        const dates = !weekEnding
+          ? ''
+          : run
+            ? `${dateOf(first).format('M/D')}–${dateOf(last).format('M/D')}`
+            : dateOf(first).format('M/D');
         const details = [group.hours && `${group.hours} h`, group.miles && `${group.miles} mi`]
           .filter(Boolean)
           .join(' · ');
         return (
-          <Box key={first} component='section' aria-label={`${label} ${dates}${isToday ? ', today' : ''}`}>
+          <Box
+            key={first}
+            component='section'
+            aria-label={`${label}${dates ? ` ${dates}` : ''}${isToday ? ', today' : ''}`}
+          >
             <Box sx={{ display: 'flex', alignItems: 'baseline', columnGap: 1, flexWrap: 'wrap' }}>
               <Typography component='span' sx={{ fontWeight: 700, color: isToday ? 'primary.main' : 'text.primary' }}>
                 {label}
               </Typography>
-              <Typography component='span' variant='body2' color={isToday ? 'primary.main' : 'text.secondary'}>
-                {dates}
-                {isToday && ' · Today'}
-              </Typography>
+              {dates && (
+                <Typography component='span' variant='body2' color={isToday ? 'primary.main' : 'text.secondary'}>
+                  {dates}
+                  {isToday && ' · Today'}
+                </Typography>
+              )}
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'baseline', columnGap: 1, flexWrap: 'wrap' }}>
               <Typography

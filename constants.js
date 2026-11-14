@@ -242,6 +242,14 @@ export const COVERS_OPEN = false;
 // days from the moment it was turned on (`coversOpenedAt`, lib/db/appSettings.js
 // getSessionFeatures; header/UserMenu.jsx).
 export const COVERS_NEW_DAYS = 21;
+// The drivers' Jobs page (/jobs, docs/JOBS-PAGE.md) is for staff with the Jobs
+// tool until it rolls out to verified drivers: `canUseJobs` in lib/authz.js
+// and the menu read this. Only the default: the "Jobs for verified drivers"
+// switch on /admin/super/features wins, and turning it off is the rollback.
+export const JOBS_OPEN = false;
+// Once the switch opens Jobs, its header-menu row says "New" for this many
+// days (`jobsOpenedAt`, lib/db/appSettings.js getSessionFeatures).
+export const JOBS_NEW_DAYS = 21;
 // A verified driver's cover list (docs/COVER-BIDDING.md, stage 2): the jobs
 // they want for a week, in order. At most this many per week, and a week's
 // lists are deleted this many days after the week ends (a TTL index).

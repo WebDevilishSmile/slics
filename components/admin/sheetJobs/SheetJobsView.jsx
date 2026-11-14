@@ -19,6 +19,7 @@ import {
 
 import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
 import { markJobChangesSeen } from '@/lib/jobChangesStore';
+import { sortRows, startMinutes } from '@/lib/jobTable';
 import {
   softInputSx,
   softPressSx,
@@ -29,41 +30,19 @@ import JobChangesFeed from './JobChangesFeed';
 import SheetJobDialog from './SheetJobDialog';
 import { displayName } from '@/lib/names';
 
-// "15:00" or "0:09" → minutes, for sorting start times; NaN when not a time.
-const minutes = (value) => {
-  const match = /^(\d{1,2}):(\d{2})/.exec(value ?? '');
-  return match ? Number(match[1]) * 60 + Number(match[2]) : NaN;
-};
-
-// The table's columns: what each heading sorts by. Numbers and times sort as
-// numbers, the rest as text; blank cells go last either way.
+// The table's columns: what each heading sorts by (sortRows, lib/jobTable.js).
 const COLUMNS = [
   { key: 'jobName', label: 'Job', value: (job) => job.jobName, type: 'text' },
   { key: 'driver', label: 'Driver', value: (job) => job.driver, type: 'text' },
   ...DAY_FIELDS.map((day) => ({
     key: day,
     label: DAY_LABELS[day],
-    value: (job) => minutes(job.days[day].start),
+    value: (job) => startMinutes(job.days[day].start),
     type: 'number',
   })),
   { key: 'weekHours', label: 'Week hrs', value: (job) => parseFloat(job.weekHours), type: 'number' },
   { key: 'seniority', label: 'Seniority', value: (job) => parseFloat(job.seniority), type: 'number' },
 ];
-
-function sortJobs(jobs, { key, direction }) {
-  const column = COLUMNS.find((c) => c.key === key);
-  if (!column) return jobs;
-  const sign = direction === 'asc' ? 1 : -1;
-  const blank = (v) => (column.type === 'number' ? Number.isNaN(v) : !v);
-  return [...jobs].sort((a, b) => {
-    const x = column.value(a);
-    const y = column.value(b);
-    if (blank(x) || blank(y)) return blank(x) - blank(y);
-    const order =
-      column.type === 'number' ? x - y : x.localeCompare(y, undefined, { numeric: true, sensitivity: 'base' });
-    return sign * order;
-  });
-}
 
 // One job on a phone: job, driver, the week's start times and the numbers.
 function JobCard({ job, onOpen }) {
@@ -145,7 +124,7 @@ export default function SheetJobsView({ jobs, changes, moreChanges, seenAt }) {
   const [sort, setSort] = useState(null);
 
   const byName = useMemo(() => new Map(jobs.map((job) => [job.jobName, job])), [jobs]);
-  const sorted = useMemo(() => (sort ? sortJobs(jobs, sort) : jobs), [jobs, sort]);
+  const sorted = useMemo(() => (sort ? sortRows(jobs, COLUMNS, sort) : jobs), [jobs, sort]);
   const query = search.trim().toLowerCase();
   const shown = query
     ? sorted.filter(

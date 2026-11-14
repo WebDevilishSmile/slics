@@ -22,6 +22,7 @@ import {
   PersonOutline,
   SearchOutlined,
   SignpostOutlined,
+  WorkOutline,
 } from '@mui/icons-material';
 import {
   Badge,
@@ -38,13 +39,20 @@ import {
   useMediaQuery,
 } from '@mui/material';
 
-import { BMC_URL, COVERS_NEW_DAYS, COVERS_OPEN, PLACES_NEW_UNTIL } from '@/constants';
+import {
+  BMC_URL,
+  COVERS_NEW_DAYS,
+  COVERS_OPEN,
+  JOBS_NEW_DAYS,
+  JOBS_OPEN,
+  PLACES_NEW_UNTIL,
+} from '@/constants';
 import { refreshAdminAlerts } from '@/lib/adminAlertsStore';
 import { useOpenDisputesCount } from '@/lib/coverDisputesStore';
 import { usePendingClaimsCount } from '@/lib/driverClaimsStore';
 import { useJobChangesCount } from '@/lib/jobChangesStore';
 import { useCoverJobChangesCount } from '@/lib/coverJobChangesStore';
-import { coversAllowed } from '@/lib/featureAccess';
+import { coversAllowed, jobsAllowed } from '@/lib/featureAccess';
 import { turnOffThisDevice } from '@/lib/pushDevice';
 import { useOpenReportsCount } from '@/lib/slicReportsStore';
 import { useOpenRouteSuggestionsCount } from '@/lib/routeSuggestionsStore';
@@ -199,6 +207,14 @@ function UserMenu({ user, features, creatorMode = null, signOutAction }) {
   // Once it's open, the row says "New" for COVERS_NEW_DAYS after the switch.
   const coversOpenedAt = coversOpen ? Date.parse(features?.coversOpenedAt ?? '') : NaN;
   const coversIsNew = Date.now() < coversOpenedAt + COVERS_NEW_DAYS * 24 * 60 * 60 * 1000;
+  // Jobs (/jobs, docs/JOBS-PAGE.md) is for staff with the Jobs tool while
+  // it's tested, then every verified driver once the super admin's switch
+  // opens it (jobsAllowed, the rule canUseJobs in lib/authz.js uses too). Its
+  // row says "New" for JOBS_NEW_DAYS after the switch.
+  const jobsOpen = features?.jobsOpen ?? JOBS_OPEN;
+  const canUseJobs = jobsAllowed(user, features);
+  const jobsOpenedAt = jobsOpen ? Date.parse(features?.jobsOpenedAt ?? '') : NaN;
+  const jobsIsNew = Date.now() < jobsOpenedAt + JOBS_NEW_DAYS * 24 * 60 * 60 * 1000;
   // Places opened to everyone on 2026-10-12; its row says "New" until the
   // date the super admin set.
   const placesIsNew = new Date().toISOString() < (features?.placesNewUntil ?? PLACES_NEW_UNTIL);
@@ -342,6 +358,22 @@ function UserMenu({ user, features, creatorMode = null, signOutAction }) {
                   }
                   icon={<EventAvailableOutlined />}
                   current={isCurrent('/covers')}
+                />
+              )}
+              {canUseJobs && (
+                <NavItem
+                  onClick={handleClose}
+                  href='/jobs'
+                  label='Jobs'
+                  secondary={
+                    jobsOpen
+                      ? jobsIsNew
+                        ? 'New · Every bid job and its times'
+                        : undefined
+                      : 'Admin only for now'
+                  }
+                  icon={<WorkOutline />}
+                  current={isCurrent('/jobs')}
                 />
               )}
             </List>

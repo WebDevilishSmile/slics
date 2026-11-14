@@ -235,13 +235,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.areas = token.areas ?? [];
         session.user.created_at = token.created_at || new Date();
       }
-      // `{ coversOpen, pushOpen, placesNewUntil }`: read by canUseCovers and
-      // canUsePush (lib/authz.js) and the header menu. Never about the user, so
-      // beside it.
+      // `{ coversOpen, pushOpen, jobsOpen, placesNewUntil }`: read by
+      // canUseCovers, canUsePush and canUseJobs (lib/authz.js) and the header
+      // menu. Never about the user, so beside it.
       session.features = token?.features ?? {
         coversOpen: FEATURE_DEFAULTS.coversOpen,
         coversOpenedAt: null,
         pushOpen: FEATURE_DEFAULTS.pushOpen,
+        jobsOpen: FEATURE_DEFAULTS.jobsOpen,
+        jobsOpenedAt: null,
         placesNewUntil: FEATURE_DEFAULTS.placesNewUntil,
       };
       // console.log('Main Auth.js Session Callback - Final Session:', session);

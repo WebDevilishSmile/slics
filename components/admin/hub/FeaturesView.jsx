@@ -166,6 +166,45 @@ export default function FeaturesView({ initial }) {
         <Changed features={features} featureKey='pushOpen' />
       </FeatureCard>
 
+      <FeatureCard title='Jobs for verified drivers'>
+        <Box component='label' sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: busy ? 'default' : 'pointer' }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography sx={{ fontWeight: 700 }}>Jobs for verified drivers</Typography>
+            <Typography variant='body2' color='text.secondary'>
+              {features.jobsOpen
+                ? 'On: every verified driver has the Jobs page.'
+                : 'Off: only admins have the Jobs page while it’s tested.'}
+            </Typography>
+          </Box>
+          <Switch
+            edge='end'
+            checked={features.jobsOpen}
+            disabled={busy}
+            onChange={(event) =>
+              setConfirm(
+                event.target.checked
+                  ? {
+                      title: 'Open Jobs to verified drivers?',
+                      body:
+                        'Every verified driver gets /jobs and its menu item, which says New for three weeks: every bid job with its times, route, week hours and the seniority number of the driver on it, never a name. Go through the rollout checklist in docs/JOBS-PAGE.md first.',
+                      action: 'Open Jobs',
+                      key: 'jobsOpen',
+                      value: true,
+                    }
+                  : {
+                      title: 'Close Jobs to drivers?',
+                      body: 'Drivers lose /jobs and its menu item on their next request; admins keep it.',
+                      action: 'Close Jobs',
+                      key: 'jobsOpen',
+                      value: false,
+                    },
+              )
+            }
+          />
+        </Box>
+        <Changed features={features} featureKey='jobsOpen' />
+      </FeatureCard>
+
       <FeatureCard title='Places "New" label'>
         <Box>
           <Typography sx={{ fontWeight: 700 }}>Places &ldquo;New&rdquo; label</Typography>

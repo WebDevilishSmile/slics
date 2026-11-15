@@ -15,7 +15,7 @@ import {
   EMAIL_ATTACHMENTS_MAX_BYTES,
   validateAttachments,
 } from '@/lib/emailAttachments';
-import { FLYERS_DIR, validateFlyers } from '@/lib/flyers';
+import { validateFlyers } from '@/lib/flyers';
 import { checkRateLimit } from '@/lib/rateLimit';
 
 // POST `{ to, subject, heading, message, buttonLabel, buttonUrl, note,
@@ -81,7 +81,10 @@ async function readFlyers(flyers) {
   for (const flyer of flyers) {
     let content;
     try {
-      content = await readFile(path.join(process.cwd(), FLYERS_DIR, flyer.file));
+      // The folder is written out here, not imported: Next's file tracer
+      // follows only literal paths, and with an imported one it packed the
+      // whole project into this function (1.14 GB, over Vercel's 250 MB).
+      content = await readFile(path.join(process.cwd(), 'docs', 'print', flyer.file));
     } catch {
       console.error(`Flyer missing from the deploy: ${flyer.file}`);
       throw new AttachmentProblem(`“${flyer.file}” isn’t in this version of the app. Remove it and send again.`);

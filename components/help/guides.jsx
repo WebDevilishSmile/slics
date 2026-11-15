@@ -696,11 +696,13 @@ export const HELP_SECTIONS = [
             <Tap>Covers</Tap> shows the day beside your call-in time.
           </>,
           <>
-            Also under <Tap>Covers</Tap>: <Tap>Your list</Tap> tells you when a
-            job on your list is taken, <Tap>Your call-in time</Tap> when the
-            pick list names you or your time changes, and{' '}
-            <Tap>Cover jobs</Tap> when a week&apos;s jobs are posted or
-            change. None of them ever says who took a job.
+            Also under <Tap>Covers</Tap>: <Tap>Your turn</Tap> tells you on
+            bid day when the driver before you has picked, so you can call;{' '}
+            <Tap>Your list</Tap> when a job on your list is taken,{' '}
+            <Tap>Your call-in time</Tap> when the pick list names you or your
+            time changes, and <Tap>Cover jobs</Tap> when a week&apos;s jobs
+            are posted or change. None of them ever says who took a job, or
+            who picked.
           </>,
           <>
             <strong>iPhone:</strong> notifications only work in SLICs on your

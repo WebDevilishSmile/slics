@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Privacy Policy · SLICs',
 };
 
-const EFFECTIVE_DATE = 'November 12, 2026';
+const EFFECTIVE_DATE = 'November 15, 2026';
 
 // Every section's title, in page order, for the summary card's "On this
 // page" list. Keep it in step with the LegalSection titles below.
@@ -152,9 +152,10 @@ export default function PrivacyPage() {
               wrote. If you&apos;re verified for covers, an alert can also say
               a week, your own place and call-in time on its pick list, and
               job numbers from your own cover list, like &quot;a job on your
-              list was taken&quot;: never who took it. To remind you before
-              your call-in, we keep how long before it you chose, and which
-              cover alerts we&apos;ve sent you for each week. Turning
+              list was taken&quot;, or that the driver before you on the pick
+              list has picked: never who took a job, or who picked. To remind
+              you before your call-in, we keep how long before it you chose,
+              and which cover alerts we&apos;ve sent you for each week. Turning
               notifications off, or signing out on that device, deletes its
               address. For 90 days we keep a record of each alert sent: what
               it said and how many devices took it, not who got it.
@@ -327,7 +328,7 @@ export default function PrivacyPage() {
           items={[
             'Account and profile details are kept for as long as your account exists.',
             'A device’s push address is kept until you turn notifications off, sign out on that device, or delete your account. One the push service says is gone is deleted the next time an alert is sent.',
-            'The record of which cover alerts were sent to you for a week (a reminder, your call-in time) is deleted four weeks after that week ends, or with your account.',
+            'The record of which cover alerts were sent to you for a week (a reminder, your call-in time, your turn) is deleted four weeks after that week ends, or with your account.',
             'Tips and comments are kept until you delete them, or until your account is deleted. Delete a tip from the SLIC or your profile page, and a comment on a place from the place itself.',
             'Places you add stay after your account is deleted, without your name, because other drivers rely on them.',
             'Reports about a SLIC are kept after they are dealt with, as a record of what was fixed. If you delete your account they stay, no longer linked to you.',

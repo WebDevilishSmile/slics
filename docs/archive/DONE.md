@@ -28,6 +28,8 @@
 
 ## Super admin hub (`SUPER-ADMIN-HUB.md`)
 
+- [x] Pick an email's recipient from every account by name or email on `/admin/super/email`
+      (2026-11-15; "Email" → "Pick who it's to" in `archive/SUPER-ADMIN-HUB.md`)
 - [x] Attach files and the printed flyers to an email written on `/admin/super/email`
       (2026-11-15; "Email" → "Attachments" and "Flyers" in `archive/SUPER-ADMIN-HUB.md`)
 - [x] **On or after 2026-10-21:** does the super admin hub replace checking the Vercel and

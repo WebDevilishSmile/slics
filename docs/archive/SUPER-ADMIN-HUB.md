@@ -274,6 +274,14 @@ address, but its compose box rewrites pasted HTML, so the look doesn't survive.
       `lib/flyers.js`, a new flyer gets a line there). They're bundled with `/api/emails`
       (`outputFileTracingIncludes` in `next.config.mjs`) and read from disk when the email
       is sent, never served to the web, so a re-made PDF goes out from the next deploy.
+- [x] **Pick who it's to** (2026-11-15, Tiago: "a drop down menu where I can add an email
+      from any user. We have to include name and email"): the "To" field lists every
+      account with its name and email and narrows as you type either
+      (`getEmailRecipients`, `lib/db/users.js`, super admin only); a typed address still
+      works. The name shows under the field, in the preview and in the confirm dialog, and
+      the server addresses the email `"Name" <address>` when the address is an account's
+      (`getNameByEmail`, `addressWithName` in `lib/composedEmail.js`, quotes and line
+      breaks taken out of the name).
 - [x] A card on the hub opens it, and an Email row on `/admin` (super admin only, beside
       "Super Admin"), since the card is a level down.
 - [x] **The app icon in the header** (2026-11-11, every email, the account ones too): the

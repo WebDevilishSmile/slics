@@ -5,6 +5,7 @@ import HubSection from '@/components/admin/hub/HubSection';
 import SentEmails from '@/components/admin/hub/SentEmails';
 import { getSession, isSuperAdmin } from '@/lib/authz';
 import { getSentEmails } from '@/lib/db/adminAudit';
+import { getEmailRecipients } from '@/lib/db/users';
 import theme from '@/theme';
 
 // Write an email from tiago@slics.app in the account emails' look
@@ -20,6 +21,14 @@ export default async function EmailPage() {
   } catch (error) {
     console.error('Error loading the sent emails:', error);
   }
+  // Every account's name and email, for the "To" picker. Without them the
+  // field still takes a typed address.
+  let people = [];
+  try {
+    people = await getEmailRecipients();
+  } catch (error) {
+    console.error('Error loading the email recipients:', error);
+  }
 
   return (
     <>
@@ -34,7 +43,7 @@ export default async function EmailPage() {
             title='Write an email'
             description='It goes out through Resend in the same look as the sign-up and password emails.'
           >
-            <ComposeEmail />
+            <ComposeEmail people={people} />
           </HubSection>
           <HubSection id='email-sent' title='Sent'>
             {sent ? (

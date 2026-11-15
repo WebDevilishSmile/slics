@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { DarkModeOutlined, LightModeOutlined, SendOutlined } from '@mui/icons-material';
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
   Chip,
@@ -26,7 +27,7 @@ import {
   SITE_URL,
 } from '@/constants';
 import { apiRequest } from '@/lib/apiRequest';
-import { composedEmail, validateComposedEmail } from '@/lib/composedEmail';
+import { addressWithName, composedEmail, validateComposedEmail } from '@/lib/composedEmail';
 import { validateAttachments } from '@/lib/emailAttachments';
 import { tapHaptic } from '@/lib/haptics';
 import {
@@ -40,7 +41,9 @@ import {
 
 import EmailAttachments from './EmailAttachments';
 
-// The compose form on /admin/super/email (POST /api/emails): who it's to, the
+// The compose form on /admin/super/email (POST /api/emails): who it's to
+// (typed, or picked from every account by name or email: `people`, from
+// getEmailRecipients), the
 // subject, an optional heading, the message, an optional button and note, and
 // the sign-off, with a live preview rendered by the same code the server
 // sends (lib/composedEmail.js), and files to attach (EmailAttachments.jsx).
@@ -64,7 +67,18 @@ const attachedCount = (email) => (email?.attachments?.length ?? 0) + (email?.fly
 
 const counter = (value, max) => `${value.length.toLocaleString('en-US')}/${max.toLocaleString('en-US')}`;
 
-export default function ComposeEmail() {
+// Up to this many accounts listed at once; typing narrows them.
+const PEOPLE_SHOWN = 50;
+
+const filterPeople = (options, { inputValue }) => {
+  const query = inputValue.trim().toLowerCase();
+  const found = query
+    ? options.filter((person) => person.name.toLowerCase().includes(query) || person.email.includes(query))
+    : options;
+  return found.slice(0, PEOPLE_SHOWN);
+};
+
+export default function ComposeEmail({ people = [] }) {
   const router = useRouter();
   const [fields, setFields] = useState(EMPTY);
   const [copyMe, setCopyMe] = useState(true);
@@ -75,6 +89,12 @@ export default function ComposeEmail() {
   const [sentTo, setSentTo] = useState('');
   const [files, setFiles] = useState([]);
   const uploading = files.some((file) => file.status === 'uploading');
+  // The account the typed address belongs to, if any: its name is shown under
+  // the field and the server addresses the email with it.
+  const recipient = useMemo(() => {
+    const email = fields.to.trim().toLowerCase();
+    return email ? (people.find((person) => person.email === email) ?? null) : null;
+  }, [people, fields.to]);
 
   // The draft, from this browser only (it may be blocked or empty).
   useEffect(() => {
@@ -155,14 +175,64 @@ export default function ComposeEmail() {
       }}
     >
       <Box component='form' onSubmit={ask} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-        {field('to', {
-          label: 'To',
-          required: true,
-          type: 'email',
-          placeholder: 'name@example.com',
-          helperText: `From ${COMPOSE_EMAIL_FROM_NAME} <${CONTACT_EMAIL}>. Replies come back to that inbox.`,
-          slotProps: { htmlInput: { maxLength: 254, autoCapitalize: 'none', spellCheck: false, autoComplete: 'off' } },
-        })}
+        <Autocomplete
+          freeSolo
+          options={people}
+          filterOptions={filterPeople}
+          getOptionLabel={(option) => (typeof option === 'string' ? option : option.email)}
+          getOptionKey={(option) => (typeof option === 'string' ? option : option.id)}
+          inputValue={fields.to}
+          onInputChange={(_event, value, reason) => {
+            // MUI resets the text on blur when nothing was picked; keep it.
+            if (reason === 'reset' && !value) return;
+            setFields((current) => ({ ...current, to: value }));
+            setSentTo('');
+          }}
+          onChange={(_event, option) => {
+            if (option && typeof option === 'object') {
+              setFields((current) => ({ ...current, to: option.email }));
+              setSentTo('');
+            }
+          }}
+          disabled={busy}
+          autoHighlight={false}
+          noOptionsText='No account with that name or email. You can still send to it.'
+          renderOption={({ key, ...props }, option) => (
+            <Box component='li' key={key} {...props} sx={{ minHeight: '3rem' }}>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography sx={{ fontWeight: 600, overflowWrap: 'anywhere' }}>{option.name || 'No name'}</Typography>
+                <Typography variant='body2' color='text.secondary' sx={{ overflowWrap: 'anywhere' }}>
+                  {option.email}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              sx={softInputSx}
+              label='To'
+              required
+              type='email'
+              placeholder='Pick someone, or type an address'
+              helperText={
+                recipient?.name
+                  ? `To ${recipient.name}, from ${COMPOSE_EMAIL_FROM_NAME} <${CONTACT_EMAIL}>. Replies come back to that inbox.`
+                  : `From ${COMPOSE_EMAIL_FROM_NAME} <${CONTACT_EMAIL}>. Replies come back to that inbox.`
+              }
+              slotProps={{
+                ...params.slotProps,
+                htmlInput: {
+                  ...params.inputProps,
+                  maxLength: 254,
+                  autoCapitalize: 'none',
+                  spellCheck: false,
+                  autoComplete: 'off',
+                },
+              }}
+            />
+          )}
+        />
         {field('subject', { label: 'Subject', required: true })}
         {field('heading', {
           label: 'Heading',
@@ -261,7 +331,7 @@ export default function ComposeEmail() {
         <Typography variant='body2' color='text.secondary' sx={{ overflowWrap: 'anywhere' }}>
           <strong>{fields.subject.trim() || 'No subject yet'}</strong>
           <br />
-          To {fields.to.trim() || '…'}
+          To {fields.to.trim() ? addressWithName(recipient?.name, fields.to.trim()) : '…'}
           {files.length ? ` · Attached: ${files.map((file) => file.name).join(', ')}` : ''}{' '}
           · Dark is how Apple Mail shows it; Gmail and Outlook show the light one without
           the shadows.
@@ -282,7 +352,9 @@ export default function ComposeEmail() {
         <DialogTitle>Send this email?</DialogTitle>
         <DialogContent>
           <Typography sx={{ overflowWrap: 'anywhere' }}>
-            &ldquo;{confirming?.subject}&rdquo; goes to {confirming?.to} from {CONTACT_EMAIL}
+            &ldquo;{confirming?.subject}&rdquo; goes to{' '}
+            {recipient?.name && recipient.email === confirming?.to ? `${recipient.name} (${confirming?.to})` : confirming?.to} from{' '}
+            {CONTACT_EMAIL}
             {confirming?.copyMe ? ', with a copy to you' : ''}
             {attachedCount(confirming)
               ? `, with ${attachedCount(confirming) === 1 ? 'one file' : `${attachedCount(confirming)} files`} attached`

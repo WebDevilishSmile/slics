@@ -6,8 +6,9 @@ import { after, NextResponse } from 'next/server';
 import { COMPOSE_EMAIL_FROM_NAME, CONTACT_EMAIL, SITE_URL } from '@/constants';
 import { requireSuperAdmin } from '@/lib/authz';
 import { deleteBlobs, isOwnBlobUrl } from '@/lib/blob';
-import { composedEmail, validateComposedEmail } from '@/lib/composedEmail';
+import { addressWithName, composedEmail, validateComposedEmail } from '@/lib/composedEmail';
 import { markAdminActionFailed, recordAdminAction } from '@/lib/db/adminAudit';
+import { getNameByEmail } from '@/lib/db/users';
 import { sendEmail } from '@/lib/email';
 import {
   detectAttachment,
@@ -154,8 +155,11 @@ export async function POST(request) {
       details: files.length ? { attachments: files.map((file) => file.filename) } : undefined,
     });
 
+    // Addressed with the account's name when the address is a SLICs account's
+    // (`"Jane Doe" <jane@…>`), so mail apps show who it's to.
+    const toName = await getNameByEmail(value.to).catch(() => '');
     const sent = await sendEmail({
-      to: value.to,
+      to: addressWithName(toName, value.to),
       from: `${COMPOSE_EMAIL_FROM_NAME} <${CONTACT_EMAIL}>`,
       replyTo: CONTACT_EMAIL,
       bcc: value.copyMe ? CONTACT_EMAIL : undefined,

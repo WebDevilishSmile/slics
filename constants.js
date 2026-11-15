@@ -319,6 +319,12 @@ export const COVER_REMINDER_DEFAULT_LEADS = [15];
 export const SHEET_PUSH_DIGEST = true;
 export const SHEET_NOTICE_QUIET_MINUTES = 15;
 export const SHEET_NOTICE_MAX_WAIT_MINUTES = 60;
+// "Your turn" (docs/PUSH-NOTIFICATIONS.md, "Up next", since 2026-11-15): on
+// bid day, a verified cover driver is told when the driver before them has
+// picked (runUpNextNotices in lib/coverNotices.js; the rule is lib/upNext.js).
+// `false` is the rollback: nothing more is sent, and the call-in reminders go
+// on as before.
+export const COVER_UP_NEXT = true;
 
 // The kinds of push notification a driver can choose on /profile
 // (docs/PUSH-NOTIFICATIONS.md, stages 1b and 2), in the order the switches
@@ -357,6 +363,14 @@ export const PUSH_TYPES = [
     group: 'Covers',
     label: 'Call-in reminder',
     description: 'Before your call-in time on bid day.',
+    audience: 'coverDriver',
+    defaultOn: true,
+  },
+  {
+    key: 'coverUpNext',
+    group: 'Covers',
+    label: 'Your turn',
+    description: 'On bid day, when the driver before you has picked.',
     audience: 'coverDriver',
     defaultOn: true,
   },

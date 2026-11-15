@@ -71,6 +71,7 @@ made up.
 | [`SLICS-FLYER.pdf`](print/SLICS-FLYER.pdf) | The general flyer: a QR code to `www.slics.app`, looking up a SLIC, what's on its card, reading and posting tips | A lookup or tip button is renamed |
 | [`COVERS-FOR-DRIVERS.pdf`](print/COVERS-FOR-DRIVERS.pdf) | The Covers flyer: a QR code to `www.slics.app/covers`, what Covers is, getting verified, what the page shows | A Covers button is renamed |
 | [`DIRECTIONS-FOR-DRIVERS.pdf`](print/DIRECTIONS-FOR-DRIVERS.pdf) | The directions flyer: a QR code to `www.slics.app/home`, reading a route (ways, Step by step, Read aloud, Print), suggesting one. Its phones show Creator mode's made-up route | A button in the directions sheet is renamed |
+| [`TIPS-FOR-DRIVERS.pdf`](print/TIPS-FOR-DRIVERS.pdf) | The tips flyer, asking drivers to post: a QR code to `www.slics.app/home`, posting a tip by topic, what's worth one (made-up examples), pins, votes and replies, reply notifications, the terms' ground rules. Its tip counts are from 2026-11-15 | A tip button is renamed, or before a reprint (update the counts) |
 
 ## Archive (`archive/`)
 

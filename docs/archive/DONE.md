@@ -207,6 +207,10 @@ email.
 
 ## Delete account
 
+- [x] **Leaving as a dispatcher:** only admins are refused self-service account deletion;
+      should a dispatcher need a super admin too? (`archive/STAFF-ROLES.md`) (closed
+      2026-11-15: the super admin changes their role to Driver, then deletes the account
+      on `/admin/users/[id]`, `ADMIN-USER-DELETION.md`)
 The app should provide a way for users to delete their accounts.
 
 - [x] self-service delete (2026-09-20; re-checked 2026-10-12): `/profile` → Edit profile →

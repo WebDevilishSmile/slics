@@ -117,8 +117,6 @@ Effort: S = an evening or two · M = a few evenings · L = a project with stages
   "Follow-ups")
 - **Per-person tool exceptions:** tools are per role; add overrides on an account if one
   dispatcher needs a tool the others don't (`archive/STAFF-ROLES.md`)
-- **Leaving as a dispatcher:** only admins are refused self-service account deletion;
-  should a dispatcher need a super admin too? (`archive/STAFF-ROLES.md`)
 
 ### Platform
 

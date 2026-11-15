@@ -22,6 +22,7 @@ import UserComments from '@/components/admin/users/UserComments';
 import UserSlics from '@/components/admin/users/UserSlics';
 import UserCoversAccess from '@/components/admin/users/UserCoversAccess';
 import UserDriver from '@/components/admin/users/UserDriver';
+import UserDangerZone from '@/components/admin/users/UserDangerZone';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
 
 async function UserPage({ params }) {
@@ -106,6 +107,21 @@ async function UserPage({ params }) {
           }}
           names={sheetNames}
         />
+
+        {/* Deleting the account: the super admin only, never their own or
+            another super admin's (docs/ADMIN-USER-DELETION.md). */}
+        {isSuperAdmin(session) &&
+          user.superAdmin !== true &&
+          user._id.toString() !== session.user.id && (
+            <UserDangerZone
+              userId={user._id.toString()}
+              name={displayName(user.name ?? '')}
+              email={user.email ?? ''}
+              role={user.role ?? 'user'}
+              commentCount={userComments.length}
+              viewCount={userSlicViews.length}
+            />
+          )}
       </Paper>
 
       <UserSlics

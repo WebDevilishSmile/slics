@@ -1,10 +1,12 @@
+import { AttachFileOutlined } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
+import { visuallyHidden } from '@mui/utils';
 
 import { formatWhen } from './format';
 
 // The emails written on /admin/super/email, newest first (getSentEmails, from
-// admin_audit): the subject, who it went to and when. The message itself
-// isn't kept; Resend's dashboard has it.
+// admin_audit): the subject, who it went to, when, and its files by name. The
+// message and the files themselves aren't kept; Resend's dashboard has them.
 export default function SentEmails({ emails }) {
   if (!emails.length) {
     return (
@@ -26,6 +28,21 @@ export default function SentEmails({ emails }) {
             ) : null}
             To {email.to} · {formatWhen(email.at)}
           </Typography>
+          {email.attachments?.length ? (
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.5, overflowWrap: 'anywhere' }}
+            >
+              <AttachFileOutlined fontSize='small' aria-hidden sx={{ mt: '0.1rem', color: 'primary.main' }} />
+              <span>
+                <Box component='span' sx={visuallyHidden}>
+                  Attached:{' '}
+                </Box>
+                {email.attachments.join(', ')}
+              </span>
+            </Typography>
+          ) : null}
         </Box>
       ))}
     </Box>

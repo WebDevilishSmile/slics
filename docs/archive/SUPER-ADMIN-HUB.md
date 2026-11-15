@@ -257,6 +257,23 @@ address, but its compose box rewrites pasted HTML, so the look doesn't survive.
       message), and gets `failed: true` if Resend turns it down.
 - [x] **Sent:** the page lists the last 25 (`getSentEmails`), and the activity feed shows
       them as admin actions. The message itself is only in Resend's dashboard.
+- [x] **Attachments** (2026-11-15, Tiago: "I want to be able to attach docs in the email from
+      the app"): "Attach files" under the sign-off (`admin/hub/EmailAttachments.jsx`) takes
+      PDFs, photos and Word, Excel or PowerPoint files, up to 10 and 20 MB together
+      (`lib/emailAttachments.js`). Each uploads from the browser straight to Vercel Blob
+      under `email-attachments/` (`POST /api/emails/attachments`, a one-file token, super
+      admin only), since a request to the app carries at most 4.5 MB. Sending passes the
+      links; `POST /api/emails` reads each file back only from this app's store
+      (`isOwnBlobUrl`), checks its first bytes match its name, gives Resend the files, and
+      deletes them from Blob once Resend takes the email. The daily cron deletes any left
+      over a day. `email.sent` keeps the files' names (`details.attachments`), shown under
+      the email in Sent.
+- [x] **Flyers** (2026-11-15, Tiago: "Also add the ability to send the flyers from the app"):
+      "Add a flyer" beside "Attach files" lists the printed flyers in `docs/print/` (the
+      SLICs flyer, Driver tips, Directions, Covers and the on-call sheet conventions;
+      `lib/flyers.js`, a new flyer gets a line there). They're bundled with `/api/emails`
+      (`outputFileTracingIncludes` in `next.config.mjs`) and read from disk when the email
+      is sent, never served to the web, so a re-made PDF goes out from the next deploy.
 - [x] A card on the hub opens it, and an Email row on `/admin` (super admin only, beside
       "Super Admin"), since the card is a level down.
 - [x] **The app icon in the header** (2026-11-11, every email, the account ones too): the

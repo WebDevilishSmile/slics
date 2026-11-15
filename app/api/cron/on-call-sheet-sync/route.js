@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import { secretsMatch } from '@/lib/secretsMatch';
 import { syncFromSheet } from '@/lib/onCallSheetSync';
 import { snapshotCoverListTotals } from '@/lib/db/coverListTotals';
+import { deleteStaleBlobs } from '@/lib/blob';
+import { EMAIL_ATTACHMENT_PREFIX } from '@/lib/emailAttachments';
+
+// Email attachments are deleted once their email is sent; one left a day
+// was removed from the form or never sent (lib/emailAttachments.js).
+const STALE_ATTACHMENT_MS = 24 * 60 * 60 * 1000;
 
 export const runtime = 'nodejs';
 // Reads Jobs plus every current week.
@@ -41,7 +47,13 @@ export async function GET(request) {
     } catch (error) {
       console.error('Error saving cover list totals in the cron:', error);
     }
-    return NextResponse.json({ success: true, data: { results, listTotals } });
+    let staleAttachments = null;
+    try {
+      staleAttachments = await deleteStaleBlobs(EMAIL_ATTACHMENT_PREFIX, STALE_ATTACHMENT_MS);
+    } catch (error) {
+      console.error('Error deleting stale email attachments in the cron:', error?.name ?? 'Error');
+    }
+    return NextResponse.json({ success: true, data: { results, listTotals, staleAttachments } });
   } catch (error) {
     console.error('Error in the on-call sheet cron sync:', error);
     return NextResponse.json({ error: "Couldn't read the sheet." }, { status: 502 });

@@ -880,8 +880,12 @@ Safari in standalone (installed) mode — the PWA path is the one nobody checks.
   distance need it.
 - `img-src` adds `yt3.ggpht.com` (an allowed `next/image` host), and keeps `data:` for the
   SVG avatars made at registration.
-- `connect-src` is `'self'` alone. On Vercel, Analytics and Speed Insights load from and
-  report to `/_vercel/*` on the site itself.
+- `connect-src` is `'self'` and, since 2026-11-15, `https://vercel.com/api/blob/`: the super
+  admin's email attachments upload straight from the browser to Vercel Blob with a
+  one-file token from `POST /api/emails/attachments` (super admin only). `POST /api/emails`
+  reads a file back only from this app's own store and under `email-attachments/`
+  (`isOwnBlobUrl`, `lib/blob.js`) and checks its first bytes before attaching it. On Vercel,
+  Analytics and Speed Insights load from and report to `/_vercel/*` on the site itself.
 - **Dev only:** `'unsafe-eval'` (React's dev build), `va.vercel-scripts.com` (Analytics'
   dev script), `ws:`/`wss:` for hot reload, and no `upgrade-insecure-requests`, which would
   break a phone testing over the LAN.

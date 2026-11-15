@@ -33,6 +33,9 @@ const csp = {
   'font-src': ["'self'", ...(isPreview ? ['https://vercel.live', 'https://assets.vercel.com'] : [])],
   'connect-src': [
     "'self'",
+    // Email attachments upload straight to Vercel Blob's API
+    // (POST /api/emails/attachments, lib/emailAttachments.js).
+    'https://vercel.com/api/blob/',
     // Hot reload's websocket.
     ...(isDev ? ['ws:', 'wss:'] : []),
     ...(isPreview ? ['https://vercel.live', 'wss://ws-us3.pusher.com'] : []),
@@ -70,6 +73,11 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // The printed flyers ride along with the email route, which attaches them
+  // (lib/flyers.js); they aren't served to the web.
+  outputFileTracingIncludes: {
+    '/api/emails': ['./docs/print/*.pdf'],
+  },
   // No `X-Powered-By: Next.js` (docs/SECURITY.md #30).
   poweredByHeader: false,
   images: {

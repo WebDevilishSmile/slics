@@ -27,6 +27,7 @@ import {
 } from '@/constants';
 import { apiRequest } from '@/lib/apiRequest';
 import { composedEmail, validateComposedEmail } from '@/lib/composedEmail';
+import { validateAttachments } from '@/lib/emailAttachments';
 import { tapHaptic } from '@/lib/haptics';
 import {
   softContainedSx,
@@ -37,11 +38,15 @@ import {
   softToggleSx,
 } from '@/components/utility/soft';
 
+import EmailAttachments from './EmailAttachments';
+
 // The compose form on /admin/super/email (POST /api/emails): who it's to, the
 // subject, an optional heading, the message, an optional button and note, and
 // the sign-off, with a live preview rendered by the same code the server
-// sends (lib/composedEmail.js). The draft is kept in this browser until it's
-// sent, so leaving the page doesn't lose it.
+// sends (lib/composedEmail.js), and files to attach (EmailAttachments.jsx).
+// The draft's words are kept in this browser until it's sent, so leaving the
+// page doesn't lose them; its files aren't, since their uploads are cleaned
+// up after a day.
 
 const EMPTY = {
   to: '',
@@ -55,6 +60,8 @@ const EMPTY = {
 };
 const DRAFT_KEY = 'slics.emailDraft';
 
+const attachedCount = (email) => (email?.attachments?.length ?? 0) + (email?.flyers?.length ?? 0);
+
 const counter = (value, max) => `${value.length.toLocaleString('en-US')}/${max.toLocaleString('en-US')}`;
 
 export default function ComposeEmail() {
@@ -66,6 +73,8 @@ export default function ComposeEmail() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [sentTo, setSentTo] = useState('');
+  const [files, setFiles] = useState([]);
+  const uploading = files.some((file) => file.status === 'uploading');
 
   // The draft, from this browser only (it may be blocked or empty).
   useEffect(() => {
@@ -96,7 +105,16 @@ export default function ComposeEmail() {
     setSentTo('');
     const { value, error: invalid } = validateComposedEmail({ ...fields, copyMe });
     if (invalid) return setError(invalid);
-    setConfirming(value);
+    if (uploading) return setError('Wait for the files to finish uploading.');
+    if (files.some((file) => file.status === 'failed')) {
+      return setError('A file didn’t upload. Remove it, or attach it again.');
+    }
+    const { value: attachments, error: attachError } = validateAttachments(
+      files.filter((file) => !file.flyer).map(({ url, name, size }) => ({ url, name, size })),
+    );
+    if (attachError) return setError(attachError);
+    const flyers = files.filter((file) => file.flyer).map((file) => file.flyer);
+    setConfirming({ ...value, attachments, flyers });
   };
 
   const send = async () => {
@@ -111,6 +129,7 @@ export default function ComposeEmail() {
     setSentTo(confirming.to);
     setConfirming(null);
     setFields({ ...EMPTY, signOff: fields.signOff });
+    setFiles([]);
     // The Sent list below picks it up.
     router.refresh();
   };
@@ -175,6 +194,16 @@ export default function ComposeEmail() {
         })}
         {field('signOff', { label: 'Sign-off', multiline: true, minRows: 1 })}
 
+        <EmailAttachments
+          files={files}
+          setFiles={(change) => {
+            setFiles(change);
+            setSentTo('');
+          }}
+          disabled={busy}
+          onProblem={setError}
+        />
+
         <Box component='label' sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: busy ? 'default' : 'pointer' }}>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography sx={{ fontWeight: 700 }}>Send me a copy</Typography>
@@ -196,11 +225,11 @@ export default function ComposeEmail() {
           <Button
             type='submit'
             variant='contained'
-            disabled={busy}
-            startIcon={<SendOutlined />}
+            disabled={busy || uploading}
+            startIcon={uploading ? <CircularProgress size={16} color='inherit' /> : <SendOutlined />}
             sx={[softContainedSx, { px: 3, minHeight: '3rem' }]}
           >
-            Send
+            {uploading ? 'Uploading files…' : 'Send'}
           </Button>
         </Box>
       </Box>
@@ -232,7 +261,9 @@ export default function ComposeEmail() {
         <Typography variant='body2' color='text.secondary' sx={{ overflowWrap: 'anywhere' }}>
           <strong>{fields.subject.trim() || 'No subject yet'}</strong>
           <br />
-          To {fields.to.trim() || '…'} · Dark is how Apple Mail shows it; Gmail and Outlook show the light one without
+          To {fields.to.trim() || '…'}
+          {files.length ? ` · Attached: ${files.map((file) => file.name).join(', ')}` : ''}{' '}
+          · Dark is how Apple Mail shows it; Gmail and Outlook show the light one without
           the shadows.
         </Typography>
         <Box sx={[softInset, { borderRadius: 4, overflow: 'hidden', p: 0 }]}>
@@ -252,7 +283,11 @@ export default function ComposeEmail() {
         <DialogContent>
           <Typography sx={{ overflowWrap: 'anywhere' }}>
             &ldquo;{confirming?.subject}&rdquo; goes to {confirming?.to} from {CONTACT_EMAIL}
-            {confirming?.copyMe ? ', with a copy to you' : ''}. It can&apos;t be taken back.
+            {confirming?.copyMe ? ', with a copy to you' : ''}
+            {attachedCount(confirming)
+              ? `, with ${attachedCount(confirming) === 1 ? 'one file' : `${attachedCount(confirming)} files`} attached`
+              : ''}
+            . It can&apos;t be taken back.
           </Typography>
         </DialogContent>
         <DialogActions disableSpacing sx={{ px: 3, pb: 3, gap: 1.5 }}>

@@ -28,6 +28,8 @@
 
 ## Super admin hub (`SUPER-ADMIN-HUB.md`)
 
+- [x] Attach files and the printed flyers to an email written on `/admin/super/email`
+      (2026-11-15; "Email" → "Attachments" and "Flyers" in `archive/SUPER-ADMIN-HUB.md`)
 - [x] **On or after 2026-10-21:** does the super admin hub replace checking the Vercel and
       Atlas dashboards day to day, and is anything missing from it? (closed by Tiago
       2026-11-13; the plan moved to `archive/SUPER-ADMIN-HUB.md`)

@@ -11,7 +11,7 @@ Everything written about SLICs that isn't code. The product overview is the root
   `RECOMMENDATIONS.md` (design notes for ideas).
 - **`guides/`**: how-tos for people, not code: the sheet's Apps Script, the tutorial
   videos.
-- **`print/`**: the flyers and the sheet conventions, each PDF beside its HTML source.
+- **`print/`**: the flyers and the sheet conventions, each PDF beside its HTML source. The super admin emails them from `/admin/super/email` ("Add a flyer", `lib/flyers.js`), so keep the file names, and add a line there for a new one.
 - **`archive/`**: finished work: `DONE.md`, the plans whose stages all shipped, and the
   closed punch lists.
 

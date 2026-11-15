@@ -2,7 +2,7 @@ import theme from '@/theme';
 import { ArrowUpward, ChevronRight, EmailOutlined } from '@mui/icons-material';
 import { Box, Button, Link, Typography } from '@mui/material';
 
-import { CONTACT_EMAIL } from '@/constants';
+import { CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from '@/constants';
 import ExampleSlicCard, { CARD_CONTROLS } from '@/components/help/ExampleSlicCard';
 import HelpGuide from '@/components/help/HelpGuide';
 import { HELP_SECTIONS, visibleHelpSections } from '@/components/help/guides';
@@ -201,6 +201,13 @@ export default async function HelpPage() {
             A wrong address or phone number? Use{' '}
             <Link href='#report'>Something wrong with this SLIC?</Link> under the
             card instead. It goes straight to the admin with the SLIC attached.
+          </Typography>
+          <Typography variant='body2' color='text.secondary'>
+            Short videos of these guides are on Instagram:{' '}
+            <Link href={INSTAGRAM_URL} target='_blank' rel='noopener'>
+              @{INSTAGRAM_HANDLE}
+            </Link>
+            .
           </Typography>
           <Button
             variant='contained'

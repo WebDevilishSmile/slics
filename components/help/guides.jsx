@@ -43,6 +43,25 @@ function Tap({ children }) {
 // `feature` names a switch on /admin/super/features (lib/db/appSettings.js):
 // the guide shows only while it's on, so drivers aren't told about something
 // they don't have yet (visibleHelpSections).
+// The how-to reels on @slics_app (constants.js INSTAGRAM_URL) that a guide
+// covers, by the guide's id. Every reel and where it's linked is listed in
+// docs/guides/REELS.md; keep the two in step. Each guide with reels ends its
+// steps with a link per reel (HelpGuide.jsx): `label` names a second one, and
+// the first says "Watch it on Instagram". A guide behind a `feature` shows its
+// reels only while the switch is on, like the guide itself. A link, never an
+// embed: the privacy page promises no third-party tracking, and the CSP's
+// frame-src is 'none'.
+export const GUIDE_VIDEOS = {
+  search: [{ url: 'https://www.instagram.com/reel/DfvnFZ1Ag2C/' }], // Look up any SLIC in Seconds
+  install: [{ url: 'https://www.instagram.com/reel/Dfvmy2iAjL4/' }], // Add SLICs to Your Home Screen
+  pdf: [
+    { url: 'https://www.instagram.com/reel/DfvncEkgcKn/' }, // NEW: Truck Directions
+    { url: 'https://www.instagram.com/reel/DfvqPhOgaJE/', label: 'Watch how to suggest a change' }, // Know a Better Way
+  ],
+  verify: [{ url: 'https://www.instagram.com/reel/DfvqcIVgOUb/' }], // Get Verified for Covers
+  'cover-list': [{ url: 'https://www.instagram.com/reel/DfvrEPagt7g/' }], // Build Your Cover List
+};
+
 // The sections with only the guides whose `feature` is on. `features` is
 // getFeatures() (lib/db/appSettings.js). A section with none left is dropped.
 export function visibleHelpSections(features) {

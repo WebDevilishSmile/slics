@@ -1,9 +1,10 @@
 import theme from '@/theme';
-import { LightbulbOutlined } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { LightbulbOutlined, PlayCircleOutline } from '@mui/icons-material';
+import { Box, Link, Typography } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 
 import ExampleSlicCard from '@/components/help/ExampleSlicCard';
+import { GUIDE_VIDEOS } from '@/components/help/guides';
 import HelpScreen, { HELP_SCREEN_KEYS } from '@/components/help/HelpScreens';
 import { softInset, softRaisedSmall } from '@/components/utility/soft';
 
@@ -49,8 +50,11 @@ const numberSx = [
 // on, so the driver sees where they arrived. The steps list sets role='list' because Safari drops a list's
 // semantics once its bullets are styled away, and each step says "Step n" to
 // a screen reader, since the drawn number is hidden from it.
+// A guide with reels on Instagram (GUIDE_VIDEOS) ends its steps with a link to
+// each: plain, not embossed, opening Instagram in a new tab.
 export default function HelpGuide({ guide }) {
   const { id, title, icon: Icon, intro, screen, steps, notes } = guide;
+  const videos = GUIDE_VIDEOS[id] ?? [];
 
   return (
     <Box
@@ -113,6 +117,31 @@ export default function HelpGuide({ guide }) {
           </Box>
         ))}
       </Box>
+
+      {videos.length > 0 && (
+        <Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          {videos.map(({ url, label }) => (
+            <Link
+              key={url}
+              href={url}
+              target='_blank'
+              rel='noopener'
+              underline='hover'
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                minHeight: '2.75rem',
+                typography: 'body1',
+                fontWeight: 600,
+              }}
+            >
+              <PlayCircleOutline aria-hidden='true' />
+              {label ?? 'Watch it on Instagram'}
+            </Link>
+          ))}
+        </Box>
+      )}
 
       {notes?.length > 0 && (
         <Box sx={[softInset(theme), { mt: 3, p: 2, borderRadius: 4 }]}>

@@ -22,9 +22,10 @@ The app is used daily in production.
   notifications** (2026-10-22) are deployed too.
 - **Indexes:** every index in `lib/db/indexSpecs.mjs` exists in production (checked
   2026-11-07), so nothing here waits on `npm run db:indexes`.
-- **Stage 3** (picking in the app): not started. **Stage 4:** the call-in reminder is
-  built; "your pick is up" is planned from the sheet, without waiting for stage 3
-  (`PUSH-NOTIFICATIONS.md` → "Up next", 2026-11-13).
+- **Stage 3** (picking in the app): not started. **Stage 4:** the call-in reminder and
+  "your pick is up" ("Your turn", built 2026-11-15 from the sheet, without waiting for
+  stage 3; `PUSH-NOTIFICATIONS.md` → "Up next") are built; Your turn's first bid day is
+  Thu 11/19.
 
 ---
 
@@ -326,15 +327,16 @@ Open questions, to settle before building:
 - **On-call drivers** (after pick 20): do they bid too?
 - **Mistakes:** who can undo a pick, and how it's recorded.
 
-## Stage 4: "Your pick is up" (part built 2026-10-22)
+## Stage 4: "Your pick is up" (built 2026-10-22 and 2026-11-15)
 
 A push notification when a driver's turn comes. The call-in reminder is built: on bid day,
 at the times the driver chose before their call-in, with the first jobs on their list
 (stage 3 of `PUSH-NOTIFICATIONS.md`). "Your pick is up", sent when the driver before them
-picks, no longer waits for stage 3: it's planned from the sheet (`PUSH-NOTIFICATIONS.md` →
-"Up next: your turn on bid day", 2026-11-13), where dispatch types each pick into the
-driver's status cell as the call ends. Once picking is in the app, only the source of a
-pick changes.
+picks, didn't wait for stage 3: it was built on 2026-11-15 from the sheet as the Covers
+kind "Your turn" (`coverUpNext`, `PUSH-NOTIFICATIONS.md` → "Up next: your turn on bid
+day"), where dispatch types each pick into the driver's status cell as the call ends.
+Since then a reminder isn't sent once the driver's status cell has a value. Once picking
+is in the app, only the source of a pick changes.
 
 ---
 

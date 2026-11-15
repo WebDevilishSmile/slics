@@ -21,6 +21,10 @@ with the detail. Items move **Inbox → Ideas → Next → Now → done**, and a
 
 Built and live, waiting on a check or a step only Tiago can do.
 
+- [ ] **Your turn** (built 2026-11-15, `coverUpNext`): on Thu 11/19, check that `push-log`
+      has `coverUpNext` rows with no failures, nobody is told twice, and a push comes one
+      to two minutes after the previous driver's pick; send yourself the sample from
+      `/admin/super/notifications` first (`PUSH-NOTIFICATIONS.md` → "Up next" → Verifying)
 - [ ] **Jobs page** (`/jobs`, built 2026-11-14, admins only): try it on a phone and a wide
       screen, then go through the rollout checklist before turning on "Jobs for verified
       drivers" (`JOBS-PAGE.md` → Verifying)
@@ -70,10 +74,6 @@ Built and live, waiting on a check or a step only Tiago can do.
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open
       questions first, starting with what the source of truth is once the app can't write
       the sheet (`COVER-BIDDING.md` → "Stage 3")
-- [ ] **Up next on bid day** (planned 2026-11-13, from the Inbox): a push when the driver
-      before you has picked, read from the sheet, so it doesn't wait on Covers stage 3.
-      Five open questions, each with a default. Ship before a bid day (next: Thu 11/19)
-      (`PUSH-NOTIFICATIONS.md` → "Up next: your turn on bid day")
 
 ---
 

@@ -1,5 +1,6 @@
 import theme from '@/theme';
 import { Box, Link, Typography } from '@mui/material';
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from '@/constants';
 import { softInset, softRaised } from '@/components/utility/soft';
 import OpenAppButton from './OpenAppButton';
 
@@ -105,7 +106,12 @@ export default function GetStarted({ signedIn }) {
       >
         <OpenAppButton signedIn={signedIn} />
         <Typography variant='body2' sx={{ textAlign: 'center' }}>
-          Step-by-step guides are on the <Link href='/help'>Help page</Link>.
+          Step-by-step guides are on the <Link href='/help'>Help page</Link>,
+          and short videos on Instagram (
+          <Link href={INSTAGRAM_URL} target='_blank' rel='noopener'>
+            @{INSTAGRAM_HANDLE}
+          </Link>
+          ).
         </Typography>
       </Box>
     </Box>

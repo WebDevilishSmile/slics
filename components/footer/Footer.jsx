@@ -6,15 +6,12 @@ import {
   X,
 } from '@mui/icons-material';
 import { Box, Button, IconButton, Typography } from '@mui/material';
-import { CONTACT_EMAIL } from '@/constants';
+import { CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from '@/constants';
 import FooterContainer from './FooterContainer';
 
+// Tiago's own accounts, under "Made by". The app's Instagram has its own line
+// above them.
 const socialLinks = [
-  {
-    name: 'Instagram',
-    icon: Instagram,
-    url: 'https://www.instagram.com/webdevilishsmile/',
-  },
   {
     name: 'Facebook',
     icon: Facebook,
@@ -32,8 +29,9 @@ const socialLinks = [
 const linkSx = { minHeight: '2.75rem' };
 
 // One compact column (UI-SUGGESTIONS.md #37): Help and the legal links first (the
-// landing page's trust copy points at them), the contact email, then who made
-// the app with their social links, and the copyright. Everything inherits
+// landing page's trust copy points at them), the contact email, the app's
+// Instagram with the how-to videos, then who made the app with their social
+// links, and the copyright. Everything inherits
 // text.light from FooterContainer. The second logo is gone; the header
 // carries the brand.
 function Footer() {
@@ -63,6 +61,24 @@ function Footer() {
           sx={linkSx}
         >
           {CONTACT_EMAIL}
+        </Button>
+      </Box>
+
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography variant='caption' component='p'>
+          Short how-to videos
+        </Typography>
+        <Button
+          variant='text'
+          color='inherit'
+          href={INSTAGRAM_URL}
+          target='_blank'
+          rel='noopener'
+          startIcon={<Instagram />}
+          aria-label={`SLICs on Instagram, @${INSTAGRAM_HANDLE}`}
+          sx={linkSx}
+        >
+          @{INSTAGRAM_HANDLE}
         </Button>
       </Box>
 

@@ -7,6 +7,13 @@ export const SITE_URL = 'https://www.slics.app';
 // forwards to the admin's inbox (docs/OPERATIONS.md, "Email for the domain").
 export const CONTACT_EMAIL = 'tiago@slics.app';
 
+// The app's Instagram, where the how-to videos are (docs/guides/VIDEO-SCRIPTS.md):
+// the footer, the "Still stuck?" card on /help and the landing page's steps.
+// Linked, never embedded: an embed would load Instagram's tracking, which the
+// privacy page says the app doesn't have, and the CSP's frame-src is 'none'.
+export const INSTAGRAM_HANDLE = 'slics_app';
+export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
+
 // The line under the SLIC card's Open map button (home/SlicActions.jsx, and
 // the copies on /help and the landing page): a maps app routes like a car,
 // so the driver checks with dispatch when unsure (since 2026-11-11).

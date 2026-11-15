@@ -41,3 +41,8 @@ The how-to videos posted on the app's Instagram, [@slics_app](https://www.instag
 
 - url: https://www.instagram.com/reel/DfvncEkgcKn/
 - On /help: Read the directions (`#pdf`)
+
+## Help the Next Driver
+
+- url: https://www.instagram.com/reel/DfwwtT-Ao3B/
+- On /help: Post a tip (`#post-tip`)

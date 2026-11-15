@@ -54,6 +54,7 @@ function Tap({ children }) {
 export const GUIDE_VIDEOS = {
   search: [{ url: 'https://www.instagram.com/reel/DfvnFZ1Ag2C/' }], // Look up any SLIC in Seconds
   install: [{ url: 'https://www.instagram.com/reel/Dfvmy2iAjL4/' }], // Add SLICs to Your Home Screen
+  'post-tip': [{ url: 'https://www.instagram.com/reel/DfwwtT-Ao3B/' }], // Help the Next Driver
   pdf: [
     { url: 'https://www.instagram.com/reel/DfvncEkgcKn/' }, // NEW: Truck Directions
     { url: 'https://www.instagram.com/reel/DfvqPhOgaJE/', label: 'Watch how to suggest a change' }, // Know a Better Way

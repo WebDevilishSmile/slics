@@ -131,5 +131,7 @@ Six short screen recordings for drivers who aren't comfortable with apps. Each o
 ## After recording
 
 - Trim the start and end, and blur any emails, names or photos.
-- Upload where drivers already go (a YouTube channel set to Unlisted works well). Text the link with one line: "How to look up a SLIC, in under a minute."
+- Add captions burned into the video: most drivers watch with the sound off.
+- Post it as a Reel on the app's Instagram, [@slics_app](https://www.instagram.com/slics_app/) (`INSTAGRAM_URL` in `constants.js`). Then add it to [`REELS.md`](REELS.md), and paste its link (`https://www.instagram.com/reel/<id>/`, the form Instagram calls canonical) into `GUIDE_VIDEOS` in `components/help/guides.jsx`, under the guide it covers. That guide on `/help` then shows "Watch it on Instagram". Link the reel, never embed it: the privacy page promises no third-party tracking, and the CSP's `frame-src` is `'none'`.
+- Text the reel's link with one line: "How to look up a SLIC, in under a minute." A reel plays in the phone's browser without the Instagram app.
 - If the button names change in the app, re-record that video and update `components/help/guides.jsx` at the same time.

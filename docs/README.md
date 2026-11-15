@@ -57,6 +57,7 @@ a line for each open stage or live check and links here.
 |---|---|---|
 | [`on-call-sheet-apps-script.md`](guides/on-call-sheet-apps-script.md) | The admin's guide to installing the sheet notifier (Apps Script) | Setting up or fixing the sheet's pings |
 | [`VIDEO-SCRIPTS.md`](guides/VIDEO-SCRIPTS.md) | Shot-by-shot scripts for the driver tutorial videos, one per `/help` guide (`components/help/guides.jsx`) | Recording a tutorial |
+| [`REELS.md`](guides/REELS.md) | Every reel posted on @slics_app, its link, and the `/help` guide that links it (`GUIDE_VIDEOS`) | Posting a reel, or changing a guide that has one |
 
 ## Printables (`print/`)
 

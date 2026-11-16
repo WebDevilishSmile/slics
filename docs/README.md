@@ -50,7 +50,7 @@ a line for each open stage or live check and links here.
 | [`ROUTE-REVIEW.md`](ROUTE-REVIEW.md) | Claude's review of the 65 directions PDFs (`SLIC-DIRECTIONS.md` stage 0): things to confirm with drivers | Being worked through, route by route |
 | [`CREATOR-MODE.md`](CREATOR-MODE.md) | The super admin's switch for recording videos: made-up data on every driver page | Stage 2 built 2026-11-12; the phone check is left |
 | [`DEV-DATABASE.md`](DEV-DATABASE.md) | A scrubbed copy of production for local work and previews | Stages 1–2 done 2026-11-12; local dev and Vercel Preview left |
-| [`MULTI-HUB.md`](MULTI-HUB.md) | Opening SLICs to other hubs: a shared SLIC directory; per-hub covers, jobs, drivers and admins | Stages 0–1 live 2026-11-12; Home base steps 1–2 built 2026-11-16, the `/home` card next; stage 2 on hold until a hub asks |
+| [`MULTI-HUB.md`](MULTI-HUB.md) | Opening SLICs to other hubs: a shared SLIC directory; per-hub covers, jobs, drivers and admins | Stages 0–1 live 2026-11-12; Home base steps 1–3 built 2026-11-16 (the `/home` card), the admin side next; stage 2 on hold until a hub asks |
 | [`RECOMMENDATIONS.md`](RECOMMENDATIONS.md) | Design notes for the ideas in `TODOS.md` → Ideas, numbered (#1–#21). An idea's notes move into its own plan doc when it's committed | Grows |
 
 ## Guides (`guides/`)

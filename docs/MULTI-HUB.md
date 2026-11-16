@@ -19,8 +19,9 @@ they see until a stage is finished, verified and deliberately merged.
   Nothing reads either field yet, so drivers see nothing different.
 - **Home base** (planned 2026-11-15): which building each driver starts from, asked on
   `/home` and stored apart from `hubId`. It ships before stage 2. Steps 1 (the census) and 2
-  (BETPA for staff and verified drivers) are built (2026-11-16); step 3, the `/home` card, is
-  next.
+  (BETPA for staff and verified drivers, run on production) and 3 (the `/home` card, Change
+  on `/profile`, a preview in the super admin's Notes) are built (2026-11-16); step 4, the
+  admin side, is next.
 - **Stage 2 is on hold** (Tiago, 2026-11-12) until a hub asks, or before Covers picking
   (stage 3 of `COVER-BIDDING.md`) is built, whichever comes first. See [Timing](#timing).
   When it starts, it's built on the `multi-hub` branch in its own worktree
@@ -311,7 +312,7 @@ Tiago, 2026-11-15:
 > some might be from other hubs that share locations. How can we check each user for
 > home hub base?
 
-Steps 1 and 2 built 2026-11-16. It needs no stage 2 and changes nothing for anyone who
+Steps 1–3 built 2026-11-16. It needs no stage 2 and changes nothing for anyone who
 doesn't answer, so it ships on its own, before stage 2. Its counts also say which hub to
 onboard first.
 
@@ -385,55 +386,88 @@ demotion or taking a verification away leaves it: it's still their building.
   `--undo` removed 17 and kept that one. `fillBetpaHomeBase` against the dev database
   filled an empty account, kept an `'asked'` ALLPA answer and logged a bad id without
   throwing. The dev copy is left filled.
-- **Production:** the dry-run counts 8 staff and 12 verified drivers, as the census does.
+- **Production (2026-11-16),** after the deploy: the dry-run counted 8 staff and 12
+  verified drivers, as the census does, and the run filled all 20; the census then showed
+  "BETPA 1809, 20 (staff 8, sheet 12)" and 202 not answered.
 
 ### Step 3: ask everyone else, once
 
-- **Where:** a card on `/home` (`home/HomeBaseCard.jsx`, a `SoftNotice`-style raised card
-  under the lookup), only for a signed-in account with no `homeBase`. Not on sign-up: the
+Built 2026-11-16.
+
+- **Where:** a card on `/home` (`home/HomeBaseCard.jsx`, a `SoftNotice` under the lookup),
+  only for a signed-in account with no `homeBase` that may set one itself (not a verified
+  driver or staff, `homeBaseIsFixed` in `lib/homeBase.js`). `/home` reads the one field
+  (`getHomeBase`, `lib/db/homeBase.js`); a failed read skips the card. Not on sign-up: the
   form stays short, and a new driver hasn't looked anything up yet.
-- **What it says:** "Which building do you work out of?" with **Bethlehem (BETPA 1809)**
-  as the one-tap answer and **Another building** opening a search over the All Hubs list
-  (`getAllHubs`, the same list as `/hubs`). "Not now" hides it for 7 days
-  (`localStorage`, per device; the account isn't touched).
+- **What it says:** "Which building do you work out of?" and, under it, "So SLICs can show
+  your building's routes when other hubs join." (true, short, nothing else promised).
+  **Bethlehem (BETPA 1809)** is the one-tap answer, the card's one blue button; **Another
+  building** opens the picker (`homeBase/HomeBasePicker.jsx`), a search over the All Hubs
+  list by alpha code, number or town (`GET /api/all-hubs`, `getHubChoices`: BETPA first,
+  fetched once per page load). The X is "Not now": it hides the card for 7 days
+  (`localStorage` `slics-home-base-snoozed`, per device; the account isn't touched).
+  Saving says so in the card ("Saved: PRORI 0269 · Warwick, RI. You can change it on your
+  profile."), and the card is gone on the next visit.
 - **Not on the list** (Tiago, 2026-11-15: the All Hubs list isn't taken as complete):
-  under the search, "My building isn't here" opens three fields: the SLIC number (4
-  digits), the alpha code (letters and digits, 2–6, uppercased, like `BETPA` or `FTW1`)
-  and the building's name or town ("Allentown"). Saved with `listed: false`.
-  - Before saving, the number is looked up in the SLIC directory (`slics`) and in All
-    Hubs: if either has it, the form shows that building ("Is it ALLPA, Allentown?") so a
-    typo or a missed search ends on the listed one.
+  "My building isn't here" opens three fields: the SLIC number (4 or 5 letters or digits:
+  25 buildings on the list have letters in theirs, like `070CR` or `62GL`), the alpha code
+  (2–7 letters and digits, uppercased) and the building's name or town. Saved with
+  `listed: false`.
+  - A typed number the All Hubs list has offers that building first ("That number is on
+    the list. Is it this one?", both buildings for a number the list has twice), so a typo
+    or a missed search ends on the listed one. The plan also looked the number up in the
+    SLIC directory (`slics`); that was left out, since a directory center that isn't on All
+    Hubs couldn't be saved as listed anyway.
   - A typed building is the driver's answer straight away: the card doesn't come back,
     and `/profile` shows it with "Waiting to be checked".
   - It never becomes a SLIC on its own and never shows on `/hubs` until the super admin
     adds it (step 4). What one driver types isn't shown to another.
-- **Why it's asked:** one line under the question: "So SLICs can show your building's
-  routes when other hubs join." True, short, and nothing else is promised.
-- **Saving:** `PUT /api/users/me/home-base` (`requireUser()`, body `{ numSlic,
-  alphaSlic, name? }`, `source: 'asked'`; never a client-sent `source` or `listed`).
-  The server decides `listed`: `true` if `allHubs` has that number and alpha, else
-  `false` with the typed name kept (trimmed, at most 60 characters, plain text). Format
-  checks in `lib/homeBase.js` (pure). Rate-limited per user like other driver writes.
-- **Changing it:** `/profile` shows "Home building" with Change (the same picker).
-- **A verified driver or staff asks instead** (Tiago, 2026-11-16, open question 2): their
-  row says "Set from the on-call sheet" (staff: "Set when you joined the staff") with
-  **Ask to change**, the same picker. The same `PUT` then saves the pick as
-  `users.homeBaseRequest` (`{ numSlic, alphaSlic, name, listed, at }`, one at a time, a new
-  one replacing it) and leaves `homeBase` alone. The server decides which by the session
-  (`isVerifiedDriver`, a staff role), never the body. `/profile` shows "Asked for ALLPA,
-  waiting for an admin" with Cancel (`DELETE /api/users/me/home-base-request`). Why an
-  admin: the sheet says they're BETPA's, so a different answer is a mistake or a move, and
-  an admin should know either way.
-- **Creator mode:** the card and the route get a made-up answer (`lib/creatorFetch.js`),
-  like every driver page.
+- **Saving:** `PUT /api/users/me/home-base` (`requireUser()`, body `{ numSlic, alphaSlic,
+  name? }`, `saveAskedHomeBase`, `source: 'asked'`; a `source` or `listed` in the body is
+  ignored). The server decides `listed`: `true` when `allHubs` has that number (as text or
+  a number, so `0269` finds `269`) with that alpha code, and the name is then the list's
+  town (BETPA's "Bethlehem Center"); else `false` with the typed name kept (spaces
+  collapsed, at most 60 characters, plain text), and a name is required. Format checks are
+  `validateHomeBaseInput` (pure). A verified driver or staff gets 403. Rate-limited to 10 an
+  hour per driver.
+- **Changing it:** `/profile`'s Account well has "Home building" (`toHomeBase`,
+  `lib/serializers.js`, through `toSelfUser`) with Change, or "Set your building" when
+  there's none: the same picker, the row updating in place with a polite live region. A
+  verified driver's row says "Set from the on-call sheet" and staff's "Set with your staff
+  role", with no button until step 4's Ask to change.
+- **The super admin's preview:** Notes on `/admin/super` has "Home building card" (Tiago,
+  2026-11-16): Show it puts the card on the page as a driver sees it
+  (`admin/hub/HomeBasePreview.jsx`, `HomeBaseCard preview`). Every button works, the picker
+  included, but nothing is saved and nothing is snoozed (`putHomeBase` answers from the
+  list, as the server would).
+- **Creator mode:** `GET /api/all-hubs` answers with the made-up centers and the `PUT`
+  with what it would save (`lib/creatorFetch.js`); the made-up driver is verified, so their
+  profile shows Oakdale Hub from the sheet.
+- **Checked (2026-11-16):** `getHubChoices` on production lists 733 of the 758 rows (the
+  rest have no alpha code, or a number and alpha code swapped). On the dev database
+  `saveAskedHomeBase` saved BETPA as "Bethlehem Center" and PRORI 0269 as "Warwick, RI",
+  refused an unlisted building with no name, and saved one with a name as `listed: false`.
+  On a dev server against the dev copy at 390 px, light and dark: the preview card, the
+  picker's search ("allen" finds MCATX and PORLA), "isn't here" with 0269 offering PRORI
+  and YARMA, the saved message, and the staff profile row. Not yet seen: the card on a
+  real driver's `/home`.
 
 ### Step 4: the admin side
 
+- **A verified driver or staff asks to change theirs** (Tiago, 2026-11-16, open question
+  2): their `/profile` row gains **Ask to change**, the same picker. The same `PUT` then
+  saves the pick as `users.homeBaseRequest` (`{ numSlic, alphaSlic, name, listed, at }`,
+  one at a time, a new one replacing it) and leaves `homeBase` alone. The server decides
+  which by the session (`homeBaseIsFixed`), never the body. `/profile` shows "Asked for
+  ALLPA, waiting for an admin" with Cancel (`DELETE /api/users/me/home-base-request`). Why
+  an admin: the sheet says they're BETPA's, so a different answer is a mistake or a move,
+  and an admin should know either way. Built with the Approve and Decline below, so no
+  request waits with no way to decide it.
 - `/admin/users/[id]`: "Home building" with its source, and Change (Users area,
   `admin_audit` `user.homeBase` first, `source: 'admin'`).
 - `/admin/users`: a filter by home building, "Not answered", "Not on the list" and
   "Change asked" included.
-- **Change requests** (step 3's "Ask to change"): `/admin/users/[id]` shows the asked
+- **Change requests** (the Ask to change above): `/admin/users/[id]` shows the asked
   building beside the current one with **Approve** (it becomes `homeBase`, `source:
   'admin'`, `listed` as the server works it out) and **Decline** (the request goes), each
   to `admin_audit` (`user.homeBase`) first, Users area. Approving a verified driver's move
@@ -466,8 +500,8 @@ commit as step 2. Deleting the account deletes it with the row.
 1. Census and backfill dry-run on the dev copy; the counts match.
 2. A driver with no `homeBase` sees the card; BETPA saves in one tap; Another building
    finds ALLPA; the card doesn't come back; `/profile` shows it.
-3. A verified driver never sees the card. Their `/profile` row's Ask to change saves a
-   request and leaves `homeBase` as it was; the admin's Approve moves it in, Decline
+3. A verified driver never sees the card. Their `/profile` row's Ask to change (step 4)
+   saves a request and leaves `homeBase` as it was; the admin's Approve moves it in, Decline
    clears it, and the badge counts it until then.
 4. "My building isn't here" with a new number saves `listed: false`; with a number the
    directory has, the form offers that building first.
@@ -482,8 +516,8 @@ commit as step 2. Deleting the account deletes it with the row.
    short, and every existing account needs the card anyway. Sign-up can gain it in stage 3
    with the `/join/<hubId>` invite, which answers it for free.
 2. **Can a driver change their own answer?** Yes. A verified driver's or staff's follows the
-   sheet, so they ask and an admin approves (Tiago, 2026-11-16; step 3 "A verified driver
-   or staff asks instead", step 4 "Change requests").
+   sheet, so they ask and an admin approves (Tiago, 2026-11-16; step 4, "A verified
+   driver or staff asks to change theirs" and "Change requests").
 3. **Ask once a week until answered, or once and done?** Until answered, with "Not now"
    for 7 days: an unanswered account is the one the census can't place.
 4. **Does a building a driver adds go on `/hubs` by itself?** No: only after the super

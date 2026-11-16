@@ -8,8 +8,11 @@ import { getUnthankedSupport } from '@/lib/db/bmcEvents';
 import { getAllSlics } from '@/lib/db/slics';
 import { CREATOR_SLICS, creatorUser } from '@/lib/creatorData';
 import { getRoleNotice, isIconNoticeDue } from '@/lib/db/users';
+import { getHomeBase } from '@/lib/db/homeBase';
+import { homeBaseIsFixed } from '@/lib/homeBase';
 
 import CommentPrompt from '@/components/comments/CommentPrompt';
+import HomeBaseCard from '@/components/home/HomeBaseCard';
 import InstallNudge from '@/components/install/InstallNudge';
 import NewIconNotice from '@/components/install/NewIconNotice';
 import RedirectMessage from '@/components/layout/RedirectMessage';
@@ -50,6 +53,19 @@ async function roleNotice(userId) {
   }
 }
 
+// Whether to ask which building this driver works out of
+// (home/HomeBaseCard.jsx, docs/MULTI-HUB.md "Home base"): only an account with
+// none that may set it itself. A failure skips the card.
+async function homeBaseMissing(user) {
+  if (homeBaseIsFixed(user)) return false;
+  try {
+    return !(await getHomeBase(user.id));
+  } catch (error) {
+    console.error('Error loading the home base for /home:', error);
+    return false;
+  }
+}
+
 export default async function Home({ searchParams }) {
   const session = await getSession();
 
@@ -78,12 +94,13 @@ export default async function Home({ searchParams }) {
 
   const user = session.user;
   const firstName = user.name?.split(' ')[0];
-  const [slics, support, iconDue, welcome] = await Promise.all([
+  const [slics, support, iconDue, welcome, askHomeBase] = await Promise.all([
     getAllSlics(),
     unthankedSupport(user.id),
     iconNoticeDue(user.id),
     // Only staff can have one, so a driver's /home doesn't ask.
     STAFF_ROLES.includes(user.role) ? roleNotice(user.id) : null,
+    homeBaseMissing(user),
   ]);
 
   return (
@@ -97,6 +114,7 @@ export default async function Home({ searchParams }) {
       {support && <SupportThanks support={support} firstName={firstName} />}
       <InstallNudge />
       <NewIconNotice due={iconDue} />
+      {askHomeBase && <HomeBaseCard profileHref={`/profile/${user.id}`} />}
       <CommentPrompt user={user} />
     </SlicLookupPage>
   );

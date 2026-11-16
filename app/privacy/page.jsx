@@ -95,11 +95,14 @@ export default function PrivacyPage() {
               number and change your display name on your profile page.
             </>,
             <>
-              <strong>Your home building.</strong> If you&apos;re verified for
-              covers, or an administrator or dispatcher, your account notes
-              that you work out of the Bethlehem building (BETPA), the one
-              SLICs serves today, so it can show your building&apos;s routes
-              when other buildings join. Other drivers never see it.
+              <strong>Your home building.</strong> If you tell us which UPS
+              building you work out of, it&apos;s stored with your account, so
+              SLICs can show your building&apos;s routes when other buildings
+              join. If you name one that isn&apos;t on the app&apos;s list, the
+              administrator checks it before adding it to the list. If
+              you&apos;re verified for covers, or an administrator or
+              dispatcher, your account notes the Bethlehem building (BETPA),
+              the one SLICs serves today. Other drivers never see it.
             </>,
             <>
               <strong>Driver tips and places.</strong> The tips and replies you

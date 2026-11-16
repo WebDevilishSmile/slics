@@ -131,7 +131,8 @@ async function UserPage({ params }) {
         slics={serializeSlics(slics)}
       />
 
-      <UserComments userComments={serializeComments(userComments)} />
+      {/* The super admin edits a tip's text here (CommentCardEdit). */}
+      <UserComments userComments={serializeComments(userComments)} canEdit={isSuperAdmin(session)} />
     </>
   );
 }

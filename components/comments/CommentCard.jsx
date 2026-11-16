@@ -1,15 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import Link from '@/components/utility/NextLink';
 import dayjs from 'dayjs';
 import {
+  EditOutlined,
   OpenInNew,
   ThumbDownOutlined,
   ThumbUpOutlined,
 } from '@mui/icons-material';
-import { Avatar, Box, Button, Typography } from '@mui/material';
+import { Avatar, Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 
 import { softPressSx, softRaised, softRaisedSmall } from '@/components/utility/soft';
+import CommentCardEdit from './CommentCardEdit';
 import CommentContent from './CommentContent';
 import CommentDelete from './CommentDelete';
 import CommentPin from './CommentPin';
@@ -25,13 +28,17 @@ import CommentPin from './CommentPin';
 // - `author` ({ name, image }) shows who posted it, for lists of many drivers.
 // - `canDelete` shows the delete button, which needs a CommentRefreshProvider
 //   around the list.
+// - `canEdit` shows an edit button that edits the tip's text in place
+//   (CommentCardEdit.jsx), the super admin's on /admin/users/[id]; it needs
+//   the same provider.
 // - `index` staggers the entry fade.
-function CommentCard({ comment, slicName, author, canDelete = true, index = 0 }) {
+function CommentCard({ comment, slicName, author, canDelete = true, canEdit = false, index = 0 }) {
+  const [editing, setEditing] = useState(false);
   const posted = dayjs(comment.created_at);
   const up = comment.upVotes?.length || 0;
   const down = comment.downVotes?.length || 0;
   // The delete button's 40px row sets the bottom edge; without it, match the sides.
-  const bottom = canDelete ? 1 : 2;
+  const bottom = canDelete || canEdit ? 1 : 2;
 
   return (
     <Box
@@ -67,8 +74,12 @@ function CommentCard({ comment, slicName, author, canDelete = true, index = 0 })
       </Box>
 
       <Box sx={{ mt: 1.5 }}>
-        {/* A tip can be just a pin. */}
-        {comment.content && <CommentContent comment={comment} />}
+        {editing ? (
+          <CommentCardEdit comment={comment} onDone={() => setEditing(false)} />
+        ) : (
+          // A tip can be just a pin.
+          comment.content && <CommentContent comment={comment} />
+        )}
         {comment.pin && (
           <CommentPin pin={comment.pin} sx={comment.content ? { mt: 1 } : undefined} />
         )}
@@ -116,9 +127,20 @@ function CommentCard({ comment, slicName, author, canDelete = true, index = 0 })
             <Avatar src={author.image} alt='' sx={{ width: '1.75rem', height: '1.75rem' }} />
           </Box>
         )}
-        {canDelete && (
-          <Box sx={{ ml: author ? 0 : 'auto', mr: -1 }}>
-            <CommentDelete comment={comment} />
+        {(canEdit || canDelete) && (
+          <Box sx={{ ml: author ? 0 : 'auto', mr: -1, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            {canEdit && !editing && (
+              <Tooltip title='Edit tip'>
+                <IconButton
+                  onClick={() => setEditing(true)}
+                  aria-label='Edit tip'
+                  sx={[softPressSx, { width: '2.5rem', height: '2.5rem' }]}
+                >
+                  <EditOutlined fontSize='small' color='primary' />
+                </IconButton>
+              </Tooltip>
+            )}
+            {canDelete && <CommentDelete comment={comment} />}
           </Box>
         )}
       </Box>

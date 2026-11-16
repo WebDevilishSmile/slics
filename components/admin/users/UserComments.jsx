@@ -12,8 +12,9 @@ const pillSx = [softRaisedSmall, softPressSx, { px: 2 }];
 const PAGE_SIZE = 3;
 
 // The driver's tips on the admin user page, in a panel like "SLICs pulled up"
-// (UserSlics) above it, three at a time.
-export default function UserComments({ userComments }) {
+// (UserSlics) above it, three at a time. `canEdit`: the super admin, who can
+// edit a tip's text here (CommentCardEdit.jsx).
+export default function UserComments({ userComments, canEdit = false }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const visibleComments = userComments.slice(0, visibleCount);
 
@@ -43,6 +44,7 @@ export default function UserComments({ userComments }) {
                 <CommentCard
                   key={serialized._id}
                   comment={serialized}
+                  canEdit={canEdit}
                   index={index}
                 />
               );

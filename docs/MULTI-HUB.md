@@ -17,6 +17,10 @@ they see until a stage is finished, verified and deliberately merged.
 - **Stage 1 is merged into `main` and deployed, and its backfill has run on production**
   (2026-11-12): every per-hub doc carries `hubId: 'betpa'` and every SLIC `hubs: ['betpa']`.
   Nothing reads either field yet, so drivers see nothing different.
+- **Home base** (planned 2026-11-15): which building each driver starts from, asked on
+  `/home` and stored apart from `hubId`. It ships before stage 2. Steps 1 (the census) and 2
+  (BETPA for staff and verified drivers) are built (2026-11-16); step 3, the `/home` card, is
+  next.
 - **Stage 2 is on hold** (Tiago, 2026-11-12) until a hub asks, or before Covers picking
   (stage 3 of `COVER-BIDDING.md`) is built, whichever comes first. See [Timing](#timing).
   When it starts, it's built on the `multi-hub` branch in its own worktree
@@ -298,6 +302,192 @@ Built 2026-11-11 on `multi-hub`, checked on the dev copy, merged into `main` and
 - **Production (2026-11-12),** after the deploy: `npm run hub:backfill -- --dry-run` counted
   the same 7,575 docs and 361 SLICs as the day before, and `npm run hub:backfill` tagged
   them all, 0 left untagged. `npm run hub:backfill -- --undo` takes back only those.
+
+## Home base: which building each driver starts from (planned 2026-11-15)
+
+Tiago, 2026-11-15:
+
+> I wanted to start getting users' home base hub. I'm assuming most are BETPA-1809 but
+> some might be from other hubs that share locations. How can we check each user for
+> home hub base?
+
+Steps 1 and 2 built 2026-11-16. It needs no stage 2 and changes nothing for anyone who
+doesn't answer, so it ships on its own, before stage 2. Its counts also say which hub to
+onboard first.
+
+### Why not just look at the data
+
+- **Lookups don't tell.** The directory is shared and Feeder runs go hub to hub, so a
+  BETPA driver and an Allentown driver look up the same SLICs. At best a weak hint, never
+  stored as an answer.
+- **The email doesn't tell,** and sign-up records no source today.
+- **What is certain:** a verified driver (`users.driver`) is a name on BETPA's on-call
+  sheet, so BETPA; staff (`dispatch`, `admin`) are BETPA. Everyone else is unknown.
+
+### Not `users.hubId`
+
+`users.hubId` (above) is a hub **set up in SLICs**, and today only BETPA is. A driver from
+ALLPA can't be given `hubId: 'allpa'` without stage 2 and 3 meaning things for them
+(covers, admins, the sheet). So the answer is stored apart:
+
+`users.homeBase`: `{ numSlic, alphaSlic, name, source, listed, at }`
+
+- `numSlic` + `alphaSlic` together: `allHubs` reuses a number on two hubs (0269, 7752,
+  9079; `DATA-MODEL.md`), so the alpha code tells them apart.
+- `source`: `'sheet'` (verified driver), `'staff'`, `'asked'` (the driver answered), or
+  `'admin'` (an admin set it).
+- `listed`: `false` when the driver typed a building the All Hubs list doesn't have
+  (step 3, "Not on the list"), so it's waiting for the super admin to check it; `true`
+  once it's on the list. Either way it's the driver's answer and counts in the census.
+- Missing means not known yet. Never filtered on.
+
+When a hub is onboarded (stage 3), `npm run hubs:assign -- <hubId>` gives `hubId` to every
+account whose `homeBase` is that hub's SLIC, `--dry-run` first. BETPA's accounts need
+nothing: a missing `hubId` already means `betpa`.
+
+### Step 1: count first (read-only)
+
+`npm run hubs:census` (`scripts/hubsCensus.mjs`, reads only; built 2026-11-15, `--dev`
+for the dev copy) prints:
+
+- accounts in total, verified drivers, staff, and the rest;
+- the rest split by activity: a lookup (`slicViews`) in the last 30 days, 30–180 days,
+  older or never;
+- once answers exist, `homeBase` by hub and source.
+
+If only a handful of active accounts are unknown, ask them in the yard and set them on
+`/admin/users/[id]` (step 4) instead of building the prompt.
+
+**Production, 2026-11-16:** 222 accounts: 8 staff, 12 verified drivers and 202 unknown
+(91%). Of the unknown, 120 looked a SLIC up in the last 30 days, 48 in the 30–180 days
+before, 6 longer ago and 28 never; 31 joined in the last 30 days. 120 active accounts are
+too many to ask in the yard, so the card (step 3) is built.
+
+### Step 2: fill in the certain ones
+
+Built 2026-11-16. `npm run hubs:home-base` (`scripts/backfillHomeBase.mjs`, `--dry-run`,
+`--dev`, `--undo`): staff get `source: 'staff'` and verified drivers `source: 'sheet'`
+(staff first, as the census groups them), both BETPA 1809 (`betpaHomeBase`,
+`lib/homeBase.js`), only where `homeBase` is missing, so it never overwrites an answer.
+Each account it fills is marked `homeBaseBackfilledAt` (the same time as `homeBase.at`):
+`--undo` removes a home base only while it's still the one a run wrote, and from one
+changed since takes just the marker. A run writes `homeBase.backfilled` to `admin_audit`
+first, with counts only.
+
+From then on the app fills it in too, through `fillBetpaHomeBase` (`lib/db/homeBase.js`,
+only where it's missing, never throws): `setUserDriver` when an admin verifies a driver
+(`'sheet'`), and `setUserRole` when an account becomes dispatch or admin (`'staff'`). A
+demotion or taking a verification away leaves it: it's still their building.
+
+- **Dev copy (2026-11-16):** the dry-run counted the census's 8 staff and 10 verified
+  drivers; the run filled 18 and the census then showed "BETPA 1809, 18 (staff 8, sheet
+  10)"; a second run found nothing; with one changed by hand to `source: 'admin'`,
+  `--undo` removed 17 and kept that one. `fillBetpaHomeBase` against the dev database
+  filled an empty account, kept an `'asked'` ALLPA answer and logged a bad id without
+  throwing. The dev copy is left filled.
+- **Production:** the dry-run counts 8 staff and 12 verified drivers, as the census does.
+
+### Step 3: ask everyone else, once
+
+- **Where:** a card on `/home` (`home/HomeBaseCard.jsx`, a `SoftNotice`-style raised card
+  under the lookup), only for a signed-in account with no `homeBase`. Not on sign-up: the
+  form stays short, and a new driver hasn't looked anything up yet.
+- **What it says:** "Which building do you work out of?" with **Bethlehem (BETPA 1809)**
+  as the one-tap answer and **Another building** opening a search over the All Hubs list
+  (`getAllHubs`, the same list as `/hubs`). "Not now" hides it for 7 days
+  (`localStorage`, per device; the account isn't touched).
+- **Not on the list** (Tiago, 2026-11-15: the All Hubs list isn't taken as complete):
+  under the search, "My building isn't here" opens three fields: the SLIC number (4
+  digits), the alpha code (letters and digits, 2–6, uppercased, like `BETPA` or `FTW1`)
+  and the building's name or town ("Allentown"). Saved with `listed: false`.
+  - Before saving, the number is looked up in the SLIC directory (`slics`) and in All
+    Hubs: if either has it, the form shows that building ("Is it ALLPA, Allentown?") so a
+    typo or a missed search ends on the listed one.
+  - A typed building is the driver's answer straight away: the card doesn't come back,
+    and `/profile` shows it with "Waiting to be checked".
+  - It never becomes a SLIC on its own and never shows on `/hubs` until the super admin
+    adds it (step 4). What one driver types isn't shown to another.
+- **Why it's asked:** one line under the question: "So SLICs can show your building's
+  routes when other hubs join." True, short, and nothing else is promised.
+- **Saving:** `PUT /api/users/me/home-base` (`requireUser()`, body `{ numSlic,
+  alphaSlic, name? }`, `source: 'asked'`; never a client-sent `source` or `listed`).
+  The server decides `listed`: `true` if `allHubs` has that number and alpha, else
+  `false` with the typed name kept (trimmed, at most 60 characters, plain text). Format
+  checks in `lib/homeBase.js` (pure). Rate-limited per user like other driver writes.
+- **Changing it:** `/profile` shows "Home building" with Change (the same picker).
+- **A verified driver or staff asks instead** (Tiago, 2026-11-16, open question 2): their
+  row says "Set from the on-call sheet" (staff: "Set when you joined the staff") with
+  **Ask to change**, the same picker. The same `PUT` then saves the pick as
+  `users.homeBaseRequest` (`{ numSlic, alphaSlic, name, listed, at }`, one at a time, a new
+  one replacing it) and leaves `homeBase` alone. The server decides which by the session
+  (`isVerifiedDriver`, a staff role), never the body. `/profile` shows "Asked for ALLPA,
+  waiting for an admin" with Cancel (`DELETE /api/users/me/home-base-request`). Why an
+  admin: the sheet says they're BETPA's, so a different answer is a mistake or a move, and
+  an admin should know either way.
+- **Creator mode:** the card and the route get a made-up answer (`lib/creatorFetch.js`),
+  like every driver page.
+
+### Step 4: the admin side
+
+- `/admin/users/[id]`: "Home building" with its source, and Change (Users area,
+  `admin_audit` `user.homeBase` first, `source: 'admin'`).
+- `/admin/users`: a filter by home building, "Not answered", "Not on the list" and
+  "Change asked" included.
+- **Change requests** (step 3's "Ask to change"): `/admin/users/[id]` shows the asked
+  building beside the current one with **Approve** (it becomes `homeBase`, `source:
+  'admin'`, `listed` as the server works it out) and **Decline** (the request goes), each
+  to `admin_audit` (`user.homeBase`) first, Users area. Approving a verified driver's move
+  only reminds the admin of their sheet link ("Linked to BETPA's sheet as DOE, JANE");
+  removing the link stays its own step. Open requests count in `/api/admin-alerts` for the
+  header-menu badge (`lib/homeBaseRequestsStore.js`, like the claims), until decided.
+- **Buildings drivers added** (super admin, on the "Home buildings" table): each typed
+  building with how many drivers gave it, grouped by number. Three actions, each to
+  `admin_audit` first:
+  - **Add to All Hubs** inserts it into `allHubs` (the app's first write there; the
+    number, alpha and name as the super admin corrects them) and sets `listed: true` on
+    every account that gave it. It then shows on `/hubs` for everyone.
+  - **Same as…** points it at a building already listed (a typo, a second name for one
+    building) and moves those accounts to it, `listed: true`.
+  - **Not a hub** clears those accounts' `homeBase`, so the card asks them again.
+- `DATA-MODEL.md`'s `allHubs` row changes from "Not written by the app" in the same
+  commit.
+- `/admin/super`: a "Home buildings" table, counts by hub and source, with Not answered
+  last. The super admin's view of where interest is.
+
+### Privacy
+
+A building is work context, not sensitive, but it's new: the privacy page gets one line
+under what's kept ("Your home building, if you tell us, so SLICs can show your
+building's routes"), and `DATA-MODEL.md`'s `users` row gains `homeBase` in the same
+commit as step 2. Deleting the account deletes it with the row.
+
+### Verifying
+
+1. Census and backfill dry-run on the dev copy; the counts match.
+2. A driver with no `homeBase` sees the card; BETPA saves in one tap; Another building
+   finds ALLPA; the card doesn't come back; `/profile` shows it.
+3. A verified driver never sees the card. Their `/profile` row's Ask to change saves a
+   request and leaves `homeBase` as it was; the admin's Approve moves it in, Decline
+   clears it, and the badge counts it until then.
+4. "My building isn't here" with a new number saves `listed: false`; with a number the
+   directory has, the form offers that building first.
+5. `PUT` with a bad number or alpha: 400; `source` or `listed` in the body: ignored.
+6. Add to All Hubs: the building shows on `/hubs`, and its drivers' `/profile` drops
+   "Waiting to be checked". Not a hub: their card comes back.
+7. The super admin's table adds up to the number of accounts.
+
+### Open questions (recommended answer first)
+
+1. **Ask in a card on `/home`, or a question at sign-up too?** Card only: sign-up stays
+   short, and every existing account needs the card anyway. Sign-up can gain it in stage 3
+   with the `/join/<hubId>` invite, which answers it for free.
+2. **Can a driver change their own answer?** Yes. A verified driver's or staff's follows the
+   sheet, so they ask and an admin approves (Tiago, 2026-11-16; step 3 "A verified driver
+   or staff asks instead", step 4 "Change requests").
+3. **Ask once a week until answered, or once and done?** Until answered, with "Not now"
+   for 7 days: an unanswered account is the one the census can't place.
+4. **Does a building a driver adds go on `/hubs` by itself?** No: only after the super
+   admin adds it, so one typo can't put a wrong building in every driver's list.
 
 ## Stage 2: scope everything by hub (the big refactor)
 

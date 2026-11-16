@@ -74,6 +74,10 @@ Built and live, waiting on a check or a step only Tiago can do.
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open
       questions first, starting with what the source of truth is once the app can't write
       the sheet (`COVER-BIDDING.md` → "Stage 3")
+- [ ] **Each driver's home building** (`MULTI-HUB.md` "Home base"): the census found 202
+      of 222 accounts unknown, 120 of them active (2026-11-16), and BETPA is filled in for
+      staff and verified drivers (step 2). Next the `/home` card that asks the rest (step
+      3), then the admin side with a verified driver's change requests (step 4)
 
 ---
 

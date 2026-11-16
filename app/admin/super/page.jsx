@@ -7,6 +7,7 @@ import { getFeaturesFresh, getRoleAreas } from '@/lib/db/appSettings';
 import { getSupportSummary } from '@/lib/db/bmcEvents';
 import { getAdminCounts, getGlanceNumbers, getUsageSeries } from '@/lib/db/hub';
 import { getNotificationsSummary } from '@/lib/db/pushOverview';
+import { getHomeBaseSummary } from '@/lib/db/homeBase';
 import { getSystemHealth } from '@/lib/systemHealth';
 import theme from '@/theme';
 
@@ -28,7 +29,7 @@ export default async function SuperAdminPage() {
 
   // The welcome note's preview names each role's tools; getRoleAreas never
   // throws (the defaults stand in).
-  const [glance, usage, notifications, activity, health, features, admins, support, roleAreas] = await Promise.all([
+  const [glance, usage, notifications, activity, health, features, admins, support, roleAreas, homeBuildings] = await Promise.all([
     part('numbers', getGlanceNumbers),
     part('usage', getUsageSeries),
     part('notifications summary', getNotificationsSummary),
@@ -38,6 +39,7 @@ export default async function SuperAdminPage() {
     part('admin counts', getAdminCounts),
     part('support summary', getSupportSummary),
     getRoleAreas(),
+    part('home buildings', getHomeBaseSummary),
   ]);
 
   return (
@@ -59,6 +61,7 @@ export default async function SuperAdminPage() {
           roleAreas={roleAreas}
           firstName={session.user.name?.split(' ')[0]}
           profileHref={`/profile/${session.user.id}`}
+          homeBuildings={homeBuildings}
         />
       </Paper>
     </>

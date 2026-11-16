@@ -16,6 +16,7 @@ import ActivityList from './ActivityList';
 import HubCard from './HubCard';
 import HubSection from './HubSection';
 import HomeBasePreview from './HomeBasePreview';
+import HomeBuildings from './HomeBuildings';
 import HubTiles from './HubTiles';
 import ThankYouPreview from './ThankYouPreview';
 import TopSlics from './TopSlics';
@@ -133,6 +134,7 @@ export default function HubView({
   roleAreas,
   firstName,
   profileHref,
+  homeBuildings,
 }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
@@ -183,6 +185,14 @@ export default function HubView({
             <HomeBasePreview profileHref={profileHref} />
           </Box>
         </Box>
+      </HubSection>
+
+      <HubSection
+        id='hub-home-buildings'
+        title='Home buildings'
+        description='Where drivers say they work out of. Counts only, never who.'
+      >
+        {homeBuildings ? <HomeBuildings summary={homeBuildings} /> : failed('the home buildings')}
       </HubSection>
 
       <HubSection id='hub-usage' title='Usage'>

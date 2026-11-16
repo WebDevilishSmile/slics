@@ -1,5 +1,6 @@
 import theme from '@/theme';
 import {
+  AddIcCallOutlined,
   ChatBubbleOutline,
   HelpOutline,
   HubOutlined,
@@ -61,32 +62,30 @@ function SearchScreen() {
   );
 }
 
-// The tip box: topic chips, the text box, Add pin and Post tip.
+// The tip box: its heading, the text box, Add pin and Add phone, and Post tip.
 function TipComposerScreen() {
   return (
     <>
       <Box sx={{ opacity: DIM }}>
-        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          {['Parking', 'Gate / guard'].map((topic) => (
-            <Box
-              key={topic}
-              component='span'
-              sx={[softRaisedSmall(theme), { px: 1.5, py: 0.5, borderRadius: 99, typography: 'body2', fontWeight: 600 }]}
-            >
-              {topic}
-            </Box>
-          ))}
-        </Box>
+        <Typography variant='body2' sx={{ fontWeight: 700 }}>
+          Share a tip with the next driver
+        </Typography>
         <Box sx={[softInset(theme), { mt: 1.5, p: 1.5, minHeight: '4rem', borderRadius: 3 }]}>
           <Typography variant='body2' color='text.secondary'>
-            Gate code changed, use the north entrance.
+            Use the north entrance. The guard wants your trailer number.
           </Typography>
         </Box>
       </Box>
       <Box sx={[rowSx, { mt: 2, justifyContent: 'space-between' }]}>
-        <Box sx={[rowSx, { opacity: DIM, color: 'primary.main', typography: 'body2', fontWeight: 700 }]}>
-          <PinDropOutlined fontSize='small' aria-hidden='true' />
-          Add pin
+        <Box sx={[rowSx, { gap: 1.5, opacity: DIM, color: 'primary.main', typography: 'body2', fontWeight: 700 }]}>
+          <Box component='span' sx={[rowSx, { gap: 0.5 }]}>
+            <PinDropOutlined fontSize='small' aria-hidden='true' />
+            Add pin
+          </Box>
+          <Box component='span' sx={[rowSx, { gap: 0.5 }]}>
+            <AddIcCallOutlined fontSize='small' aria-hidden='true' />
+            Add phone
+          </Box>
         </Box>
         <Lit
           sx={{

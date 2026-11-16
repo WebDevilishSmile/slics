@@ -256,7 +256,7 @@ function Comments({ user }) {
       <CommentComposer
         ref={composerRef}
         numSlic={numSlic}
-        topics
+        heading
         placeholder={`Share a tip about ${stop}`}
         onPosted={async (id) => {
           await refresh(id);

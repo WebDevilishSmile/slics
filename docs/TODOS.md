@@ -10,6 +10,12 @@ with the detail. Items move **Inbox → Ideas → Next → Now → done**, and a
 
 <!-- Add anything here, any wording. -->
 
+- The printed flyers still describe the tip box's topic chips (Gate / guard, Parking…),
+  removed 2026-11-16 for a heading with Add pin and Add phone:
+  `docs/print/tips-for-drivers.html` (the steps and its picture of the box) and
+  `docs/print/slics-flyer.html` ("tap a topic to start"). Update the words, mention Add
+  phone, and re-render their PDFs
+
 - Changing your password (or a reset) signs you out everywhere, but the account's
   `push-subscriptions` rows stay, so a device signed out that way keeps getting its
   pushes until someone signs in on it. Delete them where `sessionVersion` is bumped?

@@ -396,10 +396,9 @@ export const HELP_SECTIONS = [
         steps: [
           <>Look up the SLIC and scroll down to &ldquo;Driver tips&rdquo;.</>,
           <>
-            Tap a topic to get started, like <Tap>Parking</Tap> or{' '}
-            <Tap>Gate / guard</Tap>. Or just tap the box.
+            Under &ldquo;Share a tip with the next driver&rdquo;, tap the box
+            and type your tip. Keep it short and clear.
           </>,
-          <>Type your tip. Keep it short and clear.</>,
           <>
             Tap <Tap>Post tip</Tap>.
           </>,
@@ -409,6 +408,10 @@ export const HELP_SECTIONS = [
             Want to mark an exact spot, like a hidden gate? Tap{' '}
             <Tap>Add pin</Tap>. If you&apos;re standing there, tap{' '}
             <Tap>Use my location</Tap>.
+          </>,
+          <>
+            Know who to call? Tap <Tap>Add phone</Tap> and type the number.
+            Other drivers see it as a button that calls it.
           </>,
           <>
             After you look up a SLIC, the app may ask &ldquo;How was

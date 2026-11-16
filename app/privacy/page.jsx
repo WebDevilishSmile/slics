@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Privacy Policy · SLICs',
 };
 
-const EFFECTIVE_DATE = 'November 15, 2026';
+const EFFECTIVE_DATE = 'November 16, 2026';
 
 // Every section's title, in page order, for the summary card's "On this
 // page" list. Keep it in step with the LegalSection titles below.
@@ -93,6 +93,13 @@ export default function PrivacyPage() {
             <>
               <strong>Profile details.</strong> You can optionally add a phone
               number and change your display name on your profile page.
+            </>,
+            <>
+              <strong>Your home building.</strong> If you&apos;re verified for
+              covers, or an administrator or dispatcher, your account notes
+              that you work out of the Bethlehem building (BETPA), the one
+              SLICs serves today, so it can show your building&apos;s routes
+              when other buildings join. Other drivers never see it.
             </>,
             <>
               <strong>Driver tips and places.</strong> The tips and replies you

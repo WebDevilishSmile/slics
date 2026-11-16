@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>ON CALL SHEET: conventions for the weekly cover tabs</title>
+<title>ON CALL SHEET: how the app reads the weekly cover tabs</title>
 <!--
   The printable conventions for the people who keep the ON CALL SHEET
   (docs/print/ON-CALL-SHEET-CONVENTIONS.pdf is this page printed to PDF; see
@@ -14,7 +14,7 @@
   @page {
     size: Letter;
     margin: 0.55in 0.6in 0.65in;
-    @bottom-left { content: "ON CALL SHEET conventions · November 11, 2026"; font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; }
+    @bottom-left { content: "ON CALL SHEET conventions · November 16, 2026"; font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; }
     @bottom-right { content: "Page " counter(page) " of " counter(pages); font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; }
   }
   * { box-sizing: border-box; }
@@ -71,43 +71,43 @@
 
 <!-- ============================ PAGE 1 ============================ -->
 <section class="page">
-  <h1>ON CALL SHEET: the weekly cover tabs</h1>
-  <p class="sub">Conventions and protocols for dispatch and management, SLICs staff and cover drivers · November 11, 2026</p>
+  <h1>ON CALL SHEET: how the app reads the weekly cover tabs</h1>
+  <p class="sub">What we've learned from the way dispatch keeps the sheet, and a few small asks · November 16, 2026</p>
 
-  <p class="lead">The SLICs app shows each cover driver the week's jobs, their place on the pick list and their call-in time. It reads all of it from the ON CALL SHEET, within a minute of each edit. <b>The app never writes to the sheet, and can't.</b> The sheet is the record and the app is a copy of it. The app reads the text in the cells and nothing else (no colors, no comments), so what matters has to be typed in a cell, the same way every week.</p>
-  <p class="small">Where this comes from: the 30 weekly tabs from May to November 2026, and every change the app recorded from October 14 to November 11 (5,614 changed cells). Most of what follows is already how the sheet is kept. The points below are the ones that slipped at least once, and what each slip did in the app.</p>
+  <p class="lead">Dispatch runs the ON CALL SHEET and the bid. The SLICs app only follows along: it shows each cover driver the week's jobs, their place on the pick list and their call-in time, read from the sheet within a minute of each edit. <b>The app never writes to the sheet, and can't.</b> The sheet is the record and the app is a copy of it. The app reads the text in the cells and nothing else (no colors, no comments).</p>
+  <p class="small">Where this comes from: the 30 weekly tabs from May to November 2026, and every change the app recorded from October 14 to November 11 (5,614 changed cells). Most of what follows is simply how the sheet is already kept, written down so the app can keep up with it. Where we ask for something, it's because the app stumbled on it at least once, and we say what happened. Dispatch has the final say on all of it.</p>
 
   <div class="cols">
     <div class="box">
-      <h3>Posting a week: the checklist</h3>
+      <h3>A posted week, as dispatch keeps it today</h3>
       <ol class="check">
-        <li>The tab's name is the week-ending Saturday's date and nothing else: <code>11/21/2026</code></li>
+        <li>The tab's name is the week-ending Saturday's date: <code>11/21/2026</code></li>
         <li>The title row says the same date: <code>JOBS AVAILABLE FOR W/E 11.21.2026</code></li>
         <li>The two header rows are as they've always been (<code>Job #</code> … <code>Description</code>, and <code>NAME</code> … <code>PICK #7</code>).</li>
-        <li>Every job row has its <b>Job #</b>, in capitals, listed once.</li>
-        <li>Start times are 24-hour <code>HH:MM</code>. A day the job doesn't run is left blank.</li>
-        <li><b>NAME</b> on a job row is blank while the job is open. Once taken: the driver's name as the pick list spells it, or <code>CUT</code>. A note starts with an asterisk: <code>*COVER DAY-BY-DAY</code></li>
-        <li>Pick list: every driver once, <code>LAST, FIRST</code>, spelled as last week.</li>
-        <li>Pick numbers run 1, 2, 3… down the list with no repeats. 1 to 20 are the cover drivers. Everyone after number 20 is on call.</li>
-        <li>A cover driver who's out keeps their row, with no call-in time and no number. Their number is skipped.</li>
-        <li>The cell before <code>PICK #1</code> says what the driver is doing that week, in the standard words (page 3).</li>
+        <li>Every job row has its <b>Job #</b>, listed once.</li>
+        <li>Start times are 24-hour <code>HH:MM</code>, with a blank on days the job doesn't run.</li>
+        <li><b>NAME</b> on a job row is blank while the job is open, then holds the driver's name or <code>CUT</code>. A note starts with an asterisk: <code>*COVER DAY-BY-DAY</code></li>
+        <li>The pick list has every driver once, <code>LAST, FIRST</code>, spelled as the week before.</li>
+        <li>Pick numbers run 1, 2, 3… down the list. 1 to 20 are the cover drivers; everyone after 20 is on call.</li>
+        <li>A cover driver who's out keeps their row, with no call-in time and no number.</li>
+        <li>The cell before <code>PICK #1</code> says what the driver is doing that week (page 3).</li>
       </ol>
     </div>
     <div>
       <div class="box">
-        <h3>Changing a posted week: the protocol</h3>
+        <h3>What we've noticed when a week changes</h3>
         <ul>
-          <li><b>Finish one row before starting the next,</b> and make related changes in one sitting. Drivers see each edit within a minute.</li>
-          <li><b>When a driver picks,</b> write their name on the job's row <i>and</i> the job code on their own row. Both, right away.</li>
-          <li><b>Renumbering or re-timing the pick list:</b> do all of it at once. Each driver is told their call-in time 30 minutes after the list stops changing.</li>
-          <li><b>Sort, cut and paste whole rows,</b> never one column.</li>
-          <li><b>Bid day moved for a holiday?</b> Tell a SLICs admin. The sheet doesn't say which day the bid is, so the app has to be told.</li>
-          <li><b>Something looks wrong in the app?</b> Check the sheet first. If the sheet is right and the app isn't, tell a SLICs admin.</li>
+          <li><b>Drivers see each edit within a minute.</b> Changes made in one sitting reach them as one notification; spread over an afternoon, they become several.</li>
+          <li><b>When a driver picks,</b> dispatch writes the job code on their row and their name on the job's row. On bid day the app watches for that row to fill to tell the next driver they're up, so it works best when it's typed during the call.</li>
+          <li><b>Renumbering the pick list:</b> each driver hears their final place and time once, 30 minutes after the list settles.</li>
+          <li><b>Sorting or pasting whole rows</b> keeps every column together. A single column moved on its own briefly puts drivers on the wrong jobs.</li>
+          <li><b>Bid day moved for a holiday?</b> The sheet doesn't show the bid day, so a quick word to a SLICs admin is all the app needs. Thanksgiving (Thu 11/26) is W/E 12/05's bid day as things stand.</li>
+          <li><b>Something looks off in the app?</b> The sheet is the record. If the sheet is right and the app isn't, that's ours to fix: please let a SLICs admin know.</li>
         </ul>
       </div>
       <div class="box soft">
-        <p style="margin:0"><span class="tag must">Required</span> The app can't read the week, or shows drivers something wrong, without it.<br>
-        <span class="tag helps">Helps</span> The app copes, but everyone reads it more easily.</p>
+        <p style="margin:0"><span class="tag must">App needs</span> Without it, the app can't read the week or shows drivers something wrong.<br>
+        <span class="tag helps">Helps</span> The app copes either way. A small ask that saves drivers or dispatch a step.</p>
       </div>
     </div>
   </div>
@@ -138,57 +138,57 @@
     <div>
       <h3>The tab</h3>
       <ul>
-        <li><span class="tag must">Required</span><b>Name it with the date only:</b> <code>11/21/2026</code>, the Saturday the week ends. Any other word in the name and the app doesn't read the tab. That's on purpose: <code>ON CALL 11/14/2026</code>, <code>HUB Drivers…</code>, <code>SHIFTERS</code> and <code>Copy of…</code> are never read.</li>
-        <li><span class="tag must">Required</span><b>The title row carries the same date.</b> When a new week starts as a copy of the last one, the title is the easy thing to miss. If it's missing or says another week, the app saves nothing for that week.
+        <li><span class="tag must">App needs</span><b>The tab's name is the date only:</b> <code>11/21/2026</code>, the Saturday the week ends. The app reads only tabs named that way, which is handy: <code>ON CALL 11/14/2026</code>, <code>HUB Drivers…</code>, <code>SHIFTERS</code> and <code>Copy of…</code> are left alone.</li>
+        <li><span class="tag must">App needs</span><b>The title row carries the same date.</b> When a new week starts as a copy of the last one, the title is the easy thing to miss, and the app then saves nothing for that week.
           <div class="found"><b>Seen:</b> 2 tabs since May had no title row (5/16, 8/15) and 2 said another date (7/4 said 6.27, 8/22 said 8.20).</div></li>
-        <li><span class="tag must">Required</span><b>Leave the two header rows as they are.</b> The app finds each column by its header text, so a row or a column can be added anywhere without harm. A renamed header can't be found.
-          <div class="found"><b>Seen:</b> identical in all 30 tabs. Nothing to change.</div></li>
-        <li><span class="tag must">Required</span><b>One week, one tab.</b> With two tabs of the same date, the app reads the first one only.</li>
-        <li><span class="tag helps">Helps</span><b>Build next week under a working name</b> (<code>DRAFT 11/28</code>) and rename it to the date when it's ready. Nobody sees a draft: drivers get one "Cover jobs posted" for the finished week, not the week being typed in.
+        <li><span class="tag must">App needs</span><b>The two header rows stay as they are.</b> The app finds each column by its header text, so rows and columns can be added anywhere; only a renamed header gets lost.
+          <div class="found"><b>Seen:</b> identical in all 30 tabs.</div></li>
+        <li><span class="tag must">App needs</span><b>One tab per week.</b> With two tabs of the same date, the app reads the first one only.</li>
+        <li><span class="tag helps">Helps</span><b>An idea, if it suits dispatch:</b> build next week under a working name (<code>DRAFT 11/28</code>) and rename it to the date when it's ready. The app ignores a draft, so drivers get one "Cover jobs posted" for the finished week instead of following it as it's typed.
           <div class="found"><b>Seen:</b> W/E 11/21 was built in the open over four days: 166 jobs added and 142 removed along the way, for a list of 51.</div></li>
-        <li><span class="tag must">Required</span><b>Hiding a job's row hides it from drivers</b> in the app (admins still see it, marked "Hidden in sheet"). That's how the shifter jobs at the top are kept out today: unhide them and drivers see them as jobs they can bid on. So hide every row drivers shouldn't see, and never one they should. Only <b>Hide row</b> counts: a row filtered out or squeezed small still shows in the app. The app doesn't look for the word "shifter" or where the row sits, only whether it's hidden. Sleeper jobs (<code>ER</code> and a number) are never shown to drivers, hidden or not.</li>
+        <li><span class="tag must">App needs</span><b>A hidden row is hidden from drivers</b> in the app too (admins still see it, marked "Hidden in sheet"). That's how the shifter jobs at the top stay out of drivers' view today; unhidden, they'd show as jobs to bid on. The app goes only by <b>Hide row</b>: a row filtered out or squeezed small still shows. Sleeper jobs (<code>ER</code> and a number) are never shown to drivers either way.</li>
       </ul>
 
       <h3>Job #</h3>
       <ul>
-        <li><span class="tag must">Required</span><b>Every job row has one, typed first.</b> A new row with times but no number shows drivers a job with no name.</li>
-        <li><span class="tag must">Required</span><b>One number, one job, for the whole week.</b> Drivers' lists, the admins' "hide" and the change history all follow the number. A number reused for a different job that week carries the old job's lists with it.</li>
-        <li><span class="tag helps">Helps</span><b>Capitals, no spaces, no notes:</b> <code>CPU2</code>, not <code>cpu2</code> or <code>ER18013?</code>. The app treats them as the same job, but drivers see it as typed.</li>
-        <li><span class="tag helps">Helps</span><b>List a job once.</b> When the same number is on two rows on purpose (a two-driver sleeper team, a shifter job shown twice), the app keeps both, but hiding one hides both.
+        <li><span class="tag must">App needs</span><b>Every job row has one.</b> A row with times but no number shows drivers a job with no name.</li>
+        <li><span class="tag must">App needs</span><b>One number, one job, for the whole week.</b> Drivers' lists, the admins' "hide" and the change history all follow the number, so a number reused for a different job carries the old job's lists with it.</li>
+        <li><span class="tag helps">Helps</span><b>Capitals, no spaces:</b> <code>CPU2</code> rather than <code>cpu2</code> or <code>ER18013?</code>. The app treats them as the same job; drivers just see it as typed.</li>
+        <li><span class="tag helps">Helps</span><b>A number on two rows</b> (a two-driver sleeper team, a shifter job shown twice) works fine; hiding one hides both.
           <div class="found"><b>Seen:</b> 26 repeated numbers in 16 weeks, all <code>ER</code> or <code>SH</code>, plus <code>CPU4</code> twice on 11/21.</div></li>
       </ul>
     </div>
     <div>
       <h3>NAME (who took the job)</h3>
       <ul>
-        <li><span class="tag must">Required</span><b>Blank means open.</b> Any text at all in this cell and drivers see the job as taken. A note for drivers about an open job goes in Description, which they can read.</li>
-        <li><span class="tag must">Required</span><b>Cut job: <code>CUT</code>.</b> Drivers see it as taken, which is right.</li>
-        <li><span class="tag must">Required</span><b>A note starts with an asterisk: <code>*COVER DAY-BY-DAY</code>.</b> The asterisk tells the app the words aren't a driver's name. Drivers still see the job as taken, and never the note. Admins see it labeled "Note".
-          <div class="found"><b>Seen:</b> about a dozen notes under NAME in 19 weeks (covered day by day, nobody to cover). Without the asterisk, the app takes each for a driver by that name.</div></li>
-        <li><span class="tag helps">Helps</span><b>Write the name as the pick list has it: <code>DOE, JANE</code>.</b> Copy and paste it from the pick list below. A last name alone marks the job taken just the same, but the app can't tell which driver it is, so the driver who took it also gets "a job on your list was taken".
+        <li><span class="tag must">App needs</span><b>Blank means open.</b> Any text in this cell and drivers see the job as taken. Notes for drivers about an open job show in Description.</li>
+        <li><span class="tag must">App needs</span><b><code>CUT</code></b> shows the job as taken, which is right.</li>
+        <li><span class="tag must">App needs</span><b>An asterisk marks a note:</b> <code>*COVER DAY-BY-DAY</code>. It tells the app the words aren't a driver's name. Drivers see the job as taken, never the note; admins see it labeled "Note".
+          <div class="found"><b>Seen:</b> about a dozen notes under NAME in 19 weeks (covered day by day, nobody to cover). Without the asterisk, the app took each for a driver by that name.</div></li>
+        <li><span class="tag helps">Helps</span><b>The full name, as the pick list has it</b> (<code>DOE, JANE</code>), lets the app tell which driver took the job. A last name alone marks it taken just the same, but the driver who took it is also told "a job on your list was taken".
           <div class="found"><b>Seen:</b> of 553 names since August, 61% were a last name only, 30% <code>LAST, FIRST</code>, 6% <code>CUT</code>. Each week 4 to 11 can't be matched to a pick-list name as written.</div></li>
       </ul>
 
       <h3>Sun to Sat (start times)</h3>
       <ul>
-        <li><span class="tag must">Required</span><b>24-hour <code>HH:MM</code>:</b> <code>07:00</code>, <code>15:30</code>, <code>21:45</code>. Blank on a day the job doesn't run. Words go in Description, never in a day's cell.
+        <li><span class="tag must">App needs</span><b>24-hour <code>HH:MM</code></b> (<code>07:00</code>, <code>21:45</code>), blank on a day the job doesn't run, with any words in Description.
           <div class="found"><b>Seen:</b> all 2,456 day cells since August are valid times. The only slips on record were half-typed ones (<code>15:0</code>, <code>8:</code>).</div></li>
       </ul>
 
       <h3>Description (the route)</h3>
       <ul>
-        <li><span class="tag helps">Helps</span><b>A day label, a colon, then the stops joined by <code>&gt;</code>:</b><br><code>Mon-Fri: BETPA&gt;LANPA&gt;BETPA</code><br><code>Sun: BETPA&gt;NEWPA&gt;BETPA</code> &nbsp; <code>Mon, Thu: BETPA&gt;AILPA</code><br>Written this way, the app shows each day's route on the driver's week, and every stop opens that building's address, map and phone.
-          <div class="found"><b>Seen:</b> 447 of 492 descriptions since August are written this way. The rest show as plain text.</div></li>
+        <li><span class="tag helps">Helps</span><b>Most routes are already written as a day label, a colon, then stops joined by <code>&gt;</code>:</b><br><code>Mon-Fri: BETPA&gt;LANPA&gt;BETPA</code><br><code>Sun: BETPA&gt;NEWPA&gt;BETPA</code> &nbsp; <code>Mon, Thu: BETPA&gt;AILPA</code><br>Written this way, the app shows each day's route on the driver's week, and every stop opens that building's address, map and phone.
+          <div class="found"><b>Seen:</b> 447 of 492 descriptions since August. The rest show as plain text.</div></li>
       </ul>
 
       <h3>Assigned Driver and Cover Reason</h3>
       <ul>
         <li>Drivers never see these two columns in the app. Admins do.</li>
-        <li><span class="tag helps">Helps</span><b>Assigned Driver:</b> the name as the Jobs tab has it.</li>
-        <li><span class="tag helps">Helps</span><b>Cover Reason: one of a short list,</b> spelled the same each week: <code>VACATION</code> <code>FMLA</code> <code>VACANT</code> <code>PEAK JOB</code> <code>NEW JOB</code> <code>EXTRA JOB</code> <code>COMBO WEEK</code> <code>COVERING ER18006</code> <code>VOLUNTARY LAYOFF</code> <code>REDUCTION OF WORKFORCE</code> <code>P/H</code> <code>OTHER</code>
+        <li><span class="tag helps">Helps</span><b>Assigned Driver</b> spelled as on the Jobs tab lets admins match the two.</li>
+        <li><span class="tag helps">Helps</span><b>Cover Reason</b> reads best from a short list, spelled the same each week, for example: <code>VACATION</code> <code>FMLA</code> <code>VACANT</code> <code>PEAK JOB</code> <code>NEW JOB</code> <code>EXTRA JOB</code> <code>COMBO WEEK</code> <code>COVERING ER18006</code> <code>VOLUNTARY LAYOFF</code> <code>REDUCTION OF WORKFORCE</code> <code>P/H</code> <code>OTHER</code>
           <div class="found"><b>Seen:</b> nearly 50 wordings in 16 weeks for about a dozen reasons (<code>PEAK</code>, <code>PEAK JOB</code>, <code>PEAK ADD</code>; <code>VACANT</code>, <code>OPEN</code>, <code>OPEN JOB</code>; <code>VOLUTNARY LAYOFF</code>).</div></li>
-        <li><span class="tag helps">Helps</span><b>Keep personal details out.</b> Anyone with the sheet's link can read it. For a family or medical reason, <code>OTHER</code> says enough.</li>
-        <li><span class="tag helps">Helps</span><b>A dropdown does this for you:</b> select the column, then Data → Data validation → Dropdown, with "Show a warning" so anything can still be typed. One-time setup by the sheet's owner, and it's faster than typing.</li>
+        <li><span class="tag helps">Helps</span><b>Personal details:</b> anyone with the sheet's link can read it, so for a family or medical reason <code>OTHER</code> says enough.</li>
+        <li><span class="tag helps">Helps</span><b>A dropdown could save typing:</b> Data → Data validation → Dropdown, with "Show a warning" so anything can still be typed. A one-time setup, if the sheet's owner wants it.</li>
       </ul>
     </div>
   </div>
@@ -201,68 +201,61 @@
     <div>
       <h3>NAME</h3>
       <ul>
-        <li><span class="tag must">Required</span><b><code>LAST, FIRST</code>, spelled the same every week.</b> Each driver's SLICs account is linked to their name as the sheet spells it. Capitals, periods and spacing don't matter. A different word does (a nickname, an added middle initial): the app then tells that driver they're not on the week's list.
+        <li><span class="tag must">App needs</span><b><code>LAST, FIRST</code>, spelled the same every week.</b> Each driver's SLICs account is linked to their name as the sheet spells it. Capitals, periods and spacing don't matter; a different word does (a nickname, an added middle initial), and the app then tells that driver they're not on the week's list.
           <div class="found"><b>Seen:</b> 1,100 rows since August, 122 drivers, not one spelled two ways. This is the part of the sheet that's kept best.</div></li>
-        <li><span class="tag must">Required</span><b>Each driver once.</b> Listed twice, a driver keeps the first row's place and time.
+        <li><span class="tag must">App needs</span><b>Each driver once.</b> Listed twice, a driver keeps the first row's place and time.
           <div class="found"><b>Seen:</b> one driver listed twice in 4 of the weeks since May.</div></li>
-        <li><span class="tag must">Required</span><b>A row that isn't a driver starts with an asterisk:</b> <code>*VACANT</code>. The app skips it. Without the asterisk it's read as a driver with no number.
+        <li><span class="tag must">App needs</span><b>An asterisk marks a row that isn't a driver:</b> <code>*VACANT</code>. The app skips it; without the asterisk it's read as a driver with no number.
           <div class="found"><b>Seen:</b> a <code>VACANT</code> row on 8/29, read as a driver.</div></li>
       </ul>
 
       <h3>Call-in time (the first column)</h3>
       <ul>
-        <li><span class="tag must">Required</span><b>24-hour <code>HH:MM</code>, later as the numbers go up.</b> This is the time the app shows the driver, and reminds them before, on bid day.</li>
-        <li><span class="tag must">Required</span><b>Blank for a driver who's out.</b> No time means no reminder.</li>
+        <li><span class="tag must">App needs</span><b>24-hour <code>HH:MM</code>, later as the numbers go up.</b> It's the time the app shows the driver, with a reminder before it on bid day.</li>
+        <li><span class="tag must">App needs</span><b>Blank for a driver who's out.</b> No time, no reminder. A filled job / status cell also stops the reminder: the app takes it the driver has picked or won't be calling.</li>
       </ul>
 
       <h3>Pick number (the column after NAME)</h3>
       <ul>
-        <li><span class="tag must">Required</span><b>1, 2, 3… in order, each number once.</b> The app goes by these numbers and nothing else: 1 to 20 are the week's cover drivers, and everyone listed after number 20 is on call. A repeated number puts a driver in the wrong place.
-          <div class="found"><b>Seen:</b> a number repeated in 7 of the 15 weeks read since August (18 twice; 22, 24 and 25 twice). None in the last seven weeks.</div></li>
-        <li><span class="tag must">Required</span><b>A cover driver who's out keeps their row, with no number, and their number is skipped</b> (4, blank, 6). Their place stays theirs and the drivers after them don't move.</li>
-        <li><span class="tag helps">Helps</span><b>Numbers only in this column.</b> A note here (<code>TWI AND NIGHT</code>, <code>PASS</code>, <code>NO ANSWER</code>) makes the row unnumbered. Notes fit in the job / status cell, or in a column to the right of <code>PICK #7</code>, which the app ignores.
+        <li><span class="tag must">App needs</span><b>1, 2, 3… in order, each number once.</b> The app goes by these numbers alone: 1 to 20 are the week's cover drivers, everyone after 20 is on call. A repeated number puts a driver in the wrong place.
+          <div class="found"><b>Seen:</b> a number repeated in 7 of the 15 weeks read since August. None in the last seven weeks.</div></li>
+        <li><span class="tag must">App needs</span><b>A cover driver who's out keeps their row with no number,</b> and their number is skipped (4, blank, 6), so the drivers after them don't move.</li>
+        <li><span class="tag helps">Helps</span><b>Numbers only in this column.</b> A note here (<code>TWI AND NIGHT</code>, <code>PASS</code>) leaves the row unnumbered. The job / status cell or a column right of <code>PICK #7</code> holds notes without that.
           <div class="found"><b>Seen:</b> 55 rows since August, all after number 20, where it does no harm.</div></li>
-        <li><span class="tag helps">Helps</span><b>Colors aren't read.</b> Yellow fill, red names and gray rows mean nothing to the app. If it matters, it's in a cell.</li>
+        <li><span class="tag helps">Helps</span><b>Colors aren't read.</b> Yellow fill, red names and gray rows mean nothing to the app; only what's typed in a cell does.</li>
       </ul>
 
       <h3>PICK #1 to PICK #7</h3>
       <ul>
-        <li><span class="tag helps">Helps</span>Job codes only, as the job list writes them. These columns are mostly empty these days and the app doesn't depend on them.</li>
+        <li>These columns are mostly empty these days, and the app doesn't depend on them.</li>
       </ul>
     </div>
     <div>
       <h3>Job / status (the cell before PICK #1)</h3>
       <ul>
-        <li><span class="tag must">Required</span><b>What the driver is doing that week.</b> The app shows each driver their own cell, as typed, at the top of their profile. It's also how the app knows who covered which job.</li>
-        <li><span class="tag must">Required</span><b>When a driver takes a job, fill both places:</b> their name in the job's NAME cell (drivers see the job as taken) and the job code here (the driver sees their week, with times and route).
-          <div class="found"><b>Seen:</b> most weeks, 1 to 4 taken jobs have no driver's row pointing at them, and now and then a driver's row names a job whose NAME is still blank, so the app still offers it.</div></li>
-        <li><span class="tag helps">Helps</span><b>Use the same few words.</b> Suggested standard:</li>
+        <li><span class="tag must">App needs</span><b>What the driver is doing that week.</b> The app shows each driver their own cell, as typed, at the top of their profile, and it's how the app knows who covered which job.</li>
+        <li><span class="tag must">App needs</span><b>A pick shows in two places:</b> the driver's name in the job's NAME cell (drivers see the job as taken) and the job code here (the driver sees their week, with times and route).
+          <div class="found"><b>Seen:</b> most weeks, 1 to 4 taken jobs have no driver's row pointing at them, and now and then a row names a job whose NAME is still blank, so the app still offers it.</div></li>
+        <li><span class="tag must">App needs</span><b>New: "You're up" on bid day.</b> About a minute after this cell goes from blank to filled, the app tells the next driver who hasn't picked that it's their turn (never more than an hour before their call-in). It works off this cell alone, so when it's filled during the call, the next driver hears right away.</li>
+        <li><span class="tag must">App needs</span><b>Filled before bid day,</b> the app takes it the driver won't be calling (a leave, their own job): no reminder, and "You're up" passes them by. So we'd ask that <code>ON CALL</code> not go in ahead for drivers who will still call.</li>
+        <li><span class="tag helps">Helps</span><b>No answer?</b> A word here (<code>PASS</code>, <code>NO ANSWER</code>) lets the driver after them be told they're up.</li>
+        <li><span class="tag helps">Helps</span><b>The same few words each week</b> help the app and the drivers. What we see most:</li>
       </ul>
       <table class="words">
-        <tr><th>Write</th><th>The app understands</th></tr>
-        <tr><td><code>LV57</code></td><td>Covering that job. The code must match a Job # on this week's list.</td></tr>
+        <tr><th>In the cell</th><th>What the app understands</th></tr>
+        <tr><td><code>LV57</code></td><td>Covering that job. The code matches a Job # on this week's list.</td></tr>
         <tr><td><code>COVERING ER18006</code></td><td>Covering a sleeper team's seat.</td></tr>
-        <tr><td><code>ON CALL</code></td><td>On call this week.</td></tr>
+        <tr><td><code>ON CALL</code></td><td>On call this week, once they've called.</td></tr>
         <tr><td>(blank)</td><td>Hasn't picked yet.</td></tr>
         <tr><td><code>VACATION</code> · <code>FMLA</code> · <code>BUYOUT</code></td><td>Off this week.</td></tr>
         <tr><td><code>PASS</code> · <code>DIS</code> · <code>LIGHT DUTY</code> · <code>WORKERS COMP</code> · <code>VOLUNTARY LAYOFF</code> · <code>REDUCTION OF WORKFORCE</code> · <code>WON LV93</code></td><td>Shown to the driver as written.</td></tr>
-        <tr><td><code>TWI AND NIGHT (MON-THU)</code></td><td>Shown as written. One spelling, days in parentheses.</td></tr>
+        <tr><td><code>TWI AND NIGHT (MON-THU)</code></td><td>Shown as written.</td></tr>
       </table>
       <ul>
-        <li class="found" style="list-style:none;margin-left:-13pt"><b>Seen:</b> more than 70 wordings since August for about a dozen meanings. "Twi and night" alone is written more than 15 ways (<code>TWI &amp; NIGHT</code>, <code>TWI AND NIGHT (MON - THRU)</code>, <code>TWI &amp; NIGHR</code>), and voluntary layoff four (<code>VOLUTNARY LAYOFF</code>, <code>VOL LAYOFF</code>). Once, a file path was pasted here by accident.</li>
-        <li><span class="tag helps">Helps</span><b>Short and neutral.</b> The driver reads this cell on their phone, and the sheet is open to anyone with the link. A return date is fine (<code>FMLA - RTW 11/30</code>). Medical detail isn't needed.</li>
-        <li><span class="tag helps">Helps</span><b>A dropdown fits here too</b> (Data → Data validation → Dropdown, "Show a warning"), since a job code still has to be typed.</li>
+        <li class="found" style="list-style:none;margin-left:-13pt"><b>Seen:</b> more than 70 wordings since August for about a dozen meanings. "Twi and night" alone is written more than 15 ways (<code>TWI &amp; NIGHT</code>, <code>TWI AND NIGHT (MON - THRU)</code>), and voluntary layoff four (<code>VOLUTNARY LAYOFF</code>, <code>VOL LAYOFF</code>).</li>
+        <li><span class="tag helps">Helps</span><b>Short and neutral reads best.</b> The driver sees this cell on their phone, and the sheet is open to anyone with the link. A return date is fine (<code>FMLA - RTW 11/30</code>); medical detail isn't needed.</li>
+        <li><span class="tag helps">Helps</span><b>A dropdown could work here too</b> (Data → Data validation → Dropdown, "Show a warning"), since a job code still has to be typed.</li>
       </ul>
-
-      <div class="box soft" style="margin-top:8pt">
-        <h3>The Jobs tab (every bid job)</h3>
-        <ul>
-          <li><span class="tag must">Required</span>Keep the tab named <code>Jobs</code>, its header row as it is, and each <b>Job Name</b> on one row only.</li>
-          <li><span class="tag must">Required</span><b>Sort and paste whole rows.</b>
-            <div class="found"><b>Seen:</b> on 11/3 the Driver and Seniority columns of all 298 jobs changed and changed back within 67 seconds. For that minute the app had the wrong driver on every job.</div></li>
-          <li><span class="tag helps">Helps</span>A driver's name here is spelled as on the pick list. The app puts the two together to show a driver their own job.</li>
-        </ul>
-      </div>
     </div>
   </div>
 </section>
@@ -277,7 +270,7 @@
     <div><b>After 10 quiet minutes</b>Drivers on that week's list are told once what changed: jobs added, removed, new times.</div>
     <div><b>After 30 quiet minutes</b>Each driver whose place or call-in time ended up different is told the final one.</div>
   </div>
-  <p class="small">"Quiet" means no more edits to that part of the sheet. That's why one sitting is kinder than a change every twenty minutes: the first is one notification, the second is one each time. Edits to a week after its Saturday aren't read. A full re-read runs early every morning in case anything was missed. Notifications reach the drivers who turned them on.</p>
+  <p class="small"><b>On bid day,</b> about a minute after a driver's job / status is filled, the next driver who hasn't picked is told they're up. "Quiet" means no more edits to that part of the sheet, so a change made in one sitting is one notification, while a change every twenty minutes is one each time. Edits to a week after its Saturday aren't read. A full re-read runs early every morning in case anything was missed. Notifications reach the drivers who turned them on.</p>
 
   <div class="cols">
     <div>
@@ -297,34 +290,45 @@
       </table>
       <ul>
         <li><b>A week is built Sunday to Wednesday,</b> 13 to 10 days before it ends (72% of all job-list edits), in sessions around noon, 3 PM and early evening. Bid day, Thursday, is the names going in from 7 AM.</li>
-        <li><b>A new job goes in one cell at a time:</b> number, reason, five start times, description. That's 8 saves, and until this month each one was a notification on the admins' phones. On 11/10 that was 88 in a day.</li>
-        <li><b>Inserting a row</b> used to make every job under it leave the app until the new row's first cell was typed (17 jobs gone and back, several times, on 11/9), and drivers were told a job on their list was removed. The app now reads straight past a blank row, so insert rows wherever they belong.</li>
-        <li><b>Renumbering cascades:</b> one driver's number changes and everyone after moves. Three quarters of all pick-list edits are times and numbers. On 11/10, about 45 rows of the 11/21 list changed four times inside one minute.</li>
+        <li><b>A new job goes in one cell at a time:</b> number, reason, five start times, description. That's 8 saves, and until this month each one was a notification on the admins' phones. On 11/10 that was 88 in a day. They're digests now.</li>
+        <li><b>Inserting a row</b> used to make every job under it drop out of the app until the new row's first cell was typed (17 jobs gone and back on 11/9). That was ours to fix, and it's fixed: rows can go in wherever they belong.</li>
+        <li><b>Renumbering cascades:</b> one driver's number changes and everyone after moves. Three quarters of all pick-list edits are times and numbers.</li>
       </ul>
     </div>
     <div>
       <div class="box">
         <h3>SLICs staff (admins and dispatch in the app)</h3>
         <ul>
-          <li><b>Never edit the sheet to fix the app.</b> If the sheet is wrong, dispatch corrects it. If the sheet is right and the app isn't, that's a bug: tell the SLICs admin.</li>
+          <li><b>The sheet is dispatch's.</b> We never edit it to fix the app. If the sheet is right and the app isn't, that's a bug for the SLICs admin.</li>
           <li><b>Admin → Covers</b> is the hub. Cover Jobs has Refresh, the list of changes and the hide button. Cover Reports is where drivers' "Report a problem" lands.</li>
-          <li><b>A week won't appear?</b> Press Refresh on Cover Jobs: the message names what's off (no tab with that date, a title with another week, no jobs).</li>
-          <li><b>Admin → Jobs</b> shows when the app last heard from the sheet. It warns after two silent days.</li>
-          <li><b>Notifications are digests now.</b> "Cover jobs" and "Job changes" arrive once the sheet has been quiet for 15 minutes, saying where things ended up, and at most once an hour while edits keep coming. Picks are their own kind, "Cover picks", off unless you turn it on in your profile.</li>
-          <li><b>Bid day moved?</b> Set it on Cover Jobs as soon as dispatch says so. Reminders follow it.</li>
+          <li><b>A week won't appear?</b> Refresh on Cover Jobs names what's off (no tab with that date, a title with another week, no jobs).</li>
+          <li><b>Admin → Jobs</b> shows when the app last heard from the sheet, and warns after two silent days.</li>
+          <li><b>Notifications are digests.</b> "Cover jobs" and "Job changes" arrive once the sheet has been quiet for 15 minutes, at most once an hour while edits keep coming. "Cover picks" is off unless turned on in your profile.</li>
+          <li><b>Bid day moved?</b> Set it on Cover Jobs once dispatch says so. Reminders and "You're up" follow it.</li>
         </ul>
       </div>
       <div class="box">
         <h3>Cover drivers</h3>
         <ul>
-          <li><b>Covers is for reference.</b> Dispatch and the sheet decide. Call dispatch at your call-in time and ask what's available.</li>
+          <li><b>Covers is for reference.</b> Dispatch and the sheet decide. Call dispatch at your call-in time, or sooner once you're told you're up, and ask what's available.</li>
           <li><b>Your place and call-in time can move</b> until bid day. The app tells you the final ones once the list settles.</li>
           <li><b>"Taken" means a name is on that job in the sheet.</b> A job can reopen. Your list isn't a pick: it's your own order to read off on the call.</li>
           <li><b>You see only the jobs you can bid on.</b> Shifter and sleeper jobs aren't shown.</li>
-          <li><b>Not on the week's list and should be?</b> Tap "This is a mistake". <b>Something else wrong?</b> Tap "Report a problem". Both reach the admins, who check with dispatch.</li>
+          <li><b>Not on the list and should be?</b> Tap "This is a mistake". <b>Something else wrong?</b> Tap "Report a problem". Both reach the admins, who check with dispatch.</li>
         </ul>
       </div>
     </div>
+  </div>
+  <div class="box soft" style="margin-top:4pt">
+    <h3>The Jobs tab (every bid job)</h3>
+    <ul style="columns:2;column-gap:18pt">
+      <li><span class="tag must">App needs</span><b>The tab named <code>Jobs</code>,</b> its header row as it is, and each <b>Job Name</b> on one row.</li>
+      <li><span class="tag must">App needs</span><b>Whole rows sorted or pasted.</b>
+        <div class="found"><b>Seen:</b> on 11/3 the Driver and Seniority columns of all 298 jobs were out of step for 67 seconds: the wrong driver on every job.</div></li>
+      <li><span class="tag helps">Helps</span>A driver's name spelled as on the pick list lets the app show a driver their own job.</li>
+      <li><span class="tag must">App needs</span><b>Seniority as a whole number.</b> When the app's Jobs page opens to drivers, they'll see each job's times, hours, route and seniority number, never a name. Anything else in that cell shows blank.</li>
+      <li><span class="tag helps">Helps</span><b>Description</b> in the weekly tabs' style (<code>Mon-Fri: BETPA&gt;LANPA&gt;BETPA</code>) lets each stop open its building.</li>
+    </ul>
   </div>
 </section>
 

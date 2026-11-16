@@ -6,6 +6,7 @@ import { Alert, Box, Button, Chip, TextField } from '@mui/material';
 
 import { apiRequest } from '@/lib/apiRequest';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/constants';
+import { tipPhoneHelp } from '@/lib/phoneText';
 
 import PinField, { readPin } from '@/components/form/PinField';
 import {
@@ -79,8 +80,13 @@ const CommentComposer = forwardRef(function CommentComposer(
     setPinText('');
   };
 
+  // A phone number that looks wrong stops the post; one written another way
+  // says how it will be saved (lib/phoneText.js).
+  const phoneHelp = tipPhoneHelp(draft);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (phoneHelp.error) return;
     const pin = pinOpen ? readPin(pinText) : null;
     if (pin === false) {
       setError(
@@ -140,10 +146,13 @@ const CommentComposer = forwardRef(function CommentComposer(
         disabled={saving}
         autoFocus={autoFocus}
         fullWidth
+        error={Boolean(phoneHelp.error)}
         helperText={
-          draft.length > SLIC_COMMENT_MAX_LENGTH - 200
+          phoneHelp.error ??
+          phoneHelp.hint ??
+          (draft.length > SLIC_COMMENT_MAX_LENGTH - 200
             ? `${draft.length}/${SLIC_COMMENT_MAX_LENGTH}`
-            : undefined
+            : undefined)
         }
         slotProps={{
           htmlInput: {
@@ -205,7 +214,7 @@ const CommentComposer = forwardRef(function CommentComposer(
           <Button
             type='submit'
             variant='contained'
-            disabled={saving || (empty && !hasPin)}
+            disabled={saving || (empty && !hasPin) || Boolean(phoneHelp.error)}
             sx={softContainedSx}
           >
             {saving ? 'Posting…' : parentId ? 'Reply' : 'Post tip'}

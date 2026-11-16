@@ -33,6 +33,7 @@ import { apiRequest } from '@/lib/apiRequest';
 import { tapHaptic } from '@/lib/haptics';
 import { userHasArea } from '@/lib/staffAreas';
 import { SLIC_COMMENT_MAX_LENGTH } from '@/constants';
+import { tipPhoneHelp } from '@/lib/phoneText';
 
 import CommentComposer from './CommentComposer';
 import PinField, { formatPin, readPin } from '@/components/form/PinField';
@@ -107,7 +108,11 @@ function Comment({
     setEditing(true);
   };
 
+  // A phone number that looks wrong stops the save (lib/phoneText.js).
+  const phoneHelp = editing ? tipPhoneHelp(draft) : {};
+
   const handleSave = async () => {
+    if (phoneHelp.error) return;
     // The pin is always sent: null removes one the tip had.
     const pin = pinOpen ? readPin(pinText) : null;
     if (pin === false) {
@@ -315,6 +320,8 @@ function Comment({
             autoFocus
             fullWidth
             placeholder='Edit your tip'
+            error={Boolean(phoneHelp.error)}
+            helperText={phoneHelp.error ?? phoneHelp.hint}
             slotProps={{
               htmlInput: {
                 maxLength: SLIC_COMMENT_MAX_LENGTH,
@@ -356,7 +363,9 @@ function Comment({
             <Button
               variant='contained'
               onClick={handleSave}
-              disabled={saving || (!draft.trim() && !(pinOpen && readPin(pinText)))}
+              disabled={
+                saving || (!draft.trim() && !(pinOpen && readPin(pinText))) || Boolean(phoneHelp.error)
+              }
               sx={softContainedSx}
             >
               {saving ? 'Saving…' : 'Save'}

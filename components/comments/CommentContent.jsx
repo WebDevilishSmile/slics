@@ -32,8 +32,9 @@ const phoneSx = [
 // plain text since 2026-10-07 (`format: 'text'`). Older comments were Tiptap
 // HTML; scripts/convertHtmlComments.mjs converted them, and any still stored
 // as HTML is flattened here, never parsed (docs/SECURITY.md #2). A US phone
-// number in it is a button that calls it (lib/phoneText.js, since
-// 2026-11-16); everything else stays text. Used by the home tips, the
+// number in it is a button that calls it, written (610) 555-0134 however an
+// older tip has it (lib/phoneText.js, since 2026-11-16); everything else stays
+// text. Used by the home tips, the
 // profile page and admin.
 export default function CommentContent({ comment, variant = 'body1' }) {
   return (
@@ -44,11 +45,11 @@ export default function CommentContent({ comment, variant = 'body1' }) {
             key={index}
             component='a'
             href={`tel:${part.tel}`}
-            aria-label={`Call ${part.text}`}
+            aria-label={`Call ${part.display}`}
             sx={phoneSx}
           >
             <PhoneOutlined sx={{ fontSize: '1.1em' }} aria-hidden />
-            {part.text}
+            {part.display}
           </Box>
         ) : (
           part.text

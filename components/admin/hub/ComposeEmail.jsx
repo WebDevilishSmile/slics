@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { DarkModeOutlined, LightModeOutlined, SendOutlined } from '@mui/icons-material';
 import {
   Alert,
-  Autocomplete,
   Box,
   Button,
   Chip,
@@ -27,7 +26,7 @@ import {
   SITE_URL,
 } from '@/constants';
 import { apiRequest } from '@/lib/apiRequest';
-import { addressWithName, composedEmail, validateComposedEmail } from '@/lib/composedEmail';
+import { addressWithName, composedEmail, isEmailAddress, validateComposedEmail } from '@/lib/composedEmail';
 import { validateAttachments } from '@/lib/emailAttachments';
 import { tapHaptic } from '@/lib/haptics';
 import {
@@ -40,10 +39,12 @@ import {
 } from '@/components/utility/soft';
 
 import EmailAttachments from './EmailAttachments';
+import EmailRecipients, { groupOf } from './EmailRecipients';
 
 // The compose form on /admin/super/email (POST /api/emails): who it's to
-// (typed, or picked from every account by name or email: `people`, from
-// getEmailRecipients), the
+// (EmailRecipients.jsx: any number of people, picked from every account
+// (`people`, from getEmailRecipients), typed, or a whole group; each gets
+// their own copy), the
 // subject, an optional heading, the message, an optional button and note, and
 // the sign-off, with a live preview rendered by the same code the server
 // sends (lib/composedEmail.js), and files to attach (EmailAttachments.jsx).
@@ -52,7 +53,9 @@ import EmailAttachments from './EmailAttachments';
 // up after a day.
 
 const EMPTY = {
+  // What's typed in "To" but not yet a chip.
   to: '',
+  recipients: [],
   subject: '',
   heading: '',
   message: '',
@@ -67,17 +70,6 @@ const attachedCount = (email) => (email?.attachments?.length ?? 0) + (email?.fly
 
 const counter = (value, max) => `${value.length.toLocaleString('en-US')}/${max.toLocaleString('en-US')}`;
 
-// Up to this many accounts listed at once; typing narrows them.
-const PEOPLE_SHOWN = 50;
-
-const filterPeople = (options, { inputValue }) => {
-  const query = inputValue.trim().toLowerCase();
-  const found = query
-    ? options.filter((person) => person.name.toLowerCase().includes(query) || person.email.includes(query))
-    : options;
-  return found.slice(0, PEOPLE_SHOWN);
-};
-
 export default function ComposeEmail({ people = [] }) {
   const router = useRouter();
   const [fields, setFields] = useState(EMPTY);
@@ -89,23 +81,38 @@ export default function ComposeEmail({ people = [] }) {
   const [sentTo, setSentTo] = useState('');
   const [files, setFiles] = useState([]);
   const uploading = files.some((file) => file.status === 'uploading');
-  // The account the typed address belongs to, if any: its name is shown under
-  // the field and the server addresses the email with it.
-  const recipient = useMemo(() => {
-    const email = fields.to.trim().toLowerCase();
-    return email ? (people.find((person) => person.email === email) ?? null) : null;
-  }, [people, fields.to]);
+  // The chips, plus a typed address not yet made one.
+  const allRecipients = useMemo(() => {
+    const typed = fields.to.trim().toLowerCase();
+    return typed && isEmailAddress(typed) && !fields.recipients.includes(typed)
+      ? [...fields.recipients, typed]
+      : fields.recipients;
+  }, [fields.to, fields.recipients]);
+  // With one person, their account (for their name in the preview and the
+  // confirm dialog; the server addresses the email with it).
+  const recipient = useMemo(
+    () => (allRecipients.length === 1 ? (people.find((person) => person.email === allRecipients[0]) ?? null) : null),
+    [people, allRecipients],
+  );
 
   // The draft, from this browser only (it may be blocked or empty).
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? 'null');
-      if (saved && typeof saved === 'object') setFields({ ...EMPTY, ...saved });
+      if (saved && typeof saved === 'object') {
+        setFields({
+          ...EMPTY,
+          ...saved,
+          recipients: Array.isArray(saved.recipients) ? saved.recipients.filter((item) => typeof item === 'string') : [],
+        });
+      }
     } catch {}
   }, []);
   useEffect(() => {
     try {
-      const blank = Object.keys(EMPTY).every((key) => fields[key] === EMPTY[key]);
+      const blank = Object.keys(EMPTY).every((key) =>
+        Array.isArray(EMPTY[key]) ? !fields[key]?.length : fields[key] === EMPTY[key],
+      );
       if (blank) localStorage.removeItem(DRAFT_KEY);
       else localStorage.setItem(DRAFT_KEY, JSON.stringify(fields));
     } catch {}
@@ -123,7 +130,12 @@ export default function ComposeEmail({ people = [] }) {
     event.preventDefault();
     setError('');
     setSentTo('');
-    const { value, error: invalid } = validateComposedEmail({ ...fields, copyMe });
+    const { value, error: invalid } = validateComposedEmail({
+      ...fields,
+      recipients: allRecipients,
+      group: groupOf(people, allRecipients),
+      copyMe,
+    });
     if (invalid) return setError(invalid);
     if (uploading) return setError('Wait for the files to finish uploading.');
     if (files.some((file) => file.status === 'failed')) {
@@ -139,14 +151,21 @@ export default function ComposeEmail({ people = [] }) {
 
   const send = async () => {
     setBusy(true);
-    const { error: sendError } = await apiRequest('/api/emails', { body: confirming });
+    const { data, error: sendError } = await apiRequest('/api/emails', { body: confirming });
     setBusy(false);
     if (sendError) {
       setConfirming(null);
       return setError(sendError);
     }
     tapHaptic();
-    setSentTo(confirming.to);
+    const many = confirming.recipients.length > 1;
+    const sent = data?.data?.sent ?? confirming.recipients.length;
+    const notSent = data?.data?.failed ?? 0;
+    setSentTo(
+      many
+        ? `Sent to ${sent} ${sent === 1 ? 'person' : 'people'}${notSent ? `. ${notSent} didn’t go out; try them again` : ''}.`
+        : `Sent to ${confirming.to}.`,
+    );
     setConfirming(null);
     setFields({ ...EMPTY, signOff: fields.signOff });
     setFiles([]);
@@ -175,63 +194,22 @@ export default function ComposeEmail({ people = [] }) {
       }}
     >
       <Box component='form' onSubmit={ask} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-        <Autocomplete
-          freeSolo
-          options={people}
-          filterOptions={filterPeople}
-          getOptionLabel={(option) => (typeof option === 'string' ? option : option.email)}
-          getOptionKey={(option) => (typeof option === 'string' ? option : option.id)}
+        <EmailRecipients
+          people={people}
+          recipients={fields.recipients}
+          setRecipients={(change) => {
+            setFields((current) => ({
+              ...current,
+              recipients: typeof change === 'function' ? change(current.recipients) : change,
+            }));
+            setSentTo('');
+          }}
           inputValue={fields.to}
-          onInputChange={(_event, value, reason) => {
-            // MUI resets the text on blur when nothing was picked; keep it.
-            if (reason === 'reset' && !value) return;
+          setInputValue={(value) => {
             setFields((current) => ({ ...current, to: value }));
             setSentTo('');
           }}
-          onChange={(_event, option) => {
-            if (option && typeof option === 'object') {
-              setFields((current) => ({ ...current, to: option.email }));
-              setSentTo('');
-            }
-          }}
           disabled={busy}
-          autoHighlight={false}
-          noOptionsText='No account with that name or email. You can still send to it.'
-          renderOption={({ key, ...props }, option) => (
-            <Box component='li' key={key} {...props} sx={{ minHeight: '3rem' }}>
-              <Box sx={{ minWidth: 0 }}>
-                <Typography sx={{ fontWeight: 600, overflowWrap: 'anywhere' }}>{option.name || 'No name'}</Typography>
-                <Typography variant='body2' color='text.secondary' sx={{ overflowWrap: 'anywhere' }}>
-                  {option.email}
-                </Typography>
-              </Box>
-            </Box>
-          )}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              sx={softInputSx}
-              label='To'
-              required
-              type='email'
-              placeholder='Pick someone, or type an address'
-              helperText={
-                recipient?.name
-                  ? `To ${recipient.name}, from ${COMPOSE_EMAIL_FROM_NAME} <${CONTACT_EMAIL}>. Replies come back to that inbox.`
-                  : `From ${COMPOSE_EMAIL_FROM_NAME} <${CONTACT_EMAIL}>. Replies come back to that inbox.`
-              }
-              slotProps={{
-                ...params.slotProps,
-                htmlInput: {
-                  ...params.inputProps,
-                  maxLength: 254,
-                  autoCapitalize: 'none',
-                  spellCheck: false,
-                  autoComplete: 'off',
-                },
-              }}
-            />
-          )}
         />
         {field('subject', { label: 'Subject', required: true })}
         {field('heading', {
@@ -278,7 +256,7 @@ export default function ComposeEmail({ people = [] }) {
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography sx={{ fontWeight: 700 }}>Send me a copy</Typography>
             <Typography variant='body2' color='text.secondary'>
-              A blind copy to {CONTACT_EMAIL}, since these don’t show up in Gmail’s Sent folder.
+              A copy to {CONTACT_EMAIL}, since these don’t show up in Gmail’s Sent folder.
             </Typography>
           </Box>
           <Switch edge='end' checked={copyMe} disabled={busy} onChange={(event) => setCopyMe(event.target.checked)} />
@@ -286,8 +264,8 @@ export default function ComposeEmail({ people = [] }) {
 
         {error && <Alert severity='error'>{error}</Alert>}
         {sentTo && (
-          <Alert severity='success' role='status'>
-            Sent to {sentTo}.
+          <Alert severity={sentTo.includes('didn’t go out') ? 'warning' : 'success'} role='status'>
+            {sentTo}
           </Alert>
         )}
 
@@ -331,7 +309,12 @@ export default function ComposeEmail({ people = [] }) {
         <Typography variant='body2' color='text.secondary' sx={{ overflowWrap: 'anywhere' }}>
           <strong>{fields.subject.trim() || 'No subject yet'}</strong>
           <br />
-          To {fields.to.trim() ? addressWithName(recipient?.name, fields.to.trim()) : '…'}
+          To{' '}
+          {allRecipients.length > 1
+            ? `${allRecipients.length} people, one copy each`
+            : allRecipients.length
+              ? addressWithName(recipient?.name, allRecipients[0])
+              : '…'}
           {files.length ? ` · Attached: ${files.map((file) => file.name).join(', ')}` : ''}{' '}
           · Dark is how Apple Mail shows it; Gmail and Outlook show the light one without
           the shadows.
@@ -353,8 +336,12 @@ export default function ComposeEmail({ people = [] }) {
         <DialogContent>
           <Typography sx={{ overflowWrap: 'anywhere' }}>
             &ldquo;{confirming?.subject}&rdquo; goes to{' '}
-            {recipient?.name && recipient.email === confirming?.to ? `${recipient.name} (${confirming?.to})` : confirming?.to} from{' '}
-            {CONTACT_EMAIL}
+            {confirming?.recipients?.length > 1
+              ? `${confirming.recipients.length} people, each their own copy,`
+              : recipient?.name && recipient.email === confirming?.to
+                ? `${recipient.name} (${confirming?.to})`
+                : confirming?.to}{' '}
+            from {CONTACT_EMAIL}
             {confirming?.copyMe ? ', with a copy to you' : ''}
             {attachedCount(confirming)
               ? `, with ${attachedCount(confirming) === 1 ? 'one file' : `${attachedCount(confirming)} files`} attached`

@@ -28,6 +28,8 @@
 
 ## Super admin hub (`SUPER-ADMIN-HUB.md`)
 
+- [x] Email many people at once, with Everyone, Admins and Dispatch buttons, each their own
+      copy (2026-11-15; "Email" → "Many people at once" in `archive/SUPER-ADMIN-HUB.md`)
 - [x] Pick an email's recipient from every account by name or email on `/admin/super/email`
       (2026-11-15; "Email" → "Pick who it's to" in `archive/SUPER-ADMIN-HUB.md`)
 - [x] Attach files and the printed flyers to an email written on `/admin/super/email`

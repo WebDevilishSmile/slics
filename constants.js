@@ -512,6 +512,14 @@ export const PUSH_COMPOSE_BODY_MAX = 180;
 // sent through Resend from CONTACT_EMAIL, so a reply comes back to the same
 // inbox. The name is what the recipient's mail app shows as the sender.
 export const COMPOSE_EMAIL_FROM_NAME = 'Tiago from SLICs';
+// The most people one written email goes to, each getting their own copy.
+// Resend's free plan sends 100 emails a day, password resets and sign-up
+// links included (checked 2026-11-15: 100 a day, 3,000 a month, 10 requests a
+// second), so a send leaves room for those. Raise it with the plan.
+export const COMPOSE_EMAIL_MAX_RECIPIENTS = 90;
+// Files go out once per person, so a send with files may move at most this
+// much in all (the files' size times the people).
+export const COMPOSE_EMAIL_MAX_FILE_TRAFFIC = 100 * 1024 * 1024;
 export const COMPOSE_EMAIL_LIMITS = {
   subject: 150,
   heading: 120,

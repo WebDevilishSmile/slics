@@ -282,6 +282,21 @@ address, but its compose box rewrites pasted HTML, so the look doesn't survive.
       the server addresses the email `"Name" <address>` when the address is an account's
       (`getNameByEmail`, `addressWithName` in `lib/composedEmail.js`, quotes and line
       breaks taken out of the name).
+- [x] **Many people at once** (2026-11-15, Tiago: "a mass email button and multiple users
+      button, one that selects all admins, one that selects just dispatch"): "To" takes
+      chips (`admin/hub/EmailRecipients.jsx`): accounts picked by name or email, typed or
+      pasted addresses, and Everyone, Admins (super admins included) and Dispatch buttons,
+      each showing its count and pressed again to take the group back out. Each person gets
+      their own copy addressed to them by name (`getNamesByEmails` replaced
+      `getNameByEmail`), so nobody sees the others; without files Resend's batch endpoint
+      sends 100 a request (`sendEmailBatch`), with files one send each, four at a time, and
+      a send's files times its people may move at most 100 MB
+      (`COMPOSE_EMAIL_MAX_FILE_TRAFFIC`). "Send me a copy" is one more email instead of a
+      BCC. At most 90 people a send (`COMPOSE_EMAIL_MAX_RECIPIENTS`): Resend's free plan
+      (checked 2026-11-15) sends 100 a day, 3,000 a month, password and sign-up emails
+      included. `email.sent` records "12 people (Admins)" instead of the addresses, with
+      `details.recipients`, `details.group` and `result: { sent, failed }`; Sent shows how
+      many didn't go.
 - [x] A card on the hub opens it, and an Email row on `/admin` (super admin only, beside
       "Super Admin"), since the card is a level down.
 - [x] **The app icon in the header** (2026-11-11, every email, the account ones too): the

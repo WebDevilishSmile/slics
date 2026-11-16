@@ -27,6 +27,12 @@ export default function SentEmails({ emails }) {
               </Box>
             ) : null}
             To {email.to} · {formatWhen(email.at)}
+            {!email.failed && email.notSent ? (
+              <Box component='span' sx={{ color: 'error.main', fontWeight: 600 }}>
+                {' '}
+                · {email.notSent} didn&apos;t go
+              </Box>
+            ) : null}
           </Typography>
           {email.attachments?.length ? (
             <Typography

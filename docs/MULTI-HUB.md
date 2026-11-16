@@ -19,9 +19,10 @@ they see until a stage is finished, verified and deliberately merged.
   Nothing reads either field yet, so drivers see nothing different.
 - **Home base** (planned 2026-11-15): which building each driver starts from, asked on
   `/home` and stored apart from `hubId`. It ships before stage 2. Steps 1 (the census) and 2
-  (BETPA for staff and verified drivers, run on production) and 3 (the `/home` card, Change
-  on `/profile`, a preview in the super admin's Notes) are built (2026-11-16); step 4, the
-  admin side, is next.
+  (BETPA for staff and verified drivers, run on production), 3 (the `/home` card, Change on
+  `/profile`, a preview in the super admin's Notes) and 4 (the admin side: change requests,
+  the users filter, the super admin's Home buildings) are built (2026-11-16). Left: watching
+  the answers come in.
 - **Stage 2 is on hold** (Tiago, 2026-11-12) until a hub asks, or before Covers picking
   (stage 3 of `COVER-BIDDING.md`) is built, whichever comes first. See [Timing](#timing).
   When it starts, it's built on the `multi-hub` branch in its own worktree
@@ -312,7 +313,7 @@ Tiago, 2026-11-15:
 > some might be from other hubs that share locations. How can we check each user for
 > home hub base?
 
-Steps 1–3 built 2026-11-16. It needs no stage 2 and changes nothing for anyone who
+Steps 1–4 built 2026-11-16. It needs no stage 2 and changes nothing for anyone who
 doesn't answer, so it ships on its own, before stage 2. Its counts also say which hub to
 onboard first.
 
@@ -459,39 +460,70 @@ Built 2026-11-16.
 
 ### Step 4: the admin side
 
+Built 2026-11-16.
+
 - **A verified driver or staff asks to change theirs** (Tiago, 2026-11-16, open question
-  2): their `/profile` row gains **Ask to change**, the same picker. The same `PUT` then
-  saves the pick as `users.homeBaseRequest` (`{ numSlic, alphaSlic, name, listed, at }`,
-  one at a time, a new one replacing it) and leaves `homeBase` alone. The server decides
-  which by the session (`homeBaseIsFixed`), never the body. `/profile` shows "Asked for
-  ALLPA, waiting for an admin" with Cancel (`DELETE /api/users/me/home-base-request`). Why
-  an admin: the sheet says they're BETPA's, so a different answer is a mistake or a move,
-  and an admin should know either way. Built with the Approve and Decline below, so no
-  request waits with no way to decide it.
-- `/admin/users/[id]`: "Home building" with its source, and Change (Users area,
-  `admin_audit` `user.homeBase` first, `source: 'admin'`).
-- `/admin/users`: a filter by home building, "Not answered", "Not on the list" and
-  "Change asked" included.
-- **Change requests** (the Ask to change above): `/admin/users/[id]` shows the asked
-  building beside the current one with **Approve** (it becomes `homeBase`, `source:
-  'admin'`, `listed` as the server works it out) and **Decline** (the request goes), each
-  to `admin_audit` (`user.homeBase`) first, Users area. Approving a verified driver's move
-  only reminds the admin of their sheet link ("Linked to BETPA's sheet as DOE, JANE");
-  removing the link stays its own step. Open requests count in `/api/admin-alerts` for the
-  header-menu badge (`lib/homeBaseRequestsStore.js`, like the claims), until decided.
-- **Buildings drivers added** (super admin, on the "Home buildings" table): each typed
-  building with how many drivers gave it, grouped by number. Three actions, each to
-  `admin_audit` first:
-  - **Add to All Hubs** inserts it into `allHubs` (the app's first write there; the
-    number, alpha and name as the super admin corrects them) and sets `listed: true` on
-    every account that gave it. It then shows on `/hubs` for everyone.
-  - **Same as…** points it at a building already listed (a typo, a second name for one
-    building) and moves those accounts to it, `listed: true`.
-  - **Not a hub** clears those accounts' `homeBase`, so the card asks them again.
-- `DATA-MODEL.md`'s `allHubs` row changes from "Not written by the app" in the same
-  commit.
-- `/admin/super`: a "Home buildings" table, counts by hub and source, with Not answered
-  last. The super admin's view of where interest is.
+  2): their `/profile` row (`profile/HomeBaseRow.jsx`) has **Ask to change**, the same
+  picker ("An admin checks the change…", saved with "Ask an admin"). The same `PUT
+  /api/users/me/home-base` then saves the pick as `users.homeBaseRequest` (`{ numSlic,
+  alphaSlic, name, listed, at }`, plus `city`/`state` when typed in; one at a time, a new
+  one replacing it; `requestHomeBaseChange`) and leaves `homeBase` alone, answering `{
+  request }`. The server decides which by the session (`homeBaseIsFixed`), never the body;
+  asking for the building they have is refused. The row then says "You asked for PRORI
+  0269 · Warwick, RI. Waiting for an admin." with **Cancel request** (`DELETE
+  /api/users/me/home-base-request`). Why an admin: the sheet says they're BETPA's, so a
+  different answer is a mistake or a move, and an admin should know either way. A declined
+  request just goes; the driver isn't told why.
+- **`/admin/users/[id]`** (`admin/users/UserHomeBase.jsx`, Users area): "Home building"
+  with its source ("From the on-call sheet", "With their staff role", "They answered",
+  "Set by an admin") and whether the list has it, and **Change**, the driver's picker
+  pointed at `PUT /api/users/[id]/home-base` (`setHomeBaseByAdmin`, `source: 'admin'`,
+  `admin_audit` `user.homeBase` first), which settles a waiting request too.
+- **Change requests** sit in that same well: "Claude Test asked to change it to PRORI
+  0269 · Warwick, RI." with **Approve** (it becomes `homeBase`, `source: 'admin'`) and
+  **Decline** (the request goes), `POST /api/users/[id]/home-base-request` `{ approve }`
+  (`decideHomeBaseRequest`, `admin_audit` `user.homeBaseRequestApproved` / `…Declined`
+  first; nothing waiting is a 409). Approving a verified driver's move away from BETPA
+  shows a reminder of their sheet link ("They're still linked to BETPA's on-call sheet as
+  …"); removing the link stays its own step under Driver verification. Open requests count
+  in `/api/admin-alerts` (`homeBaseRequests`, Users area; `countHomeBaseRequests`) for the
+  header-menu badge ("N building changes", `lib/homeBaseRequestsStore.js`, lowered as one
+  is decided) and a `/admin` banner (`admin/users/HomeBaseRequestsNotice.jsx`) whose
+  Review opens `/admin/users?home=asked`.
+- **`/admin/users`** has a **Home building** select (`?home=`): Every building, Not
+  answered, Not on the list, Change asked, then each building with its count. Each card's
+  details say the building, "(not on the list)" and "· asked for …".
+- **The super admin's Home buildings** (`admin/hub/HomeBuildings.jsx`, a section of
+  `/admin/super`, `getHomeBaseSummary`): every building with its count and sources, Not
+  answered last, the total, and how many changes wait. Counts only, never who. Under it,
+  **Added by drivers**: each building that isn't on the list, grouped by number and alpha
+  code, with the cities drivers gave and how many gave it or are asking for it. Three
+  actions, through `/api/home-buildings/[key]` (`key` "ALPHA-NUMBER", super admin only),
+  each to `admin_audit` first:
+  - **Add to All Hubs** (`POST`, `addTypedBuildingToHubs`): a form filled in from what
+    drivers typed (number, alpha code, city, state) plus the street, ZIP and an optional
+    phone, since `/hubs` shows the address on its card (`validateHubEntry`). It inserts
+    the building into `allHubs`, in capitals like the rest of the list and with
+    `addedBy`, the app's only write there; one the list has already is refused ("Use Same
+    as"). The accounts that gave it, and requests for it, move to it, listed, named
+    "City, ST". It shows on `/hubs` for every driver. `homeBuilding.added`.
+  - **Same as…** (`PUT`, `mergeTypedBuilding`): the driver's picker, "Which listed
+    building is ZZZPA 9999?"; it must pick a listed one. Its accounts and requests move
+    to it. `homeBuilding.merged`.
+  - **Not a hub** (`DELETE`, `dismissTypedBuilding`), after a confirm: those accounts
+    lose their answer, so the `/home` card asks them again, and requests for it go.
+    `homeBuilding.dismissed`.
+- The activity feed names each of these (`auditText`, `lib/db/admins.js`), and
+  `DATA-MODEL.md`'s `allHubs` row says the app writes there now.
+- **Checked (2026-11-16):** every function against the dev database: a request for the
+  same building refused, Decline keeping the building, Approve moving it, deciding with
+  nothing waiting a 409, an admin's set; the summary grouping two typed buildings with
+  their cities; Same as refusing an unlisted target and moving to a listed one; Add
+  refusing a listed number, writing a new row in capitals and moving its drivers; Not a hub
+  clearing them. The test rows were removed. On a dev server against the dev copy at 390
+  px, light and dark: the profile's Ask to change and the request line, the admin well with
+  Approve and Decline and the menu badge, the hub's table and Added by drivers, the Add
+  form, and the users filter on Not on the list.
 
 ### Privacy
 

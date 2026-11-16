@@ -15,11 +15,17 @@ with the detail. Items move **Inbox → Ideas → Next → Now → done**, and a
   pushes until someone signs in on it. Delete them where `sessionVersion` is bumped?
   (found 2026-10-14 building Push stage 2, `PUSH-NOTIFICATIONS.md` → 2.4)
 
+- In `admin/users`, we should link the email to the superAdmin Email page with the email address pre-filled.
+
 ---
 
 ## Now
 
 Built and live, waiting on a check or a step only Tiago can do.
+
+- [ ] **Home buildings** (steps 1–4 built 2026-11-16, `MULTI-HUB.md` "Home base"): 202 of
+      222 accounts were unknown. Watch Home buildings on `/admin/super` fill in, check each
+      building under Added by drivers, and see the `/home` card on a real driver's phone
 
 - [ ] **Your turn** (built 2026-11-15, `coverUpNext`): on Thu 11/19, check that `push-log`
       has `coverUpNext` rows with no failures, nobody is told twice, and a push comes one
@@ -74,11 +80,6 @@ Built and live, waiting on a check or a step only Tiago can do.
 - [ ] **Covers stage 3:** picking in the app on the clock, with auto-pick. Settle the open
       questions first, starting with what the source of truth is once the app can't write
       the sheet (`COVER-BIDDING.md` → "Stage 3")
-- [ ] **Each driver's home building** (`MULTI-HUB.md` "Home base"): the census found 202
-      of 222 accounts unknown, 120 of them active (2026-11-16), and BETPA is filled in for
-      staff and verified drivers (step 2). The `/home` card that asks the rest is built
-      (step 3, 2026-11-16; see it under Notes on `/admin/super`); next the admin side with a
-      verified driver's change requests (step 4)
 
 ---
 

@@ -70,6 +70,7 @@ made up.
 | PDF | What it's for | Reprint it when |
 |---|---|---|
 | [`ON-CALL-SHEET-CONVENTIONS.pdf`](print/ON-CALL-SHEET-CONVENTIONS.pdf) | For dispatch, staff and cover drivers: how to keep the sheet so the app reads it right (based on `ON-CALL-SHEET-SYNC.md` → "Conventions for the sheet") | A parser changes what it accepts |
+| [`SHEET-IDEAS-FOR-DISPATCH.pdf`](print/SHEET-IDEAS-FOR-DISPATCH.pdf) | For dispatch: 15 optional ideas for the sheet itself (shifter jobs on their own tab, a Notes column, pick-list headings, dropdowns, a template tab, archiving the 530 tabs, view-only link sharing, phone numbers out of the shared file), each marked "Works today" or "After an app update". Its counts are from the sheet on 2026-11-16 | Dispatch takes up an idea, or a parser changes what it accepts |
 | [`SLICS-FLYER.pdf`](print/SLICS-FLYER.pdf) | The general flyer: a QR code to `www.slics.app`, looking up a SLIC, what's on its card, reading and posting tips | A lookup or tip button is renamed |
 | [`COVERS-FOR-DRIVERS.pdf`](print/COVERS-FOR-DRIVERS.pdf) | The Covers flyer: a QR code to `www.slics.app/covers`, what Covers is, getting verified, what the page shows | A Covers button is renamed |
 | [`DIRECTIONS-FOR-DRIVERS.pdf`](print/DIRECTIONS-FOR-DRIVERS.pdf) | The directions flyer: a QR code to `www.slics.app/home`, reading a route (ways, Step by step, Read aloud, Print), suggesting one. Its phones show Creator mode's made-up route | A button in the directions sheet is renamed |

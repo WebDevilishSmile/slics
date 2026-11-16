@@ -62,6 +62,12 @@ Built and live, waiting on a check or a step only Tiago can do.
 
 ## Waiting
 
+- [ ] **Waiting on dispatch (2026-11-16): `print/SHEET-IDEAS-FOR-DISPATCH.pdf`.** If they
+      want shifter jobs (idea 1, option B) or sleeper teams (idea 4) as sections on the
+      weekly tab, `lib/coverSheetParser.js` has to stop at the `SHIFTER JOBS` heading and
+      read the `SLEEPER TEAMS` one first: today a heading in the Job # column reads as a
+      job. Option A (their own `SHIFTERS 11/28/2026` tab) and the other ideas need nothing
+
 - [ ] **On hold (2026-11-12) until Tiago picks it back up: SLIC directions, stage 4,** the
       route as waypoints in Google Maps (`SLIC-DIRECTIONS.md`). Before then: confirm
       `ROUTE-REVIEW.md` → Do first with drivers (a gate code in a public PDF, low

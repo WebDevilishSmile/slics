@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ON CALL SHEET: ideas for an easier sheet</title>
+<!--
+  Suggestions for dispatch on the ON CALL SHEET's layout, words, tabs and
+  sharing (docs/print/SHEET-IDEAS-FOR-DISPATCH.pdf is this page printed to PDF
+  with headless Chrome, like ON-CALL-SHEET-CONVENTIONS.pdf: Segoe UI and
+  Consolas, --no-pdf-header-footer). It goes with the conventions sheet: that
+  one says how the app reads the sheet as it is, this one offers changes.
+  Every name in it is made up. Never put the sheet's link or id in here, or a
+  real driver's name or phone number.
+
+  What it's based on (read 2026-11-16, read-only): the tab list (530 tabs),
+  the W/E 11/28/2026 tab with its fills and hidden rows, the ON CALL, SHIFTERS
+  and Jobs tabs' first rows, and the file's sharing ("anyone with the link can
+  edit"). The app reads the sheet with an API key, so link viewing has to stay
+  on: idea 11 keeps it. Ideas marked "After an app update" need
+  lib/coverSheetParser.js to learn the section headings first.
+-->
+<style>
+  @page {
+    size: Letter;
+    margin: 0.55in 0.6in 0.65in;
+    @bottom-left { content: "ON CALL SHEET ideas · November 16, 2026"; font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; }
+    @bottom-right { content: "Page " counter(page) " of " counter(pages); font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; }
+  }
+  * { box-sizing: border-box; }
+  html { font: 9.6pt/1.38 "Segoe UI", Arial, Helvetica, sans-serif; color: #111; }
+  body { margin: 0; zoom: 1; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h1 { font-size: 21pt; line-height: 1.1; margin: 0 0 2pt; letter-spacing: -0.01em; }
+  .sub { font-size: 10.5pt; color: #333; margin: 0 0 9pt; }
+  h2 { font-size: 13.5pt; margin: 0 0 6pt; padding-bottom: 3pt; border-bottom: 2.2pt solid #111; }
+  h3 { font-size: 10.6pt; margin: 10pt 0 3pt; }
+  h3 .n { display: inline-block; min-width: 17pt; height: 13pt; line-height: 13pt; text-align: center; border-radius: 7pt; background: #111; color: #fff; font-size: 8.4pt; margin-right: 4pt; vertical-align: 1pt; }
+  p { margin: 0 0 5pt; }
+  ul, ol { margin: 0 0 4pt; padding-left: 14pt; }
+  li { margin: 0 0 2.6pt; break-inside: avoid; }
+  code, .cell { font: 8.9pt Consolas, "Courier New", monospace; background: #eef0f3; border: 0.5pt solid #c9ccd1; border-radius: 2pt; padding: 0 2.5pt; white-space: nowrap; }
+  .menu { font-weight: 700; }
+  .page { break-after: page; }
+  .page:last-child { break-after: auto; }
+  .lead { font-size: 10pt; }
+  .small { font-size: 8.6pt; color: #333; }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 18pt; }
+  .cols > div { min-width: 0; }
+  .box { border: 1pt solid #111; border-radius: 4pt; padding: 7pt 9pt 5pt; margin: 0 0 8pt; break-inside: avoid; }
+  .box.soft { border: 0.75pt solid #9aa0a8; background: #f6f7f9; }
+  .box h3 { margin-top: 0; }
+  .seen { color: #333; font-size: 8.8pt; margin: 2pt 0 3pt; }
+  .seen b { color: #111; }
+  .how { font-size: 8.9pt; margin: 2pt 0 4pt; padding-left: 15pt; }
+  .how li { margin-bottom: 1.6pt; }
+  .tag { display: inline-block; font-size: 6.9pt; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 2pt; padding: 0 3.5pt; vertical-align: 1pt; white-space: nowrap; }
+  .today { background: #1f6f3f; color: #fff; }
+  .later { border: 0.75pt solid #8a5a00; color: #6b4600; background: #fff4dc; }
+  table { border-collapse: collapse; width: 100%; margin: 3pt 0 7pt; break-inside: avoid; }
+  th, td { border: 0.5pt solid #8d9299; padding: 2pt 4pt; text-align: left; vertical-align: top; }
+  th { background: #e4e7eb; font-size: 8.4pt; }
+  table.glance td { font-size: 8.9pt; }
+  table.glance td:first-child { width: 16pt; text-align: center; font-weight: 700; }
+  table.glance td:nth-child(4) { white-space: nowrap; }
+  table.sheet { font: 6.9pt Consolas, "Courier New", monospace; }
+  table.sheet td, table.sheet th { padding: 1.4pt 3pt; white-space: nowrap; }
+  table.sheet th { font: 700 6.9pt Consolas, "Courier New", monospace; background: #d9d9d9; }
+  table.sheet .title td { font-weight: 700; background: #fff; }
+  table.sheet .section td { font-weight: 700; background: #111; color: #fff; letter-spacing: 0.03em; }
+  table.sheet .heading td { font-weight: 700; background: #eef0f3; }
+  table.sheet .new { background: #e3f2e8; }
+  table.sheet .gap td { background: repeating-linear-gradient(135deg, #fff 0 3pt, #e9ebee 3pt 6pt); color: #333; font-family: "Segoe UI", Arial, sans-serif; font-style: italic; }
+  table.sheet .heading td.note { background: none; font-weight: 400; }
+  table.sheet .section td.note { background: none; color: #111; font-weight: 400; letter-spacing: 0; }
+  table.sheet .note { border: none; font: 7.4pt "Segoe UI", Arial, sans-serif; color: #111; white-space: nowrap; padding-left: 6pt; background: none; }
+  .legend { font-size: 8.4pt; color: #333; margin: -3pt 0 6pt; }
+  .swatch { display: inline-block; width: 9pt; height: 9pt; border: 0.5pt solid #8d9299; vertical-align: -1pt; margin-right: 2pt; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGE 1 ============================ -->
+<section class="page">
+  <h1>ON CALL SHEET: ideas for an easier sheet</h1>
+  <p class="sub">Suggestions for dispatch from the SLICs app · November 16, 2026</p>
+
+  <p class="lead">Dispatch keeps the ON CALL SHEET going every week, often in a hurry and, on bid day, with the phone ringing. We've read every weekly tab since May and every edit since October, and a few ideas kept coming up that might make the sheet quicker to fill in, easier for a new dispatcher to pick up, and harder to get wrong. <b>They're only suggestions.</b> Take any, all or none, in whatever order suits you. None of them changes how the bid works, and the sheet stays yours.</p>
+  <p class="small">Every name in this document is made up. Where we mention something we saw in the sheet, it's to show why an idea might help, not to point at anyone. The companion sheet, <i>How the app reads the weekly cover tabs</i>, describes the sheet as it's kept today; nothing here undoes it.</p>
+
+  <h3 style="margin-top:6pt">At a glance</h3>
+  <table class="glance">
+    <tr><th></th><th>Idea</th><th>What it might help with</th><th>Time</th><th>With the app</th></tr>
+    <tr><td>1</td><td><b>Shifter jobs in a place of their own</b></td><td>No more hiding rows one by one; the job list shows only jobs to bid on</td><td>A few min a week</td><td><span class="tag today">Works today</span> on their own tab</td></tr>
+    <tr><td>2</td><td><b>A Notes column</b></td><td>Notes no longer look like a driver's name or a job</td><td>5 min, once</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>3</td><td><b>Headings in the pick list</b></td><td>Cover drivers and on call told apart at a glance</td><td>2 min a week</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>4</td><td><b>Sleeper teams in their own section</b></td><td>Who covers which seat, in one place</td><td>Once it's ready</td><td><span class="tag later">After an app update</span></td></tr>
+    <tr><td>5</td><td><b>Dropdowns for the common words</b></td><td>Same wording every week, less typing</td><td>20 min, once</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>6</td><td><b>One code per job</b></td><td>Every job tells apart from the others</td><td>As you go</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>7</td><td><b>Colors with a key, or a word</b></td><td>Anyone can read what a color means</td><td>5 min, once</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>8</td><td><b>Freeze the header rows</b></td><td>Headings stay in view while you scroll</td><td>1 min a tab</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>9</td><td><b>A clean template for each new week</b></td><td>Nothing carried over from last week; the title date isn't missed</td><td>30 min, once</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>10</td><td><b>Archive the old tabs</b></td><td>530 tabs down to a handful; this week is easy to find</td><td>30 min, once</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>11</td><td><b>Tabs in order, one naming style, colors</b></td><td>The right tab, first time</td><td>15 min, once</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>12</td><td><b>A look at the ON CALL tab's dates</b></td><td>The newest one shows 12/25/1899</td><td>2 min</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>13</td><td><b>Link can view; dispatch can edit</b></td><td>Nobody outside dispatch changes the sheet by accident</td><td>5 min, once</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>14</td><td><b>Phone numbers in a private file</b></td><td>Drivers' numbers off a sheet anyone with the link can open</td><td>15 min, once</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>15</td><td><b>Name a version when a week posts</b></td><td>An easy way to look back, or undo</td><td>1 min a week</td><td><span class="tag today">Works today</span></td></tr>
+  </table>
+  <p class="legend"><span class="tag today">Works today</span> the app reads the sheet fine either way. <span class="tag later">After an app update</span> we'd change the app first and tell you when it's ready, so nothing breaks in between.</p>
+
+  <div class="cols">
+    <div class="box">
+      <h3>If you only try three</h3>
+      <ol>
+        <li><b>Freeze the header rows</b> (8). One minute, and every tab is easier to scroll.</li>
+        <li><b>Link can view; dispatch can edit</b> (13). Five minutes, and the sheet is much harder to wipe by mistake.</li>
+        <li><b>A Notes column</b> (2). Notes get a home that drivers and the app both read correctly.</li>
+      </ol>
+    </div>
+    <div class="box soft">
+      <h3>What stays the same</h3>
+      <p style="margin:0">The tab named by its Saturday's date, the title row, the two header rows, names as <code>LAST, FIRST</code>, the pick numbers, and how the bid runs. Each idea here is a small addition or a tidy-up around those.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PAGE 2 ============================ -->
+<section class="page">
+  <h2>1 · The weekly tab</h2>
+
+  <p style="margin-bottom:3pt"><b>How a week could look</b> with ideas 1 to 4 (every name and job here is made up; green cells are new):</p>
+  <table class="sheet">
+    <tr class="title"><td colspan="11">JOBS AVAILABLE FOR W/E 11.28.2026</td><td class="note"></td></tr>
+    <tr><th>Job #</th><th>NAME</th><th>Assigned Driver</th><th>Cover Reason</th><th>Sun</th><th>Mon</th><th>Tue…Fri</th><th>Sat</th><th>Description</th><th class="new" colspan="2">Notes</th><td class="note">← frozen (8)</td></tr>
+    <tr><td>LV57</td><td>DOE, JANE</td><td>SMITH, JOHN</td><td>VACATION</td><td></td><td>07:00</td><td>07:00</td><td></td><td>Mon-Fri: BETPA&gt;LANPA&gt;BETPA</td><td class="new" colspan="2"></td><td class="note">← a dropdown (5)</td></tr>
+    <tr><td>XTR4</td><td></td><td></td><td>PEAK JOB</td><td>18:00</td><td>18:00</td><td>18:00</td><td></td><td>WAA</td><td class="new" colspan="2"></td><td class="note"></td></tr>
+    <tr><td>BE11</td><td></td><td></td><td>VACANT</td><td></td><td>21:30</td><td>21:30</td><td></td><td>Mon-Fri: BETPA&gt;NEWPA&gt;BETPA</td><td class="new" colspan="2">STA needed</td><td class="note">← a note (2)</td></tr>
+    <tr><td>CS1</td><td></td><td></td><td>PEAK JOB</td><td></td><td>14:00</td><td>14:00</td><td></td><td>Carrier shifting</td><td class="new" colspan="2"></td><td class="note">← one code (6)</td></tr>
+    <tr class="section"><td colspan="11">SLEEPER TEAMS</td><td class="note">← app update (4)</td></tr>
+    <tr><td>ER18013</td><td>ROE, RICHARD</td><td>LEE, SAM</td><td>VACATION</td><td></td><td></td><td></td><td></td><td></td><td class="new" colspan="2">3rd move from LV81</td><td class="note"></td></tr>
+    <tr class="gap"><td colspan="11">one blank row, then the pick list</td><td class="note"></td></tr>
+    <tr><th></th><th>NAME</th><th></th><th></th><th colspan="7">PICK #1 … PICK #7</th><td class="note"></td></tr>
+    <tr class="heading"><td></td><td class="new">*COVER DRIVERS 1-20</td><td></td><td></td><td colspan="7"></td><td class="note">← skipped (3)</td></tr>
+    <tr><td>07:00</td><td>DOE, JANE</td><td>1</td><td>LV57</td><td colspan="7"></td><td class="note"></td></tr>
+    <tr><td></td><td>POE, ANN</td><td></td><td>VACATION</td><td colspan="7"></td><td class="note"></td></tr>
+    <tr><td>07:30</td><td>ROE, RICHARD</td><td>3</td><td>COVERING ER18013</td><td colspan="7"></td><td class="note"></td></tr>
+    <tr class="heading"><td></td><td class="new">*ON CALL 21 AND UP</td><td></td><td></td><td colspan="7"></td><td class="note">← (3)</td></tr>
+    <tr><td>13:00</td><td>KIM, ALEX</td><td>21</td><td></td><td colspan="7"></td><td class="note"></td></tr>
+  </table>
+  <p class="small" style="margin-top:-3pt">And the shifter jobs, with nothing hidden, on a tab of their own named <code>SHIFTERS 11/28/2026</code> (1), laid out the same way.</p>
+
+  <div class="cols">
+    <div>
+      <h3><span class="n">1</span>Shifter jobs in a place of their own</h3>
+      <p>Today the shifter jobs sit at the top of the job list in gray, and each row is hidden so drivers don't see them as jobs to bid on. It works, but it's easy to miss a row, and a hidden row is easy to forget is there.</p>
+      <p class="seen"><b>Seen:</b> on W/E 11/28, seven shifter rows hidden at the top, and one of them (<code>SH07</code>) listed again further down among the bid jobs, in orange and not hidden.</p>
+      <p><b>Option A</b> <span class="tag today">Works today</span> A tab of their own each week, like <code>SHIFTERS 11/28/2026</code>. The app only reads tabs named with the date alone, so drivers never see it, and nothing needs hiding.</p>
+      <p><b>Option B</b> <span class="tag later">After an app update</span> On the same tab, under a heading row <code>SHIFTER JOBS (NOT FOR BID)</code> below the bid jobs. If you'd prefer this, we'll teach the app to stop at that heading first and let you know when it's safe.</p>
+
+      <h3><span class="n">2</span>A Notes column</h3>
+      <p>Add a column headed <code>Notes</code> to the right of Description. The app doesn't read it, so anything typed there stays a note: "STA needed", "3rd move from LV81", "no route".</p>
+      <p class="seen"><b>Seen:</b> <code>STA NEEDED</code> typed under NAME, which the app reads as a driver by that name taking the job; three "3RD MOVE FROM …" rows with no Job #; <code>NO ROUTE</code> under NAME.</p>
+      <ol class="how">
+        <li>Right-click the <b>Description</b> column letter → <span class="menu">Insert 1 column right</span>.</li>
+        <li>Type <code>Notes</code> in the header row of that column.</li>
+      </ol>
+    </div>
+    <div>
+      <h3><span class="n">3</span>Headings in the pick list</h3>
+      <p>A row with <code>*COVER DRIVERS 1-20</code> under NAME before driver 1, and <code>*ON CALL 21 AND UP</code> before driver 21. The asterisk tells the app it's a heading, not a driver, so it skips the row. A new dispatcher sees where the cover list ends without counting.</p>
+      <p class="seen"><b>Worth knowing:</b> in the pick list, unlike the job list, a hidden row is still read. A hidden name with a call-in time shows in the app as a driver without a number. Deleting the row keeps it out (last week's tab still has it).</p>
+
+      <h3><span class="n">4</span>Sleeper teams in their own section</h3>
+      <p><span class="tag later">After an app update</span> The <code>ER</code> seats under a <code>SLEEPER TEAMS</code> heading at the end of the job list: the seat, who's covering it, whose seat it is, and why. The covering driver's own row then says <code>COVERING ER18013</code>, as it does today.</p>
+      <p class="seen"><b>Seen:</b> the seats already gather at the end of the list, next to the "3rd move" notes. A heading would make that official. Drivers never see sleeper seats in the app either way.</p>
+
+      <div class="box soft" style="margin-top:8pt">
+        <h3>Why a word beats a color, every time</h3>
+        <p style="margin:0">The app reads the words in cells and nothing else: no colors, no hidden rows in the pick list, no comments. A heading, a note or a status in a cell reads the same to a new dispatcher, a driver on their phone, and the app.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PAGE 3 ============================ -->
+<section class="page">
+  <h2>2 · Words, colors and a template</h2>
+  <div class="cols">
+    <div>
+      <h3><span class="n">5</span>Dropdowns for the common words</h3>
+      <p>A dropdown on <b>Cover Reason</b> and on the pick list's <b>job / status</b> cell lets dispatch pick a word instead of typing it, and every week reads the same. With "Show a warning", anything else can still be typed, so a job code or a one-off still goes in.</p>
+      <p class="seen"><b>Seen:</b> on one tab, <code>PEAK</code>, <code>PEAK JOB</code> and <code>peak</code> for the same reason; <code>RETIRED</code> and <code>EXTRA CPU</code> beside <code>VACATION</code>. In 16 weeks, nearly 50 wordings for about a dozen reasons.</p>
+      <p style="margin-bottom:2pt"><b>A starting list</b>, to change as dispatch sees fit:</p>
+      <table>
+        <tr><th>Cover Reason</th><th>Job / status</th></tr>
+        <tr><td style="font-size:8.6pt">VACATION · FMLA · VACANT · PEAK JOB · NEW JOB · EXTRA JOB · COMBO WEEK · VOLUNTARY LAYOFF · REDUCTION OF WORKFORCE · P/H · RETIRED · OTHER</td><td style="font-size:8.6pt">ON CALL · VACATION · FMLA · BUYOUT · PASS · NO ANSWER · DIS · LIGHT DUTY · WORKERS COMP · VOLUNTARY LAYOFF · TWI AND NIGHT (MON-THU)</td></tr>
+      </table>
+      <ol class="how">
+        <li>Select the Cover Reason column (click its letter).</li>
+        <li><span class="menu">Data → Data validation → Add rule</span>.</li>
+        <li>Criteria: <b>Dropdown</b>. Type each word on its own line.</li>
+        <li>Under <b>Advanced options</b>: <b>Show a warning</b>. <span class="menu">Done</span>.</li>
+      </ol>
+      <p class="small">Once it's on the template (9), every new week has it.</p>
+
+      <h3><span class="n">6</span>One code per job</h3>
+      <p>Each job with a code of its own, in capitals and without spaces, for the whole week. Drivers' lists and the app's history follow the code, so two jobs sharing one get mixed up.</p>
+      <p class="seen"><b>Seen:</b> on W/E 11/28, <code>XTR99</code> on two rows with different start times, <code>CARRIER SHIFT</code> used as the code for two jobs, and <code>xtr88</code> in lower case. Something like <code>CS1</code> and <code>CS2</code> keeps them apart.</p>
+
+      <h3><span class="n">7</span>Colors with a key, or a word</h3>
+      <p>Colors carry a lot of meaning in the sheet today: gray rows, a yellow Job # on every job, two shades of yellow behind names in the pick list, red and light-blue fills on hidden rows, an orange row. Someone new can't tell what each one means, and the app can't see them at all.</p>
+      <p>Two easy fixes, either or both: a <b>key</b>, a short row at the top right of the tab saying what each color means, or the meaning <b>in a word</b> (the Notes column, a heading, a status) beside the color.</p>
+    </div>
+    <div>
+      <h3><span class="n">8</span>Freeze the header rows</h3>
+      <p>With the title and the job header frozen, the column names stay at the top while you scroll down a 150-row tab.</p>
+      <ol class="how">
+        <li>Open the week's tab.</li>
+        <li><span class="menu">View → Freeze → 2 rows</span>.</li>
+      </ol>
+      <p class="seen"><b>Seen:</b> no tab in the file has frozen rows today.</p>
+
+      <h3><span class="n">9</span>A clean template for each new week</h3>
+      <p>Most weeks start as a copy of last week's tab, which brings along last week's hidden rows, notes, colors and title. A <b>TEMPLATE</b> tab that's blank but ready (title, both header rows, the Notes column, the pick-list headings, the dropdowns, frozen rows) gives every week the same clean start.</p>
+      <p class="seen"><b>Seen:</b> since May, 2 tabs had no title row and 2 kept the title of another week, so the app couldn't save those weeks. The light shading on days a job doesn't run stops at a fixed row on each tab, so jobs added below it don't get it.</p>
+      <ol class="how">
+        <li>Make the TEMPLATE tab once: copy a week, clear the jobs and names, type <code>JOBS AVAILABLE FOR W/E</code> in the title.</li>
+        <li>Protect it with a warning: <span class="menu">Data → Protect sheets and ranges → Add a sheet or range → Sheet → Set permissions</span> → <b>Show a warning when editing this range</b>.</li>
+        <li>Each new week: right-click the TEMPLATE tab → <span class="menu">Duplicate</span>, rename it to the Saturday's date, and add the date to the title.</li>
+      </ol>
+      <p class="small">The file already has a protected <i>Sample On Call</i> tab, so the idea isn't new to it.</p>
+
+      <div class="box soft" style="margin-top:8pt">
+        <h3>Building a week in private</h3>
+        <p style="margin:0">Building next week under a working name, like <code>DRAFT 11/28</code>, and renaming it to the date when it's ready means drivers get one "Cover jobs posted" for the finished week instead of following it as it's typed in. It pairs well with the template.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PAGE 4 ============================ -->
+<section class="page">
+  <h2>3 · The file, and keeping it safe</h2>
+  <div class="cols">
+    <div>
+      <h3><span class="n">10</span>Archive the old tabs</h3>
+      <p>The file has <b>530 tabs</b> going back to March 2022: 247 weekly job lists, 202 ON CALL tabs, 34 hub driver lists, 17 "Copy of" tabs, 13 interest lists and 9 tabs still named "Sheet…". The Jobs tab is the very last one. That's a lot of scrolling to reach this week, and a big file is slower to open on a phone.</p>
+      <p>One way that keeps everything: make a copy of the whole file as an archive, then remove the old tabs from the working file, keeping the last two months or so.</p>
+      <ol class="how">
+        <li><span class="menu">File → Make a copy</span>, named <code>ON CALL SHEET ARCHIVE 2022-2026</code>.</li>
+        <li>Open the copy and check it has everything.</li>
+        <li>Back in the working file, right-click each old tab → <span class="menu">Delete</span>. (Or, more gently, <span class="menu">Hide sheet</span>.)</li>
+      </ol>
+      <p class="small">The app only reads the current and coming weeks, and it keeps its own copy of past weeks, so an archive doesn't change anything drivers see.</p>
+
+      <h3><span class="n">11</span>Tabs in order, one naming style, colors</h3>
+      <p>The tabs everyone uses every week first (Jobs, SHIFTERS, the driver lists), then the weeks, newest first. One name style for each kind (<code>11/28/2026</code>, <code>ON CALL 11/28/2026</code>), and one tab color per kind: right-click a tab → <span class="menu">Change color</span>.</p>
+      <p class="seen"><b>Seen:</b> dates written at least six ways in tab names (<code>11/28/2026</code>, <code>01/10/2026</code>, <code>8/30/25</code>, <code>3.26.2022</code>, <code>on call 02.04.23</code>, <code>oncall12.10.22</code>), and the week of 1/17/2026 named <code>1/17/2025</code>.</p>
+
+      <h3><span class="n">12</span>A look at the ON CALL tab's dates</h3>
+      <p>On <code>ON CALL 11/14/2026</code>, the <b>Date:</b> above each day shows <code>12/25/1899</code>, <code>12/26/1899</code> and so on. That's what Google Sheets shows when a date is worked out from an empty cell. The weeks before it show the right dates, so the cell the days count from was probably left blank when the tab was made. Typing the week's first date there fixes all five days.</p>
+    </div>
+    <div>
+      <h3><span class="n">13</span>Link can view; dispatch can edit</h3>
+      <p>Today <b>anyone with the link can edit</b> the sheet, and a link travels easily. One wrong paste or an accidental delete from anyone who has it, and a week is gone. Making the link <b>view-only</b> and adding each dispatcher as an editor (each needs a Google account) keeps everyone who edits today able to, and everyone else able to look.</p>
+      <ol class="how">
+        <li><span class="menu">Share</span> → add each dispatcher's email as <b>Editor</b>.</li>
+        <li>Under <b>General access</b>: Anyone with the link → <b>Viewer</b>.</li>
+        <li>The gear at the top → untick <b>Editors can change permissions and share</b>.</li>
+      </ol>
+      <p class="small">The SLICs app needs the link to stay open for <i>viewing</i>, which this keeps. It's the sheet owner's call, and usually the owner's change to make.</p>
+
+      <h3><span class="n">14</span>Phone numbers in a private file</h3>
+      <p>The SHIFTERS tab lists drivers' personal phone numbers, and the ON CALL tabs hold notes from calls. Anyone with the link can open the whole file, every tab included. A separate small file for phone numbers, shared only with dispatch, keeps them close at hand without being on a link that's been passed around.</p>
+
+      <h3><span class="n">15</span>Name a version when a week posts</h3>
+      <p>Google keeps every change, but finding "how it looked when we posted" is hard in a long list. Naming the moment takes a few seconds and makes it easy to look back, or put a week back as it was.</p>
+      <ol class="how">
+        <li><span class="menu">File → Version history → Name current version</span>.</li>
+        <li>Type something like <code>W/E 11/28 posted</code>.</li>
+      </ol>
+
+      <div class="box" style="margin-top:9pt">
+        <h3>If you'd like to try any of this</h3>
+        <ul style="margin-bottom:2pt">
+          <li><b>No rush, one at a time.</b> A quiet day suits best, not a bid day, and not Thanksgiving week.</li>
+          <li><b>A heads-up helps.</b> A word to a SLICs admin before the layout changes, and we'll watch the app through that first week.</li>
+          <li><b>We're glad to help.</b> Setting up the dropdowns, the template or the archive copy goes quicker side by side, at a time that suits dispatch.</li>
+          <li><b>The sheet stays yours.</b> The app only reads it. Whatever dispatch decides, we'll make the app fit.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

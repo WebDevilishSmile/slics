@@ -102,7 +102,9 @@ export default function PrivacyPage() {
               administrator checks it before adding it to the list. If
               you&apos;re verified for covers, or an administrator or
               dispatcher, your account notes the Bethlehem building (BETPA),
-              the one SLICs serves today. Other drivers never see it.
+              the one SLICs serves today; if you ask to change it, your request
+              is kept until an administrator decides it. Other drivers never
+              see it.
             </>,
             <>
               <strong>Driver tips and places.</strong> The tips and replies you

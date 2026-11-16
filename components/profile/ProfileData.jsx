@@ -3,10 +3,8 @@
 import dayjs from 'dayjs';
 import Link from '@/components/utility/NextLink';
 import { useState } from 'react';
-import { visuallyHidden } from '@mui/utils';
 
 import { capitalizeFirstLetter } from '@/lib/format';
-import { homeBaseIsFixed, homeBaseLabel } from '@/lib/homeBase';
 
 import {
   BadgeOutlined,
@@ -17,7 +15,6 @@ import {
   SettingsOutlined,
   VerifiedOutlined,
   VolunteerActivismOutlined,
-  WarehouseOutlined,
   WorkOutline,
 } from '@mui/icons-material';
 import {
@@ -31,13 +28,13 @@ import {
   Typography,
 } from '@mui/material';
 
-import HomeBasePicker from '@/components/homeBase/HomeBasePicker';
 import BmcButton from '@/components/layout/BmcButton';
 import SoftNotice from '@/components/utility/SoftNotice';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
-import { softInset, softPressSx, softRaisedSmall } from '@/components/utility/soft';
+import { softInset, softPressSx } from '@/components/utility/soft';
 import ConfirmEmailButton from './ConfirmEmailButton';
 import EditProfileDialog from './EditProfileDialog';
+import HomeBaseRow from './HomeBaseRow';
 import ProfileImage from './ProfileImage';
 import PushNotifications from './PushNotifications';
 import ThisWeek from './ThisWeek';
@@ -87,12 +84,6 @@ function ProfileData({
   const [snackMessage, setSnackMessage] = useState('Random error occurred');
   const [snackSeverity, setSnackSeverity] = useState('error');
   const [editProfileOpen, setEditProfileOpen] = useState(false);
-  // The building they work out of (docs/MULTI-HUB.md "Home base"), updated
-  // in place when they change it.
-  const [homeBase, setHomeBase] = useState(userData?.homeBase ?? null);
-  const [homeBasePickerOpen, setHomeBasePickerOpen] = useState(false);
-  const [homeBaseSaved, setHomeBaseSaved] = useState(false);
-  const homeBaseFixed = homeBaseIsFixed(userData);
 
   const handleCloseSnack = () => {
     setOpenSnack(false);
@@ -225,36 +216,7 @@ function ProfileData({
               {userData.driverVerified ? `Verified · ${userData.driverName}` : 'Not verified'}
             </Detail>
           )}
-          <Detail icon={<WarehouseOutlined />} label='Home building'>
-            {homeBase ? homeBaseLabel(homeBase) : 'Not set'}
-            {homeBase?.listed === false && (
-              <Typography component='span' variant='body2' color='text.secondary' sx={{ display: 'block' }}>
-                Waiting to be checked
-              </Typography>
-            )}
-            {/* A verified driver's or staff's follows the sheet or their role
-                (homeBaseIsFixed); asking an admin to change it is step 4. */}
-            {homeBaseFixed && homeBase && (
-              <Typography component='span' variant='body2' color='text.secondary' sx={{ display: 'block' }}>
-                {userData.driverVerified ? 'Set from the on-call sheet' : 'Set with your staff role'}
-              </Typography>
-            )}
-          </Detail>
-          <Box component='span' role='status' aria-live='polite' sx={visuallyHidden}>
-            {homeBaseSaved ? `Home building saved: ${homeBaseLabel(homeBase)}` : ''}
-          </Box>
-          {!homeBaseFixed && (
-            <Box sx={{ pl: 4.5, mt: -1 }}>
-              <Button
-                size='small'
-                onClick={() => setHomeBasePickerOpen(true)}
-                aria-haspopup='dialog'
-                sx={[softRaisedSmall, softPressSx, { px: 1.5, minHeight: '2.5rem' }]}
-              >
-                {homeBase ? 'Change' : 'Set your building'}
-              </Button>
-            </Box>
-          )}
+          <HomeBaseRow Detail={Detail} userData={userData} />
           <Detail icon={<LocalCafeOutlined />} label='Membership'>
             {userData.bmcMember ? 'Active' : 'Inactive'}
           </Detail>
@@ -277,16 +239,6 @@ function ProfileData({
           Become a member to keep your SLIC history and support the app.
         </SoftNotice>
       )}
-
-      <HomeBasePicker
-        open={homeBasePickerOpen}
-        onClose={() => setHomeBasePickerOpen(false)}
-        onSaved={(saved) => {
-          setHomeBase(saved);
-          setHomeBasePickerOpen(false);
-          setHomeBaseSaved(true);
-        }}
-      />
 
       <EditProfileDialog
         open={editProfileOpen}

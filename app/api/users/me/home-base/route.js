@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { requireUser } from '@/lib/authz';
-import { saveAskedHomeBase } from '@/lib/db/homeBase';
+import { requestHomeBaseChange, saveAskedHomeBase } from '@/lib/db/homeBase';
 import { homeBaseIsFixed, validateHomeBaseInput } from '@/lib/homeBase';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { toHomeBase } from '@/lib/serializers';
@@ -14,18 +14,12 @@ const WINDOW_MS = 60 * 60 * 1000; // an hour
 // building they work out of (docs/MULTI-HUB.md "Home base", step 3), from the
 // card on /home or Change on /profile. Saved as `source: 'asked'`; whether the
 // All Hubs list has it (`listed`) is the server's call, never the body's. A
-// verified driver's or staff's is fixed (homeBaseIsFixed): 403.
-// → { homeBase } (toHomeBase).
+// verified driver's or staff's is fixed (homeBaseIsFixed), so theirs is saved
+// as a request for an admin instead (MULTI-HUB.md "Home base", step 4).
+// → { homeBase } or { request } (toHomeBase).
 export async function PUT(request) {
   const { session, denied } = await requireUser();
   if (denied) return denied;
-
-  if (homeBaseIsFixed(session.user)) {
-    return NextResponse.json(
-      { error: 'Your building comes from the on-call sheet. Ask an admin to change it.' },
-      { status: 403 },
-    );
-  }
 
   const rate = await checkRateLimit({
     key: `home-base:${session.user.id}`,
@@ -49,6 +43,11 @@ export async function PUT(request) {
   if (error) return NextResponse.json({ error }, { status: 400 });
 
   try {
+    if (homeBaseIsFixed(session.user)) {
+      const result = await requestHomeBaseChange(session.user.id, value);
+      if (result.error) return NextResponse.json({ error: result.error }, { status: 400 });
+      return NextResponse.json({ request: toHomeBase(result.request) });
+    }
     const result = await saveAskedHomeBase(session.user.id, value);
     if (result.error) return NextResponse.json({ error: result.error }, { status: 400 });
     return NextResponse.json({ homeBase: toHomeBase(result.homeBase) });

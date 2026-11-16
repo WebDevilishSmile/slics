@@ -64,7 +64,7 @@ export default function HomeBaseCard({ profileHref, preview = false, onHide }) {
     }
   };
 
-  const onSaved = (homeBase) => {
+  const onSaved = ({ homeBase }) => {
     setPickerOpen(false);
     setSaved(homeBase);
     setState('saved');

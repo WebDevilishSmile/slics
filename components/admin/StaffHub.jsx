@@ -5,6 +5,8 @@ import DriverClaimsNotice from '@/components/admin/driverClaims/DriverClaimsNoti
 import JobChangesNotice from '@/components/admin/sheetJobs/JobChangesNotice';
 import SlicReportsNotice from '@/components/admin/slicReports/SlicReportsNotice';
 import RouteSuggestionsNotice from '@/components/admin/routeSuggestions/RouteSuggestionsNotice';
+import HomeBaseRequestsNotice from '@/components/admin/users/HomeBaseRequestsNotice';
+import { countHomeBaseRequests } from '@/lib/db/homeBase';
 import { getOpenRouteSuggestionSummary } from '@/lib/db/routeSuggestions';
 import { getOpenDisputeCount } from '@/lib/db/coverDisputes';
 import { getOpenCoverReportSummary } from '@/lib/db/coverReports';
@@ -88,13 +90,24 @@ async function openDisputes() {
   }
 }
 
+// Home building changes drivers asked for (docs/MULTI-HUB.md "Home base"),
+// for their banner. Same rule.
+async function homeBaseRequests() {
+  try {
+    return await countHomeBaseRequests();
+  } catch (error) {
+    console.error('Error counting home building requests for a staff hub:', error);
+    return 0;
+  }
+}
+
 // The banners and links of a staff hub, /admin or /dispatch
 // (docs/archive/STAFF-ROLES.md), for the areas (keys) given: each area's links in
 // STAFF_AREAS order, and each banner read only when its area is there.
 // `extraLinks` go last (the super admin's hub link).
 export default async function StaffHub({ areas, userId, extraLinks = [], label }) {
   const has = (key) => areas.includes(key);
-  const [jobChanges, coverJobChanges, reports, claims, disputes, coverReports, routeSuggestions] = await Promise.all([
+  const [jobChanges, coverJobChanges, reports, claims, disputes, coverReports, routeSuggestions, buildingChanges] = await Promise.all([
     has('jobs') ? unseenJobChanges(userId) : null,
     has('covers') ? unseenCoverJobChanges(userId) : null,
     has('reports') ? openReports() : null,
@@ -102,6 +115,7 @@ export default async function StaffHub({ areas, userId, extraLinks = [], label }
     has('driverClaims') ? openDisputes() : 0,
     has('covers') ? openCoverReports() : null,
     has('slics') ? openRouteSuggestions() : null,
+    has('users') ? homeBaseRequests() : 0,
   ]);
   const links = [...areaEntries(areas).flatMap((area) => area.links), ...extraLinks];
 
@@ -111,6 +125,7 @@ export default async function StaffHub({ areas, userId, extraLinks = [], label }
       {routeSuggestions && <RouteSuggestionsNotice {...routeSuggestions} />}
       {coverReports && <CoverReportsNotice {...coverReports} />}
       {has('driverClaims') && <DriverClaimsNotice count={claims} disputes={disputes} />}
+      {has('users') && <HomeBaseRequestsNotice count={buildingChanges} />}
       {jobChanges && <JobChangesNotice {...jobChanges} />}
       {coverJobChanges && <CoverJobChangesNotice {...coverJobChanges} />}
       {links.length > 0 && <AdminLinks links={links} label={label} />}

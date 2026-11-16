@@ -54,25 +54,29 @@ const EMPTY_TYPED = { numSlic: '', alphaSlic: '', city: '', state: '' };
 // Codes show in capitals as they're typed; the server uppercases them too.
 const capsSx = [softInputSx, { '& input': { textTransform: 'uppercase' } }];
 
-// Saves a pick through PUT /api/users/me/home-base and returns the saved home
-// base (toHomeBase). With `preview` (the super admin's Notes, where their
-// own building is fixed) nothing is sent: it answers as the server would,
-// from the list. Throws with the message to show.
-export async function putHomeBase(body, { preview = false, hubs = [] } = {}) {
+// Saves a pick with a PUT to `endpoint` and returns what the route answers:
+// `{ homeBase }`, `{ request }` (a verified driver's or staff's, waiting for an
+// admin) or, from an admin's save, `{ homeBase, homeBaseRequest }`. With
+// `preview` (the super admin's Notes, where their own building is fixed)
+// nothing is sent: it answers as the driver's route would, from the list.
+// Throws with the message to show.
+export const MY_HOME_BASE_URL = '/api/users/me/home-base';
+export async function putHomeBase(body, { preview = false, hubs = [], endpoint = MY_HOME_BASE_URL } = {}) {
   if (preview) {
     const numSlic = String(body.numSlic).trim().toUpperCase();
     const alphaSlic = String(body.alphaSlic).trim().toUpperCase();
     const hub = hubs.find((choice) => choice.numSlic === numSlic && choice.alphaSlic === alphaSlic);
-    return { numSlic, alphaSlic, name: hub ? hub.town : hubTown(body.city, body.state), source: 'asked', listed: Boolean(hub) };
+    const name = hub ? hub.town : hubTown(body.city, body.state);
+    return { homeBase: { numSlic, alphaSlic, name, source: 'asked', listed: Boolean(hub) } };
   }
-  const response = await fetch('/api/users/me/home-base', {
+  const response = await fetch(endpoint, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || "Couldn't save your building. Please try again.");
-  return data.homeBase;
+  if (!response.ok) throw new Error(data.error || "Couldn't save the building. Please try again.");
+  return data;
 }
 
 // Which building a driver works out of (docs/MULTI-HUB.md "Home base", step
@@ -81,8 +85,18 @@ export async function putHomeBase(body, { preview = false, hubs = [] } = {}) {
 // enough for the super admin to find the building). A
 // typed number the list has offers that building first, so a typo or a
 // missed search ends on the listed one. Saves through putHomeBase and hands
-// the saved home base to `onSaved`; `preview` saves nothing.
-export default function HomeBasePicker({ open, onClose, onSaved, preview = false }) {
+// the route's answer to `onSaved`; `preview` saves nothing. An admin's page
+// passes its own `endpoint`, `title` and `description` (null for none).
+export default function HomeBasePicker({
+  open,
+  onClose,
+  onSaved,
+  preview = false,
+  endpoint = MY_HOME_BASE_URL,
+  title = 'Which building do you work out of?',
+  description = "So SLICs can show your building's routes when other hubs join.",
+  saveLabel = 'Save',
+}) {
   const [hubs, setHubs] = useState(null);
   const [loadError, setLoadError] = useState('');
   const [picked, setPicked] = useState(null);
@@ -126,9 +140,9 @@ export default function HomeBasePicker({ open, onClose, onSaved, preview = false
     setSaving(true);
     setError('');
     try {
-      const homeBase = await putHomeBase(body, { preview, hubs: hubs ?? [] });
+      const saved = await putHomeBase(body, { preview, hubs: hubs ?? [], endpoint });
       tapHaptic();
-      onSaved(homeBase);
+      onSaved(saved);
     } catch (saveError) {
       setError(saveError.message);
     } finally {
@@ -151,11 +165,9 @@ export default function HomeBasePicker({ open, onClose, onSaved, preview = false
 
   return (
     <BottomSheetDialog open={open} onClose={saving ? undefined : onClose} aria-labelledby='home-base-title'>
-      <DialogTitle id='home-base-title'>Which building do you work out of?</DialogTitle>
+      <DialogTitle id='home-base-title'>{title}</DialogTitle>
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-        <DialogContentText>
-          So SLICs can show your building&apos;s routes when other hubs join.
-        </DialogContentText>
+        {description && <DialogContentText>{description}</DialogContentText>}
 
         {loadError && <Alert severity='error'>{loadError}</Alert>}
 
@@ -287,7 +299,7 @@ export default function HomeBasePicker({ open, onClose, onSaved, preview = false
           disabled={!canSave || saving}
           sx={softContainedSx}
         >
-          {saving ? 'Saving…' : 'Save'}
+          {saving ? 'Saving…' : saveLabel}
         </Button>
         <Button size='large' onClick={onClose} disabled={saving} sx={[softRaisedSmall, softPressSx]}>
           Cancel

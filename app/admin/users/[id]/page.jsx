@@ -16,12 +16,14 @@ import {
   serializeSlics,
   serializeComments,
   toCoversAccess,
+  toHomeBase,
 } from '@/lib/serializers';
 import dayjs from 'dayjs';
 import UserComments from '@/components/admin/users/UserComments';
 import UserSlics from '@/components/admin/users/UserSlics';
 import UserCoversAccess from '@/components/admin/users/UserCoversAccess';
 import UserDriver from '@/components/admin/users/UserDriver';
+import UserHomeBase from '@/components/admin/users/UserHomeBase';
 import UserDangerZone from '@/components/admin/users/UserDangerZone';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
 
@@ -106,6 +108,15 @@ async function UserPage({ params }) {
             verifiedBy: user.driver?.verifiedBy?.name ?? null,
           }}
           names={sheetNames}
+        />
+
+        {/* Where they work out of, and a change they asked for
+            (docs/MULTI-HUB.md "Home base", step 4). */}
+        <UserHomeBase
+          userId={user._id.toString()}
+          name={displayName(user.name ?? '')}
+          initial={{ homeBase: toHomeBase(user.homeBase), homeBaseRequest: toHomeBase(user.homeBaseRequest) }}
+          driverName={user.driver?.verifiedAt ? displayName(user.driver.name ?? '') : null}
         />
 
         {/* Deleting the account: the super admin only, never their own or

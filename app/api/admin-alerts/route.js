@@ -7,17 +7,20 @@ import { getPendingClaimCount } from '@/lib/db/driverClaims';
 import { getUnseenJobChanges } from '@/lib/db/sheetJobs';
 import { getOpenReportSummary } from '@/lib/db/slicReports';
 import { getOpenRouteSuggestionSummary } from '@/lib/db/routeSuggestions';
+import { countHomeBaseRequests } from '@/lib/db/homeBase';
 import { getCoverChangesSeenAt, getJobChangesSeenAt } from '@/lib/db/users';
 
 // Every count behind the staff header-menu badge, in one call
 // (lib/adminAlertsStore.js): Jobs-tab and cover job changes this account
 // hasn't seen, open SLIC reports, pending driver claims and open cover
 // disputes, open cover reports, and open route suggestions (the SLICs
-// area, docs/SLIC-DIRECTIONS.md). It was five calls on every route change. The five routes it reads
+// area, docs/SLIC-DIRECTIONS.md), and home building changes drivers asked for
+// (the Users area, docs/MULTI-HUB.md "Home base"). It was five calls on every route change. The five routes it reads
 // like stay for the feeds and queues. Each count is read only for an area the
 // caller has (docs/archive/STAFF-ROLES.md), and is 0 otherwise.
 // 200 { success, data: { jobChanges, coverJobChanges, openReports,
-// pendingClaims, openDisputes, openCoverReports, openRouteSuggestions } }.
+// pendingClaims, openDisputes, openCoverReports, openRouteSuggestions,
+// homeBaseRequests } }.
 export async function GET() {
   const { session, denied } = await requireStaff();
   if (denied) return denied;
@@ -27,8 +30,16 @@ export async function GET() {
     const userId = session.user.id;
     const claims = hasArea(session, 'driverClaims');
     const covers = hasArea(session, 'covers');
-    const [jobChanges, coverJobChanges, reports, pendingClaims, openDisputes, coverReports, routeSuggestions] =
-      await Promise.all([
+    const [
+      jobChanges,
+      coverJobChanges,
+      reports,
+      pendingClaims,
+      openDisputes,
+      coverReports,
+      routeSuggestions,
+      homeBaseRequests,
+    ] = await Promise.all([
       hasArea(session, 'jobs')
         ? getJobChangesSeenAt(userId).then((since) => getUnseenJobChanges(since))
         : none,
@@ -40,6 +51,7 @@ export async function GET() {
       claims ? getOpenDisputeCount() : 0,
       covers ? getOpenCoverReportSummary() : none,
       hasArea(session, 'slics') ? getOpenRouteSuggestionSummary() : none,
+      hasArea(session, 'users') ? countHomeBaseRequests() : 0,
     ]);
     return NextResponse.json({
       success: true,
@@ -51,6 +63,7 @@ export async function GET() {
         openDisputes,
         openCoverReports: coverReports.count,
         openRouteSuggestions: routeSuggestions.count,
+        homeBaseRequests,
       },
     });
   } catch (error) {

@@ -56,6 +56,7 @@ import { coversAllowed, jobsAllowed } from '@/lib/featureAccess';
 import { turnOffThisDevice } from '@/lib/pushDevice';
 import { useOpenReportsCount } from '@/lib/slicReportsStore';
 import { useOpenRouteSuggestionsCount } from '@/lib/routeSuggestionsStore';
+import { useHomeBaseRequestsCount } from '@/lib/homeBaseRequestsStore';
 import { useOpenCoverReportsCount } from '@/lib/coverReportsStore';
 import { userHasArea } from '@/lib/staffAreas';
 
@@ -69,8 +70,9 @@ import VerifiedBadge from '@/components/utility/VerifiedBadge';
 const MENU_ID = 'app-menu';
 
 // The tools whose counts are in the menu's alerts (GET /api/admin-alerts):
-// jobs, cover jobs and cover reports, SLIC reports, and claims with disputes.
-const ALERT_AREAS = ['jobs', 'covers', 'reports', 'driverClaims', 'slics'];
+// jobs, cover jobs and cover reports, SLIC reports, claims with disputes,
+// route suggestions, and home building changes drivers asked for (Users).
+const ALERT_AREAS = ['jobs', 'covers', 'reports', 'driverClaims', 'slics', 'users'];
 
 // Every row is at least 48px tall — a driver's thumb, maybe gloved, in a cab
 // (UI-SUGGESTIONS.md "Design target"). Soft rows (utility/soft.js): the
@@ -174,6 +176,7 @@ function UserMenu({ user, features, creatorMode = null, signOutAction }) {
   const openDisputes = useOpenDisputesCount();
   const openCoverReports = useOpenCoverReportsCount();
   const openRouteSuggestions = useOpenRouteSuggestionsCount();
+  const homeBaseRequests = useHomeBaseRequestsCount();
   const alerts =
     jobChanges +
     coverJobChanges +
@@ -181,7 +184,8 @@ function UserMenu({ user, features, creatorMode = null, signOutAction }) {
     pendingClaims +
     openDisputes +
     openCoverReports +
-    openRouteSuggestions;
+    openRouteSuggestions +
+    homeBaseRequests;
   const alertsText = [
     jobChanges && `${jobChanges} job change${jobChanges === 1 ? '' : 's'}`,
     coverJobChanges && `${coverJobChanges} cover job change${coverJobChanges === 1 ? '' : 's'}`,
@@ -191,6 +195,8 @@ function UserMenu({ user, features, creatorMode = null, signOutAction }) {
     openCoverReports && `${openCoverReports} cover report${openCoverReports === 1 ? '' : 's'}`,
     openRouteSuggestions &&
       `${openRouteSuggestions} route suggestion${openRouteSuggestions === 1 ? '' : 's'}`,
+    homeBaseRequests &&
+      `${homeBaseRequests} building change${homeBaseRequests === 1 ? '' : 's'}`,
   ]
     .filter(Boolean)
     .join(', ');

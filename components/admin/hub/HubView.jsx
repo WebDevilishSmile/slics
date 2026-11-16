@@ -15,6 +15,7 @@ import { CONTACT_EMAIL } from '@/constants';
 import ActivityList from './ActivityList';
 import HubCard from './HubCard';
 import HubSection from './HubSection';
+import HomeBasePreview from './HomeBasePreview';
 import HubTiles from './HubTiles';
 import ThankYouPreview from './ThankYouPreview';
 import TopSlics from './TopSlics';
@@ -131,6 +132,7 @@ export default function HubView({
   support,
   roleAreas,
   firstName,
+  profileHref,
 }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
@@ -176,6 +178,10 @@ export default function HubView({
         >
           <ThankYouPreview firstName={firstName} />
           <WelcomePreview roleAreas={roleAreas} firstName={firstName} />
+          {/* A card on /home, not a letter: the whole row, as wide as it is there. */}
+          <Box sx={{ gridColumn: '1 / -1' }}>
+            <HomeBasePreview profileHref={profileHref} />
+          </Box>
         </Box>
       </HubSection>
 

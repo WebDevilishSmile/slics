@@ -58,6 +58,7 @@ export default async function SuperAdminPage() {
           support={support}
           roleAreas={roleAreas}
           firstName={session.user.name?.split(' ')[0]}
+          profileHref={`/profile/${session.user.id}`}
         />
       </Paper>
     </>

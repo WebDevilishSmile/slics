@@ -11,9 +11,10 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { softInputSx, softToggleSx } from '@/components/utility/soft';
 import { STAFF_ROLES } from '@/constants';
+import { homeBaseLabel } from '@/lib/homeBase';
 import UserCard from './UserCard';
 
 const USERS_PER_PAGE = 10;
@@ -29,8 +30,23 @@ const SORT_OPTIONS = [
 ];
 const DEFAULT_SORT = 'most-lookups';
 
+// The home building filter (docs/MULTI-HUB.md "Home base", step 4): every
+// account, the ones SLICs can't place, buildings drivers typed in that the
+// All Hubs list doesn't have, the changes waiting for an admin, or one
+// building by its alpha code and number ("BETPA 1809").
+const HOME_ALL = '';
+const HOME_FIXED = [
+  { value: 'none', label: 'Not answered', test: (user) => !user.homeBase },
+  { value: 'unlisted', label: 'Not on the list', test: (user) => user.homeBase?.listed === false },
+  { value: 'asked', label: 'Change asked', test: (user) => Boolean(user.homeBaseRequest) },
+];
+const buildingKey = (homeBase) => `${homeBase.alphaSlic} ${homeBase.numSlic}`;
+const homeTest = (value) =>
+  HOME_FIXED.find((option) => option.value === value)?.test ??
+  ((user) => Boolean(user.homeBase) && buildingKey(user.homeBase) === value);
+
 // The search, filters, sort and page live in the URL (?q=&members=1&admins=1
-// &verified=1&covers=1&sort=&page=), so Back from a user's page lands on the same list. This only
+// &verified=1&covers=1&home=&sort=&page=), so Back from a user's page lands on the same list. This only
 // renders on the client (HydrationGuard), so it reads the address bar itself:
 // that's right even when Back restores a cached server render.
 function readView() {
@@ -43,18 +59,20 @@ function readView() {
     admins: search.get('admins') === '1',
     verified: search.get('verified') === '1',
     covers: search.get('covers') === '1',
+    home: search.get('home') ?? HOME_ALL,
     sort: SORT_OPTIONS.some(({ value }) => value === sort) ? sort : DEFAULT_SORT,
     page: Number.isInteger(page) && page > 1 ? page - 1 : 0,
   };
 }
 
-function writeView({ q, members, admins, verified, covers, sort, page }) {
+function writeView({ q, members, admins, verified, covers, home, sort, page }) {
   const search = new URLSearchParams();
   if (q) search.set('q', q);
   if (members) search.set('members', '1');
   if (admins) search.set('admins', '1');
   if (verified) search.set('verified', '1');
   if (covers) search.set('covers', '1');
+  if (home) search.set('home', home);
   if (sort !== DEFAULT_SORT) search.set('sort', sort);
   if (page > 0) search.set('page', String(page + 1));
   const query = search.toString();
@@ -83,8 +101,26 @@ function UserList({ users, viewCounts = {}, coversOpen = false }) {
       (view.verified ? user.driverVerified : true) &&
       // Everyone the super admin let into Covers early (UserCoversAccess).
       (view.covers ? Boolean(user.coversAccess) : true) &&
+      (view.home ? homeTest(view.home)(user) : true) &&
       user.name.toLowerCase().includes(view.q.toLowerCase()),
   );
+
+  // The filter's choices with how many accounts each has; buildings by count.
+  const homeOptions = useMemo(() => {
+    const buildings = new Map();
+    for (const user of users) {
+      if (!user.homeBase) continue;
+      const key = buildingKey(user.homeBase);
+      const entry = buildings.get(key) ?? { value: key, label: homeBaseLabel(user.homeBase), count: 0 };
+      entry.count += 1;
+      buildings.set(key, entry);
+    }
+    return [
+      { value: HOME_ALL, label: 'Every building', count: users.length },
+      ...HOME_FIXED.map(({ value, label, test }) => ({ value, label, count: users.filter(test).length })),
+      ...[...buildings.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label)),
+    ];
+  }, [users]);
 
   const sortedUsers = [...filteredUsers].sort((a, b) => {
     switch (view.sort) {
@@ -182,6 +218,20 @@ function UserList({ users, viewCounts = {}, coversOpen = false }) {
             onClick={() => update({ covers: !view.covers })}
           />
         </Box>
+        <TextField
+          select
+          fullWidth
+          label='Home building'
+          value={homeOptions.some((option) => option.value === view.home) ? view.home : HOME_ALL}
+          onChange={(e) => update({ home: e.target.value })}
+          sx={softInputSx}
+        >
+          {homeOptions.map(({ value, label, count }) => (
+            <MenuItem key={value || 'all'} value={value}>
+              {label} ({count})
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField
           select
           fullWidth

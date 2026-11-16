@@ -13,6 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
+
+import { homeBaseLabel } from '@/lib/homeBase';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from '@/components/utility/NextLink';
@@ -245,6 +247,12 @@ function UserCard({ user: initialUser, viewCount = 0, coversOpen = false }) {
         </Box>
         <Typography>
           Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}
+        </Typography>
+        {/* docs/MULTI-HUB.md "Home base"; changed on the user's page. */}
+        <Typography>
+          Home building: {user.homeBase ? homeBaseLabel(user.homeBase) : 'Not answered'}
+          {user.homeBase?.listed === false && ' (not on the list)'}
+          {user.homeBaseRequest && ` · asked for ${homeBaseLabel(user.homeBaseRequest)}`}
         </Typography>
         <UserMembership user={user} onToggle={handleMemberToggle} disabled={isProtected} />
         {/* Only a super admin gives early access, like the Covers switch. */}

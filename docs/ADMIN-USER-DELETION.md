@@ -200,7 +200,7 @@ On the dev database (`npm run db:dev-seed`), never production first:
 2. **Confirm with the email, or the word DELETE?** Recommended: the email.
 3. **Is a block needed?** If the goal is ever keeping someone *out* (abuse, not a test
    account), deleting won't do it. A `blocked-emails` list checked by `register` and the
-   Google sign-in callback would; that's a separate plan.
+   Google sign-in callback would; that's a separate plan: `USER-BLOCKING.md`.
 4. **Tell the person?** Optional: send "Your SLICs account was deleted" through the
    existing Resend email (`lib/email.js`) before deleting, when they have a confirmed
    email. Useful when it's at their request; skip it for spam and test accounts. A

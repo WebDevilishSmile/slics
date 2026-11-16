@@ -113,6 +113,8 @@ Effort: S = an evening or two · M = a few evenings · L = a project with stages
 
 ### For the admin
 
+- **Suspend and block an account** (M, `USER-BLOCKING.md`): signed out, posts hidden, sheet
+  name kept; stage 2 blocks the same email and Google account. Open questions first
 - **A data-health page** (S, #12): SLICs with no PDF or phone, stale ones, duplicates
 - **An admin audit log page** (S, #14): who changed what, on one page; `admin_audit` and
   the hub's Activity cover part of it, the rest is `SECURITY.md` #17

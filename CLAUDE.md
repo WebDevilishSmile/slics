@@ -124,7 +124,7 @@ A **super admin** (since 2026-10-10) is an admin with `superAdmin: true` on thei
 - System health (`lib/systemHealth.js`: keys as set or not, never values; missing indexes from `lib/db/indexSpecs.mjs`);
 - Features (`app-settings`, `lib/db/appSettings.js`: Covers, notifications for every driver, the Places "New" date and the icon notice, each written to `admin_audit`; the `constants.js` values are only defaults, read on every session through a 5-minute shared cache);
 - Admins (each staff role's tool switches; add, move between Admin and Dispatch, remove; activity) and Supporters;
-- Email (since 2026-11-11): write an email from `tiago@slics.app` in the app's email look, with a live preview and a Sent list.
+- Email (since 2026-11-11): write an email from `tiago@slics.app` in the app's email look, with a live preview and a Sent list. `?to=` adds an address to "To" (since 2026-11-16, `composeEmailHref` in `admin/users/UserEmail.jsx`): the super admin's email links on `/admin/users` and `/admin/users/[id]` open it.
 
 Every page under it checks `isSuperAdmin` before reading, and every route is `requireSuperAdmin()`. Roles change through `setUserRole` (`lib/db/admins.js`), which refuses their own row and a super admin's. The app never sets `superAdmin`; `npm run admin:super -- <email>` (`scripts/setSuperAdmin.mjs`) does. Role and membership changes go to `admin_audit` before they happen (`lib/db/adminAudit.js`). Membership tier is `session.user.bmcMember` (Buy Me a Coffee supporter — unlocks `/history`, set via `app/api/webhooks/buymeacoffee`).
 

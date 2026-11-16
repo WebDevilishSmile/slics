@@ -28,6 +28,12 @@
 
 ## Super admin hub (`SUPER-ADMIN-HUB.md`)
 
+- [x] In `admin/users`, we should link the email to the superAdmin Email page with the
+      email address pre-filled (2026-11-16: for the super admin, the address on each
+      `/admin/users` card and on `/admin/users/[id]` opens `/admin/super/email?to=`, which
+      adds it to "To" as a chip on top of the saved draft and drops it from the URL; other
+      staff keep the mailto link)
+
 - [x] Email many people at once, with Everyone, Admins and Dispatch buttons, each their own
       copy (2026-11-15; "Email" → "Many people at once" in `archive/SUPER-ADMIN-HUB.md`)
 - [x] Pick an email's recipient from every account by name or email on `/admin/super/email`

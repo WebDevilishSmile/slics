@@ -15,8 +15,6 @@ with the detail. Items move **Inbox → Ideas → Next → Now → done**, and a
   pushes until someone signs in on it. Delete them where `sessionVersion` is bumped?
   (found 2026-10-14 building Push stage 2, `PUSH-NOTIFICATIONS.md` → 2.4)
 
-- In `admin/users`, we should link the email to the superAdmin Email page with the email address pre-filled.
-
 ---
 
 ## Now

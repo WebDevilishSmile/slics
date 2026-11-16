@@ -270,7 +270,7 @@ function UserCard({ user: initialUser, viewCount = 0, coversOpen = false }) {
           }}
         />
         <UserRole user={user} onChange={handleRoleChange} canChange={canChangeRole} />
-        <UserEmail email={user.email} />
+        <UserEmail email={user.email} compose={session?.user?.superAdmin === true} />
         {user.phone ? (
           <UserPhone phone={user.phone} />
         ) : (

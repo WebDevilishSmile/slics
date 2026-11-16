@@ -10,8 +10,9 @@ import theme from '@/theme';
 
 // Write an email from tiago@slics.app in the account emails' look
 // (docs/archive/SUPER-ADMIN-HUB.md "Email", POST /api/emails), and the ones sent so
-// far. Super admin only; checked here before reading anything.
-export default async function EmailPage() {
+// far. Super admin only; checked here before reading anything. `?to=` puts
+// an address in "To" (the email links on /admin/users).
+export default async function EmailPage({ searchParams }) {
   const session = await getSession();
   if (!isSuperAdmin(session)) return null;
 
@@ -30,6 +31,8 @@ export default async function EmailPage() {
     console.error('Error loading the email recipients:', error);
   }
 
+  const { to } = await searchParams;
+
   return (
     <>
       <Typography variant='sectionHeading'>Email</Typography>
@@ -43,7 +46,7 @@ export default async function EmailPage() {
             title='Write an email'
             description='It goes out through Resend in the same look as the sign-up and password emails.'
           >
-            <ComposeEmail people={people} />
+            <ComposeEmail people={people} initialTo={typeof to === 'string' ? to : ''} />
           </HubSection>
           <HubSection id='email-sent' title='Sent'>
             {sent ? (

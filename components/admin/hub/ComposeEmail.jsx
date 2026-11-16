@@ -70,7 +70,9 @@ const attachedCount = (email) => (email?.attachments?.length ?? 0) + (email?.fly
 
 const counter = (value, max) => `${value.length.toLocaleString('en-US')}/${max.toLocaleString('en-US')}`;
 
-export default function ComposeEmail({ people = [] }) {
+// `initialTo`: an address from the page's ?to= (the email links on
+// /admin/users), added to "To" on top of the saved draft.
+export default function ComposeEmail({ people = [], initialTo = '' }) {
   const router = useRouter();
   const [fields, setFields] = useState(EMPTY);
   const [copyMe, setCopyMe] = useState(true);
@@ -95,19 +97,32 @@ export default function ComposeEmail({ people = [] }) {
     [people, allRecipients],
   );
 
-  // The draft, from this browser only (it may be blocked or empty).
+  // The draft, from this browser only (it may be blocked or empty), then the
+  // address the link brought, once: it leaves the URL so a reload or a later
+  // email doesn't add it again.
   useEffect(() => {
+    let draft = EMPTY;
     try {
       const saved = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? 'null');
       if (saved && typeof saved === 'object') {
-        setFields({
+        draft = {
           ...EMPTY,
           ...saved,
           recipients: Array.isArray(saved.recipients) ? saved.recipients.filter((item) => typeof item === 'string') : [],
-        });
+        };
       }
     } catch {}
-  }, []);
+    // As the account spells it, so its chip and preview find the person.
+    const typed = initialTo.trim().toLowerCase();
+    const linked = people.find((person) => person.email?.toLowerCase() === typed)?.email ?? typed;
+    if (isEmailAddress(linked) && !draft.recipients.includes(linked)) {
+      draft = { ...draft, recipients: [...draft.recipients, linked] };
+    }
+    if (draft !== EMPTY) setFields(draft);
+    if (initialTo) window.history.replaceState(null, '', window.location.pathname);
+    // Once, on arrival: `people` comes with the page and doesn't change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialTo]);
   useEffect(() => {
     try {
       const blank = Object.keys(EMPTY).every((key) =>

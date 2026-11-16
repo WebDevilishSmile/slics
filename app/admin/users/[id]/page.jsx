@@ -9,7 +9,7 @@ import { getClaimableDriverNames } from '@/lib/db/driverClaims';
 import { getFeatures, getRoleAreas } from '@/lib/db/appSettings';
 import { areasFor } from '@/lib/staffAreas';
 import { displayName } from '@/lib/names';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Link, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
 import {
   serializeSlicViews,
@@ -23,6 +23,7 @@ import UserComments from '@/components/admin/users/UserComments';
 import UserSlics from '@/components/admin/users/UserSlics';
 import UserCoversAccess from '@/components/admin/users/UserCoversAccess';
 import UserDriver from '@/components/admin/users/UserDriver';
+import { composeEmailHref } from '@/components/admin/users/UserEmail';
 import UserHomeBase from '@/components/admin/users/UserHomeBase';
 import UserDangerZone from '@/components/admin/users/UserDangerZone';
 import VerifiedBadge from '@/components/utility/VerifiedBadge';
@@ -71,7 +72,15 @@ async function UserPage({ params }) {
           {displayName(user.name)}
           {user.driver?.verifiedAt && <VerifiedBadge />}
         </Typography>
-        <Typography variant='subtitle1'>Email: {user.email}</Typography>
+        {/* The super admin writes to them from the app's compose page. */}
+        <Typography variant='subtitle1'>
+          Email:{' '}
+          {isSuperAdmin(session) && user.email ? (
+            <Link href={composeEmailHref(user.email)}>{user.email}</Link>
+          ) : (
+            user.email
+          )}
+        </Typography>
         <Typography variant='subtitle1'>Role: {user.role}</Typography>
         <Typography variant='subtitle1'>
           Joined: {dayjs(user.created_at).format('MMMM D, YYYY')}

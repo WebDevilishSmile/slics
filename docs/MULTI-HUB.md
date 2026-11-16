@@ -331,7 +331,8 @@ onboard first.
 ALLPA can't be given `hubId: 'allpa'` without stage 2 and 3 meaning things for them
 (covers, admins, the sheet). So the answer is stored apart:
 
-`users.homeBase`: `{ numSlic, alphaSlic, name, source, listed, at }`
+`users.homeBase`: `{ numSlic, alphaSlic, name, source, listed, at }`, plus `city` and
+`state` on a building a driver typed in (step 3)
 
 - `numSlic` + `alphaSlic` together: `allHubs` reuses a number on two hubs (0269, 7752,
   9079; `DATA-MODEL.md`), so the alpha code tells them apart.
@@ -409,10 +410,13 @@ Built 2026-11-16.
   Saving says so in the card ("Saved: PRORI 0269 · Warwick, RI. You can change it on your
   profile."), and the card is gone on the next visit.
 - **Not on the list** (Tiago, 2026-11-15: the All Hubs list isn't taken as complete):
-  "My building isn't here" opens three fields: the SLIC number (4 or 5 letters or digits:
+  "My building isn't here" opens four fields: the SLIC number (4 or 5 letters or digits:
   25 buildings on the list have letters in theirs, like `070CR` or `62GL`), the alpha code
-  (2–7 letters and digits, uppercased) and the building's name or town. Saved with
-  `listed: false`.
+  (2–7 letters and digits, uppercased), the city and the state (a two-letter code, the 50
+  states, DC or PR; every state on the list is one). Tiago, 2026-11-16: the city and
+  state, not a free name, because with the SLIC and alpha code they're enough to find any
+  building that exists. Saved with `listed: false`, the city and state kept as their own
+  fields and the name built from them ("Allentown, PA").
   - A typed number the All Hubs list has offers that building first ("That number is on
     the list. Is it this one?", both buildings for a number the list has twice), so a typo
     or a missed search ends on the listed one. The plan also looked the number up in the
@@ -426,8 +430,9 @@ Built 2026-11-16.
   name? }`, `saveAskedHomeBase`, `source: 'asked'`; a `source` or `listed` in the body is
   ignored). The server decides `listed`: `true` when `allHubs` has that number (as text or
   a number, so `0269` finds `269`) with that alpha code, and the name is then the list's
-  town (BETPA's "Bethlehem Center"); else `false` with the typed name kept (spaces
-  collapsed, at most 60 characters, plain text), and a name is required. Format checks are
+  town (BETPA's "Bethlehem Center"); else `false`, and then the city and state are
+  required (both or neither; the city plain text, spaces collapsed, at most 40 characters
+  and capitalized; the state one of `US_STATES`). Format checks are
   `validateHomeBaseInput` (pure). A verified driver or staff gets 403. Rate-limited to 10 an
   hour per driver.
 - **Changing it:** `/profile`'s Account well has "Home building" (`toHomeBase`,

@@ -15,7 +15,7 @@ import {
   createFilterOptions,
 } from '@mui/material';
 
-import { HOME_BASE_NAME_MAX_LENGTH, parseNumSlic } from '@/lib/homeBase';
+import { HOME_BASE_CITY_MAX_LENGTH, hubTown, parseNumSlic } from '@/lib/homeBase';
 import { tapHaptic } from '@/lib/haptics';
 import BottomSheetDialog, { BottomSheetActions } from '@/components/utility/BottomSheetDialog';
 import { softContainedSx, softInputSx, softPressSx, softRaised, softRaisedSmall } from '@/components/utility/soft';
@@ -49,7 +49,10 @@ const filterOptions = createFilterOptions({
 // form/SlicTagsField.jsx).
 const listSx = [softRaised, { mt: 1, borderRadius: 4, '& .MuiAutocomplete-option': { minHeight: '3rem' } }];
 
-const EMPTY_TYPED = { numSlic: '', alphaSlic: '', name: '' };
+const EMPTY_TYPED = { numSlic: '', alphaSlic: '', city: '', state: '' };
+
+// Codes show in capitals as they're typed; the server uppercases them too.
+const capsSx = [softInputSx, { '& input': { textTransform: 'uppercase' } }];
 
 // Saves a pick through PUT /api/users/me/home-base and returns the saved home
 // base (toHomeBase). With `preview` (the super admin's Notes, where their
@@ -60,7 +63,7 @@ export async function putHomeBase(body, { preview = false, hubs = [] } = {}) {
     const numSlic = String(body.numSlic).trim().toUpperCase();
     const alphaSlic = String(body.alphaSlic).trim().toUpperCase();
     const hub = hubs.find((choice) => choice.numSlic === numSlic && choice.alphaSlic === alphaSlic);
-    return { numSlic, alphaSlic, name: hub ? hub.town : String(body.name ?? '').trim(), source: 'asked', listed: Boolean(hub) };
+    return { numSlic, alphaSlic, name: hub ? hub.town : hubTown(body.city, body.state), source: 'asked', listed: Boolean(hub) };
   }
   const response = await fetch('/api/users/me/home-base', {
     method: 'PUT',
@@ -74,7 +77,8 @@ export async function putHomeBase(body, { preview = false, hubs = [] } = {}) {
 
 // Which building a driver works out of (docs/MULTI-HUB.md "Home base", step
 // 3): a search over the All Hubs list, and "My building isn't here" for one
-// it doesn't have (the SLIC number, the alpha code and its name or town). A
+// it doesn't have (the SLIC number, the alpha code, the city and the state:
+// enough for the super admin to find the building). A
 // typed number the list has offers that building first, so a typo or a
 // missed search ends on the listed one. Saves through putHomeBase and hands
 // the saved home base to `onSaved`; `preview` saves nothing.
@@ -112,12 +116,12 @@ export default function HomeBasePicker({ open, onClose, onSaved, preview = false
   const suggestionTaken = suggestions.some((hub) => hub.alphaSlic === typed.alphaSlic.trim().toUpperCase());
 
   const canSave = typing
-    ? typed.numSlic.trim() && typed.alphaSlic.trim() && (typed.name.trim() || suggestionTaken)
+    ? typed.numSlic.trim() && typed.alphaSlic.trim() && ((typed.city.trim() && typed.state.trim().length === 2) || suggestionTaken)
     : Boolean(picked);
 
   const save = async () => {
     const body = typing
-      ? { numSlic: typed.numSlic, alphaSlic: typed.alphaSlic, name: typed.name }
+      ? { numSlic: typed.numSlic, alphaSlic: typed.alphaSlic, city: typed.city, state: typed.state }
       : { numSlic: picked.numSlic, alphaSlic: picked.alphaSlic };
     setSaving(true);
     setError('');
@@ -212,11 +216,13 @@ export default function HomeBasePicker({ open, onClose, onSaved, preview = false
               <TextField
                 {...field('numSlic')}
                 label='SLIC number'
+                sx={capsSx}
                 slotProps={{ htmlInput: { maxLength: 5, autoCapitalize: 'characters', autoComplete: 'off', spellCheck: false } }}
               />
               <TextField
                 {...field('alphaSlic')}
                 label='Alpha code'
+                sx={capsSx}
                 slotProps={{
                   htmlInput: { maxLength: 7, autoCapitalize: 'characters', autoComplete: 'off', spellCheck: false },
                 }}
@@ -241,13 +247,27 @@ export default function HomeBasePicker({ open, onClose, onSaved, preview = false
               </Box>
             )}
 
-            <TextField
-              {...field('name')}
-              label='Name or town'
-              placeholder='Allentown'
-              helperText='We check it, then add it to the list.'
-              slotProps={{ htmlInput: { maxLength: HOME_BASE_NAME_MAX_LENGTH } }}
-            />
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <TextField
+                {...field('city')}
+                label='City'
+                placeholder='Allentown'
+                sx={[softInputSx, { flex: 2 }]}
+                slotProps={{ htmlInput: { maxLength: HOME_BASE_CITY_MAX_LENGTH, autoComplete: 'off' } }}
+              />
+              <TextField
+                {...field('state')}
+                label='State'
+                placeholder='PA'
+                sx={[...capsSx, { flex: 1 }]}
+                slotProps={{
+                  htmlInput: { maxLength: 2, autoCapitalize: 'characters', autoComplete: 'off', spellCheck: false },
+                }}
+              />
+            </Box>
+            <Typography variant='body2' color='text.secondary' sx={{ mt: -1.5 }}>
+              We check it, then add it to the list.
+            </Typography>
             <Button
               onClick={() => setTyping(false)}
               sx={[softRaisedSmall, softPressSx, { alignSelf: 'flex-start', px: 2, minHeight: '2.75rem' }]}

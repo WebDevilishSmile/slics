@@ -15,11 +15,11 @@ The app is used daily in production.
   access since 2026-10-17. Tiago, 2026-11-07: "The trial works great. We have high praise
   from our guinea pigs and test rats." The rollout checklist under stage 1 is done but its
   last step, the "Covers for every driver" switch on `/admin/super/features`
-  (`COVERS_OPEN` in `constants.js` is only the default). Until it's on, only admins and
-  early access see `/covers`, the menu item and the check mark on Driver tips, and only
+  (`COVERS_OPEN` in `constants.js` is only the default). Until it's on, only staff with
+  the Covers tool see `/covers`, the menu item and the check mark on Driver tips, and only
   they can file a claim or keep a list (`canUseCovers`, `lib/authz.js`).
-- **Early access** (2026-10-17), **bid day, the super admin's preview and Covers
-  notifications** (2026-10-22) are deployed too.
+- **Bid day, the super admin's preview and Covers notifications** (2026-10-22) are
+  deployed too. **Early access** (2026-10-17) was removed on 2026-11-16.
 - **Indexes:** every index in `lib/db/indexSpecs.mjs` exists in production (checked
   2026-11-07), so nothing here waits on `npm run db:indexes`.
 - **Stage 3** (picking in the app): not started. **Stage 4:** the call-in reminder and
@@ -119,7 +119,16 @@ doesn't do covers never has to.
       Covers until rollout), and the admin user list and page.
 - [x] **Account deletion** deletes the driver's claims (`deleteUserDriverClaims`).
 
-### Early access (built 2026-10-17)
+### Early access (built 2026-10-17, removed 2026-11-16)
+
+**Removed 2026-11-16** (Tiago: "let's also get rid of the covers early access
+everywhere"). Covers had been open to every driver since 2026-11-07, so it did nothing.
+The switch (`UserCoversAccess.jsx`), its route, `setCoversAccess`, the `/admin/users`
+filter, the session flag and the clause in `coversAllowed` and `coversAllowedFilter` are
+gone. The `users.coversAccess` fields on the 8 accounts that had it stay and are read by
+nothing, as are the `coversAccess.granted` / `.revoked` rows in `admin_audit`. If Covers
+closes again, only staff with the Covers tool have it. Rollback: `git revert` that commit.
+What it was:
 
 Tiago asked: "In the user page, I want to be able to choose which individuals have access
 to the cover jobs info. I want to be able to toggle that off and on for whomever I

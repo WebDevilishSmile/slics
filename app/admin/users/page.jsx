@@ -1,7 +1,5 @@
 import { toAdminUser } from '@/lib/serializers';
 import { getPasswordUserIds, getSlicViewCounts, getUsers } from '@/lib/db/users';
-import { getFeatures, getRoleAreas } from '@/lib/db/appSettings';
-import { areasFor } from '@/lib/staffAreas';
 import NoAccess from '@/components/admin/NoAccess';
 import { getAreaSession } from '@/lib/authz';
 
@@ -12,20 +10,16 @@ import HydrationGuard from '@/components/utility/HydrationGuard';
 async function UsersPage() {
   if (!(await getAreaSession('users'))) return <NoAccess />;
 
-  const [users, viewCounts, passwordIds, roleAreas, features] = await Promise.all([
+  const [users, viewCounts, passwordIds] = await Promise.all([
     getUsers(),
     getSlicViewCounts(),
     getPasswordUserIds(),
-    getRoleAreas(),
-    getFeatures(),
   ]);
   // `hasPassword` puts "Reset password" on the card (docs/archive/PASSWORD-RESET.md);
-  // only the flag, never the hash. `coversByRole`: their role has the Covers
-  // tool, so Covers early access is theirs already (UserCoversAccess).
+  // only the flag, never the hash.
   const rows = users.map((user) => ({
     ...toAdminUser(user),
     hasPassword: passwordIds.has(user._id.toString()),
-    coversByRole: areasFor(user, roleAreas).includes('covers'),
   }));
 
   return (
@@ -33,7 +27,7 @@ async function UsersPage() {
       <Typography variant='sectionHeading'>Users</Typography>
 
       <HydrationGuard>
-        <UserList users={rows} viewCounts={viewCounts} coversOpen={features.coversOpen} />
+        <UserList users={rows} viewCounts={viewCounts} />
       </HydrationGuard>
     </>
   );

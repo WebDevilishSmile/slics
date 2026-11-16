@@ -47,7 +47,8 @@ same components, the same URL, the same header.
     made-up hours, miles and a seniority number (`creatorJobs`). None is Alex's, and his
     menu has no Jobs row until the "Jobs for verified drivers" switch is on.
   - The header menu (`header/Header.jsx`) shows a made-up verified driver, Alex Rivera,
-    with Covers through early access, no Admin or Dispatch rows and no alert badge.
+    with Covers once it's open to every driver, no Admin or Dispatch rows and no alert
+    badge.
 - **The browser.** `creator/CreatorMode.jsx`, first on each of those pages, swaps
   `window.fetch` for `lib/creatorFetch.js`, which answers the pages' API calls:
   - tips (post, reply, edit, delete, vote, Votes), directions, reports and route

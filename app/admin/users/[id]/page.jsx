@@ -6,8 +6,6 @@ import { getAllSlics } from '@/lib/db/slics';
 import NoAccess from '@/components/admin/NoAccess';
 import { getAreaSession, isSuperAdmin } from '@/lib/authz';
 import { getClaimableDriverNames } from '@/lib/db/driverClaims';
-import { getFeatures, getRoleAreas } from '@/lib/db/appSettings';
-import { areasFor } from '@/lib/staffAreas';
 import { displayName } from '@/lib/names';
 import { Box, Link, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
@@ -15,13 +13,11 @@ import {
   serializeSlicViews,
   serializeSlics,
   serializeComments,
-  toCoversAccess,
   toHomeBase,
 } from '@/lib/serializers';
 import dayjs from 'dayjs';
 import UserComments from '@/components/admin/users/UserComments';
 import UserSlics from '@/components/admin/users/UserSlics';
-import UserCoversAccess from '@/components/admin/users/UserCoversAccess';
 import UserDriver from '@/components/admin/users/UserDriver';
 import { composeEmailHref } from '@/components/admin/users/UserEmail';
 import UserHomeBase from '@/components/admin/users/UserHomeBase';
@@ -35,13 +31,11 @@ async function UserPage({ params }) {
   const { id } = await params;
   const user = await getUserById(id); // Assuming you have a function to get user by ID
   const userComments = await getCommentsByUserId(id); // Fetch comments by user ID
-  const [userSlicViews, slics, supporterSince, sheetNames, roleAreas, features] = await Promise.all([
+  const [userSlicViews, slics, supporterSince, sheetNames] = await Promise.all([
     getSlicViewsByUserId(id),
     getAllSlics(),
     user ? getSupporterSince(user._id).catch(() => null) : null,
     getClaimableDriverNames(),
-    getRoleAreas(),
-    getFeatures(),
   ]);
 
   if (!user) {
@@ -94,18 +88,6 @@ async function UserPage({ params }) {
             Supporter since {dayjs(supporterSince).format('MMMM YYYY')}
           </Typography>
         )}
-
-        {/* Covers early access: only a super admin switches it, like the
-            "Covers for every driver" switch (docs/COVER-BIDDING.md). */}
-        <UserCoversAccess
-          framed
-          userId={user._id.toString()}
-          name={displayName(user.name ?? '')}
-          initial={toCoversAccess(user)}
-          byRole={areasFor(user, roleAreas).includes('covers')}
-          coversOpen={features.coversOpen}
-          canChange={isSuperAdmin(session)}
-        />
 
         <UserDriver
           userId={user._id.toString()}

@@ -46,7 +46,7 @@ const homeTest = (value) =>
   ((user) => Boolean(user.homeBase) && buildingKey(user.homeBase) === value);
 
 // The search, filters, sort and page live in the URL (?q=&members=1&admins=1
-// &verified=1&covers=1&home=&sort=&page=), so Back from a user's page lands on the same list. This only
+// &verified=1&home=&sort=&page=), so Back from a user's page lands on the same list. This only
 // renders on the client (HydrationGuard), so it reads the address bar itself:
 // that's right even when Back restores a cached server render.
 function readView() {
@@ -58,20 +58,18 @@ function readView() {
     members: search.get('members') === '1',
     admins: search.get('admins') === '1',
     verified: search.get('verified') === '1',
-    covers: search.get('covers') === '1',
     home: search.get('home') ?? HOME_ALL,
     sort: SORT_OPTIONS.some(({ value }) => value === sort) ? sort : DEFAULT_SORT,
     page: Number.isInteger(page) && page > 1 ? page - 1 : 0,
   };
 }
 
-function writeView({ q, members, admins, verified, covers, home, sort, page }) {
+function writeView({ q, members, admins, verified, home, sort, page }) {
   const search = new URLSearchParams();
   if (q) search.set('q', q);
   if (members) search.set('members', '1');
   if (admins) search.set('admins', '1');
   if (verified) search.set('verified', '1');
-  if (covers) search.set('covers', '1');
   if (home) search.set('home', home);
   if (sort !== DEFAULT_SORT) search.set('sort', sort);
   if (page > 0) search.set('page', String(page + 1));
@@ -81,7 +79,7 @@ function writeView({ q, members, admins, verified, covers, home, sort, page }) {
   window.history.replaceState(null, '', query ? `${pathname}?${query}` : pathname);
 }
 
-function UserList({ users, viewCounts = {}, coversOpen = false }) {
+function UserList({ users, viewCounts = {} }) {
   const [view, setView] = useState(readView);
 
   useEffect(() => {
@@ -99,8 +97,6 @@ function UserList({ users, viewCounts = {}, coversOpen = false }) {
       // keeps its old name so saved links still work.
       (view.admins ? STAFF_ROLES.includes(user.role) : true) &&
       (view.verified ? user.driverVerified : true) &&
-      // Everyone the super admin let into Covers early (UserCoversAccess).
-      (view.covers ? Boolean(user.coversAccess) : true) &&
       (view.home ? homeTest(view.home)(user) : true) &&
       user.name.toLowerCase().includes(view.q.toLowerCase()),
   );
@@ -209,14 +205,6 @@ function UserList({ users, viewCounts = {}, coversOpen = false }) {
             sx={softToggleSx}
             onClick={() => update({ verified: !view.verified })}
           />
-          <Chip
-            size='medium'
-            label='Covers early access'
-            clickable
-            aria-pressed={view.covers}
-            sx={softToggleSx}
-            onClick={() => update({ covers: !view.covers })}
-          />
         </Box>
         <TextField
           select
@@ -272,7 +260,6 @@ function UserList({ users, viewCounts = {}, coversOpen = false }) {
             key={user._id}
             user={user}
             viewCount={viewCounts[user._id] ?? 0}
-            coversOpen={coversOpen}
           />
         ))}
       </Box>

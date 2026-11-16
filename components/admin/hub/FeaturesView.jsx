@@ -95,7 +95,7 @@ export default function FeaturesView({ initial }) {
             <Typography variant='body2' color='text.secondary'>
               {features.coversOpen
                 ? 'On: every signed-in driver has Covers.'
-                : 'Off: only admins and early access have Covers while it’s tested.'}
+                : 'Off: only staff with the Covers tool have it while it’s tested.'}
             </Typography>
           </Box>
           <Switch

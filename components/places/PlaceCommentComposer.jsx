@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Alert, Box, Button, TextField } from '@mui/material';
 import { apiRequest } from '@/lib/apiRequest';
 import { PLACE_COMMENT_MAX_LENGTH } from '@/constants';
+import { tipPhoneHelp } from '@/lib/phoneText';
 import {
   softContainedSx,
   softInputSx,
@@ -15,7 +16,8 @@ import {
 // (the API files a reply-to-a-reply under the thread's top-level comment).
 // A pressed-in soft well with a placeholder, not a floating label (`label`
 // still names it for screen readers); the buttons show once there's a draft,
-// as in the Driver tips composer (comments/CommentComposer.jsx).
+// as in the Driver tips composer (comments/CommentComposer.jsx). A phone
+// number that looks wrong holds the post, as in a tip (lib/phoneText.js).
 function PlaceCommentComposer({
   placeId,
   parentId = null,
@@ -29,8 +31,11 @@ function PlaceCommentComposer({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  const phoneHelp = tipPhoneHelp(draft);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (phoneHelp.error) return;
     setSaving(true);
     setError('');
     const { error } = await apiRequest('/api/place-comments', {
@@ -57,6 +62,8 @@ function PlaceCommentComposer({
         disabled={saving}
         autoFocus={autoFocus}
         fullWidth
+        error={Boolean(phoneHelp.error)}
+        helperText={phoneHelp.error ?? phoneHelp.hint}
         slotProps={{
           htmlInput: {
             maxLength: PLACE_COMMENT_MAX_LENGTH,
@@ -82,7 +89,7 @@ function PlaceCommentComposer({
           <Button
             type='submit'
             variant='contained'
-            disabled={saving || !draft.trim()}
+            disabled={saving || !draft.trim() || Boolean(phoneHelp.error)}
             sx={softContainedSx}
           >
             {saving ? 'Posting…' : parentId ? 'Reply' : 'Post'}

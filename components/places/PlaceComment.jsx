@@ -28,6 +28,8 @@ import {
 import { apiRequest } from '@/lib/apiRequest';
 import { tapHaptic } from '@/lib/haptics';
 import { PLACE_COMMENT_MAX_LENGTH } from '@/constants';
+import { tipPhoneHelp } from '@/lib/phoneText';
+import PhoneLinkedText from '@/components/utility/PhoneLinkedText';
 import { useCommentRefresh } from '@/app/context/CommentRefreshContext';
 import {
   softContainedSx,
@@ -74,7 +76,11 @@ function PlaceComment({
     setEditing(true);
   };
 
+  // A phone number that looks wrong stops the save (lib/phoneText.js).
+  const phoneHelp = editing ? tipPhoneHelp(draft) : {};
+
   const handleSave = async () => {
+    if (phoneHelp.error) return;
     setSaving(true);
     setError('');
     const { error } = await apiRequest(`/api/place-comments/${comment._id}`, {
@@ -213,6 +219,8 @@ function PlaceComment({
             autoFocus
             fullWidth
             placeholder='Edit your comment'
+            error={Boolean(phoneHelp.error)}
+            helperText={phoneHelp.error ?? phoneHelp.hint}
             slotProps={{
               htmlInput: {
                 maxLength: PLACE_COMMENT_MAX_LENGTH,
@@ -232,7 +240,7 @@ function PlaceComment({
             <Button
               variant='contained'
               onClick={handleSave}
-              disabled={busy || !draft.trim()}
+              disabled={busy || !draft.trim() || Boolean(phoneHelp.error)}
               sx={softContainedSx}
             >
               {saving ? 'Saving…' : 'Save'}
@@ -241,7 +249,8 @@ function PlaceComment({
         </Box>
       ) : (
         <Typography sx={{ mt: 1, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
-          {comment.content}
+          {/* Phone numbers are buttons that call them. */}
+          <PhoneLinkedText text={comment.content} />
         </Typography>
       )}
 

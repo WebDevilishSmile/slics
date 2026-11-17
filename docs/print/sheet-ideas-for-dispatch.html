@@ -12,18 +12,23 @@
   Every name in it is made up. Never put the sheet's link or id in here, or a
   real driver's name or phone number.
 
+  Idea 16 (names from a DRIVERS tab, a job's times, driver and route looked
+  up from the Jobs tab) was added 2026-11-17: the app reads FORMATTED_VALUE,
+  so a lookup must show '' when a code isn't found (XLOOKUP's fourth
+  argument), never #N/A, and the day columns must keep their 24-hour hh:mm
+  format; the Jobs tab's starts are TIME values shown as 15:00.
   What it's based on (read 2026-11-16, read-only): the tab list (530 tabs),
   the W/E 11/28/2026 tab with its fills and hidden rows, the ON CALL, SHIFTERS
   and Jobs tabs' first rows, and the file's sharing ("anyone with the link can
   edit"). The app reads the sheet with an API key, so link viewing has to stay
-  on: idea 11 keeps it. Ideas marked "After an app update" need
+  on: idea 13 keeps it. Ideas marked "After an app update" need
   lib/coverSheetParser.js to learn the section headings first.
 -->
 <style>
   @page {
     size: Letter;
     margin: 0.55in 0.6in 0.65in;
-    @bottom-left { content: "ON CALL SHEET ideas · November 16, 2026"; font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; }
+    @bottom-left { content: "ON CALL SHEET ideas · November 17, 2026"; font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; }
     @bottom-right { content: "Page " counter(page) " of " counter(pages); font: 7.5pt "Segoe UI", Arial, sans-serif; color: #555; }
   }
   * { box-sizing: border-box; }
@@ -72,6 +77,10 @@
   table.sheet .heading td.note { background: none; font-weight: 400; }
   table.sheet .section td.note { background: none; color: #111; font-weight: 400; letter-spacing: 0; }
   table.sheet .note { border: none; font: 7.4pt "Segoe UI", Arial, sans-serif; color: #111; white-space: nowrap; padding-left: 6pt; background: none; }
+  pre.formula { font: 8.6pt Consolas, "Courier New", monospace; background: #eef0f3; border: 0.5pt solid #c9ccd1; border-radius: 3pt; padding: 4pt 6pt; margin: 3pt 0 4pt; white-space: pre-wrap; }
+  table.map td, table.map th { font-size: 8.6pt; padding: 1.4pt 4pt; }
+  table.sheet .typed { background: #fff; outline: 1pt solid #1f6f3f; outline-offset: -1pt; }
+  table.sheet .filled { background: #e3f2e8; }
   .legend { font-size: 8.4pt; color: #333; margin: -3pt 0 6pt; }
   .swatch { display: inline-block; width: 9pt; height: 9pt; border: 0.5pt solid #8d9299; vertical-align: -1pt; margin-right: 2pt; }
 </style>
@@ -81,7 +90,7 @@
 <!-- ============================ PAGE 1 ============================ -->
 <section class="page">
   <h1>ON CALL SHEET: ideas for an easier sheet</h1>
-  <p class="sub">Suggestions for dispatch from the SLICs app · November 16, 2026</p>
+  <p class="sub">Suggestions for dispatch from the SLICs app · November 17, 2026</p>
 
   <p class="lead">Dispatch keeps the ON CALL SHEET going every week, often in a hurry and, on bid day, with the phone ringing. We've read every weekly tab since May and every edit since October, and a few ideas kept coming up that might make the sheet quicker to fill in, easier for a new dispatcher to pick up, and harder to get wrong. <b>They're only suggestions.</b> Take any, all or none, in whatever order suits you. None of them changes how the bid works, and the sheet stays yours.</p>
   <p class="small">Every name in this document is made up. Where we mention something we saw in the sheet, it's to show why an idea might help, not to point at anyone. The companion sheet, <i>How the app reads the weekly cover tabs</i>, describes the sheet as it's kept today; nothing here undoes it.</p>
@@ -104,6 +113,7 @@
     <tr><td>13</td><td><b>Link can view; dispatch can edit</b></td><td>Nobody outside dispatch changes the sheet by accident</td><td>5 min, once</td><td><span class="tag today">Works today</span></td></tr>
     <tr><td>14</td><td><b>Phone numbers in a private file</b></td><td>Drivers' numbers off a sheet anyone with the link can open</td><td>15 min, once</td><td><span class="tag today">Works today</span></td></tr>
     <tr><td>15</td><td><b>Name a version when a week posts</b></td><td>An easy way to look back, or undo</td><td>1 min a week</td><td><span class="tag today">Works today</span></td></tr>
+    <tr><td>16</td><td><b>Let the sheet fill itself in</b></td><td>Pick a driver's name from a list; type a job code and its driver, times and route appear</td><td>45 min, once</td><td><span class="tag today">Works today</span></td></tr>
   </table>
   <p class="legend"><span class="tag today">Works today</span> the app reads the sheet fine either way. <span class="tag later">After an app update</span> we'd change the app first and tell you when it's ready, so nothing breaks in between.</p>
 
@@ -287,6 +297,68 @@
           <li><b>We're glad to help.</b> Setting up the dropdowns, the template or the archive copy goes quicker side by side, at a time that suits dispatch.</li>
           <li><b>The sheet stays yours.</b> The app only reads it. Whatever dispatch decides, we'll make the app fit.</li>
         </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PAGE 5 ============================ -->
+<section class="page">
+  <h2>4 · Let the sheet fill itself in</h2>
+  <p class="lead">Google Sheets works like Excel here: one tab can read from another. Today every week is typed cell by cell: a new job is its number, its reason, five start times and its route, eight entries, and every driver's name is typed again each week. The Jobs tab already holds every bid job's driver, start times and route, and one list could hold every driver's name. <b>The week's tab can read from both.</b></p>
+
+  <div class="cols">
+    <div>
+      <h3><span class="n">16</span>Part 1: names from a list</h3>
+      <p>A <b>DRIVERS</b> tab with every driver once, written <code>LAST, FIRST</code>. The NAME cells on each week become a dropdown that reads from it, so dispatch picks a name instead of typing it, and it's spelled the same every week, which is what links each driver to their SLICs account.</p>
+      <ol class="how">
+        <li>Add a tab named <code>DRIVERS</code>. Type <code>NAME</code> in A1, then one driver per row. Copying this week's pick list is a quick start.</li>
+        <li>On the week's tab, select the NAME cells (the job list's and the pick list's).</li>
+        <li><span class="menu">Data → Data validation → Add rule</span>. Criteria: <b>Dropdown (from a range)</b>, range <code>DRIVERS!A2:A</code>.</li>
+        <li>Under <b>Advanced options</b>: <b>Show a warning</b>, so <code>CUT</code>, a <code>*note</code> or a brand-new driver can still be typed.</li>
+      </ol>
+      <p class="small">A new driver goes on the DRIVERS tab once, and every week's dropdown has them. Set it up on the template (9) and every new week starts with it.</p>
+
+      <h3>Part 2: a job's details from the Jobs tab</h3>
+      <p>Type the job code, and the Assigned Driver, the start times and the route fill themselves in from the Jobs tab. Each of those cells holds a short formula that says, in plain words: <i>find this row's job code in the Jobs tab and bring back its Monday start (or its driver, or its route). If it isn't there, leave the cell blank.</i></p>
+      <pre class="formula">=XLOOKUP($A3, Jobs!$A:$A, Jobs!$F:$F, "")</pre>
+      <p class="small" style="margin-top:-1pt">That's the Mon cell of the first job row: <code>$A3</code> is the row's Job #, <code>Jobs!$A:$A</code> the Jobs tab's Job Name column, <code>Jobs!$F:$F</code> its Mo Start column, and <code>""</code> means "blank if not found". Each column swaps in its own Jobs column:</p>
+      <table class="map">
+        <tr><th>On the week's tab</th><th>From the Jobs tab</th></tr>
+        <tr><td>Assigned Driver</td><td>Driver (column B)</td></tr>
+        <tr><td>Sun · Mon · Tues · Wed</td><td>Su Start (C) · Mo Start (F) · Tu Start (I) · We Start (L)</td></tr>
+        <tr><td>Thurs · Fri · Sat</td><td>Th Start (O) · Fr Start (R) · Sa Start (U)</td></tr>
+        <tr><td>Description</td><td>Description (X)</td></tr>
+      </table>
+      <p class="small">Type the formulas once in the template's first job row, then drag the small square at the corner of the selection down the rows.</p>
+    </div>
+    <div>
+      <p style="margin:10pt 0 3pt"><b>How a row could look</b> (made up): dispatch types the code and picks the name; the rest fills in.</p>
+      <table class="sheet">
+        <tr><th>Job #</th><th>NAME</th><th>Assigned Driver</th><th>Cover Reason</th><th>Mon…Fri</th><th>Description</th></tr>
+        <tr><td class="typed">LV57</td><td class="typed">DOE, JANE ▾</td><td class="filled">Smith, John</td><td class="typed">VACATION ▾</td><td class="filled">07:00</td><td class="filled">Mon-Fri: BETPA…</td></tr>
+        <tr><td class="typed">XTR4</td><td></td><td class="filled"></td><td class="typed">PEAK JOB ▾</td><td class="typed">18:00</td><td class="typed">WAA</td></tr>
+      </table>
+      <p class="legend"><span class="swatch" style="outline:1pt solid #1f6f3f;outline-offset:-1pt;background:#fff"></span>typed or picked &nbsp; <span class="swatch" style="background:#e3f2e8"></span>filled in from the Jobs tab. <code>XTR4</code> isn't on the Jobs tab, so its cells stay blank and are typed as they are today.</p>
+
+      <div class="box">
+        <h3>Worth checking once</h3>
+        <ul>
+          <li><b>A code that isn't on the Jobs tab</b> (extra and peak jobs) leaves its cells blank, thanks to the <code>""</code>, and they're typed by hand. Without it the cell shows <code>#N/A</code>, which drivers would see.</li>
+          <li><b>A day the job doesn't run</b> should come out blank, not <code>00:00</code>. Worth a look on the first job filled in.</li>
+          <li><b>Keep the day columns' format</b> as it is today (24-hour, <code>15:00</code>). Google's ready-made "Time" format shows <code>3:00:00 PM</code>, which drivers and the app read less well. Copying the template keeps the right one.</li>
+          <li><b>Typing over a filled cell</b> is fine: the typed value wins for that row. A cover that runs different hours this week just gets them typed in.</li>
+        </ul>
+      </div>
+
+      <div class="box soft">
+        <h3>When a week is over</h3>
+        <p>Lookups follow the Jobs tab, so if a job is re-bid later, an old week would change with it. Turning a finished week's formulas into plain values keeps it as it was:</p>
+        <ol class="how" style="margin-bottom:2pt">
+          <li>On the finished week's tab, select everything (<b>Ctrl+A</b>) and copy (<b>Ctrl+C</b>).</li>
+          <li><span class="menu">Edit → Paste special → Values only</span>.</li>
+        </ol>
+        <p class="small" style="margin:0">The app reads what each cell shows, not the formula behind it, so all of this works with it today. After an edit on the Jobs tab, the week's tab catches up in the app at its next edit, or overnight.</p>
       </div>
     </div>
   </div>

@@ -167,7 +167,7 @@ export default function SheetJobDialog({ jobName, job, onClose }) {
             ) : (
               <Box component='ul' sx={{ m: 0, mt: 1, pl: 2.5, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {history.changes.map((change) => (
-                  <Box component='li' key={change._id} sx={{ typography: 'body2' }}>
+                  <Box component='li' key={change._id} sx={{ typography: 'body2', overflowWrap: 'anywhere' }}>
                     <Box component='span' sx={{ color: 'text.secondary' }}>
                       {dayjs(change.seenAt).format('MMM D, h:mm A')} ·{' '}
                     </Box>

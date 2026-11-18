@@ -10,6 +10,10 @@ import { describeJobChange } from './jobChangeText';
 
 const JOBS_SHOWN = 4;
 
+// A change line in the banner: a long one (a whole route) stops at three
+// lines here; View changes shows it in full.
+const CHANGE_LINE_SX = { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', color: 'text.secondary' };
+
 // The /admin banner for Jobs-tab changes the admin hasn't seen
 // (docs/ON-CALL-SHEET-SYNC.md, stage 3 alerts): "3 job changes since you last
 // looked (LV56, BE11)", the newest 3, and a way to /admin/jobs, which clears it.
@@ -39,9 +43,9 @@ export default function JobChangesNotice({ count, jobs, latest }) {
       </strong>{' '}
       since you last looked ({named})
       {/* Spans, not a list: SoftNotice puts its message in a <p>. */}
-      <Box component='span' sx={{ display: 'grid', gap: 0.5, mt: 1 }}>
+      <Box component='span' sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 0.5, mt: 1 }}>
         {latest.map((change) => (
-          <Box component='span' key={change._id} sx={{ display: 'block', color: 'text.secondary' }}>
+          <Box component='span' key={change._id} sx={CHANGE_LINE_SX}>
             <Box component='strong' sx={{ color: 'text.primary' }}>
               {change.jobName}
             </Box>{' '}

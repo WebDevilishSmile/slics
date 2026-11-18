@@ -143,6 +143,7 @@ export default function JobChangesFeed({ initial, initialMore, newSince, onOpenJ
                         width: 1,
                         textAlign: 'left',
                         textTransform: 'none',
+                        overflowWrap: 'anywhere',
                         color: 'text.primary',
                         typography: 'body2',
                         px: 1.5,

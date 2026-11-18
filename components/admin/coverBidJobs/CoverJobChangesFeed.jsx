@@ -138,6 +138,7 @@ export default function CoverJobChangesFeed({ refreshKey, onSelectWeek }) {
                           width: 1,
                           textAlign: 'left',
                           textTransform: 'none',
+                          overflowWrap: 'anywhere',
                           color: 'text.primary',
                           typography: 'body2',
                           px: 1.5,

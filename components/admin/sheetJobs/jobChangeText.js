@@ -1,4 +1,5 @@
 import { DAY_LABELS } from '@/lib/dayFormat';
+import { briefFieldChange } from '@/components/admin/coverBidJobs/coverJobChangeText';
 import { displayName } from '@/lib/names';
 
 const PART_LABELS = { start: 'start', hours: 'hours', miles: 'miles' };
@@ -15,10 +16,12 @@ export function fieldLabel(field) {
 const shown = (field, value) => (field === 'driver' ? displayName(value) : value);
 
 // One change as a line, without the job name: "Driver: Smith → Pope". An
-// added or removed job's value is its driver.
-export function describeJobChange(change) {
+// added or removed job's value is its driver. `brief` (the /admin banner) says
+// only that the description changed, without the route.
+export function describeJobChange(change, { brief = false } = {}) {
   if (change.kind === 'added') return `added to the sheet${change.to ? ` (${displayName(change.to)})` : ''}`;
   if (change.kind === 'removed') return `removed from the sheet${change.from ? ` (was ${displayName(change.from)})` : ''}`;
+  if (brief && change.field === 'description') return briefFieldChange(fieldLabel(change.field), change.from, change.to);
   return `${fieldLabel(change.field)}: ${shown(change.field, change.from) || '—'} → ${shown(change.field, change.to) || '—'}`;
 }
 

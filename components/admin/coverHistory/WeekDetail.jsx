@@ -261,7 +261,7 @@ export default function WeekDetail({ detail, weeks, onWeek, pending }) {
               <Box component='ol' sx={{ listStyle: 'none', m: 0, p: 0, display: 'grid', gap: 1 }}>
                 {log.map((entry) => (
                   <Box component='li' key={`${entry.type}-${entry._id}`}>
-                    <Typography variant='body2'>
+                    <Typography variant='body2' sx={{ overflowWrap: 'anywhere' }}>
                       <Box component='span' sx={{ color: 'text.secondary' }}>
                         {formatWhen(entry.seenAt)} ·{' '}
                       </Box>

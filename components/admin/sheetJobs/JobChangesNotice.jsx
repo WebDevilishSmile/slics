@@ -6,6 +6,7 @@ import { Box, Button } from '@mui/material';
 
 import SoftNotice from '@/components/utility/SoftNotice';
 import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
+import { NOTICE_LINE_SX } from '@/components/admin/coverBidJobs/CoverJobChangesNotice';
 import { describeJobChange } from './jobChangeText';
 
 const JOBS_SHOWN = 4;
@@ -41,11 +42,11 @@ export default function JobChangesNotice({ count, jobs, latest }) {
       {/* Spans, not a list: SoftNotice puts its message in a <p>. */}
       <Box component='span' sx={{ display: 'grid', gap: 0.5, mt: 1 }}>
         {latest.map((change) => (
-          <Box component='span' key={change._id} sx={{ display: 'block', color: 'text.secondary' }}>
+          <Box component='span' key={change._id} sx={NOTICE_LINE_SX}>
             <Box component='strong' sx={{ color: 'text.primary' }}>
               {change.jobName}
             </Box>{' '}
-            · {describeJobChange(change)}
+            · {describeJobChange(change, { brief: true })}
           </Box>
         ))}
       </Box>

@@ -14,6 +14,18 @@ import { changeJob, describeCoverJobChange } from './coverJobChangeText';
 // looked", the newest 3, and a way to /admin/cover/jobs on the newest one's
 // week, which clears it. `count`, `latest` and `week` come from
 // getUnseenCoverJobChanges. Renders nothing when there's nothing new.
+// Each line is the brief form (a description says only "Description changed")
+// and never runs past the card: a long unbroken value (a route like
+// BETPA>REAPA>…) wraps anywhere, and a line stops at two with an ellipsis.
+// View changes has the whole line.
+export const NOTICE_LINE_SX = {
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: 2,
+  overflow: 'hidden',
+  overflowWrap: 'anywhere',
+  color: 'text.secondary',
+};
 export default function CoverJobChangesNotice({ count, latest, week }) {
   if (!count) return null;
 
@@ -40,7 +52,7 @@ export default function CoverJobChangesNotice({ count, latest, week }) {
         {latest.map((change) => {
           const job = changeJob(change);
           return (
-            <Box component='span' key={change._id} sx={{ display: 'block', color: 'text.secondary' }}>
+            <Box component='span' key={change._id} sx={NOTICE_LINE_SX}>
               W/E {formatWeekEnding(change.weekEnding)} ·{' '}
               {job && (
                 <>
@@ -50,7 +62,7 @@ export default function CoverJobChangesNotice({ count, latest, week }) {
                   ·{' '}
                 </>
               )}
-              {describeCoverJobChange(change)}
+              {describeCoverJobChange(change, { brief: true })}
             </Box>
           );
         })}

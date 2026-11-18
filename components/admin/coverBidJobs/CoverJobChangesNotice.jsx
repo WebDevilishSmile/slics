@@ -9,6 +9,10 @@ import { softPressSx, softRaisedSmall } from '@/components/utility/soft';
 import { formatWeekEnding } from '@/lib/onCallSheet';
 import { changeJob, describeCoverJobChange } from './coverJobChangeText';
 
+// A change line in the banner: a long one (a whole route) stops at three
+// lines here; View changes shows it in full.
+const CHANGE_LINE_SX = { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', color: 'text.secondary' };
+
 // The /admin banner for cover-tab changes the admin hasn't seen
 // (docs/ON-CALL-SHEET-SYNC.md, "Alerts"): "3 cover job changes since you last
 // looked", the newest 3, and a way to /admin/cover/jobs on the newest one's
@@ -36,11 +40,11 @@ export default function CoverJobChangesNotice({ count, latest, week }) {
       </strong>{' '}
       since you last looked
       {/* Spans, not a list: SoftNotice puts its message in a <p>. */}
-      <Box component='span' sx={{ display: 'grid', gap: 0.5, mt: 1 }}>
+      <Box component='span' sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 0.5, mt: 1 }}>
         {latest.map((change) => {
           const job = changeJob(change);
           return (
-            <Box component='span' key={change._id} sx={{ display: 'block', color: 'text.secondary' }}>
+            <Box component='span' key={change._id} sx={CHANGE_LINE_SX}>
               W/E {formatWeekEnding(change.weekEnding)} ·{' '}
               {job && (
                 <>

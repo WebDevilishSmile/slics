@@ -35,7 +35,9 @@ export default function SoftNotice({ icon, children, actions, onClose, closeLabe
         {icon ?? <InfoOutlined />}
       </Box>
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant='body2'>{children}</Typography>
+        <Typography variant='body2' sx={{ overflowWrap: 'anywhere' }}>
+          {children}
+        </Typography>
         {actions && (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1, ml: -1 }}>
             {actions}

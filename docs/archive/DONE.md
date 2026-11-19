@@ -95,9 +95,13 @@
 
 The original ask is quoted in `COVER-BIDDING.md` → "Why".
 
+- [x] Add some sorting and filtering logic to the covers page, including sorting by the
+      new hours for week data (done 2026-11-19: Sort & filter above the jobs sorts by job
+      number, week hours or start time and shows open jobs only or jobs that work chosen
+      days; the wide table's headings share the sort, `lib/coverJobSort.js`)
 - [x] In the Covers page, for each job that is on the listed from the jobs tab of the
       Google Sheet, I would like to display the corresponding hours for week (done
-      2026-11-19: "h/week" on the phone card, a Week hrs column on the wide table and
+      2026-11-19: "h/week" on the phone card, an Hours column on the wide table and
       "Hours for week" in the job's details, matched by job code; 21 of the 70 jobs for
       11/21/2026 are on the Jobs tab)
 

@@ -14,7 +14,9 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import CoverBidJobCard from './CoverBidJobCard';
 import CoverBidJobDetailDialog from './CoverBidJobDetailDialog';
+import JobFilters from './JobFilters';
 import ListToggle from './ListToggle';
+import { visibleCoverJobs } from '@/lib/coverJobSort';
 import { DAY_FIELDS, DAY_LABELS } from '@/lib/dayFormat';
 import {
   DayTimeChip,
@@ -59,22 +61,24 @@ const DESKTOP_COLUMNS = [
   },
   ...DAY_COLUMNS,
   // The Jobs tab's hours for the week, for a job that's on it
-  // (toDriverCoverJob `weekHours`); sorts as a number.
+  // (toDriverCoverJob `weekHours`).
   {
     field: 'weekHours',
-    headerName: 'Week hrs',
-    width: 90,
+    // Short, so the heading fits beside the grid's sort and menu icons.
+    headerName: 'Hours',
+    description: 'Hours for week, from the Jobs tab',
+    width: 100,
     sortable: true,
-    type: 'number',
-    align: 'left',
-    headerAlign: 'left',
-    valueGetter: (value) => (value ? parseFloat(value) : null),
     renderCell: ({ row }) => row.weekHours || null,
   },
   descriptionColumn,
 ];
 
 const CARDS_PER_PAGE = 50;
+
+// The grid's sortable headings, which share JobFilters' sort. Start time has
+// no column, so the grid shows no arrow while it's chosen.
+const GRID_SORT_FIELDS = new Set(['jobNumber', 'weekHours']);
 
 // On /covers, a verified driver's add/remove button, first in each row
 // (covers/CoverBoard.jsx `listControls`).
@@ -99,6 +103,11 @@ function listColumn(list) {
 //   an add/remove button (ListToggle).
 // - `beforeJobs`: optional content between the week's filters and its jobs
 //   (the driver's list).
+// Above the jobs, Sort & filter (JobFilters) sorts them by job number, week
+// hours or start time and leaves out picked jobs or jobs off on chosen days
+// (lib/coverJobSort.js). It holds across weeks. The grid sorts with it: its
+// headings set the same sort, and the rows come in already sorted
+// (sortingMode 'server').
 function CoverBidJobsTable({
   jobs,
   minWeekEnding,
@@ -123,6 +132,14 @@ function CoverBidJobsTable({
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [sort, setSort] = useState(null);
+  const [openOnly, setOpenOnly] = useState(false);
+  const [days, setDays] = useState([]);
+  // Any change to what's shown goes back to the first page of cards.
+  const resetting = (set) => (value) => {
+    set(value);
+    setPage(0);
+  };
 
   // The picked day is the source of truth; the week it belongs to is derived.
   const selectedWeek = useMemo(
@@ -150,15 +167,10 @@ function CoverBidJobsTable({
 
   const weekJobs = jobs.filter((job) => job.weekEnding === selectedWeek);
 
-  const filteredJobs = search
-    ? weekJobs.filter((job) => {
-        const q = search.toLowerCase();
-        return (
-          job.jobNumber?.toLowerCase().includes(q) ||
-          job.description?.toLowerCase().includes(q)
-        );
-      })
-    : weekJobs;
+  const filteredJobs = visibleCoverJobs(weekJobs, { search, openOnly, days, sort, isPicked });
+  const narrowed = filteredJobs.length !== weekJobs.length;
+  const gridSortModel =
+    sort && GRID_SORT_FIELDS.has(sort.key) ? [{ field: sort.key, sort: sort.direction }] : [];
 
   const paginatedJobs = filteredJobs.slice(
     page * CARDS_PER_PAGE,
@@ -195,14 +207,27 @@ function CoverBidJobsTable({
           Today is {dayjs().format('MM/DD/YYYY')}
         </Typography>
         {isWeekPosted && (
-          <Typography variant='caption' color='text.secondary' display='block'>
-            {filteredJobs.length} job{filteredJobs.length !== 1 ? 's' : ''}{' '}
+          <Typography variant='caption' color='text.secondary' display='block' role='status'>
+            {narrowed
+              ? `${filteredJobs.length} of ${weekJobs.length} jobs`
+              : `${filteredJobs.length} job${filteredJobs.length !== 1 ? 's' : ''}`}{' '}
             found for the week ending {dayjs(selectedWeek).format('MM/DD/YYYY')}
           </Typography>
         )}
       </Box>
 
       {beforeJobs}
+
+      {isWeekPosted && weekJobs.length > 0 && (
+        <JobFilters
+          sort={sort}
+          onSort={resetting(setSort)}
+          openOnly={openOnly}
+          onOpenOnly={resetting(setOpenOnly)}
+          days={days}
+          onDays={resetting(setDays)}
+        />
+      )}
 
       {!isWeekPosted ? (
         <SoftNotice sx={{ maxWidth: 'none', my: 3 }}>
@@ -220,6 +245,11 @@ function CoverBidJobsTable({
               pagination: { paginationModel: { pageSize: 50 } },
             }}
             autoHeight
+            sortingMode='server'
+            sortModel={gridSortModel}
+            onSortModelChange={(model) =>
+              setSort(model[0] ? { key: model[0].field, direction: model[0].sort } : null)
+            }
             getRowHeight={() => 'auto'}
             onRowClick={(params) => setSelectedJob(params.row)}
             getRowClassName={({ row }) =>
@@ -232,7 +262,7 @@ function CoverBidJobsTable({
                   textAlign='center'
                   sx={{ py: 4 }}
                 >
-                  No jobs match your search.
+                  No jobs match your search or filters.
                 </Typography>
               ),
             }}
@@ -264,7 +294,7 @@ function CoverBidJobsTable({
               textAlign='center'
               sx={{ py: 4 }}
             >
-              No jobs match your search.
+              No jobs match your search or filters.
             </Typography>
           )}
 

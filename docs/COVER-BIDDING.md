@@ -63,7 +63,10 @@ doesn't do covers never has to.
   - the job list, with picked jobs grayed out and no names (`toDriverCoverJob`), and
     since 2026-11-19 each job's hours for the week when the Jobs tab has a job with the
     same code (`weekHours`, `getSheetJobWeekHours`; extra and peak jobs aren't on it),
-    on this week and the week being bid on only, since the tab is as it is today;
+    on this week and the week being bid on only, since the tab is as it is today. Sort &
+    filter above the jobs (`coverBidJobs/JobFilters.jsx`, `lib/coverJobSort.js`) sorts
+    them by job number, week hours or start time and can show open jobs only, or jobs
+    that work every chosen day;
   - their own row in the pick section: cover number or on-call order, and their call-in
     (pick) time (`myCoverSpot`).
 

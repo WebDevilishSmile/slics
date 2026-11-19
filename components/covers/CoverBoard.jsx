@@ -4,10 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 
 import { COVER_LIST_MAX } from '@/constants';
+import { bidDateFor } from '@/lib/bidDay';
 import { isPicked, jobKey } from '@/lib/coverBidJobRow';
 import { moveToPlace } from '@/lib/coverList';
 import { getUpcomingSaturday } from '@/lib/format';
 import { tapHaptic } from '@/lib/haptics';
+import { todayInNewYork } from '@/lib/onCallSheet';
 import { withViewTransition } from '@/lib/viewTransition';
 import CoverBidJobsTable from '@/components/coverBidJobs/CoverBidJobsTable';
 import CoverList from '@/components/covers/CoverList';
@@ -17,15 +19,29 @@ import PushNudge from '@/components/push/PushNudge';
 const NO_ENTRIES = [];
 // How long a removed job's Undo stays.
 const UNDO_MS = 6000;
+// How often the open page re-reads the shown week on its bid day.
+const BID_DAY_REFRESH_MS = 60 * 1000;
+
+// `jobs` with `week`'s rows swapped for `fresh`, where the old ones were (the
+// rows come newest week first, each week in sheet order).
+function replaceWeek(jobs, week, fresh) {
+  const at = jobs.findIndex((job) => job.weekEnding === week);
+  const others = jobs.filter((job) => job.weekEnding !== week);
+  if (at < 0) return [...fresh, ...others];
+  return [...others.slice(0, at), ...fresh, ...others.slice(at)];
+}
 
 // The week's jobs on /covers and, for a verified driver, their list for the
 // week picked on the calendar (docs/COVER-BIDDING.md, stage 2). The calendar
 // lives in CoverBidJobsTable; this holds the chosen day so the list follows
 // it, and does the list's saving: every change PUTs the whole list
 // (/api/users/me/cover-preferences) and shows it at once, going back if the
-// save fails. Coming back to the page re-reads the shown week's list, so jobs
-// picked meanwhile drop off.
-// - `jobs`: driver rows (toDriverCoverJob), hidden jobs already left out.
+// save fails. Coming back to the page re-reads the shown week's jobs and list
+// (/api/cover-bid-jobs/for-drivers), so jobs picked meanwhile show as taken
+// and drop off the list; on the shown week's bid day it does so once a minute
+// too while the page is in view (the sheet syncs within minutes).
+// - `jobs`: driver rows (toDriverCoverJob), hidden jobs already left out; the
+//   page's first copy, which the re-reads replace week by week.
 // - `initialLists`: { weekEnding: entries with status } (lib/coverList.js).
 // - `callIns`: { weekEnding: the driver's call-in time }.
 // - `bidDates`: { weekEnding: the day drivers call in } (lib/bidDay.js).
@@ -45,7 +61,7 @@ const UNDO_MS = 6000;
 // After the driver's first save on this visit, a nudge offers notifications
 // (push/PushNudge.jsx, never on page load), if this device has them off.
 export default function CoverBoard({
-  jobs,
+  jobs: initialJobs,
   minWeekEnding,
   initialLists,
   callIns,
@@ -65,6 +81,7 @@ export default function CoverBoard({
   );
   const selectedWeek = getUpcomingSaturday(selectedDay).format('YYYY-MM-DD');
 
+  const [jobs, setJobs] = useState(initialJobs);
   const [lists, setLists] = useState(initialLists ?? {});
   // The latest lists for handlers that run between renders (a quick second
   // tap): kept in step by the effect below and by save itself.
@@ -239,26 +256,50 @@ export default function CoverBoard({
     };
   }, [editable, entries, isFull, save, selectedWeek]);
 
-  // Re-read the shown week's list when the driver comes back to the page:
-  // jobs picked meanwhile (the sheet syncs within minutes) drop off.
+  // Re-read the shown week's jobs and list when the driver comes back to the
+  // page, and once a minute on its bid day while the page is in view: jobs
+  // picked meanwhile (the sheet syncs within minutes) show as taken and drop
+  // off the list. A preview's list stays in the page, so only its jobs are
+  // re-read.
+  const refreshing = useRef(false);
   useEffect(() => {
-    if (!canList || preview) return undefined;
     const refresh = async () => {
-      if (document.visibilityState !== 'visible') return;
+      if (document.visibilityState !== 'visible' || refreshing.current) return;
+      refreshing.current = true;
       const seq = saveSeq.current;
+      const week = selectedWeek;
       try {
-        const res = await fetch(`/api/users/me/cover-preferences?week=${selectedWeek}`);
-        const data = await res.json();
-        if (res.ok && seq === saveSeq.current) {
-          setLists((current) => ({ ...current, [selectedWeek]: data.data.entries }));
+        const [jobsRes, listRes] = await Promise.all([
+          fetch(`/api/cover-bid-jobs/for-drivers?week=${week}`),
+          canList && !preview ? fetch(`/api/users/me/cover-preferences?week=${week}`) : null,
+        ]);
+        if (jobsRes.ok) {
+          const data = await jobsRes.json();
+          setJobs((current) => replaceWeek(current, week, data.data.jobs));
+        }
+        if (listRes?.ok) {
+          const data = await listRes.json();
+          if (seq === saveSeq.current) {
+            setLists((current) => ({ ...current, [week]: data.data.entries }));
+          }
         }
       } catch {
-        // The list on screen stays; the next visit tries again.
+        // What's on screen stays; the next visit or minute tries again.
+      } finally {
+        refreshing.current = false;
       }
     };
+    // Checked on each tick, so a page left open past midnight starts or stops.
+    const tick = () => {
+      if (bidDateFor(selectedWeek, bidDates) === todayInNewYork()) refresh();
+    };
+    const timer = setInterval(tick, BID_DAY_REFRESH_MS);
     document.addEventListener('visibilitychange', refresh);
-    return () => document.removeEventListener('visibilitychange', refresh);
-  }, [canList, preview, selectedWeek]);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [bidDates, canList, preview, selectedWeek]);
 
   const showList = canList && (entries.length > 0 || (weekJobs.length > 0 && !offList));
 

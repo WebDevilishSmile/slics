@@ -271,8 +271,10 @@ calling dispatch at the call-in time; the list is what the driver reads off on t
       (`coverBidJobs/ListToggle.jsx`; a taken job can't be added, 30 at most). A taken
       or hidden job leaves the list on read (`coverListStatus`, `lib/coverList.js`) but
       stays stored, so it comes back if it reopens; the list names the taken ones. The
-      page re-reads the list when the driver comes back to it. A past week's list is
-      read-only.
+      page re-reads the shown week's jobs and list when the driver comes back to it,
+      and once a minute on that week's bid day while it's in view (since 2026-11-19;
+      the jobs from `GET /api/cover-bid-jobs/for-drivers`, `toDriverCoverJob` rows with
+      hidden jobs left out, as the page sends them). A past week's list is read-only.
 - [x] **Call dispatch** under the list dials the phone on SLIC `DISPATCH_NUM_SLIC`
       (BETPA, 1809), read at page load, beside the driver's call-in time for that week.
       It's always the list's main action. The sheet gives call-in slots but not the bid

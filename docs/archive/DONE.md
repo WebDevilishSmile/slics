@@ -95,6 +95,12 @@
 
 The original ask is quoted in `COVER-BIDDING.md` → "Why".
 
+- [x] In the Covers page, for each job that is on the listed from the jobs tab of the
+      Google Sheet, I would like to display the corresponding hours for week (done
+      2026-11-19: "h/week" on the phone card, a Week hrs column on the wide table and
+      "Hours for week" in the job's details, matched by job code; 21 of the 70 jobs for
+      11/21/2026 are on the Jobs tab)
+
 - [x] **Covers for every driver:** the switch on `/admin/super/features` turned on
       2026-11-07, after the trial (`admin_audit`); the `/help` guides and the menu's "New"
       follow it

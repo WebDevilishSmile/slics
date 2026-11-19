@@ -58,6 +58,19 @@ const DESKTOP_COLUMNS = [
     ),
   },
   ...DAY_COLUMNS,
+  // The Jobs tab's hours for the week, for a job that's on it
+  // (toDriverCoverJob `weekHours`); sorts as a number.
+  {
+    field: 'weekHours',
+    headerName: 'Week hrs',
+    width: 90,
+    sortable: true,
+    type: 'number',
+    align: 'left',
+    headerAlign: 'left',
+    valueGetter: (value) => (value ? parseFloat(value) : null),
+    renderCell: ({ row }) => row.weekHours || null,
+  },
   descriptionColumn,
 ];
 

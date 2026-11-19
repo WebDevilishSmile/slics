@@ -60,7 +60,10 @@ doesn't do covers never has to.
 - **The evidence is short-lived.** The employee ID and seniority date on a claim are
   deleted as soon as an admin decides it, either way. Claims go with the account.
 - **Anonymous to drivers, open to admins.** A driver sees:
-  - the job list, with picked jobs grayed out and no names (`toDriverCoverJob`);
+  - the job list, with picked jobs grayed out and no names (`toDriverCoverJob`), and
+    since 2026-11-19 each job's hours for the week when the Jobs tab has a job with the
+    same code (`weekHours`, `getSheetJobWeekHours`; extra and peak jobs aren't on it),
+    on this week and the week being bid on only, since the tab is as it is today;
   - their own row in the pick section: cover number or on-call order, and their call-in
     (pick) time (`myCoverSpot`).
 

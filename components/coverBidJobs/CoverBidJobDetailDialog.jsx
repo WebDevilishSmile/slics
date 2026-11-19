@@ -65,6 +65,16 @@ export default function CoverBidJobDetailDialog({ job, open, onClose, list = nul
               </Stack>
             )}
 
+            {/* The Jobs tab's hours for the job (toDriverCoverJob), when it's there. */}
+            {job.weekHours && (
+              <Box>
+                <Typography variant='subtitle2'>Hours for week</Typography>
+                <Typography variant='body2' color='text.secondary'>
+                  {job.weekHours} hours, as the Jobs tab lists this job
+                </Typography>
+              </Box>
+            )}
+
             <Typography variant='subtitle2'>Schedule</Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {scheduledDays.length > 0 ? (

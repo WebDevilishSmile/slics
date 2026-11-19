@@ -13,7 +13,7 @@ import { CREATOR_NAME, creatorCovers, creatorReminderLeads } from '@/lib/creator
 import { getUserById, resolveReminderLeads } from '@/lib/db/users';
 import { getMyDriverClaim } from '@/lib/db/driverClaims';
 import { getMyCoverDispute } from '@/lib/db/coverDisputes';
-import { getDriverJobName } from '@/lib/db/sheetJobs';
+import { getDriverJobName, getSheetJobWeekHours } from '@/lib/db/sheetJobs';
 import { getCoverBidJobsSince } from '@/lib/db/coverBidJobs';
 import { getCoverBidPicksSince } from '@/lib/db/coverBidPicks';
 import { getBidDayOverrides } from '@/lib/db/coverBidDays';
@@ -22,7 +22,7 @@ import { getMyCoverLists } from '@/lib/db/coverPreferences';
 import { getSlicByNumSlic } from '@/lib/db/slics';
 import { getHubConfig } from '@/lib/db/hubConfigs';
 import { bidDateFor, currentBidWeek } from '@/lib/bidDay';
-import { isJobHidden } from '@/lib/coverBidJobRow';
+import { isJobHidden, jobKey } from '@/lib/coverBidJobRow';
 import { coverListStatus } from '@/lib/coverList';
 import { myCoverSpot, offListWeeks } from '@/lib/coverDrivers';
 import { getUpcomingSaturday } from '@/lib/format';
@@ -146,7 +146,7 @@ export default async function CoversPage({ searchParams }) {
   // The hub's settings: BETPA's, the only hub until docs/MULTI-HUB.md stage 2.
   const hub = await getHubConfig();
 
-  const [user, claim, jobs, hiddenKeys, pickWeeks, savedLists, dispatchPhone, dispute, bidDayOverrides] = await Promise.all([
+  const [user, claim, jobs, hiddenKeys, pickWeeks, savedLists, dispatchPhone, dispute, bidDayOverrides, weekHours] = await Promise.all([
     verified ? getUserById(session.user.id) : null,
     driverView ? null : getMyDriverClaim(session.user.id),
     driverView ? getCoverBidJobsSince(cutoffWeek) : [],
@@ -161,10 +161,25 @@ export default async function CoversPage({ searchParams }) {
     // Weeks an admin moved off the usual Thursday (lib/bidDay.js). A failure
     // only shows the usual day.
     driverView ? getBidDayOverrides(thisWeek).catch(() => ({})) : {},
+    // Each job's hours for the week on the Jobs tab, shown beside a cover job
+    // with the same code. A failure only leaves them out.
+    driverView
+      ? getSheetJobWeekHours().catch((error) => {
+          console.error('Error reading the Jobs tab’s week hours for /covers:', error);
+          return new Map();
+        })
+      : new Map(),
   ]);
+  // The Jobs tab is as it is today, so its hours go only on this week's jobs
+  // and the week being bid on, not on weeks already worked.
+  const hoursWeeks = new Set([thisWeek, bidWeek]);
   const driverJobs = jobs
     .filter((job) => !isJobHidden(job, hiddenKeys))
-    .map(toDriverCoverJob);
+    .map((job) =>
+      toDriverCoverJob(job, {
+        weekHours: hoursWeeks.has(job.weekEnding) ? weekHours.get(jobKey(job.jobNumber)) : '',
+      }),
+    );
 
   const posted = (week) => (week.rows?.length ?? 0) > 0;
   const weeks = (preview ? pickWeeks.filter(posted) : pickWeeks).map((week) => ({

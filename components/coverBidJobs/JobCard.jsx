@@ -23,9 +23,11 @@ import { HiddenLabel, hiddenSx, PickedLabel, pickedSx } from './jobGrid';
 //   label; its action still works.
 // - `hidden`: a cover job an admin hid from drivers, dimmed with a "Hidden"
 //   label (admins only: drivers never receive one).
+// - `weekHours`: optional, the Jobs tab's hours for the week ('58.11'),
+//   under the title.
 // A soft raised card (CLAUDE.md "Visual style"); the day chips keep their
 // colors, which tell the days apart.
-function JobCard({ title, action, days, description, picked = false, hidden = false }) {
+function JobCard({ title, action, days, description, picked = false, hidden = false, weekHours = '' }) {
   return (
     <Box
       sx={[
@@ -47,6 +49,11 @@ function JobCard({ title, action, days, description, picked = false, hidden = fa
           <Typography variant='h6' fontWeight={700} lineHeight={1.2}>
             {title}
           </Typography>
+          {weekHours && (
+            <Typography variant='body2' color='text.secondary' sx={{ mt: 0.25 }}>
+              {weekHours} h/week
+            </Typography>
+          )}
           {(picked || hidden) && (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 1.5, mt: 0.5 }}>
               {picked && <PickedLabel />}

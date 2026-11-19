@@ -24,6 +24,7 @@ function CoverBidJobCard({ job, onSelect, list = null }) {
       description={job.description}
       picked={isPicked(job)}
       hidden={Boolean(job.hidden)}
+      weekHours={job.weekHours}
       action={
         (onSelect || list) && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
